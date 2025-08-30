@@ -1,23 +1,31 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'dart:async';
 
 class ImagePickerField extends StatefulWidget {
   final List<String> imagePaths;
   final String? coverImage;
+  final String? videoPath;
   final int maxImages;
   final Function(String) onImageSelected;
+  final Function(String)? onVideoSelected;
   final Function(String)? onCoverChanged;
   final Function(int)? onImageRemoved;
+  final Function()? onVideoRemoved;
 
   const ImagePickerField({
     Key? key,
     required this.imagePaths,
     this.coverImage,
-    this.maxImages = 4,
+    this.videoPath,
+    this.maxImages = 15,
     required this.onImageSelected,
+    this.onVideoSelected,
     this.onCoverChanged,
     this.onImageRemoved,
+    this.onVideoRemoved,
   }) : super(key: key);
 
   @override
@@ -27,30 +35,75 @@ class ImagePickerField extends StatefulWidget {
 class _ImagePickerFieldState extends State<ImagePickerField> {
   final ImagePicker _picker = ImagePicker();
   List<String> _images = [];
+  String? _videoPath;
+  String? _videoThumbnail;
 
   @override
   void initState() {
     super.initState();
     _images = List.from(widget.imagePaths);
+    _videoPath = widget.videoPath;
+    _loadVideoThumbnail();
   }
 
-  Future<void> _pickImage() async {
-    if (_images.length >= widget.maxImages) return;
+  Future<void> _loadVideoThumbnail() async {
+    if (_videoPath == null) return;
+    
+    final thumbnail = await VideoThumbnail.thumbnailFile(
+      video: _videoPath!,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 200,
+      quality: 25,
+    );
+    
+    if (mounted) {
+      setState(() {
+        _videoThumbnail = thumbnail;
+      });
+    }
+  }
 
+  Future<void> _pickMedia({required bool isVideo}) async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
+      if (isVideo) {
+        if (_videoPath != null) return;
+        
+        final XFile? video = await _picker.pickVideo(
+          source: ImageSource.gallery,
+          maxDuration: const Duration(minutes: 5),
+        );
+        
+        if (video != null) {
+          widget.onVideoSelected?.call(video.path);
+          setState(() {
+            _videoPath = video.path;
+            // If this is the first media item, set it as cover
+            if (widget.coverImage == null && _images.isEmpty) {
+              widget.onCoverChanged?.call(video.path);
+            }
+          });
+          _loadVideoThumbnail();
+        }
+      } else {
+        if (_images.length >= widget.maxImages) return;
+        
+        if (_images.length >= widget.maxImages) return;
+        
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 85,
+        );
 
-      if (image != null) {
-        widget.onImageSelected(image.path);
-        setState(() {
-          _images.add(image.path);
-          if (widget.coverImage == null && _images.length == 1) {
-            widget.onCoverChanged?.call(image.path);
-          }
-        });
+        if (image != null) {
+          widget.onImageSelected(image.path);
+          setState(() {
+            _images.add(image.path);
+            // If this is the first media item, set it as cover
+            if (widget.coverImage == null && _images.length == 1 && _videoPath == null) {
+              widget.onCoverChanged?.call(image.path);
+            }
+          });
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -74,18 +127,89 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     });
   }
 
+  void _showMediaSelectionDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Add Media',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.black),
+                title: const Text('Add Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickMedia(isVideo: false);
+                },
+              ),
+              if (_videoPath == null)
+                ListTile(
+                  leading: const Icon(Icons.video_library, color: Colors.black),
+                  title: const Text('Add Video'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickMedia(isVideo: true);
+                  },
+                ),
+              SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    
+    // Combine images and video into a single list for display
+    List<Map<String, dynamic>> mediaItems = [];
+    
+    // Add video first if exists
+    if (_videoPath != null) {
+      mediaItems.add({
+        'path': _videoPath!,
+        'isVideo': true,
+        'thumbnail': _videoThumbnail
+      });
+    }
+    
+    // Add all images
+    for (var imgPath in _images) {
+      mediaItems.add({
+        'path': imgPath,
+        'isVideo': false,
+      });
+    }
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        ..._images.asMap().entries.map((entry) {
+        ...mediaItems.asMap().entries.map((entry) {
           final index = entry.key;
-          final imgPath = entry.value;
-          bool isCover = imgPath == widget.coverImage;
+          final media = entry.value;
+          final isVideo = media['isVideo'] as bool;
+          final path = media['path'] as String;
+          final bool isCover = path == widget.coverImage;
+          final thumbnail = media['thumbnail'] as String?;
 
           return Stack(
             children: [
@@ -96,28 +220,79 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300),
                   image: DecorationImage(
-                    image: FileImage(File(imgPath)),
+                    image: isVideo && thumbnail != null 
+                      ? FileImage(File(thumbnail))
+                      : FileImage(File(path)),
                     fit: BoxFit.cover,
                   ),
                 ),
+                child: isVideo 
+                  ? Center(
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                    )
+                  : null,
               ),
               if (widget.onCoverChanged != null && isCover)
                 Positioned.fill(
                   child: GestureDetector(
-                    onTap: () => widget.onCoverChanged?.call(imgPath),
+                    onTap: () => widget.onCoverChanged?.call(path),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.black45,
                         borderRadius: BorderRadius.circular(8),
+                        image: isVideo && _videoThumbnail != null
+                            ? DecorationImage(
+                                image: FileImage(File(_videoThumbnail!)),
+                                fit: BoxFit.cover,
+                                opacity: 0.6,
+                              )
+                            : null,
                       ),
                       child: Center(
-                        child: Text(
-                          'Cover',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: width * .03,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isVideo)
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            SizedBox(height: 8),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Cover',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: width * .03,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -127,7 +302,19 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                 top: 2,
                 right: 2,
                 child: GestureDetector(
-                  onTap: () => _removeImage(index),
+                  onTap: () {
+                    if (isVideo) {
+                      _videoPath = null;
+                      _videoThumbnail = null;
+                      widget.onVideoRemoved?.call();
+                      setState(() {});
+                    } else {
+                      final imgIndex = _images.indexOf(path);
+                      if (imgIndex != -1) {
+                        _removeImage(imgIndex);
+                      }
+                    }
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(2),
                     decoration: const BoxDecoration(
@@ -142,13 +329,13 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   ),
                 ),
               ),
-              // Make the whole image tappable to set as cover
+              // Make the whole media item tappable to set as cover
               if (widget.onCoverChanged != null && !isCover)
                 Positioned.fill(
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => widget.onCoverChanged?.call(imgPath),
+                      onTap: () => widget.onCoverChanged?.call(path),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -156,16 +343,15 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
             ],
           );
         }).toList(),
-        if (_images.length < widget.maxImages)
+        if (mediaItems.length < (widget.maxImages + (_videoPath != null ? 1 : 0)))
           GestureDetector(
-            onTap: _pickImage,
+            onTap: _showMediaSelectionDialog,
             child: Container(
               width: width * .2,
               height: width * .2,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
-                //  color: Colors.grey[100],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
