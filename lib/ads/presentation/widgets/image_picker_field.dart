@@ -43,46 +43,76 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     super.initState();
     _images = List.from(widget.imagePaths);
     _videoPath = widget.videoPath;
-    _loadVideoThumbnail();
+    if (_videoPath != null && _videoPath!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadVideoThumbnail();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(ImagePickerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Update images if they've changed
+    if (widget.imagePaths != oldWidget.imagePaths) {
+      _images = List.from(widget.imagePaths);
+    }
+    
+    // Update video if it's been removed
+    if (widget.videoPath != oldWidget.videoPath) {
+      _videoPath = widget.videoPath;
+      if (_videoPath == null) {
+        _videoThumbnail = null;
+      } else if (_videoPath!.isNotEmpty) {
+        _loadVideoThumbnail();
+      }
+    }
   }
 
   Future<void> _loadVideoThumbnail() async {
-    if (_videoPath == null) return;
+    if (_videoPath == null || _videoPath!.isEmpty) return;
     
-    final thumbnail = await VideoThumbnail.thumbnailFile(
-      video: _videoPath!,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 200,
-      quality: 25,
-    );
-    
-    if (mounted) {
-      setState(() {
-        _videoThumbnail = thumbnail;
-      });
+    try {
+      final thumbnail = await VideoThumbnail.thumbnailFile(
+        video: _videoPath!,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 200,
+        quality: 50,
+      );
+      
+      if (mounted && thumbnail != null) {
+        setState(() {
+          _videoThumbnail = thumbnail;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error generating video thumbnail: $e');
     }
   }
 
   Future<void> _pickMedia({required bool isVideo}) async {
     try {
       if (isVideo) {
-        if (_videoPath != null) return;
-        
+        if (_videoPath != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You can only add one video')),
+          );
+          return;
+        }
+
         final XFile? video = await _picker.pickVideo(
           source: ImageSource.gallery,
-          maxDuration: const Duration(minutes: 5),
         );
-        
+
         if (video != null) {
           widget.onVideoSelected?.call(video.path);
           setState(() {
             _videoPath = video.path;
-            // If this is the first media item, set it as cover
-            if (widget.coverImage == null && _images.isEmpty) {
-              widget.onCoverChanged?.call(video.path);
-            }
+            _loadVideoThumbnail();
+            // Set video as cover when selected
+            widget.onCoverChanged?.call(video.path);
           });
-          _loadVideoThumbnail();
         }
       } else {
         if (_images.length >= widget.maxImages) return;
@@ -112,19 +142,20 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     }
   }
 
+
   void _removeImage(int index) {
-    if (index < 0 || index >= _images.length) return;
+    if (index >= 0 && index < _images.length) {
+      setState(() {
+        String removedImage = _images[index];
+        _images.removeAt(index);
+        widget.onImageRemoved?.call(index);
 
-    final removedImage = _images[index];
-    setState(() {
-      _images.removeAt(index);
-      widget.onImageRemoved?.call(index);
-
-      // If the removed image was the cover, update the cover
-      if (widget.coverImage == removedImage) {
-        widget.onCoverChanged?.call(_images.isNotEmpty ? _images[0] : '');
-      }
-    });
+        // If the removed image was the cover, update the cover
+        if (widget.coverImage == removedImage) {
+          widget.onCoverChanged?.call(_images.isNotEmpty ? _images[0] : (_videoPath ?? ''));
+        }
+      });
+    }
   }
 
   void _showMediaSelectionDialog() {
@@ -208,7 +239,9 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
           final media = entry.value;
           final isVideo = media['isVideo'] as bool;
           final path = media['path'] as String;
-          final bool isCover = path == widget.coverImage;
+          // Check if this media item is the cover (either image or video)
+          final bool isCover = path == widget.coverImage || 
+                             (isVideo && _videoPath == widget.coverImage);
           final thumbnail = media['thumbnail'] as String?;
 
           return Stack(
@@ -251,48 +284,15 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                       decoration: BoxDecoration(
                         color: Colors.black45,
                         borderRadius: BorderRadius.circular(8),
-                        image: isVideo && _videoThumbnail != null
-                            ? DecorationImage(
-                                image: FileImage(File(_videoThumbnail!)),
-                                fit: BoxFit.cover,
-                                opacity: 0.6,
-                              )
-                            : null,
                       ),
                       child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (isVideo)
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
-                            SizedBox(height: 8),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'Cover',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: width * .03,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'Cover',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: width * .03,
+                          ),
                         ),
                       ),
                     ),
@@ -304,10 +304,16 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                 child: GestureDetector(
                   onTap: () {
                     if (isVideo) {
-                      _videoPath = null;
-                      _videoThumbnail = null;
+                      final wasCover = _videoPath == widget.coverImage;
                       widget.onVideoRemoved?.call();
-                      setState(() {});
+                      setState(() {
+                        _videoPath = null;
+                        _videoThumbnail = null;
+                        if (wasCover) {
+                          // If video was cover, set first image as cover or clear if no images
+                          widget.onCoverChanged?.call(_images.isNotEmpty ? _images[0] : '');
+                        }
+                      });
                     } else {
                       final imgIndex = _images.indexOf(path);
                       if (imgIndex != -1) {

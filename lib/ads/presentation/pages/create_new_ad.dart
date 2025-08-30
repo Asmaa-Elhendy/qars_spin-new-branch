@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import '../widgets/drop_Down_field.dart';
+import '../widgets/video_player_widget.dart';
 import '../widgets/image_picker_field.dart';
 import '../widgets/text_field.dart';
 import '../widgets/color_picker_field.dart';
@@ -14,6 +15,49 @@ class SellCarScreen extends StatefulWidget {
 class _SellCarScreenState extends State<SellCarScreen> {
   List<String> _images = [];
   String? _coverImage;
+  String? _videoPath;
+  
+  bool _isVideo(String path) {
+    if (path.isEmpty) return false;
+    
+    // Trim any query parameters or fragments from the path
+    final cleanPath = path.split('?').first.split('#').first;
+    
+    // Get the file extension without the dot
+    final fileName = cleanPath.split('/').last;
+    if (!fileName.contains('.')) return false;
+    
+    final ext = fileName.split('.').last.toLowerCase().trim();
+    
+    // Common video extensions
+    const videoExtensions = {'mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv', 'flv', '3gp', 'm4v'};
+    
+    final isVideo = videoExtensions.contains(ext);
+    debugPrint('''
+    Video Check:
+    - Original path: $path
+    - Cleaned path: $cleanPath
+    - File name: $fileName
+    - Extracted extension: $ext
+    - Is video: $isVideo
+    ''');
+    
+    return isVideo;
+  }
+  
+  
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[200],
+      child: Center(
+        child: Icon(
+          Icons.photo,
+          size: 50,
+          color: Colors.grey[400],
+        ),
+      ),
+    );
+  }
   String? selectedMake;
   String? selectedModel;
   String? selectedType;
@@ -34,10 +78,22 @@ class _SellCarScreenState extends State<SellCarScreen> {
   void _handleImageSelected(String imagePath) {
     setState(() {
       _images.add(imagePath);
-      // If this is the first image or the only image, set it as cover
-      if (_images.length == 1) {
+      // If this is the first image, set it as cover
+      if (_images.length == 1 && _coverImage == null) {
         _coverImage = imagePath;
       }
+    });
+  }
+
+  void _handleVideoSelected(String videoPath) {
+    debugPrint('Video selected: $videoPath');
+    setState(() {
+      _videoPath = videoPath;
+      // Only set as cover if there are no other covers and no images
+      if (_coverImage == null && _images.isEmpty) {
+        _coverImage = videoPath;
+      }
+      debugPrint('Video added. Cover image: $_coverImage');
     });
   }
 
@@ -50,17 +106,25 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   void _handleImageRemoved(int index) {
-    if (index >= 0 && index < _images.length) {
-      setState(() {
+    setState(() {
+      if (index >= 0 && index < _images.length) {
         String removedImage = _images[index];
         _images.removeAt(index);
         
-        // If we removed the cover image or there's only one image left
-        if (_coverImage == removedImage || _images.length == 1) {
+        // If we removed the cover image
+        if (_coverImage == removedImage) {
+          _coverImage = _images.isNotEmpty ? _images[0] : (_videoPath != null ? _videoPath : null);
+        }
+      } 
+      // If we're removing the video
+      else if (index == -1 && _videoPath != null) {
+        // If the current cover is the video, update it
+        if (_coverImage == _videoPath) {
           _coverImage = _images.isNotEmpty ? _images[0] : null;
         }
-      });
-    }
+        _videoPath = null;
+      }
+    });
   }
 
   @override
@@ -99,21 +163,33 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
                // Cover Image Preview
                if (_coverImage != null && _coverImage!.isNotEmpty)
-                 SizedBox(
-                   width: double.infinity,
-                   height: height * .35,
-                   child: Image.file(
-                     File(_coverImage!),
-                     fit: BoxFit.cover,
-                     errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                   ),
+                 Column(
+                   children: [
+                     SizedBox(
+                       width: double.infinity,
+                       height: height * .35,
+                       child: _isVideo(_coverImage!)
+                           ? VideoPlayerWidget(
+                               videoPath: _coverImage!,
+                               autoPlay: true,
+                               looping: true,
+                             )
+                           : Image.file(
+                               File(_coverImage!),
+                               fit: BoxFit.cover,
+                               errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                             ),
+                     ),
+                     SizedBox(height: height * .02),
+                   ],
                  ),
-               SizedBox(height:height*.02),
                ImagePickerField(
                  imagePaths: _images,
                  coverImage: _coverImage,
+                 videoPath: _videoPath,
                  maxImages: 15,
                  onImageSelected: _handleImageSelected,
+                 onVideoSelected: _handleVideoSelected,
                  onCoverChanged: _handleCoverChanged,
                  onImageRemoved: _handleImageRemoved,
                ),
