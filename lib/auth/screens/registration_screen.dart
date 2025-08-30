@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:untitled2/ads/presentation/pages/create_new_ad.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
@@ -132,7 +133,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                  SizedBox(height: height*.02),
                 // Submit Button
                 PrimaryButton(
-                  onPressed: (){},borderRadius: 4,
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SellCarScreen()));
+                  },borderRadius: 4,
                   child: _isLoading
                       ?  SizedBox(
                           width: 20,
