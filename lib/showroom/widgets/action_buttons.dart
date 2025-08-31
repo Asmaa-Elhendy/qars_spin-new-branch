@@ -17,7 +17,7 @@ class ActionButtons extends StatelessWidget {
             icon: const Icon(Icons.phone, color: Colors.grey),
             label: const Text("Phone"),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
+              backgroundColor: Color(0xFFF6C42D),
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), // 👈 هنا تتحكم في الدوران
@@ -34,7 +34,7 @@ class ActionButtons extends StatelessWidget {
             icon:  Image.asset("assets/images/call.png",width: width*.04,height:height*.02),
             label: const Text("Whatsapp"),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
+              backgroundColor: Color(0xFFF6C42D),
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), // 👈 هنا تتحكم في الدوران

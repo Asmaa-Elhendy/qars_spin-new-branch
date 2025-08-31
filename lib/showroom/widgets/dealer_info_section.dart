@@ -69,7 +69,7 @@ class DealerInfoSection extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
+                              backgroundColor: Color(0xFFF6C42D),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
@@ -104,7 +104,7 @@ class DealerInfoSection extends StatelessWidget {
                     ),
                     Row(
                       children: [1, 2, 3, 4, 5]
-                          .map((e) => const Icon(Icons.star, size: 16, color: Colors.amber))
+                          .map((e) => const Icon(Icons.star, size: 16, color: Color(0xFFF6C42D)))
                           .toList(),
                     )
 
