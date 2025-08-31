@@ -68,6 +68,10 @@ flutter:
   assets:
     - assets/images/plus.svg
     - assets/images/calender.svg
+    - assets/images/car1.png
+    - assets/images/logo.png
+    - assets/images/showroom.png
+    - assets/images/call.png
 
   #   - images/a_dot_ham.jpeg
 

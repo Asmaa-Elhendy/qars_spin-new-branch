@@ -7,9 +7,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../ads/presentation/pages/create_ad_options_screen.dart';
 import '../../ads/presentation/widgets/adv_modal.dart';
+import '../../showroom/pages/show_room_detail.dart';
 import '../widgets/country_dropdown.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
+
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
@@ -21,7 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _mobileController = TextEditingController();
   bool _isLoading = false;
-  
+
   // Country data matching the Android app
   final List<Map<String, String>> _countries = [
     {'name': AppStrings.countryQatar, 'code': 'QA', 'prefix': '974'},
@@ -31,10 +33,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     {'name': AppStrings.countryOman, 'code': 'OM', 'prefix': '968'},
     {'name': AppStrings.countryKuwait, 'code': 'KW', 'prefix': '965'},
   ];
-  
+
   String _selectedCountry = 'QA';
   String _selectedCountryPrefix = '974';
-  
+
   // Generate a random OTP secret
   String _generateOtpSecret() {
     final random = Random.secure();
@@ -48,11 +50,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    double width=MediaQuery.of(context).size.width;
-    double height=MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -120,7 +121,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   controller: _mobileController,
                   keyboardType: TextInputType.phone,
                   hintText: AppStrings.enterYourMobileNumber,
-               //   prefixText: '+${_countries.firstWhere((c) => c['code'] == _selectedCountry)['prefix']} ',
+                  //   prefixText: '+${_countries.firstWhere((c) => c['code'] == _selectedCountry)['prefix']} ',
                   // validator: (value) {
                   //   if (value == null || value.isEmpty) {
                   //     return AppStrings.fieldRequired;
@@ -132,57 +133,55 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   //   return null;
                   // },
                 ),
-                 SizedBox(height: height*.02),
+                SizedBox(height: height * .02),
                 // Submit Button
                 PrimaryButton(
-                  onPressed: (){
-                      // () => _showAdOptions(context)
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateNewAdOptions()));}
-                    ,borderRadius: 4,
+                  onPressed: () {
+                    // () => _showAdOptions(context)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateNewAdOptions(),
+                      ),
+                    );
+                  },
+                  borderRadius: 4,
                   child: _isLoading
-                      ?  SizedBox(
+                      ? SizedBox(
                           width: 20,
-                          height: height*.06,
+                          height: height * .06,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : const Text(
                           'REGISTER NOW',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.black),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                 ),
-              ]),
-
+         InkWell(
+           onTap: (){
+             Navigator.push(
+               context,
+               MaterialPageRoute(
+                 builder: (context) => const CarDealerScreen(
+                 ),
+               ),
+             );
+           },child: Text('showRoom'),
+         )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-  // void _showAdOptions(BuildContext context) {
-  //   showModalBottomSheet(
-  //     backgroundColor: Colors.white, // 👈 يمنع الطبقة البيضاء اللي مأثرة
-  //
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (_) {
-  //       return AdvertisementOptionsModal(
-  //         onShowroomAdPressed: () {
-  //           // Call your use case for showroom ad
-  //           Navigator.pop(context);
-  //           // e.g., context.read<AdBloc>().add(RequestShowroomAd());
-  //         },
-  //         onPersonalAdPressed: () {
-  //           // Call your use case for personal ad
-  //           Navigator.pop(context);
-  //           // e.g., context.read<AdBloc>().add(PostPersonalAd());
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
 }
