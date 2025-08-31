@@ -5,6 +5,8 @@ import 'package:untitled2/ads/presentation/pages/create_new_ad.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../ads/presentation/pages/create_ad_options_screen.dart';
+import '../../ads/presentation/widgets/adv_modal.dart';
 import '../widgets/country_dropdown.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
@@ -134,8 +136,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 // Submit Button
                 PrimaryButton(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SellCarScreen()));
-                  },borderRadius: 4,
+                      // () => _showAdOptions(context)
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateNewAdOptions()));}
+                    ,borderRadius: 4,
                   child: _isLoading
                       ?  SizedBox(
                           width: 20,
@@ -157,4 +160,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+  // void _showAdOptions(BuildContext context) {
+  //   showModalBottomSheet(
+  //     backgroundColor: Colors.white, // 👈 يمنع الطبقة البيضاء اللي مأثرة
+  //
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (_) {
+  //       return AdvertisementOptionsModal(
+  //         onShowroomAdPressed: () {
+  //           // Call your use case for showroom ad
+  //           Navigator.pop(context);
+  //           // e.g., context.read<AdBloc>().add(RequestShowroomAd());
+  //         },
+  //         onPersonalAdPressed: () {
+  //           // Call your use case for personal ad
+  //           Navigator.pop(context);
+  //           // e.g., context.read<AdBloc>().add(PostPersonalAd());
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
 }
