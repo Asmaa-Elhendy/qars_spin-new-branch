@@ -63,7 +63,6 @@ class CarDealerScreen extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: width * .038,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],

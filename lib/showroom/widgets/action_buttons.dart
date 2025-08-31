@@ -31,7 +31,7 @@ class ActionButtons extends StatelessWidget {
 
           child: ElevatedButton.icon(
             onPressed: () {},
-            icon:  Image.asset("assets/images/call.png",width: width*.04,height:height*.02),
+            icon:  Image.asset("assets/images/call.png",width: width*.04,height:height*.022),
             label: const Text("Whatsapp"),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFFF6C42D),

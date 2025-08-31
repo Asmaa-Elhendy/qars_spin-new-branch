@@ -41,7 +41,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   video_player: ^2.8.1
   chewie: ^1.4.0
-
+  panorama_viewer: ^2.0.7
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +74,7 @@ flutter:
     - assets/images/call.png
     - assets/images/map.svg
     - assets/images/360.svg
+    - assets/images/Rectangle.png
 
   #   - images/a_dot_ham.jpeg
 
