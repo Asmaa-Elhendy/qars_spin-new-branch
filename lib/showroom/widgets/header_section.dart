@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Stack(
       children: [
         Container(
@@ -18,33 +21,16 @@ class HeaderSection extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 70,
+          top: height*.1,
           left: 0,
           right: 0,
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(40),
+          child:  Center(
+            child: SvgPicture.asset(
+                "assets/images/360.svg",
+                width: width * .25,
+
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.threesixty, color: Colors.white, size: 30),
-                  SizedBox(width: 6),
-                  Text(
-                    "360°",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          )
         ),
       ],
     );
