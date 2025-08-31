@@ -19,7 +19,7 @@ class HeaderSection extends StatelessWidget {
             height: 200,
             width: double.infinity,
             child: PanoramaViewer(
-              zoom: .5,
+              zoom: 1,
               animSpeed: 0.0,
               sensorControl: SensorControl.none,
               child: Image.asset(

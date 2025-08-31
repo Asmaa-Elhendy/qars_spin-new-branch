@@ -166,17 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                         ),
                 ),
-         InkWell(
-           onTap: (){
-             Navigator.push(
-               context,
-               MaterialPageRoute(
-                 builder: (context) => const CarDealerScreen(
-                 ),
-               ),
-             );
-           },child: Text('showRoom'),
-         )
+
               ],
             ),
           ),
