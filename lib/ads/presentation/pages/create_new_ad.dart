@@ -200,6 +200,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                SizedBox(height: height*.01),
                // Make Dropdown
                DropdownField(
+                 value: selectedMake,
                  label: "Choose Make(*)",
                  items: ["Toyota", "Honda", "BMW", "Mercedes"],
                  onChanged: (value) {
@@ -212,6 +213,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                SizedBox(height: height*.01),
                // Make Dropdown
                DropdownField(
+                 value: selectedClass,
                  label: "Choose Class(*)",
                  items: ["Toyota", "Honda", "BMW", "Mercedes"],
                  onChanged: (value) {
@@ -223,6 +225,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
                // Model Dropdown
                DropdownField(
+                 value: selectedModel,
                  label: "Choose Model(*)",
                  items: [ "Camry", "Corolla", "RAV4", "Highlander"],
                  onChanged: (value) {
@@ -234,6 +237,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
                SizedBox(height: height*.01),
                DropdownField(
+                 value: selectedType,
                  label: "Choose Type(*)",
                  items: ["4*4", "Bus", "Coupe"],
                  onChanged: (value) {
@@ -246,6 +250,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                SizedBox(height: height*.01),
                // Year Dropdown
                DropdownField(
+                 value: selectedYear,
                  label: "Manufacture Year(*)",
                  items: List.generate(21, (index) => (DateTime.now().year - index).toString())
                      .toList()..insert(0, "Select Year"),
