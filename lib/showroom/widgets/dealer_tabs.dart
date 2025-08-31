@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:untitled2/showroom/widgets/rating_tab_show_room_detail.dart';
+import 'package:untitled2/showroom/widgets/showroom_details_tab_widget.dart';
 
 class DealerTabs extends StatelessWidget {
   const DealerTabs({super.key});
@@ -62,20 +64,11 @@ class DealerTabs extends StatelessWidget {
                   ),
 
                   // Details tab
-                  ListView(
-                    padding: EdgeInsets.all(16),
-                    children: [
-                      Text("Car details here " * 20),
-                    ],
-                  ),
+                  ShowroomDetailsTabWidget(),
+
 
                   // Rating tab
-                  ListView(
-                    padding: EdgeInsets.all(16),
-                    children: [
-                      Text("User ratings here " * 20),
-                    ],
-                  ),
+                  RatingTabShowRoomDetail()
                 ],
               ),
             ),

@@ -72,6 +72,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/showroom.png
     - assets/images/call.png
+    - assets/images/map.svg
 
   #   - images/a_dot_ham.jpeg
 
