@@ -59,9 +59,21 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: AppColors.background,
         toolbarHeight: 60.h,
         shadowColor: Colors.grey.shade300,
-
         // elevation: 3,
-        elevation: .4,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow( //update asmaa
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5.h,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
         leading: // Menu Button
             GestureDetector(onTap: () {
               Get.to(MainMenu());
@@ -75,23 +87,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Get.to(MyAccount());
                 },
-                child: Image.asset(
-                  'assets/images/ic_personal_account.png',
-                  width: 20,
-                  height: 20,
+                child: Padding(
+                  padding:  EdgeInsets.only(right: 15.w),
+                  child: Image.asset(
+                    'assets/images/ic_personal_account.png',
+                    width: 20.w, //update asmaa
+                    height: 20.h,
+                  ),
                 ),
+
               ),
               if (notificationCount > 0)
                 Positioned(
-                  right: 7,
-                  top: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
+                  right: 25.w,//update asmaa
+                  top: 15.h,
+                  child: Container(height: 18.h,
                     constraints:
-                        const BoxConstraints(minWidth: 14, minHeight: 14),
+                        const BoxConstraints(minWidth: 14, minHeight: 8),
                     decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
+                      color: Color(0xffEC6D64),
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.18),
@@ -100,14 +116,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      notificationCount > 99
-                          ? '99+'
-                          : notificationCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
+                    child: Center(
+                      child: Text(
+                        notificationCount > 99
+                            ? '99+'
+                            : notificationCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                      //    fontWeight: FontWeight.bold, //update asmaa
+                        ),
                       ),
                     ),
                   ),
@@ -138,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                    adContainer(),
+                        SizedBox(height:10.h),
+                    adContainer(bigAdHome: true,),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final screenWidth = constraints.maxWidth;
@@ -155,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             shrinkWrap: true,
                             mainAxisSpacing: 3,
                             crossAxisSpacing: 5,
-                            childAspectRatio: 1.2,
+                            childAspectRatio: 1.42, //instead 1.2 update asmaa
                             children: [
                               HomeServiceCard(
                                 onTap: () {
@@ -166,8 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 title: 'Cars For Sale',
                                 imageAsset:
-                                    'assets/images/ic_cars_for_sale.png',
-                                large: true,
+                                    'assets/images/new_svg/home1.svg',
+                                large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
                                 onTap: () {
@@ -178,20 +197,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 title: 'Cars For Rent',
                                 imageAsset:
-                                    'assets/images/ic_cars_for_rent.png',
-                                large: true,
+                                    'assets/images/new_svg/home2.svg',
+                                large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
                                 onTap: () => Get.to(CarsShowRoom(carCare: true,title: "Car Care",)),
                                 title: 'Car Care',
-                                imageAsset: 'assets/images/ic_car_care.png',
-                                large: true,
+                                imageAsset: 'assets/images/new_svg/home3.svg',
+                                large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
                                 onTap: () => _toggleMenu(true),
                                 title: 'Garages',
-                                imageAsset: 'assets/images/ic_garages.png',
+                                imageAsset: 'assets/images/new_svg/home4.svg',
                                 large: true,
+                                fromHome: 'true',
                               ),
                             ],
                           ),
@@ -201,37 +221,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     adContainer(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 8.0),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.width *
-                            0.46, // matches card height
-                        child: SingleChildScrollView(
+                          horizontal: 8.0, vertical: 1.0),
+                      child: SizedBox(height: 140.h,   //update asmaa
+                        child: SingleChildScrollView(padding: EdgeInsets.zero,
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.38,
+                                width: 125.w, //update asmaa
                                 child: HomeServiceCard(
                                   title: 'Bikes',
-                                  imageAsset: 'assets/images/ic_bikes.png',
+                                  imageAsset: 'assets/images/new_svg/bikes.svg',
                                   large: false,
                                 ),
                               ),
                               SizedBox(width: 12),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.38,
+                                width: 125.w, //update asmaa
                                 child: HomeServiceCard(
                                   title: 'Caravans',
-                                  imageAsset: 'assets/images/ic_caravans.png',
+                                  imageAsset: 'assets/images/new_svg/caravans.svg',
                                   large: false,
                                 ),
                               ),
                               SizedBox(width: 12),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.38,
+                                width: 125.w, //update asmaa
                                 child: HomeServiceCard(
                                   title: 'Plates',
-                                  imageAsset: 'assets/images/ic_plates.png',
+                                  imageAsset: 'assets/images/new_svg/plates.svg',
                                   large: false,
                                 ),
                               ),

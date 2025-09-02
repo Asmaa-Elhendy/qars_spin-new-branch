@@ -40,8 +40,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
-                spreadRadius: 0,
-                blurRadius: 15.h,
+                spreadRadius: 1,
+                blurRadius: 5.h,
                 offset: Offset(0, 2),
               ),
             ],

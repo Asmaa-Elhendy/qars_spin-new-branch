@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../controller/const/colors.dart';
 
 
@@ -11,6 +12,7 @@ class HomeServiceCard extends StatelessWidget {
   bool large;
   bool brand;
   int  make_count;
+  String fromHome;
   final VoidCallback? onTap;
 
    HomeServiceCard({
@@ -18,6 +20,7 @@ class HomeServiceCard extends StatelessWidget {
      this.brand = false,
       this.make_count =0,
     required this.title,
+     this.fromHome='',
     required this.imageAsset,
     required this.large,
     this.onTap,
@@ -35,7 +38,7 @@ class HomeServiceCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.all(4),
-        height: large?126.h :120.h,
+    //    height: large?126.h :120.h, //update asmaa
         width: large? 53.w: 55.w,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -81,7 +84,9 @@ class HomeServiceCard extends StatelessWidget {
                  imageAsset,
                  fit: BoxFit.contain,
                )
-                   : CachedNetworkImage(
+                   :
+
+               CachedNetworkImage(
                  imageUrl: imageAsset,
                  fit: BoxFit.contain,
                  placeholder: (context, url) => Center(
@@ -106,12 +111,16 @@ class HomeServiceCard extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.all(10.r),
-                  child: Image.asset(
+                  child:  fromHome=='true'?
+                  SvgPicture.asset(
                     imageAsset,
-                    // width: iconSize,
-                    // height: iconSize,
-                    fit: BoxFit.contain,
-                  ),
+                    width: 95.37.w,
+                    height: 73.33.h,
+                  ):  SvgPicture.asset(
+                    imageAsset,
+                    width: 58.w,
+                    height: 40.h,
+                  )
                 ),
               ),
             ),
