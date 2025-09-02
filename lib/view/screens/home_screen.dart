@@ -279,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     padding: EdgeInsets.only(top: 35.h, left: 12, right: 12,),
                     decoration: BoxDecoration(
-                      color: AppColors.star,
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                       boxShadow: [
                         BoxShadow(
@@ -306,9 +306,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: AppColors.star,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.white,
+                        child: InkWell( //update asmaa
+                          onTap: (){
+                         setState(() {
+                           _isMenuVisible=false;
+                         });
+                          },
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white,size: 50.h,
+                          ),
                         ),
                       ),
                     ),
@@ -375,18 +382,18 @@ class _HomeScreenState extends State<HomeScreen> {
         return  GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
-            padding: EdgeInsets.only(bottom: 77.h,),
+            padding: EdgeInsets.only(bottom: 25.h,),
             physics: NeverScrollableScrollPhysics(),
             mainAxisSpacing: 1,
-            crossAxisSpacing: 3,
+            crossAxisSpacing: 30.w,
             childAspectRatio: 1.3,
             children: [
               HomeServiceCard(
                 onTap: () {
                   Get.to(AllCars());
                 },
-                title: 'All Cars',
-                imageAsset: 'assets/images/ic_all_cars.png',
+                title: 'All Cars',fromHome: 'true',
+                imageAsset: 'assets/images/new_svg/Group.svg',
                 large: false,
               ),
               HomeServiceCard(
@@ -394,26 +401,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
                   Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",));
                 },
-                title: 'Qars Spin Showrooms',
-                imageAsset: 'assets/images/logo_the_q.png',
+                title: 'Qars Spin Showrooms',fromHome: 'true',
+                imageAsset: 'assets/images/new_svg/Group (1).svg',
                 large: false,
               ),
               HomeServiceCard(
                 onTap: () {
                   Get.to(CarsShowRoom(title: "Rental Showrooms For Sale",));
                 },
-                title: 'Cars Showrooms',
-                imageAsset: 'assets/images/ic_cars_for_sale.png',
+                title: 'Cars Showrooms',fromHome: 'true',
+                imageAsset: 'assets/images/new_svg/Group (2).svg',
                 large: false,
               ),
-              HomeServiceCard(
+              HomeServiceCard(fromHome: 'true',
                 title: 'Personal Cars',
                 onTap: () {
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
 
                   Get.to(CarsBrandList(brandName: "Personal Cars",));
                 },
-                imageAsset: 'assets/images/ic_personal_cars.png',
+                imageAsset: 'assets/images/new_svg/Group (3).svg',
                 large: false,
               ),
             ],

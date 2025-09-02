@@ -23,7 +23,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
     return Container(
      // height: barHeight + MediaQuery.of(context).padding.bottom,
-      height: 108.h,
+     // height: 100.h, //update asmaa
      // padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       child: Stack(
         clipBehavior: Clip.none, // Allow the add button to overflow
