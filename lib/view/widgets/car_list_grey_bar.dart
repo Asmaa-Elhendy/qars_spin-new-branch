@@ -34,11 +34,7 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
               fillColor: Colors.transparent,
               label: Row(
                 children: [
-                  Icon(
-                    Icons.search,
-                    size: 22.w,
-                    color: Colors.black,
-                  ),
+                  SvgPicture.asset("assets/images/new_svg/search.svg",height: 25.h,),
                   6.horizontalSpace,
                   Text("Search",
 
