@@ -434,12 +434,13 @@ class _HomeScreenState extends State<HomeScreen> {
         {
          return GridView.count(
             crossAxisCount: 2,
-            shrinkWrap: true,
-            padding: EdgeInsets.only(bottom: 77.h,),
-            physics: NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 1,
-            crossAxisSpacing: 3,
-            childAspectRatio: 1.3,
+           shrinkWrap: true,
+           padding: EdgeInsets.only(bottom: 25.h,),
+           physics: NeverScrollableScrollPhysics(),
+           mainAxisSpacing: 1,
+           crossAxisSpacing: 30.w,
+           childAspectRatio: 1.3,
+
             children: [
               HomeServiceCard(
                 onTap: () {
@@ -447,15 +448,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   Get.to(AllRentalCars());
                 },
                 title: 'All Rental Cars',
-                imageAsset: 'assets/images/ic_cars_for_rent.png',
+                fromHome: 'true',
+                imageAsset: 'assets/images/new_svg/home2.svg',
                 large: false,
               ),
               HomeServiceCard(
                 onTap: () {
                   Get.to(CarsShowRoom(title: "Rental Showrooms",));
                 },
-                title: 'Rental Showrooms',
-                imageAsset: 'assets/images/ic_rental_showrooms.png',
+                title: 'Rental Showrooms',fromHome: 'true',
+                imageAsset: 'assets/images/new_svg/Group (5).svg',
                 large: false,
               ),
 
