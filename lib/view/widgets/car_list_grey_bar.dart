@@ -67,7 +67,7 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
           onTap: (){},
           child:
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 10.w), //update icon filter   asmaa
+            padding:  EdgeInsets.only(right: 13.w,left: 3.w), //update icon filter   asmaa
             child: SvgPicture.asset("assets/images/new_svg/swap.svg",height: 25.h,),
           )
           // Icon(Icons.swap_vert_rounded,color: AppColors.white,size: 35.h,),
