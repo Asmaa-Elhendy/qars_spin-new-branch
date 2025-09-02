@@ -50,14 +50,14 @@ class _CarsBrandListState extends State<CarsBrandList> {
         padding: const EdgeInsets.all(8.0),
     child: GridView.builder(
     itemCount: cars.length,
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 2, // 2 columns
-    mainAxisSpacing: 8,
-    crossAxisSpacing: 8,
-    childAspectRatio: .6, // adjust for card height
+    mainAxisSpacing: 30.h,
+    crossAxisSpacing: 15.w,  //update asmaa
+    childAspectRatio: .84, // adjust for card height .6  update grid cars asmaa
     ),
     itemBuilder: (context, index) {
-    return carCard(w: 189.w,h: 233.h,car: cars[index],large: false);
+    return carCard(w: 192.w,h: 235.h,car: cars[index],large: false);
 
 
     }));

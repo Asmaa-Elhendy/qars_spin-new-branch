@@ -44,7 +44,7 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
 
                     style: TextStyle(
                       fontSize: 16.sp,
-                      color: Colors.grey[700],
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                   )
@@ -83,9 +83,12 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
           // ),
         ),
 
-        squareIcon?GestureDetector(
+        squareIcon?GestureDetector( //update square asmaa
           onTap: onSwap,
-          child: Icon(Icons.grid_view,color: AppColors.white,size: 35.h,),
+          child:
+          SvgPicture.asset("assets/images/new_svg/square.svg",height: 25.h,color: AppColors.white,)
+
+    //      Icon(Icons.grid_view,color: AppColors.white,size: 35.h,),
 
         ):SizedBox()
         
