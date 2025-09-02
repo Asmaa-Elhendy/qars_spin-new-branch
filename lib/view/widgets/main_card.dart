@@ -70,35 +70,35 @@ class HomeServiceCard extends StatelessWidget {
                 style: TextStyle(
                  // fontFamily: AppFonts.gilroy,
                   fontWeight: FontWeight.w600,
-                  fontSize: 16.w,
+                  fontSize:brand?12.w: 16.w, //update asmaa
                   color: Colors.white,
                 ),
               ),
             ),
            brand?
-           Expanded(
+           title=='All Cars'
+                   ? Expanded(
              child: Padding(
                padding: EdgeInsets.all(8.w),
-               child: title=='All Cars'
-                   ? Image.asset(
+               child: Image.asset(
                  imageAsset,
                  fit: BoxFit.contain,
-               )
+               )))
                    :
-
-               CachedNetworkImage(
-                 imageUrl: imageAsset,
+           Expanded(
+             child: CachedNetworkImage(
+               imageUrl: imageAsset,
+               fit: BoxFit.cover,//j
+             //  width: 56.88.w,height: 44.h, //update asmaa   brand logo all makes
+               placeholder: (context, url) => Center(
+                 child: CircularProgressIndicator(
+                   color: AppColors.primary,
+                   strokeWidth: 2,
+                 ),
+               ),
+               errorWidget: (context, url, error) => Image.asset(
+                 'assets/images/ic_all_cars.png',
                  fit: BoxFit.contain,
-                 placeholder: (context, url) => Center(
-                   child: CircularProgressIndicator(
-                     color: AppColors.primary,
-                     strokeWidth: 2,
-                   ),
-                 ),
-                 errorWidget: (context, url, error) => Image.asset(
-                   'assets/images/ic_all_cars.png',
-                   fit: BoxFit.contain,
-                 ),
                ),
              ),
            )
@@ -126,7 +126,7 @@ class HomeServiceCard extends StatelessWidget {
             ),
             brand? Center(child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text("${make_count} Cars",style: TextStyle(color: AppColors.mutedGray,fontSize: 14.sp),),
+              child: Text("${make_count} Cars",style: TextStyle(color: AppColors.textSecondary,fontWeight: FontWeight.bold,fontSize: 14.sp),),
             )):SizedBox()
           ],
         ),

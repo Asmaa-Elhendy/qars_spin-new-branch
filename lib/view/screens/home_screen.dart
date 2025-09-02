@@ -58,11 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         backgroundColor: AppColors.background,
         toolbarHeight: 60.h,
-        shadowColor: Colors.grey.shade300,
+       shadowColor: Colors.grey.shade300,
         // elevation: 3,
         elevation: 0,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
               BoxShadow( //update asmaa

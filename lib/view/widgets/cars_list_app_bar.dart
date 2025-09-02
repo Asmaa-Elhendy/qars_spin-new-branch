@@ -13,9 +13,21 @@ import '../../controller/const/colors.dart';
     backgroundColor: AppColors.background,
     toolbarHeight: 60.h,
     shadowColor: Colors.grey.shade300,
-
     // elevation: 3,
-    elevation: .4,
+    elevation: 0,
+    flexibleSpace: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow( //update asmaa
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5.h,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+    ),
     leading: // Menu Button
     GestureDetector(onTap: () {
       Get.back();
@@ -27,23 +39,26 @@ import '../../controller/const/colors.dart';
         children: [
           GestureDetector(
             onTap: () {},
-            child: Image.asset(
-              'assets/images/logo_the_q.png',
-              width: 20,
-              height: 20,
+            child: Padding(
+              padding:  EdgeInsets.only(right: 15.w),
+              child: Image.asset(
+                'assets/images/logo_the_q.png',
+                width: 40.w, //update asmaa
+                height: 35.h,
+              ),
             ),
           ),
-          if (notificationCount > 0)
+          if (notificationCount > 0)  //update icon - asmaa
             Positioned(
-              right: 7,
-              top: 10,
-              child: Container(
-                padding: const EdgeInsets.all(2),
+              right: 40.w,//update asmaa
+              top: 10.h,
+              child: Container(height: 18.h,
                 constraints:
-                const BoxConstraints(minWidth: 14, minHeight: 14),
+                const BoxConstraints(minWidth: 14, minHeight: 8),
                 decoration: BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
+                  color: Color(0xffEC6D64),
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.18),
@@ -52,14 +67,16 @@ import '../../controller/const/colors.dart';
                   ],
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  notificationCount > 99
-                      ? '99+'
-                      : notificationCount.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    notificationCount > 99
+                        ? '99+'
+                        : notificationCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      //    fontWeight: FontWeight.bold, //update asmaa
+                    ),
                   ),
                 ),
               ),

@@ -33,7 +33,7 @@ class AppColors {
   static const Color textMuted = Color(0xFF878A99); // QS_MutedGray
 
   // UI Elements
-  static const Color divider = Color(0xFF7C7C7C); // QS_Devider
+  static const Color divider = Color(0xFF7c7c7c); // QS_Devider
   static const Color star = Color(0xFFF6C42D); // QS_Star_Yellow
   static const Color starInactive = Color(0xFF7C7C7C); // QS_Star_Gray (light)
   static const Color buttonBarNormal = Color(0xFFFFFFFF); // QS_ButtonBar_Normal

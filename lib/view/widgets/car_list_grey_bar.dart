@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../controller/const/colors.dart';
 
 Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback? onSwap}){
   return Container(
     width: double.infinity,
-    padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 20.h),
+    padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 13.h),
     color: AppColors.divider,
     child: Row(
       children: [
@@ -13,7 +14,7 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
         style: TextStyle(
           color: AppColors.white,
           fontWeight: FontWeight.w500,
-          fontSize: 20.sp
+          fontSize: 18.sp
         ),
         ),
         
@@ -23,7 +24,7 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
           width: 115.w,
           margin: EdgeInsets.symmetric(horizontal: 8.w),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFD700), // Yellow color
+            color: AppColors.primary, // Yellow color
             borderRadius: BorderRadius.circular(6.r),
           ),
           child: TextField(
@@ -68,7 +69,12 @@ Widget carListGreyBar({required String title,bool squareIcon=false, VoidCallback
 
         GestureDetector(
           onTap: (){},
-          child: Icon(Icons.swap_vert,color: AppColors.white,size: 35.h,),
+          child:
+          Padding(
+            padding:  EdgeInsets.only(right: 10.w), //update icon filter   asmaa
+            child: SvgPicture.asset("assets/images/new_svg/swap.svg",height: 25.h,),
+          )
+          // Icon(Icons.swap_vert_rounded,color: AppColors.white,size: 35.h,),
           // child: Row(
           //   children: [
           //     I
