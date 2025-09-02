@@ -24,9 +24,23 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+
         initialBinding: MyBinding(),
-
-
+        theme: ThemeData(
+          primaryColor: Colors.white,  // اللون الأساسي أبيض
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white, // الخلفية أبيض
+            foregroundColor: Colors.black, // الأيقونات + النص أسود
+            elevation: 4,                  // ظل بسيط
+            iconTheme: IconThemeData(color: Colors.black), // أيقونات أسود
+            titleTextStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         title: 'Flutter Demo',
 
         home:  HomeScreen(),

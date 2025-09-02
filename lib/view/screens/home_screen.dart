@@ -14,6 +14,7 @@ import 'cars_for_rent/all_rental_cars.dart';
 import 'cars_for_sale/all_cars.dart';
 import 'cars_for_sale/cars_brand_list.dart';
 import 'cars_for_sale/showrooms.dart';
+import 'favourites/presentation/pages/favourite_screen.dart';
 import 'general/contact_us.dart';
 import 'general/main_menu.dart';
 
@@ -321,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
 
             case 3:
-             // Get.offAll(FavoriteScreen());
+              Get.offAll(FavouriteScreen());
               break;
             case 4:
               Get.offAll(ContactUsScreen());
