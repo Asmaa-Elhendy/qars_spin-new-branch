@@ -198,7 +198,7 @@ Widget carStatus(CarStatus status) {
   return Container(
     width: 80.w,   //update asmaa
   //  height: 22.h,
-    padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 0.1.w),//update
+    padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 
     decoration: BoxDecoration(
       color: status == CarStatus.Personal

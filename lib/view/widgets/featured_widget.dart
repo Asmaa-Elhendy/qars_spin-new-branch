@@ -7,7 +7,7 @@ Widget featuredContainer(){
   return Container( //update asmaa
       width: 80.w,
     //  height: 20.h,
-    padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 0.1.w),
+    padding: EdgeInsets.symmetric(horizontal: 10.w),
 
     decoration: BoxDecoration(
       color: AppColors.danger
