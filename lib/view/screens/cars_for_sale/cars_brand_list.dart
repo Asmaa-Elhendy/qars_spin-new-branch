@@ -47,14 +47,14 @@ class _CarsBrandListState extends State<CarsBrandList> {
   Widget listAsAGread(cars){
 
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding:  EdgeInsets.symmetric(horizontal: 13.w,vertical: 8), //update asmaa
     child: GridView.builder(
     itemCount: cars.length,
     gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 2, // 2 columns
     mainAxisSpacing: 28.h,
     crossAxisSpacing: 10.w,  //update asmaa
-    childAspectRatio: .875, // adjust for card height .6  update grid cars asmaa
+    childAspectRatio: .877, // adjust for card height .6  update grid cars asmaa
     ),
     itemBuilder: (context, index) {
     return carCard(w: 192.w,h: 235.h,car: cars[index],large: false);

@@ -57,28 +57,26 @@ Widget carCard({
                   borderRadius: BorderRadius.only( //update asmaa
                     topLeft: Radius.circular(5),
                     topRight: Radius.circular(5),
-                  ),child: Container(width: double.infinity,
-                    child: CachedNetworkImage(
+                  ),child: CachedNetworkImage(
+                    fit: BoxFit.cover, // الصورة تملا الحجم
+                    width: double.infinity,
+                    //edit placeholder for now asmaa
+                    imageUrl: car.rectangleImageUrl.isNotEmpty
+                        ? car.rectangleImageUrl
+                        : "https://via.placeholder.com/150",
 
-                      //edit placeholder for now asmaa
-                      imageUrl: car.rectangleImageUrl.isNotEmpty
-                          ? car.rectangleImageUrl
-                          : "https://via.placeholder.com/150",
-
-                      height: tooSmall
-                          ? 120.h
-                          : large
-                          ? 260.h//edit
-                          : 124.9.h,
-                      //i update default height for all cars card car asmaa
-                    // width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(color: AppColors.star),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                    height: tooSmall
+                        ? 120.h
+                        : large
+                        ? 260.h//edit
+                        : 124.9.h,
+                    //i update default height for all cars card car asmaa
+                  // width: double.infinity,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(color: AppColors.star),
                     ),
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.broken_image, size: 50, color: Colors.grey),
                   ),
                 ),
                 if (car.pinToTop == 1)
@@ -117,15 +115,15 @@ Widget carCard({
                                 ? CarStatus.QarsSpin
                                 : CarStatus.Showroom,
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 2.h),
                           Row(
                             children: [
                               Text(
                                 formattedPrice  ,
                                 style: TextStyle(
                                   color: AppColors.primary,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Text(
@@ -143,9 +141,9 @@ Widget carCard({
                             children: [
                               SvgPicture.asset(
                                 'assets/images/new_svg/ic_calendar.svg',
-                                width: 25.w,
-                                height: 20.h,
-                                color: AppColors.black,
+                                width: 20.w,
+                                height: 18.h,
+                                color: AppColors.gray,
                               ),
                               SizedBox(width: 4.w),
                               Text(
@@ -158,8 +156,8 @@ Widget carCard({
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(horizontal: 5.w),
-                                width: 1.w,
-                                height: 20.h,
+                                width: 1.5.w,
+                                height: 15.h,
                                 color: AppColors.textSecondary,
                               )
                           ,
@@ -167,7 +165,7 @@ Widget carCard({
                                 'assets/images/new_svg/ic_mileage.svg',
                                 width: 25.w,
                                 height: 20.h,
-                                color: AppColors.black,
+                                color: AppColors.gray,
                               ),
                               SizedBox(width: 4.w),
                               Text(
