@@ -38,10 +38,10 @@ Widget carCard({
           borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.grey,
               offset: Offset.zero, // shadow حول كل الكارد
-              blurRadius: 6,
-              spreadRadius: 1,
+              blurRadius: 5,
+              spreadRadius: 0,
             ),
           ],
         ),
@@ -53,32 +53,32 @@ Widget carCard({
             // الصورة
             Stack(
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                ClipRRect(
+                  borderRadius: BorderRadius.only( //update asmaa
+                    topLeft: Radius.circular(5),
+                    topRight: Radius.circular(5),
+                  ),child: Container(width: double.infinity,
+                    child: CachedNetworkImage(
 
-                  ),
-                  child: CachedNetworkImage(
+                      //edit placeholder for now asmaa
+                      imageUrl: car.rectangleImageUrl.isNotEmpty
+                          ? car.rectangleImageUrl
+                          : "https://via.placeholder.com/150",
 
-                    //edit placeholder for now asmaa
-                    imageUrl: car.rectangleImageUrl.isNotEmpty
-                        ? car.rectangleImageUrl
-                        : "https://via.placeholder.com/150",
-
-                    height: tooSmall
-                        ? 120.h
-                        : large
-                        ? 260.h//edit
-                        : 124.9.h,
-                    //i update default height for all cars card car asmaa
-                  // width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(
-                      child: CircularProgressIndicator(color: AppColors.star),
+                      height: tooSmall
+                          ? 120.h
+                          : large
+                          ? 260.h//edit
+                          : 124.9.h,
+                      //i update default height for all cars card car asmaa
+                    // width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(color: AppColors.star),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.broken_image, size: 50, color: Colors.grey),
                     ),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.broken_image, size: 50, color: Colors.grey),
                   ),
                 ),
                 if (car.pinToTop == 1)
@@ -95,8 +95,7 @@ Widget carCard({
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                 Padding(
-                padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left:
-                5.w), // no horizontal padding
+                padding: EdgeInsets.only(top: 6.h, bottom: 3.h), // no horizontal padding
                 child: Text(
                   car.carNamePl,
                   style: TextStyle(
@@ -108,7 +107,7 @@ Widget carCard({
             ),
 
                     SizedBox(height: tooSmall ? 8.h : 12.h),
-                    Container(padding: EdgeInsets.only(left: 12.w),
+                    Container(padding: EdgeInsets.only(left: 6.w), //update asmaa
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           carStatus(
