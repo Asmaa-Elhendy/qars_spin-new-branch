@@ -54,7 +54,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
     crossAxisCount: 2, // 2 columns
     mainAxisSpacing: 28.h,
     crossAxisSpacing: 10.w,  //update asmaa
-    childAspectRatio: .877, // adjust for card height .6  update grid cars asmaa
+    childAspectRatio: .87, //.877 adjust for card height .6  update grid cars asmaa
     ),
     itemBuilder: (context, index) {
     return carCard(w: 192.w,h: 235.h,car: cars[index],large: false);

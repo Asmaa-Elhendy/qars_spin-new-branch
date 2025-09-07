@@ -1,14 +1,16 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import '../../controller/const/colors.dart';
 import '../../model/car_model.dart';
 import '../screens/cars_for_sale/car_details.dart';
 import 'featured_widget.dart';
-import 'package:intl/intl.dart';
+
 Widget carCard({
   required CarModel car,
   bool large = false,
@@ -16,6 +18,7 @@ Widget carCard({
   required double h,
   bool tooSmall = false,
 }) {
+// }) {
   double price = double.tryParse(car.askingPrice.toString()) ?? 0.0;
 
   String formattedPrice = NumberFormat.currency(//update currency asmaa
@@ -23,6 +26,7 @@ Widget carCard({
       symbol: '',      // empty if you don't want $ sign
       decimalDigits: 0 // remove decimals
   ).format(price);
+
 
   return GestureDetector(
     onTap: () {
@@ -32,16 +36,16 @@ Widget carCard({
       padding:  EdgeInsets.symmetric(horizontal: 8.w),
       child: Container(
         width: w,
-      //height: h, // خلي height متاحة زي ما طلبت
+        height: h, // خلي height متاحة زي ما طلبت
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey,
+              color: Colors.black.withOpacity(0.3),
               offset: Offset.zero, // shadow حول كل الكارد
-              blurRadius: 5,
-              spreadRadius: 0,
+              blurRadius: 6,
+              spreadRadius:0.1 ,
             ),
           ],
         ),
@@ -54,24 +58,20 @@ Widget carCard({
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.only( //update asmaa
-                    topLeft: Radius.circular(5),
-                    topRight: Radius.circular(5),
-                  ),child: CachedNetworkImage(
-                    fit: BoxFit.cover, // الصورة تملا الحجم
-                    width: double.infinity,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                  child: CachedNetworkImage(
                     //edit placeholder for now asmaa
                     imageUrl: car.rectangleImageUrl.isNotEmpty
                         ? car.rectangleImageUrl
                         : "https://via.placeholder.com/150",
-
                     height: tooSmall
                         ? 120.h
                         : large
-                        ? 260.h//edit
+                        ? 150.h
                         : 124.9.h,
                     //i update default height for all cars card car asmaa
-                  // width: double.infinity,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                     placeholder: (context, url) => Center(
                       child: CircularProgressIndicator(color: AppColors.star),
                     ),
@@ -83,16 +83,17 @@ Widget carCard({
                   Positioned(bottom: 3, left: 3, child: featuredContainer()),
               ],
             ),
+
             // محتوى الكارد
             Flexible(
               fit: FlexFit.loose,
-              child: Padding( //update asmaa
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                Padding(
+  Padding(
                 padding: EdgeInsets.only(top: 6.h, bottom: 3.h), // no horizontal padding
                 child: Text(
                   car.carNamePl,
@@ -115,15 +116,15 @@ Widget carCard({
                                 ? CarStatus.QarsSpin
                                 : CarStatus.Showroom,
                           ),
-                          SizedBox(height: 2.h),
+                          SizedBox(height: 8.h),
                           Row(
                             children: [
                               Text(
-                                formattedPrice  ,
+                               formattedPrice ,
                                 style: TextStyle(
                                   color: AppColors.primary,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               Text(
@@ -141,7 +142,7 @@ Widget carCard({
                             children: [
                               SvgPicture.asset(
                                 'assets/images/new_svg/ic_calendar.svg',
-                                width: 20.w,
+                                width: 25.w,
                                 height: 18.h,
                                 color: AppColors.gray,
                               ),
@@ -160,7 +161,7 @@ Widget carCard({
                                 height: 15.h,
                                 color: AppColors.textSecondary,
                               )
-                          ,
+                              ,
                               SvgPicture.asset(
                                 'assets/images/new_svg/ic_mileage.svg',
                                 width: 25.w,
@@ -202,7 +203,9 @@ Widget carStatus(CarStatus status) {
       color: status == CarStatus.Personal
           ? AppColors.success
           : status == CarStatus.Showroom
-          ? AppColors.accent
+          ? AppColors
+
+          .accent
           : AppColors.darkGray,
     ),
 
