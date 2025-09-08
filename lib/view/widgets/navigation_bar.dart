@@ -84,7 +84,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 _buildNavItem(
                   index: 4,
                   label: 'Contact',
-                  isSelected: selectedIndex == 4,
+                  isSelected: selectedIndex == 4,//j
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
                 ),
