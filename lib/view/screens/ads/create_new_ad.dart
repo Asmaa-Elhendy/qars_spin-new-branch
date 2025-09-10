@@ -1,9 +1,13 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get/get.dart';
 
+import '../../../controller/ads/ad_getx_controller_create_ad.dart';
+import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
 import '../../widgets/ads/color_picker_field.dart';
 import '../../widgets/ads/drop_Down_field.dart';
@@ -75,31 +79,29 @@ class _SellCarScreenState extends State<SellCarScreen> {
   String? selectedTrim;
   String? selectedClass;
   String? selectedunderWarranty;
-
   Color _exteriorColor = Color(0xffd54245);
   Color _interiorColor = Color(0xff4242d4);
   bool _termsAccepted = false;
   bool _infoConfirmed = false;
 
   final TextEditingController _mileageController = TextEditingController();
-  final TextEditingController _exteriorColorController =
-      TextEditingController();
-  final TextEditingController _interiorColorController =
-      TextEditingController();
+  final TextEditingController _exteriorColorController = TextEditingController();
+  final TextEditingController _interiorColorController = TextEditingController();
   final TextEditingController _askingPriceController = TextEditingController();
   final TextEditingController _plateNumberController = TextEditingController();
 
   final TextEditingController _minimumPriceController = TextEditingController();
-  final TextEditingController _chassisNumberController =
-      TextEditingController();
+  final TextEditingController _chassisNumberController = TextEditingController();
 
   //new controllers
   final TextEditingController _make_contrller = TextEditingController();
   final TextEditingController _model_controller = TextEditingController();
   final TextEditingController _class_controller = TextEditingController();
-
   final TextEditingController _descriptionController = TextEditingController();
 
+  final AdCleanController brandController = Get.put(
+    AdCleanController(AdRepository()),
+  );
   void _handleImageSelected(String imagePath) {
     setState(() {
       _images.add(imagePath);
@@ -161,7 +163,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _interiorColorController.dispose();
     _askingPriceController.dispose();
     _descriptionController.dispose();
-    _mileageController.dispose();
+
     _chassisNumberController.dispose();
     _plateNumberController.dispose();
     super.dispose();
@@ -256,12 +258,29 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   ),
                   SizedBox(height: height * .01),
 
+
                   // Make Dropdown
-                  CustomDropDownTyping(
-                    label: "Choose Make(*)" ,
+                  Obx(() => CustomDropDownTyping(
+                    label: "Choose Make(*)",
                     controller: _make_contrller,
-                    options: ["Toyota", "Honda", "BMW", "Mercedes"],
-                  ),
+                    options: brandController.carBrands.map((b) => b.name).toList(),
+                    onChanged: (value) {
+                      final selected = brandController.carBrands
+                          .firstWhereOrNull((b) => b.name == value);
+
+                      if (selected != null) {
+                        brandController.selectedMake.value = selected;
+                        _make_contrller.text = selected.name; // still keep controller in sync
+                        log("heee   ${_make_contrller.text}");
+                        brandController.fetchCarClasses(selected.id.toString());
+                        _class_controller.clear();
+                        brandController.selectedClass.value = null;
+                        // Force immediate UI refresh
+                        setState(() {});
+                      }
+                    },
+                  ))
+
 
                   // DropdownField(
                   //   value: selectedMake,
@@ -273,13 +292,24 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   //     });
                   //   },
                   // ),
-                  SizedBox(height: height * .01),
-                  // Make Dropdown
-                  CustomDropDownTyping
-                    (label: "Choose Class(*)",
-                    controller: _class_controller,
-                    options: ["Toyota", "Honda", "BMW", "Mercedes"],
-                  ),
+                ,  SizedBox(height: height * .01),
+                  // Class Dropdown
+                  Obx(() {
+                    return CustomDropDownTyping(
+                      key: Key('class_dropdown_${brandController.carClasses.length}'),
+                      label: "Choose Class(*)",
+                      controller: _class_controller,
+                      options: brandController.carClasses.map((c) => c.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+                      onChanged: (value) {
+                        final selected = brandController.carClasses
+                            .firstWhereOrNull((c) => c.name == value);
+                        if (selected != null) {
+                          brandController.selectedClass.value = selected;
+                        }
+                      },
+                    );
+                  }),
+
                   // DropdownField(
                   //   value: selectedClass,
                   //   label: "Choose Class(*)",
@@ -339,7 +369,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(fromCreateAd: true,
+                  CustomTextField(
+                    fromCreateAd: true,
                     controller: _askingPriceController,
                     label: "Asking Price(*)",
                     keyboardType: TextInputType.number,
@@ -347,7 +378,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(fromCreateAd: true,
+                  CustomTextField(
+                    fromCreateAd: true,
                     controller: _minimumPriceController,
                     label: "Minimum biding price yoou want to see",
                     keyboardType: TextInputType.number,
@@ -355,7 +387,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(fromCreateAd: true,
+                  CustomTextField(
+                    fromCreateAd: true,
                     controller: _mileageController,
                     label: "Mileage(*)",
                     keyboardType: TextInputType.number,
@@ -389,7 +422,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(fromCreateAd: true,
+                  CustomTextField(
+                    fromCreateAd: true,
                     controller: _plateNumberController,
                     label: "Plate Number",
                     keyboardType: TextInputType.number,
@@ -397,7 +431,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(fromCreateAd: true,
+                  CustomTextField(
+                    fromCreateAd: true,
                     controller: _chassisNumberController,
                     label: "Chassis Number",
                     keyboardType: TextInputType.number,
@@ -425,7 +460,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black,width: 0.3),
+                      border: Border.all(color: Colors.black, width: 0.3),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: TextField(
@@ -443,8 +478,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   Row(
                     children: [
                       Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 يلغي الـ extra tap area
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
 
+                        // 👈 يلغي الـ extra tap area
                         value: _termsAccepted,
                         onChanged: (value) {
                           setState(() {
@@ -456,8 +492,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                       Expanded(
                         child: Text(
                           'I agree to the Terms and Conditions',
-                          style: TextStyle(fontSize: 15.w
-                          ),
+                          style: TextStyle(fontSize: 15.w),
                         ),
                       ),
                     ],
@@ -466,8 +501,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 يلغي الـ extra tap area
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
 
+                        // 👈 يلغي الـ extra tap area
                         value: _infoConfirmed,
                         onChanged: (value) {
                           setState(() {
@@ -477,14 +513,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         activeColor: Colors.black,
                       ),
                       Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-                            SizedBox(height:   15.h,),
+                            SizedBox(height: 15.h),
                             Text(
                               'I confirm the accuracy of the information provided',
-                              style: TextStyle(fontSize: 15.w
-                              ),
+                              style: TextStyle(fontSize: 15.w),
                             ),
                           ],
                         ),
@@ -521,19 +557,17 @@ class _SellCarScreenState extends State<SellCarScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height:   10.h,),
+                  SizedBox(height: 10.h),
                   Center(
                     child: Text(
                       'You agree to Qars Spin Terms & Conditions',
-                      style: TextStyle(fontSize: 12.w
-                      ),
+                      style: TextStyle(fontSize: 12.w),
                     ),
                   ),
                   SizedBox(height: height * .04),
                 ],
               ),
             ),
-
           ],
         ),
       ),

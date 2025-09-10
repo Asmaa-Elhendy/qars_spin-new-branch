@@ -100,7 +100,7 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-             // SizedBox(height: 200),
+              // SizedBox(height: 200),
               GridView.count(
                 padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),

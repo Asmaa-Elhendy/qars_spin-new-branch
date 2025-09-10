@@ -9,6 +9,7 @@ import '../../controller/rental_cars_controller.dart';
 import '../widgets/ad_container.dart';
 import '../widgets/main_card.dart';
 import '../widgets/navigation_bar.dart';
+import 'ads/create_ad_options_screen.dart';
 import 'ads/create_new_ad.dart';
 import 'auth/my_account.dart';
 import 'cars_for_rent/all_rental_cars.dart';
@@ -59,11 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         backgroundColor: AppColors.background,
         toolbarHeight: 60.h,
-       shadowColor: Colors.grey.shade300,
+        shadowColor: Colors.grey.shade300,
         // elevation: 3,
         elevation: 0,
         flexibleSpace: Container(
-           decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
               BoxShadow( //update asmaa
@@ -76,19 +77,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         leading: // Menu Button
-            GestureDetector(onTap: () {
-              Get.to(MainMenu());
-            }, child: Icon(Icons.menu)),
+        GestureDetector(onTap: () {
+          Get.to(MainMenu());
+        }, child: Icon(Icons.menu)),
         actions: [
           // Account Button with Notification Counter (smaller)
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Get.to(MyAccount());
-                },
-                child: Padding(
+
+          GestureDetector(
+            onTap: () {
+              Get.to(MyAccount());
+            },
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Padding(
                   padding:  EdgeInsets.only(right: 15.w),
                   child: Image.asset(
                     'assets/images/ic_personal_account.png',
@@ -96,42 +98,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 20.h,
                   ),
                 ),
-
-              ),
-              if (notificationCount > 0)
-                Positioned(
-                  right: 25.w,//update asmaa
-                  top: 15.h,
-                  child: Container(height: 18.h,
-                    constraints:
-                        const BoxConstraints(minWidth: 14, minHeight: 8),
-                    decoration: BoxDecoration(
-                      color: Color(0xffEC6D64),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.18),
-                          blurRadius: 3,
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: Center(
-                      child: Text(
-                        notificationCount > 99
-                            ? '99+'
-                            : notificationCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                      //    fontWeight: FontWeight.bold, //update asmaa
+                if (notificationCount > 0)
+                  Positioned(
+                    right: 25.w,//update asmaa
+                    top: 15.h,
+                    child: Container(height: 18.h,
+                      constraints:
+                      const BoxConstraints(minWidth: 14, minHeight: 8),
+                      decoration: BoxDecoration(
+                        color: Color(0xffEC6D64),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.18),
+                            blurRadius: 3,
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: Center(
+                        child: Text(
+                          notificationCount > 99
+                              ? '99+'
+                              : notificationCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            //    fontWeight: FontWeight.bold, //update asmaa
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           )
         ],
 
@@ -158,112 +159,112 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(height:10.h),
-                    adContainer(bigAdHome: true,),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final screenWidth = constraints.maxWidth;
-                        final crossAxisCount = screenWidth >= 600 ? 3 : 2;
-                        final horizontalPadding =
-                            screenWidth * 0.02 + 6; // responsive
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding),
-                          child:
-                          GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: crossAxisCount,
-                            shrinkWrap: true,
-                            mainAxisSpacing: 3,
-                            crossAxisSpacing: 5,
-                            childAspectRatio: 1.42, //instead 1.2 update asmaa
-                            children: [
-                              HomeServiceCard(
-                                onTap: () {
-                                  _toggleMenu(true);
-                                  setState(() {
-                                    cardView = "forSale";
-                                  });
-                                },
-                                title: 'Cars For Sale',
-                                imageAsset:
+                        adContainer(bigAdHome: true,),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final screenWidth = constraints.maxWidth;
+                            final crossAxisCount = screenWidth >= 600 ? 3 : 2;
+                            final horizontalPadding =
+                                screenWidth * 0.02 + 6; // responsive
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding),
+                              child:
+                              GridView.count(
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisCount: crossAxisCount,
+                                shrinkWrap: true,
+                                mainAxisSpacing: 3,
+                                crossAxisSpacing: 5,
+                                childAspectRatio: 1.42, //instead 1.2 update asmaa
+                                children: [
+                                  HomeServiceCard(
+                                    onTap: () {
+                                      _toggleMenu(true);
+                                      setState(() {
+                                        cardView = "forSale";
+                                      });
+                                    },
+                                    title: 'Cars For Sale',
+                                    imageAsset:
                                     'assets/images/new_svg/home1.svg',
-                                large: true,fromHome: 'true',
-                              ),
-                              HomeServiceCard(
-                                onTap: () {
-                                  _toggleMenu(true);
-                                  setState(() {
-                                    cardView = "forRent";
-                                  });
-                                },
-                                title: 'Cars For Rent',
-                                imageAsset:
+                                    large: true,fromHome: 'true',
+                                  ),
+                                  HomeServiceCard(
+                                    onTap: () {
+                                      _toggleMenu(true);
+                                      setState(() {
+                                        cardView = "forRent";
+                                      });
+                                    },
+                                    title: 'Cars For Rent',
+                                    imageAsset:
                                     'assets/images/new_svg/home2.svg',
-                                large: true,fromHome: 'true',
+                                    large: true,fromHome: 'true',
+                                  ),
+                                  HomeServiceCard(
+                                    onTap: () {
+                                      Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop");
+                                      Get.to(CarsShowRoom(carCare: true,title: "Car Care",));
+                                    },
+                                    title: 'Car Care',
+                                    imageAsset: 'assets/images/new_svg/home3.svg',
+                                    large: true,fromHome: 'true',
+                                  ),
+                                  HomeServiceCard(
+                                    onTap: () => _toggleMenu(true),
+                                    title: 'Garages',
+                                    imageAsset: 'assets/images/new_svg/home4.svg',
+                                    large: true,
+                                    fromHome: 'true',
+                                  ),
+                                ],
                               ),
-                              HomeServiceCard(
-                                onTap: () {
-                                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop");
-                                  Get.to(CarsShowRoom(carCare: true,title: "Car Care",));
-                                },
-                                title: 'Car Care',
-                                imageAsset: 'assets/images/new_svg/home3.svg',
-                                large: true,fromHome: 'true',
+                            );
+                          },
+                        ),
+                        adContainer(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 1.0),
+                          child: SizedBox(height: 140.h,   //update asmaa
+                            child: SingleChildScrollView(padding: EdgeInsets.zero,
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 125.w, //update asmaa
+                                    child: HomeServiceCard(
+                                      title: 'Bikes',
+                                      imageAsset: 'assets/images/new_svg/bikes.svg',
+                                      large: false,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  SizedBox(
+                                    width: 125.w, //update asmaa
+                                    child: HomeServiceCard(
+                                      title: 'Caravans',
+                                      imageAsset: 'assets/images/new_svg/caravans.svg',
+                                      large: false,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  SizedBox(
+                                    width: 125.w, //update asmaa
+                                    child: HomeServiceCard(
+                                      title: 'Plates',
+                                      imageAsset: 'assets/images/new_svg/plates.svg',
+                                      large: false,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              HomeServiceCard(
-                                onTap: () => _toggleMenu(true),
-                                title: 'Garages',
-                                imageAsset: 'assets/images/new_svg/home4.svg',
-                                large: true,
-                                fromHome: 'true',
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    adContainer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 1.0),
-                      child: SizedBox(height: 140.h,   //update asmaa
-                        child: SingleChildScrollView(padding: EdgeInsets.zero,
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 125.w, //update asmaa
-                                child: HomeServiceCard(
-                                  title: 'Bikes',
-                                  imageAsset: 'assets/images/new_svg/bikes.svg',
-                                  large: false,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              SizedBox(
-                                width: 125.w, //update asmaa
-                                child: HomeServiceCard(
-                                  title: 'Caravans',
-                                  imageAsset: 'assets/images/new_svg/caravans.svg',
-                                  large: false,
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              SizedBox(
-                                width: 125.w, //update asmaa
-                                child: HomeServiceCard(
-                                  title: 'Plates',
-                                  imageAsset: 'assets/images/new_svg/plates.svg',
-                                  large: false,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ])),
+                        const SizedBox(height: 24),
+                      ])),
             ),
           ),
           // Slide-up menu
@@ -273,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 0,
             right: 0,
             bottom: _isMenuVisible ? 0 : -400, // Slide from bottom
-           // height: 320,
+            // height: 320,
             child: GestureDetector(
               onTap: () {}, // prevent tap on menu from closing it
               child: Stack(
@@ -281,19 +282,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Main menu container
                   Container(
-                    padding: EdgeInsets.only(top: 35.h, left: 12, right: 12,),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, -4),
-                        ),
-                      ],
-                    ),
-                    child: sildeUpGridView()
+                      padding: EdgeInsets.only(top: 35.h, left: 12, right: 12,),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, -4),
+                          ),
+                        ],
+                      ),
+                      child: sildeUpGridView()
                   ),
 
                   // Arrow tab at top center
@@ -312,9 +313,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: InkWell( //update asmaa
                           onTap: (){
-                         setState(() {
-                           _isMenuVisible=false;
-                         });
+                            setState(() {
+                              _isMenuVisible=false;
+                            });
                           },
                           child: Icon(
                             Icons.keyboard_arrow_down,
@@ -335,6 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedIndex: _selectedIndex,
         onTabSelected: (index) {
           setState(() {
+
             _selectedIndex = index;
           });
           switch (index) {
@@ -342,11 +344,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-              //Get.offAll(OffersScreen());
-              print("object");
+            //Get.offAll(OffersScreen());
+
               break;
             case 2:
-              Get.offAll(SellCarScreen());
+              Get.offAll(CreateNewAdOptions());
 
               break;
 
@@ -360,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onAddPressed: () {
           // TODO: Handle Add button tap
-          Get.to(SellCarScreen());
+          Get.to(CreateNewAdOptions());
         },
       ),
     );
@@ -368,10 +370,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   sildeUpGridView(){
 
-     switch (cardView) {
+    switch (cardView) {
       case 'forSale':
         {
-        return  GridView.count(
+          return  GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
             padding: EdgeInsets.only(bottom: 25.h,),
@@ -425,14 +427,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
       case 'forRent':
         {
-         return GridView.count(
+          return GridView.count(
             crossAxisCount: 2,
-           shrinkWrap: true,
-           padding: EdgeInsets.only(bottom: 25.h,),
-           physics: NeverScrollableScrollPhysics(),
-           mainAxisSpacing: 1,
-           crossAxisSpacing: 30.w,
-           childAspectRatio: 1.3,
+            shrinkWrap: true,
+            padding: EdgeInsets.only(bottom: 25.h,),
+            physics: NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 1,
+            crossAxisSpacing: 30.w,
+            childAspectRatio: 1.3,
 
             children: [
               HomeServiceCard(

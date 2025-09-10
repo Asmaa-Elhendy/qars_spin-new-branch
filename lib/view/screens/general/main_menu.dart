@@ -93,7 +93,7 @@ class _MainMenuState extends State<MainMenu> {
             onTap: onTap,
           ),
         ),
-         Container(height: .8.h, color: AppColors.darkGray),
+        Container(height: .8.h, color: AppColors.darkGray),
       ],
     );
   }
