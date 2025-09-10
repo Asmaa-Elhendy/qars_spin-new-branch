@@ -72,21 +72,22 @@ class _EditSpecsNameState extends State<EditSpecsName> {
               12.verticalSpace,/// Buttons Row
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: (){},
-                    child: yellowButtons(title: "Cancel", onTap: (){
-                      Navigator.pop(context);
 
-                    }, w: 150.w,grey: true),
-                  ),
+                   Expanded(
+                      child: yellowButtons(title: "Cancel", onTap: (){
+                        Navigator.pop(context);
+
+                      }, w: 150.w,grey: true),
+                    ),
+
                    SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: (){},
-                    child: yellowButtons(title: "Confirm", onTap: (){
-                      Get.find<SpecsController>().editName(widget.spec.id, _newNameController.text);
-                      Navigator.pop(context);
+                  Expanded(
+                      child: yellowButtons(title: "Confirm", onTap: (){
+                        Get.find<SpecsController>().editName(widget.spec.id, _newNameController.text);
+                        Navigator.pop(context);
 
-                    }, w: 150.w),
+                      }, w: 150.w),
+
                   ),
                 ],
               ),

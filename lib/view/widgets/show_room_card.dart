@@ -7,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
 import '../../model/showroom_model.dart';
+import '../screens/showrooms/car_care/car_care_details.dart';
 import '../screens/showrooms/showrooms_details.dart';
 import 'my_ads/yellow_buttons.dart';
 
@@ -51,17 +52,17 @@ class ShowroomCard extends StatelessWidget {
           ),
           Container(
             color: Colors.white,
-           padding:  EdgeInsets.symmetric( vertical: 8.h,horizontal: 8.w),
+            padding:  EdgeInsets.symmetric( vertical: 8.h,horizontal: 8.w),
             child: carCare?
             Row(
               children: [
                 // Buttons
 
                 40.horizontalSpace,
-                yellowButtons(title: "Details",w: 100.w,onTap: (){Get.to(CarDealerScreen());}),
+                yellowButtons(title: "Details",w: 100.w,onTap: (){Get.to(CarCareDetails(carCare: showroom,));}),
 
 
-               35.horizontalSpace,
+                35.horizontalSpace,
                 Container(
                   height: 40.h,
                   width: 2.w,
@@ -71,11 +72,11 @@ class ShowroomCard extends StatelessWidget {
 
 
                 //Spacer(),
-               // 10.horizontalSpace,
+                // 10.horizontalSpace,
                 Row(
                   children: [
-                     Icon(Icons.remove_red_eye, size: 18, color: Colors.blue),
-                     SizedBox(width: 2),
+                    Icon(Icons.remove_red_eye, size: 18, color: Colors.blue),
+                    SizedBox(width: 2),
                     Text("${showroom.views}"),
                   ],
                 ),
@@ -89,7 +90,7 @@ class ShowroomCard extends StatelessWidget {
                 25.horizontalSpace,
                 Row(
                   children: [
-                     Icon(Icons.star, size: 25.w, color: Colors.amber),
+                    Icon(Icons.star, size: 25.w, color: Colors.amber),
                     const SizedBox(width: 2),
                     Text("${showroom.rating}"),
                     10.horizontalSpace,
@@ -140,8 +141,8 @@ class ShowroomCard extends StatelessWidget {
                 10.horizontalSpace,
                 Row(
                   children: [
-                     Icon(Icons.star, size: 25.w, color: Colors.amber),
-                            8.horizontalSpace,
+                    Icon(Icons.star, size: 25.w, color: Colors.amber),
+                    8.horizontalSpace,
                     Text("${showroom.rating}"),
                     10.horizontalSpace,
 

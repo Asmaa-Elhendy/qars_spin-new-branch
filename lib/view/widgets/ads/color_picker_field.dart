@@ -57,7 +57,8 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
               fontSize: 12.sp,
               fontWeight: FontWeight.w800,
             ) :TextStyle(
-              fontSize: width * 0.04,
+              fontSize: 15.w
+              ,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -72,8 +73,8 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             decoration: BoxDecoration(
               color: _pickerColor,
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black,width: 0.3),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: SizedBox(),
           ),
@@ -87,7 +88,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a ${widget.label.toLowerCase()}!'),
+          title: Text('Pick a ${widget.label.toLowerCase()}!',style: TextStyle(fontSize: 15.w),),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: _pickerColor,

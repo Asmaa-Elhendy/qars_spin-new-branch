@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -11,6 +12,7 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
   final String? initialValue;
+  final bool fromCreateAd;
 
   const CustomTextField({
     Key? key,
@@ -24,6 +26,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.initialValue,
+    this.fromCreateAd=false
   }) : super(key: key);
 
   @override
@@ -36,14 +39,14 @@ class CustomTextField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: width*.04,
+            fontSize: 15.w,
             fontWeight: FontWeight.w500,
 
           ),
         ),
         const SizedBox(height: 8),
         Container(
-          height: height*.05,
+          height: fromCreateAd?height*.045:height*.05,
           child: TextFormField(
             controller: controller,
             keyboardType: keyboardType,
@@ -58,20 +61,20 @@ class CustomTextField extends StatelessWidget {
                 vertical: 12,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(fromCreateAd?5:8),
+                borderSide: BorderSide(color: Colors.black,width: 0.3),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(fromCreateAd?5:8),
+                borderSide: BorderSide(color: Colors.black,width: 0.3),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.black, width: 2),
+                borderRadius: BorderRadius.circular(fromCreateAd?5:8),
+                borderSide: BorderSide(color: Colors.black, width:fromCreateAd?0.3: 2),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(fromCreateAd?5:8),
+                borderSide: const BorderSide(color: Colors.red,width: 0.3),
               ),
               prefixText: prefixText,
               suffixText: suffixText,

@@ -16,29 +16,29 @@ class ContactUsScreen extends StatefulWidget {
 }
 
 class _ContactUsScreenState extends State<ContactUsScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 4;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar:  AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.background,
-        toolbarHeight: 60.h,
-        shadowColor: Colors.grey.shade300,
+          centerTitle: true,
+          backgroundColor: AppColors.background,
+          toolbarHeight: 60.h,
+          shadowColor: Colors.grey.shade300,
 
-        elevation: .4,
+          elevation: .4,
 
-        title: Text(
-          "My Account",
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18.sp
-          ),
-        )
-    ),
+          title: Text(
+            "My Account",
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp
+            ),
+          )
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.zero,
         //padding:  EdgeInsets.symmetric(vertical: 2.h,horizontal: 8.w),
@@ -48,21 +48,21 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           children: [
             // Logo
             SizedBox(
-             height: 70,
+              height: 70,
               width: 190,
               child: Image.asset(
                 'assets/images/ic_top_logo_colored.png',
                 fit: BoxFit.cover,
               ),
             ),
-          // 8.verticalSpace,
-             Text(
+            // 8.verticalSpace,
+            Text(
               "Specialized in selling cars using 360° technology",
               style: TextStyle(color: Colors.black54),
               textAlign: TextAlign.center,
             ),
 
-              4.verticalSpace,
+            4.verticalSpace,
             // Live Chat
             const Text(
               "Live chat",
@@ -135,7 +135,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     "Social Media Accounts",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                   12.verticalSpace,
+                  12.verticalSpace,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:  [
@@ -231,7 +231,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           height: 20,
           child: Image.asset(assets,color: Colors.white,
 
-          fit: BoxFit.contain,
+            fit: BoxFit.contain,
           ))),
     );
   }

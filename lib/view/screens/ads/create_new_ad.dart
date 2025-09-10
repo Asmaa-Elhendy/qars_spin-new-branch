@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../controller/const/colors.dart';
 import '../../widgets/ads/color_picker_field.dart';
@@ -9,7 +10,6 @@ import '../../widgets/ads/drop_Down_field.dart';
 import '../../widgets/ads/image_picker_field.dart';
 import '../../widgets/ads/text_field.dart';
 import '../../widgets/ads/video_player_widget.dart';
-
 
 class SellCarScreen extends StatefulWidget {
   @override
@@ -74,6 +74,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   String? selectedYear;
   String? selectedTrim;
   String? selectedClass;
+  String? selectedunderWarranty;
+
   Color _exteriorColor = Color(0xffd54245);
   Color _interiorColor = Color(0xff4242d4);
   bool _termsAccepted = false;
@@ -81,10 +83,21 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   final TextEditingController _mileageController = TextEditingController();
   final TextEditingController _exteriorColorController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _interiorColorController =
-  TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
+      TextEditingController();
+  final TextEditingController _askingPriceController = TextEditingController();
+  final TextEditingController _plateNumberController = TextEditingController();
+
+  final TextEditingController _minimumPriceController = TextEditingController();
+  final TextEditingController _chassisNumberController =
+      TextEditingController();
+
+  //new controllers
+  final TextEditingController _make_contrller = TextEditingController();
+  final TextEditingController _model_controller = TextEditingController();
+  final TextEditingController _class_controller = TextEditingController();
+
   final TextEditingController _descriptionController = TextEditingController();
 
   void _handleImageSelected(String imagePath) {
@@ -146,8 +159,11 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _mileageController.dispose();
     _exteriorColorController.dispose();
     _interiorColorController.dispose();
-    _priceController.dispose();
+    _askingPriceController.dispose();
     _descriptionController.dispose();
+    _mileageController.dispose();
+    _chassisNumberController.dispose();
+    _plateNumberController.dispose();
     super.dispose();
   }
 
@@ -159,21 +175,21 @@ class _SellCarScreenState extends State<SellCarScreen> {
       backgroundColor: AppColors.background,
 
       appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: AppColors.background,
-          toolbarHeight: 60.h,
-          shadowColor: Colors.grey.shade300,
+        centerTitle: true,
+        backgroundColor: AppColors.background,
+        toolbarHeight: 60.h,
+        shadowColor: Colors.grey.shade300,
 
-          elevation: .4,
+        elevation: .4,
 
-          title: Text(
-            "Sell Your Car",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18.sp
-            ),
-          )
+        title: Text(
+          "Sell Your Car",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18.sp,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -181,7 +197,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
+              padding: EdgeInsets.symmetric(horizontal: width * .06),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -207,16 +223,16 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           height: height * .35,
                           child: _isVideo(_coverImage!)
                               ? VideoPlayerWidget(
-                            videoPath: _coverImage!,
-                            autoPlay: true,
-                            looping: true,
-                          )
+                                  videoPath: _coverImage!,
+                                  autoPlay: true,
+                                  looping: true,
+                                )
                               : Image.file(
-                            File(_coverImage!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                _buildPlaceholder(),
-                          ),
+                                  File(_coverImage!),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      _buildPlaceholder(),
+                                ),
                         ),
                         SizedBox(height: height * .02),
                       ],
@@ -239,44 +255,59 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     style: TextStyle(fontSize: width * .04),
                   ),
                   SizedBox(height: height * .01),
+
                   // Make Dropdown
-                  DropdownField(
-                    value: selectedMake,
-                    label: "Choose Make(*)",
-                    items: ["Toyota", "Honda", "BMW", "Mercedes"],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedMake = value;
-                      });
-                    },
+                  CustomDropDownTyping(
+                    label: "Choose Make(*)" ,
+                    controller: _make_contrller,
+                    options: ["Toyota", "Honda", "BMW", "Mercedes"],
                   ),
 
+                  // DropdownField(
+                  //   value: selectedMake,
+                  //   label: "Choose Make(*)",
+                  //   items: ["Toyota", "Honda", "BMW", "Mercedes"],
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       selectedMake = value;
+                  //     });
+                  //   },
+                  // ),
                   SizedBox(height: height * .01),
                   // Make Dropdown
-                  DropdownField(
-                    value: selectedClass,
-                    label: "Choose Class(*)",
-                    items: ["Toyota", "Honda", "BMW", "Mercedes"],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedClass = value;
-                      });
-                    },
+                  CustomDropDownTyping
+                    (label: "Choose Class(*)",
+                    controller: _class_controller,
+                    options: ["Toyota", "Honda", "BMW", "Mercedes"],
                   ),
+                  // DropdownField(
+                  //   value: selectedClass,
+                  //   label: "Choose Class(*)",
+                  //   items: ["Toyota", "Honda", "BMW", "Mercedes"],
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       selectedClass = value;
+                  //     });
+                  //   },
+                  // ),
                   SizedBox(height: height * .01),
+                  CustomDropDownTyping(
+                    label: "Choose Model(*)",
+                    controller: _model_controller,
+                    options: ["Camry", "Corolla", "RAV4", "Highlander"],
+                  ),
 
                   // Model Dropdown
-                  DropdownField(
-                    value: selectedModel,
-                    label: "Choose Model(*)",
-                    items: ["Camry", "Corolla", "RAV4", "Highlander"],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedModel = value;
-                      });
-                    },
-                  ),
-
+                  // DropdownField(
+                  //   value: selectedModel,
+                  //   label: "Choose Model(*)",
+                  //   items: ["Camry", "Corolla", "RAV4", "Highlander"],
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       selectedModel = value;
+                  //     });
+                  //   },
+                  // ),
                   SizedBox(height: height * .01),
                   DropdownField(
                     value: selectedType,
@@ -296,7 +327,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     label: "Manufacture Year(*)",
                     items: List.generate(
                       21,
-                          (index) => (DateTime.now().year - index).toString(),
+                      (index) => (DateTime.now().year - index).toString(),
                     ).toList()..insert(0, "Select Year"),
                     onChanged: (value) {
                       setState(() {
@@ -308,23 +339,23 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(
-                    controller: _mileageController,
+                  CustomTextField(fromCreateAd: true,
+                    controller: _askingPriceController,
                     label: "Asking Price(*)",
                     keyboardType: TextInputType.number,
                   ),
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(
-                    controller: _mileageController,
+                  CustomTextField(fromCreateAd: true,
+                    controller: _minimumPriceController,
                     label: "Minimum biding price yoou want to see",
                     keyboardType: TextInputType.number,
                   ),
                   SizedBox(height: height * .01),
 
                   // Mileage Text Field
-                  CustomTextField(
+                  CustomTextField(fromCreateAd: true,
                     controller: _mileageController,
                     label: "Mileage(*)",
                     keyboardType: TextInputType.number,
@@ -355,12 +386,38 @@ class _SellCarScreenState extends State<SellCarScreen> {
                       });
                     },
                   ),
+                  SizedBox(height: height * .01),
 
+                  // Mileage Text Field
+                  CustomTextField(fromCreateAd: true,
+                    controller: _plateNumberController,
+                    label: "Plate Number",
+                    keyboardType: TextInputType.number,
+                  ),
+                  SizedBox(height: height * .01),
+
+                  // Mileage Text Field
+                  CustomTextField(fromCreateAd: true,
+                    controller: _chassisNumberController,
+                    label: "Chassis Number",
+                    keyboardType: TextInputType.number,
+                  ),
+                  SizedBox(height: height * .01),
+                  DropdownField(
+                    value: selectedunderWarranty,
+                    label: "under Warranty",
+                    items: ["4*4", "Bus", "Coupe"],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedType = value;
+                      });
+                    },
+                  ),
                   SizedBox(height: height * .01),
                   Text(
                     'Car Description',
                     style: TextStyle(
-                      fontSize: width * .04,
+                      fontSize: 15.w,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -368,8 +425,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade600),
-                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black,width: 0.3),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: TextField(
                       controller: _descriptionController,
@@ -383,78 +440,100 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     ),
                   ),
                   // Description Text Area
+                  Row(
+                    children: [
+                      Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 يلغي الـ extra tap area
+
+                        value: _termsAccepted,
+                        onChanged: (value) {
+                          setState(() {
+                            _termsAccepted = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.black,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'I agree to the Terms and Conditions',
+                          style: TextStyle(fontSize: 15.w
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 يلغي الـ extra tap area
+
+                        value: _infoConfirmed,
+                        onChanged: (value) {
+                          setState(() {
+                            _infoConfirmed = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.black,
+                      ),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            SizedBox(height:   15.h,),
+                            Text(
+                              'I confirm the accuracy of the information provided',
+                              style: TextStyle(fontSize: 15.w
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: height * .01),
+
+                  // Post Ad Button
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * .03),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: height * .05,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle form submission
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xfff6c42d),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: Text(
+                          "Confirm",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.w,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height:   10.h,),
+                  Center(
+                    child: Text(
+                      'You agree to Qars Spin Terms & Conditions',
+                      style: TextStyle(fontSize: 12.w
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * .04),
                 ],
               ),
             ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _termsAccepted,
-                  onChanged: (value) {
-                    setState(() {
-                      _termsAccepted = value ?? false;
-                    });
-                  },
-                  activeColor: Colors.black,
-                ),
-                Expanded(
-                  child: Text(
-                    'I agree to the Terms and Conditions',
-                    style: TextStyle(fontSize: width * .04),
-                  ),
-                ),
-              ],
-            ),
-            Row(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Checkbox(
-                  value: _infoConfirmed,
-                  onChanged: (value) {
-                    setState(() {
-                      _infoConfirmed = value ?? false;
-                    });
-                  },
-                  activeColor: Colors.black,
-                ),
-                Expanded(
-                  child: Text(
-                    'I confirm the accuracy of the information provided',
-                    style: TextStyle(fontSize: width * .04),
-                  ),
-                ),
-              ],
-            ),
 
-            SizedBox(height: height * .01),
-
-            // Post Ad Button
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .03),
-              child: SizedBox(
-                width: double.infinity,
-                height: height * .07,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle form submission
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xfff6c42d),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    "Confirm",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: width * .04,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: height * .04),
           ],
         ),
       ),
