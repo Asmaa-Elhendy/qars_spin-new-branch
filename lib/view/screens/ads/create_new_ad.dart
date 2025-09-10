@@ -166,6 +166,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     _chassisNumberController.dispose();
     _plateNumberController.dispose();
+    _make_contrller.dispose();
+    _model_controller.dispose();
+    _class_controller.dispose();
     super.dispose();
   }
 
@@ -277,6 +280,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         brandController.selectedClass.value = null;
                         // Force immediate UI refresh
                         setState(() {});
+                      } else if (value.isEmpty) {
+                        // Clear class field when make is cleared
+                        _class_controller.clear();
+                        brandController.selectedClass.value = null;
+                        brandController.carClasses.clear();
+                        // Force immediate UI refresh
+                        setState(() {});
                       }
                     },
                   ))
@@ -292,11 +302,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   //     });
                   //   },
                   // ),
-                ,  SizedBox(height: height * .01),
+                  ,SizedBox(height: height * .01),
                   // Class Dropdown
                   Obx(() {
                     return CustomDropDownTyping(
-                      key: Key('class_dropdown_${brandController.carClasses.length}'),
                       label: "Choose Class(*)",
                       controller: _class_controller,
                       options: brandController.carClasses.map((c) => c.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),

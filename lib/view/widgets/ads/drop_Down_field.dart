@@ -109,6 +109,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TypeAheadField<String>(
+            key: ValueKey('typeahead_${widget.options.length}_${widget.controller.text}'),
             suggestionsCallback: (pattern) async {
               if (pattern.isEmpty) {
                 return widget.options;
@@ -118,6 +119,9 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
                   car.toLowerCase().contains(pattern.toLowerCase()))
                   .toList();
             },
+            hideOnSelect: true,
+            hideOnEmpty: true,
+            hideOnError: true,
             builder: (context, controller, focusNode) {
               return Row(
                 children: [
@@ -155,13 +159,25 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
               );
             },
             onSelected: (suggestion) {
-              widget.controller.text = suggestion; // 👈 يخزن في الخارجي
-              if (widget.onChanged != null) {
-                widget.onChanged!(suggestion);
-              }
-              // Force immediate UI refresh
-              setState(() {});
+              // Ensure the controller text is updated immediately
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                widget.controller.text = suggestion;
+                // Call the onChanged callback
+                if (widget.onChanged != null) {
+                  widget.onChanged!(suggestion);
+                }
+                // Force immediate UI refresh
+                if (mounted) {
+                  setState(() {});
+                }
+              });
             },
+            errorBuilder: (context, error) => const SizedBox(),
+            loadingBuilder: (context) => const SizedBox(),
+            emptyBuilder: (context) => const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('No results found', style: TextStyle(color: Colors.grey)),
+            ),
             controller: widget.controller,
             decorationBuilder: (context, child) {
               return Container(
