@@ -116,10 +116,10 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                         show = true;
                       });
                     },
-                    title: 'Create Car Ads',
+                    title: 'Create Car Ads',fromHome: 'true',
                     imageAsset:
-                    'assets/images/ic_cars_for_sale.png',
-                    large: true,
+                    'assets/images/new_svg/home1.svg',
+                    large: false,
                   ),
                   HomeServiceCard(
                     onTap: () {
@@ -127,10 +127,10 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                         show = true;
                       });
                     },
-                    title: 'Create Bike Ads',
+                    title: 'Create Bike Ads',fromHome: 'true',
                     imageAsset:
-                    'assets/images/Vector.png',
-                    large: true,
+                    'assets/images/new_svg/bikes.svg',
+                    large: false,
                   ),
                   HomeServiceCard(
                     onTap: (){
@@ -139,8 +139,8 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                       });
                     },
                     title: 'Create Caravan Ads',
-                    imageAsset: 'assets/images/ic_caravans.png',
-                    large: true,
+                    imageAsset: 'assets/images/new_svg/caravans.svg',
+                    large: false,fromHome: 'true',
                   ),
                   HomeServiceCard(
                     onTap: (){
@@ -149,8 +149,9 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                       });
                     },
                     title: 'Create Plate Ads',
-                    imageAsset: 'assets/images/ic_plates.png',
-                    large: true,
+                      imageAsset: 'assets/images/new_svg/plates.svg',
+                      fromHome: 'true',
+                    large: false,
                   ),
                 ],
               ),

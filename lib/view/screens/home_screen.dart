@@ -237,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: HomeServiceCard(
                                       title: 'Bikes',
                                       imageAsset: 'assets/images/new_svg/bikes.svg',
-                                      large: false,
+                                      large: false,fromHome: 'true',fromHomeSmall: true,
                                     ),
                                   ),
                                   SizedBox(width: 12),
@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: HomeServiceCard(
                                       title: 'Caravans',
                                       imageAsset: 'assets/images/new_svg/caravans.svg',
-                                      large: false,
+                                      large: false,fromHome: 'true',fromHomeSmall: true,
                                     ),
                                   ),
                                   SizedBox(width: 12),
@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: HomeServiceCard(
                                       title: 'Plates',
                                       imageAsset: 'assets/images/new_svg/plates.svg',
-                                      large: false,
+                                      large: false,fromHome: 'true',fromHomeSmall: true,
                                     ),
                                   ),
                                 ],

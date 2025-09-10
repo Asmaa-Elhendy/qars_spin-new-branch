@@ -13,6 +13,7 @@ class HomeServiceCard extends StatelessWidget {
   bool brand;
   int  make_count;
   String fromHome;
+  bool fromHomeSmall;
   final VoidCallback? onTap;
 
    HomeServiceCard({
@@ -21,6 +22,7 @@ class HomeServiceCard extends StatelessWidget {
       this.make_count =0,
     required this.title,
      this.fromHome='',
+     this.fromHomeSmall=false,
     required this.imageAsset,
     required this.large,
     this.onTap,
@@ -114,12 +116,13 @@ class HomeServiceCard extends StatelessWidget {
                   child:  fromHome=='true'?
                   SvgPicture.asset(
                     imageAsset,
-                    width: 95.37.w,
-                    height: 73.33.h,
-                  ):  SvgPicture.asset(
+                    width:title.contains('Ads')?60.w:fromHomeSmall?48.58.w: 95.37.w,
+                    height: title.contains('Ads')?55.h:fromHomeSmall?30:73.33.h,
+                  ):  Image.asset(
                     imageAsset,
                     width: 58.w,
                     height: 40.h,
+                    fit: BoxFit.contain,
                   )
                 ),
               ),
