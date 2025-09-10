@@ -110,23 +110,21 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TypeAheadField<String>(
             suggestionsCallback: (pattern) async {
-              final input = widget.controller.text; // 👈 ناخد النص من الخارجي
+              if (pattern.isEmpty) {
+                return widget.options;
+              }
               return widget.options
                   .where((car) =>
-                  car.toLowerCase().contains(input.toLowerCase()))
+                  car.toLowerCase().contains(pattern.toLowerCase()))
                   .toList();
             },
-            builder: (context, textEditingController, focusNode) {
-              // 👇 نستخدم الـ controller اللي جاي من بره بس
+            builder: (context, controller, focusNode) {
               return Row(
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: widget.controller,
+                      controller: controller,
                       focusNode: focusNode,
-                      onChanged: (val) {
-                        setState(() {}); // عشان يـrefresh ويجيب suggestions
-                      },
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w400,
@@ -138,6 +136,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
                         focusedBorder: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
+
                       ),
                     ),
                   ),
@@ -163,6 +162,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
               // Force immediate UI refresh
               setState(() {});
             },
+            controller: widget.controller,
             decorationBuilder: (context, child) {
               return Container(
                 height: 230.h,
