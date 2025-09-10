@@ -24,73 +24,28 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.background,
-        toolbarHeight: 60.h,
-        shadowColor: Colors.grey.shade300,
-
-        // elevation: 3,
-        elevation: .4,
-        leading: // Menu Button
-        GestureDetector(onTap: () {
-          Get.to(MainMenu());
-        }, child: Icon(Icons.menu)),
-        actions: [
-          // Account Button with Notification Counter (smaller)
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Get.to(MyAccount());
-                },
-                child: Image.asset(
-                  'assets/images/ic_personal_account.png',
-                  width: 20,
-                  height: 20,
-                ),
+        centerTitle: true, // يخلي العنوان في نص العرض
+        elevation: 0, // نشيل الشادو الافتراضي
+        title: Text(
+          "Create New Ad",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20.sp,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5.h,
+                offset: Offset(0, 2),
               ),
-              if (notificationCount > 0)
-                Positioned(
-                  right: 7,
-                  top: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    constraints:
-                    const BoxConstraints(minWidth: 14, minHeight: 14),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.18),
-                          blurRadius: 3,
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      notificationCount > 99
-                          ? '99+'
-                          : notificationCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
             ],
-          )
-        ],
-
-        title: SizedBox(
-          height: 140,
-          width: 140,
-          child: Image.asset(
-            'assets/images/ic_top_logo_colored.png',
-            fit: BoxFit.cover,
           ),
         ),
       ),
