@@ -24,6 +24,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
   List<String> _images = [];
   String? _coverImage;
   String? _videoPath;
+  
+  // Store listener references
+  VoidCallback? _makeListener;
+  VoidCallback? _classListener;
+  
+  // Track previous values to detect actual clearing vs value changes
+  String _previousMakeValue = '';
+  String _previousClassValue = '';
 
   bool _isVideo(String path) {
     if (path.isEmpty) return false;
@@ -162,6 +170,39 @@ class _SellCarScreenState extends State<SellCarScreen> {
     super.initState();
     // Set default value for type controller
     _type_controller.text = selectedType ?? "4*4";
+    
+    // Add listener to make controller to clear class and model when make is cleared
+    _makeListener = () {
+      // Only clear if the controller was previously not empty and now is empty
+      if (_make_contrller.text.isEmpty && _previousMakeValue.isNotEmpty) {
+        // Clear class and model when make is cleared
+        _class_controller.clear();
+        brandController.selectedClass.value = null;
+        brandController.carClasses.clear();
+        _model_controller.clear();
+        brandController.selectedModel.value = null;
+        brandController.carModels.clear();
+        setState(() {});
+      }
+      // Update previous value
+      _previousMakeValue = _make_contrller.text;
+    };
+    _make_contrller.addListener(_makeListener!);
+    
+    // Add listener to class controller to clear model when class is cleared
+    _classListener = () {
+      // Only clear if the controller was previously not empty and now is empty
+      if (_class_controller.text.isEmpty && _previousClassValue.isNotEmpty) {
+        // Clear model when class is cleared
+        _model_controller.clear();
+        brandController.selectedModel.value = null;
+        brandController.carModels.clear();
+        setState(() {});
+      }
+      // Update previous value
+      _previousClassValue = _class_controller.text;
+    };
+    _class_controller.addListener(_classListener!);
   }
 
   @override
@@ -174,6 +215,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     _chassisNumberController.dispose();
     _plateNumberController.dispose();
+    // Remove listeners before disposing controllers
+    if (_makeListener != null) {
+      _make_contrller.removeListener(_makeListener!);
+    }
+    if (_classListener != null) {
+      _class_controller.removeListener(_classListener!);
+    }
+    
     _make_contrller.dispose();
     _model_controller.dispose();
     _class_controller.dispose();
