@@ -156,12 +156,31 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
               );
             },
             itemBuilder: (context, suggestion) {
-              return Padding(
-                padding:
-                EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                child: Text(
-                  suggestion,
-                  style: TextStyle(fontSize: 14.sp, color: Colors.black87),
+              bool isSelected = widget.controller.text == suggestion;
+              return Container(
+                color: isSelected ? Color(0xFFF5F5F5) : Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          suggestion,
+                          style: TextStyle(
+                            fontSize: 14.sp, 
+                            color: Colors.black87,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Icon(
+                          Icons.check,
+                          color: Colors.blue,
+                          size: 18.sp,
+                        ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -201,7 +220,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
               return Container(
                 height: adaptiveHeight,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white, // Back to white background
                   borderRadius: BorderRadius.circular(6),
                   boxShadow: [
                     BoxShadow(
