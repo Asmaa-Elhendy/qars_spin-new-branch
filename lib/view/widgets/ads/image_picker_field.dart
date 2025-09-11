@@ -360,6 +360,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
+
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(

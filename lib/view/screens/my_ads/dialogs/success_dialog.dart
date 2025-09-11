@@ -7,7 +7,7 @@ class SuccessDialog {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: const Text('Success'),
-        content: Text('Ad created successfully!\nPost ID: $postId'),
+        content: Text('Ad created successfully!'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
