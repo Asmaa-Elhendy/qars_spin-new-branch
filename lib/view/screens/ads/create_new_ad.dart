@@ -266,7 +266,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   Obx(() => CustomDropDownTyping(
                     label: "Choose Make(*)",
                     controller: _make_contrller,
-                    options: brandController.carBrands.map((b) => b.name).toList(),
+                    options: brandController.carBrands
+                        .map((b) => b.name)
+                        .toList()
+                        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
                     onChanged: (value) {
                       final selected = brandController.carBrands
                           .firstWhereOrNull((b) => b.name == value);
