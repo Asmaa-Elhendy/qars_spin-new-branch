@@ -24,11 +24,11 @@ class _SellCarScreenState extends State<SellCarScreen> {
   List<String> _images = [];
   String? _coverImage;
   String? _videoPath;
-  
+
   // Store listener references
   VoidCallback? _makeListener;
   VoidCallback? _classListener;
-  
+
   // Track previous values to detect actual clearing vs value changes
   String _previousMakeValue = '';
   String _previousClassValue = '';
@@ -107,6 +107,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _class_controller = TextEditingController();
   final TextEditingController _type_controller = TextEditingController();
   final TextEditingController _year_controller = TextEditingController();
+  final TextEditingController _warranty_controller = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   final AdCleanController brandController = Get.put(
@@ -171,10 +172,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
     super.initState();
     // Set default value for type controller
     _type_controller.text = selectedType ?? "4*4";
-    
+
     // Set default value for year controller to first year (current year + 1)
     _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
-    
+
+    // Set default value for warranty controller
+    _warranty_controller.text = selectedunderWarranty ?? "No";
+
     // Add listener to make controller to clear class and model when make is cleared
     _makeListener = () {
       // Only clear if the controller was previously not empty and now is empty
@@ -192,7 +196,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _previousMakeValue = _make_contrller.text;
     };
     _make_contrller.addListener(_makeListener!);
-    
+
     // Add listener to class controller to clear model when class is cleared
     _classListener = () {
       // Only clear if the controller was previously not empty and now is empty
@@ -226,12 +230,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
     if (_classListener != null) {
       _class_controller.removeListener(_classListener!);
     }
-    
+
     _make_contrller.dispose();
     _model_controller.dispose();
     _class_controller.dispose();
     _type_controller.dispose();
     _year_controller.dispose();
+    _warranty_controller.dispose();
     super.dispose();
   }
 
@@ -291,16 +296,16 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           height: height * .35,
                           child: _isVideo(_coverImage!)
                               ? VideoPlayerWidget(
-                                  videoPath: _coverImage!,
-                                  autoPlay: true,
-                                  looping: true,
-                                )
+                            videoPath: _coverImage!,
+                            autoPlay: true,
+                            looping: true,
+                          )
                               : Image.file(
-                                  File(_coverImage!),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      _buildPlaceholder(),
-                                ),
+                            File(_coverImage!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildPlaceholder(),
+                          ),
                         ),
                         SizedBox(height: height * .02),
                       ],
@@ -332,7 +337,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     options: brandController.carBrands
                         .map((b) => b.name)
                         .toList()
-                        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+                      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
                     onChanged: (value) {
                       final selected = brandController.carBrands
                           .firstWhereOrNull((b) => b.name == value);
@@ -455,12 +460,27 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     controller: _year_controller,
                     options: List.generate(
                       51,
-                      (index) => (DateTime.now().year + 1 - index).toString(),
+                          (index) => (DateTime.now().year + 1 - index).toString(),
                     ).toList(),
                     enableSearch: false,
                     onChanged: (value) {
                       setState(() {
                         selectedYear = value;
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: height * .01),
+
+                  // Under Warranty Dropdown
+                  CustomDropDownTyping(
+                    label: "Under Warranty",
+                    controller: _warranty_controller,
+                    options: ["No", "Yes"],
+                    enableSearch: false,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedunderWarranty = value;
                       });
                     },
                   ),
@@ -473,6 +493,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     controller: _askingPriceController,
                     label: "Asking Price(*)",
                     keyboardType: TextInputType.number,
+                    cursorColor: AppColors.brandBlue,
+                    cursorHeight: 25.h,
                   ),
                   SizedBox(height: height * .01),
 
@@ -481,7 +503,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     fromCreateAd: true,
                     controller: _minimumPriceController,
                     label: "Minimum biding price yoou want to see",
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,   cursorColor: AppColors.brandBlue,
+                    cursorHeight: 25.h,
                   ),
                   SizedBox(height: height * .01),
 
@@ -525,7 +548,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     fromCreateAd: true,
                     controller: _plateNumberController,
                     label: "Plate Number",
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,   cursorColor: AppColors.brandBlue,
+                    cursorHeight: 25.h,
                   ),
                   SizedBox(height: height * .01),
 
@@ -534,7 +558,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     fromCreateAd: true,
                     controller: _chassisNumberController,
                     label: "Chassis Number",
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,   cursorColor: AppColors.brandBlue,
+                    cursorHeight: 25.h,
                   ),
                   SizedBox(height: height * .01),
                   DropdownField(

@@ -13,6 +13,9 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final String? initialValue;
   final bool fromCreateAd;
+  final double? height;
+  final Color? cursorColor;
+  final double? cursorHeight;
 
   const CustomTextField({
     Key? key,
@@ -26,7 +29,10 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.initialValue,
-    this.fromCreateAd=false
+    this.fromCreateAd=false,
+    this.height,
+    this.cursorColor,
+    this.cursorHeight
   }) : super(key: key);
 
   @override
@@ -46,7 +52,7 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          height: fromCreateAd?height*.045:height*.05,
+          height: this.height ?? (fromCreateAd?height*.045:height*.05),
           child: TextFormField(
             controller: controller,
             keyboardType: keyboardType,
@@ -55,10 +61,13 @@ class CustomTextField extends StatelessWidget {
             initialValue: initialValue,
             onChanged: onChanged,
             validator: validator,
+            cursorColor: cursorColor,
+            cursorHeight: cursorHeight,style: TextStyle(fontSize: 15.w
+          ),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 12,
+                vertical: 1,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(fromCreateAd?5:8),

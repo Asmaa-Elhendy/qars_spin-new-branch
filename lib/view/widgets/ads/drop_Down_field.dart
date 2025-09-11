@@ -135,6 +135,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
                       controller: controller,
                       focusNode: focusNode,
                       readOnly: !widget.enableSearch,
+                      cursorColor: AppColors.brandBlue,
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w400,
