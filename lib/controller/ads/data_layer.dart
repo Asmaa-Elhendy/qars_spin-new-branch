@@ -199,31 +199,21 @@ class AdRepository {
     }
   }
 
-  /// Parse XML response from upload endpoint
-  // Map<String, dynamic> _parseUploadResponse(String xmlString) {
-  //   try {
-  //     // Simple XML parsing for the expected response format
-  //     if (xmlString.contains('<Code>OK</Code>') || xmlString.contains('<Code>ok</Code>')) {
-  //       return {
-  //         'Code': 'OK',
-  //         'Desc': 'Upload successful',
-  //       };
-  //     } else {
-  //       // Try to extract error message
-  //       final codeMatch = RegExp(r'<Code>([^<]+)</Code>').firstMatch(xmlString);
-  //       final descMatch = RegExp(r'<Desc>([^<]+)</Desc>').firstMatch(xmlString);
-  //
-  //       return {
-  //         'Code': codeMatch?.group(1) ?? 'Error',
-  //         'Desc': descMatch?.group(1) ?? 'Upload failed',
-  //       };
-  //     }
-  //   } catch (e) {
-  //     return {
-  //       'Code': 'Error',
-  //       'Desc': 'Failed to parse upload response: ${e.toString()}',
-  //     };
-  //   }
-  // }
+  /// Parse JSON response from upload endpoint
+  Map<String, dynamic> _parseUploadResponse(String jsonString) {
+    try {
+      final parsedJson = jsonDecode(jsonString);
+      
+      return {
+        'Code': parsedJson['Code'] ?? 'Error',
+        'Desc': parsedJson['Desc'] ?? 'Upload failed',
+      };
+    } catch (e) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Failed to parse upload response: ${e.toString()}',
+      };
+    }
+  }
 
 }

@@ -138,7 +138,8 @@ class AdSubmissionService {
     required String coverImage,
     required String? videoPath,
     required Function(String) showErrorDialog,
-  }) async {
+  }) async
+  {
     // Check if there are any images
     if (images.isEmpty) {
       showErrorDialog("Please upload at least one image");
@@ -175,7 +176,8 @@ class AdSubmissionService {
     required String askingPrice,
     required int imageCount,
     required bool hasVideo,
-  }) {
+  })
+  {
     log('=== Ad Submission Log ===');
     log('Make: $make');
     log('Class: $carClass');
