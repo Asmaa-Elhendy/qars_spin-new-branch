@@ -106,6 +106,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _model_controller = TextEditingController();
   final TextEditingController _class_controller = TextEditingController();
   final TextEditingController _type_controller = TextEditingController();
+  final TextEditingController _year_controller = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   final AdCleanController brandController = Get.put(
@@ -171,6 +172,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Set default value for type controller
     _type_controller.text = selectedType ?? "4*4";
     
+    // Set default value for year controller to first year (current year + 1)
+    _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
+    
     // Add listener to make controller to clear class and model when make is cleared
     _makeListener = () {
       // Only clear if the controller was previously not empty and now is empty
@@ -227,6 +231,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _model_controller.dispose();
     _class_controller.dispose();
     _type_controller.dispose();
+    _year_controller.dispose();
     super.dispose();
   }
 
@@ -445,13 +450,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
                   SizedBox(height: height * .01),
                   // Year Dropdown
-                  DropdownField(
-                    value: selectedYear,
+                  CustomDropDownTyping(
                     label: "Manufacture Year(*)",
-                    items: List.generate(
-                      21,
-                      (index) => (DateTime.now().year - index).toString(),
-                    ).toList()..insert(0, "Select Year"),
+                    controller: _year_controller,
+                    options: List.generate(
+                      51,
+                      (index) => (DateTime.now().year + 1 - index).toString(),
+                    ).toList(),
+                    enableSearch: false,
                     onChanged: (value) {
                       setState(() {
                         selectedYear = value;
