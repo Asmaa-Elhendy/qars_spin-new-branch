@@ -473,17 +473,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   SizedBox(height: height * .01),
 
                   // Under Warranty Dropdown
-                  CustomDropDownTyping(
-                    label: "Under Warranty",
-                    controller: _warranty_controller,
-                    options: ["No", "Yes"],
-                    enableSearch: false,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedunderWarranty = value;
-                      });
-                    },
-                  ),
+
 
                   SizedBox(height: height * .01),
 
@@ -562,13 +552,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
                     cursorHeight: 25.h,
                   ),
                   SizedBox(height: height * .01),
-                  DropdownField(
-                    value: selectedunderWarranty,
-                    label: "under Warranty",
-                    items: ["4*4", "Bus", "Coupe"],
+                  CustomDropDownTyping(
+                    label: "Under Warranty",
+                    controller: _warranty_controller,
+                    options: ["No", "Yes"],
+                    enableSearch: false,
                     onChanged: (value) {
                       setState(() {
-                        selectedType = value;
+                        selectedunderWarranty = value;
                       });
                     },
                   ),

@@ -6,67 +6,67 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../controller/const/colors.dart';
 
-class DropdownField extends StatelessWidget {
-  final String label;
-  final List<String> items;
-  final String? value;
-  final ValueChanged<String?>? onChanged;
-  final String? hintText;
-
-  const DropdownField({
-    Key? key,
-    required this.label,
-    required this.items,
-    this.value,
-    this.onChanged,
-    this.hintText,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    double width=MediaQuery.of(context).size.width;
-    double height=MediaQuery.of(context).size.height;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize:15.w
-            ,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: height*.045,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black,width: 0.3),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(icon: Icon(Icons.arrow_drop_down,color: Colors.black,),
-              isExpanded: true,
-              value: value,
-              hint: hintText != null ? Text(hintText!) : null,
-              items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                );
-              }).toList(),
-              onChanged: onChanged,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class DropdownField extends StatelessWidget {
+//   final String label;
+//   final List<String> items;
+//   final String? value;
+//   final ValueChanged<String?>? onChanged;
+//   final String? hintText;
+//
+//   const DropdownField({
+//     Key? key,
+//     required this.label,
+//     required this.items,
+//     this.value,
+//     this.onChanged,
+//     this.hintText,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     double width=MediaQuery.of(context).size.width;
+//     double height=MediaQuery.of(context).size.height;
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           label,
+//           style: TextStyle(
+//             fontSize:15.w
+//             ,
+//             fontWeight: FontWeight.w500,
+//           ),
+//         ),
+//         const SizedBox(height: 8),
+//         Container(
+//           height: height*.045,
+//           decoration: BoxDecoration(
+//             border: Border.all(color: Colors.black,width: 0.3),
+//             borderRadius: BorderRadius.circular(5),
+//           ),
+//           padding: const EdgeInsets.symmetric(horizontal: 12),
+//           child: DropdownButtonHideUnderline(
+//             child: DropdownButton<String>(icon: Icon(Icons.arrow_drop_down,color: Colors.black,),
+//               isExpanded: true,
+//               value: value,
+//               hint: hintText != null ? Text(hintText!) : null,
+//               items: items.map((String item) {
+//                 return DropdownMenuItem<String>(
+//                   value: item,
+//                   child: Text(
+//                     item,
+//                     style: const TextStyle(fontSize: 16),
+//                   ),
+//                 );
+//               }).toList(),
+//               onChanged: onChanged,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 class CustomDropDownTyping extends StatefulWidget {
   final String label;
   final TextEditingController controller;
@@ -187,8 +187,19 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
             ),
             controller: widget.controller,
             decorationBuilder: (context, child) {
+              // Calculate adaptive height based on number of options
+              double itemHeight = 40.h; // Height of each item
+              double maxHeight = 230.h; // Maximum height
+              double minHeight = 80.h;  // Minimum height
+              
+              // Calculate required height based on number of options
+              double calculatedHeight = widget.options.length * itemHeight;
+              
+              // Ensure height is within min and max bounds
+              double adaptiveHeight = calculatedHeight.clamp(minHeight, maxHeight);
+              
               return Container(
-                height: 230.h,
+                height: adaptiveHeight,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
