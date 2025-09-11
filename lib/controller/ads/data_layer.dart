@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../controller/const/base_url.dart';
 import '../../model/car_brand.dart';
 import '../../model/class_model.dart';
+import '../../model/car_model_class.dart';
 
 
 class AdRepository {
@@ -53,6 +54,25 @@ class AdRepository {
     }
   }
 
+  /// جلب الموديلات
+  Future<List<CarModelClass>> fetchCarModels(String classId) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/GetListOfCarModels?Class_ID=$classId',
+    );
 
+    final response = await http.get(url, headers: {'Accept': 'application/json'});
 
+    if (response.statusCode == 200) {
+      final parsedJson = jsonDecode(response.body);
+      final List<dynamic> data = parsedJson['Data'];
+      return data.map((item) {
+        return CarModelClass(
+          id: item["Model_ID"],
+          name: item["Model_Name_PL"],
+        );
+      }).toList();
+    } else {
+      throw Exception("Failed to load car models");
+    }
+  }
 }

@@ -72,6 +72,7 @@ class CustomDropDownTyping extends StatefulWidget {
   final TextEditingController controller;
   final List<String> options;
   final ValueChanged<String>? onChanged;
+  final bool enableSearch;
 
   const CustomDropDownTyping({
     Key? key,
@@ -79,6 +80,7 @@ class CustomDropDownTyping extends StatefulWidget {
     required this.controller,
     required this.options,
     this.onChanged,
+    this.enableSearch = true,
   }) : super(key: key);
 
   @override
@@ -111,6 +113,9 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
           child: TypeAheadField<String>(
             key: ValueKey('typeahead_${widget.options.length}_${widget.controller.text}'),
             suggestionsCallback: (pattern) async {
+              if (!widget.enableSearch) {
+                return widget.options;
+              }
               if (pattern.isEmpty) {
                 return widget.options;
               }
@@ -129,6 +134,7 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
                     child: TextField(
                       controller: controller,
                       focusNode: focusNode,
+                      readOnly: !widget.enableSearch,
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w400,

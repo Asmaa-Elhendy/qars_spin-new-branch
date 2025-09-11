@@ -74,7 +74,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   String? selectedMake;
   String? selectedModel;
-  String? selectedType;
+  String? selectedType = "4*4";
   String? selectedYear;
   String? selectedTrim;
   String? selectedClass;
@@ -97,6 +97,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _make_contrller = TextEditingController();
   final TextEditingController _model_controller = TextEditingController();
   final TextEditingController _class_controller = TextEditingController();
+  final TextEditingController _type_controller = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   final AdCleanController brandController = Get.put(
@@ -157,6 +158,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Set default value for type controller
+    _type_controller.text = selectedType ?? "4*4";
+  }
+
+  @override
   void dispose() {
     _mileageController.dispose();
     _exteriorColorController.dispose();
@@ -169,6 +177,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _make_contrller.dispose();
     _model_controller.dispose();
     _class_controller.dispose();
+    _type_controller.dispose();
     super.dispose();
   }
 
@@ -284,10 +293,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         // Force immediate UI refresh
                         setState(() {});
                       } else if (value.isEmpty) {
-                        // Clear class field when make is cleared
+                        // Clear class and model fields when make is cleared
                         _class_controller.clear();
                         brandController.selectedClass.value = null;
                         brandController.carClasses.clear();
+                        _model_controller.clear();
+                        brandController.selectedModel.value = null;
+                        brandController.carModels.clear();
                         // Force immediate UI refresh
                         setState(() {});
                       }
@@ -317,6 +329,15 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             .firstWhereOrNull((c) => c.name == value);
                         if (selected != null) {
                           brandController.selectedClass.value = selected;
+                          brandController.fetchCarModels(selected.id.toString());
+                          _model_controller.clear();
+                          brandController.selectedModel.value = null;
+                          setState(() {});
+                        } else if (value.isEmpty) {
+                          _model_controller.clear();
+                          brandController.selectedModel.value = null;
+                          brandController.carModels.clear();
+                          setState(() {});
                         }
                       },
                     );
@@ -333,11 +354,21 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   //   },
                   // ),
                   SizedBox(height: height * .01),
-                  CustomDropDownTyping(
-                    label: "Choose Model(*)",
-                    controller: _model_controller,
-                    options: ["Camry", "Corolla", "RAV4", "Highlander"],
-                  ),
+                  // Model Dropdown
+                  Obx(() {
+                    return CustomDropDownTyping(
+                      label: "Choose Model(*)",
+                      controller: _model_controller,
+                      options: brandController.carModels.map((m) => m.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+                      onChanged: (value) {
+                        final selected = brandController.carModels
+                            .firstWhereOrNull((m) => m.name == value);
+                        if (selected != null) {
+                          brandController.selectedModel.value = selected;
+                        }
+                      },
+                    );
+                  }),
 
                   // Model Dropdown
                   // DropdownField(
@@ -351,10 +382,11 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   //   },
                   // ),
                   SizedBox(height: height * .01),
-                  DropdownField(
-                    value: selectedType,
+                  CustomDropDownTyping(
                     label: "Choose Type(*)",
-                    items: ["4*4", "Bus", "Coupe"],
+                    controller: _type_controller,
+                    options: ["4*4", "Bus", "Convertible", "Coupe", "CrossOver", "Electric Vehicle (EV)"],
+                    enableSearch: false,
                     onChanged: (value) {
                       setState(() {
                         selectedType = value;
