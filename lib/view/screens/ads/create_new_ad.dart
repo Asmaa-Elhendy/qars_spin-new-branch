@@ -6,15 +6,15 @@ import 'package:get/get.dart';
 import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
-import '../my_ads/dialogs/missing_fields_dialog.dart';
-import '../my_ads/dialogs/missing_cover_image_dialog.dart';
-import '../my_ads/dialogs/loading_dialog.dart';
-import '../my_ads/dialogs/success_dialog.dart';
-import '../my_ads/dialogs/error_dialog.dart';
-import '../my_ads/create_ad_widgets/image_upload_section.dart';
-import '../my_ads/create_ad_widgets/form_fields_section.dart';
-import '../my_ads/create_ad_widgets/validation_methods.dart';
-import '../my_ads/create_ad_widgets/ad_submission_service.dart';
+import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
+import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
+import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
+import '../../widgets/ads/dialogs/error_dialog.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
+import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
+import '../../widgets/ads/dialogs/success_dialog.dart';
+import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
+import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 
 class SellCarScreen extends StatefulWidget {
   @override

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../widgets/ads/image_picker_field.dart';
-import '../../../widgets/ads/video_player_widget.dart';
+import '../image_picker_field.dart';
+import '../video_player_widget.dart';
 
 class ImageUploadSection extends StatefulWidget {
   final List<String> images;

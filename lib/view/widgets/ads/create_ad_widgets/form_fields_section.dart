@@ -7,9 +7,9 @@ import 'package:get/get.dart';
 import '../../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../../controller/ads/data_layer.dart';
 import '../../../../controller/const/colors.dart';
-import '../../../widgets/ads/color_picker_field.dart';
-import '../../../widgets/ads/drop_Down_field.dart';
-import '../../../widgets/ads/text_field.dart';
+import '../color_picker_field.dart';
+import '../drop_Down_field.dart';
+import '../text_field.dart';
 
 class FormFieldsSection extends StatefulWidget {
   final TextEditingController makeController;
