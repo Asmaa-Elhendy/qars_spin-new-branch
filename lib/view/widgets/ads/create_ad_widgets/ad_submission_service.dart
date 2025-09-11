@@ -78,10 +78,24 @@ class AdSubmissionService {
       final response = await adRepository.createCarAd(adModel: adData);
 
       log('API Response: $response');
-      hideLoadingDialog();
 
       if (response['Code'] == 'OK' || response['Code']?.toString().toLowerCase() == 'ok') {
         String postId = response['ID']?.toString() ?? '';
+        
+        // Upload cover photo if we have a post ID and cover image
+        if (postId.isNotEmpty && coverImage.isNotEmpty) {
+          log('Uploading cover photo for post ID: $postId');
+          await adRepository.uploadCoverPhoto(
+            postId: postId,
+            ourSecret: '1244', // Using the same secret as in ad creation
+            imagePath: coverImage,
+          );
+          log('Cover photo upload completed');
+        }
+        
+        // Hide loading dialog only after both operations are complete
+        hideLoadingDialog();
+        
         String successMessage = postId.isNotEmpty 
             ? "Ad created successfully!\nPost ID: $postId" 
             : "Ad created successfully!";
@@ -173,4 +187,5 @@ class AdSubmissionService {
     log('Has Video: $hasVideo');
     log('========================');
   }
+
 }

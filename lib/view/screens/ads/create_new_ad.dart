@@ -9,7 +9,7 @@ import '../../../controller/const/colors.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
-import '../../widgets/ads/dialogs/error_dialog.dart';
+import '../../widgets/ads/dialogs/error_dialog.dart'; 
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';

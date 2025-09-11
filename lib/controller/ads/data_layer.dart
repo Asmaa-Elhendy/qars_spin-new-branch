@@ -1,5 +1,7 @@
 // repositories/car_repository.dart
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../controller/const/base_url.dart';
 import '../../model/car_brand.dart';
@@ -95,7 +97,7 @@ class AdRepository {
       'Our_Secret': adModel.ourSecret,
       'Selected_Language': adModel.selectedLanguage,
     };
-
+  log(requestBody.toString());
     try {
       final response = await http.post(
         url,
@@ -127,11 +129,11 @@ class AdRepository {
   Map<String, dynamic> _parseJsonResponse(String jsonString) {
     try {
       final parsedJson = jsonDecode(jsonString);
-      
+
       return {
         'Code': parsedJson['Code'] ?? 'Error',
         'Desc': parsedJson['Desc'] ?? 'Unknown error',
-        'ID': parsedJson['ID'],
+        'ID': parsedJson['Created_ID'],
       };
     } catch (e) {
       return {
@@ -140,4 +142,88 @@ class AdRepository {
       };
     }
   }
+
+  /// Upload cover photo for a post
+  Future<Map<String, dynamic>> uploadCoverPhoto({
+    required String postId,
+    required String ourSecret,
+    required String imagePath,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/UploadPostCoverPhoto',
+    );
+
+    try {
+      // Read the image file
+      final file = File(imagePath);
+      if (!await file.exists()) {
+        return {
+          'Code': 'Error',
+          'Desc': 'Image file not found',
+        };
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', url);
+      
+      // Add form fields
+      request.fields['Post_ID'] = postId;
+      request.fields['Our_Secret'] = ourSecret;
+      
+      // Add image file
+      final imageFile = await http.MultipartFile.fromPath(
+        'PhotoBytes',
+        imagePath,
+        filename: 'cover.jpg',
+      );
+      request.files.add(imageFile);
+
+      // Send the request
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        // Parse XML response
+        return _parseUploadResponse(responseBody);
+      } else {
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to upload cover photo. Status code: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Parse XML response from upload endpoint
+  // Map<String, dynamic> _parseUploadResponse(String xmlString) {
+  //   try {
+  //     // Simple XML parsing for the expected response format
+  //     if (xmlString.contains('<Code>OK</Code>') || xmlString.contains('<Code>ok</Code>')) {
+  //       return {
+  //         'Code': 'OK',
+  //         'Desc': 'Upload successful',
+  //       };
+  //     } else {
+  //       // Try to extract error message
+  //       final codeMatch = RegExp(r'<Code>([^<]+)</Code>').firstMatch(xmlString);
+  //       final descMatch = RegExp(r'<Desc>([^<]+)</Desc>').firstMatch(xmlString);
+  //
+  //       return {
+  //         'Code': codeMatch?.group(1) ?? 'Error',
+  //         'Desc': descMatch?.group(1) ?? 'Upload failed',
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       'Code': 'Error',
+  //       'Desc': 'Failed to parse upload response: ${e.toString()}',
+  //     };
+  //   }
+  // }
+
 }
