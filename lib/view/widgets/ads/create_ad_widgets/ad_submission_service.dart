@@ -66,8 +66,8 @@ class AdSubmissionService {
         interiorColor: interiorColorHex,
         exteriorColor: exteriorColorHex,
         warrantyAvailable: warrantyAvailable ? 'yes' : 'no',
-        userName: 'Asmaa2',
-        ourSecret: '1244',
+        userName:userName,
+        ourSecret:ourSecret,
         selectedLanguage: 'en',
       );
 
@@ -87,7 +87,7 @@ class AdSubmissionService {
           log('Uploading cover photo for post ID: $postId');
           await adRepository.uploadCoverPhoto(
             postId: postId,
-            ourSecret: '1244', // Using the same secret as in ad creation
+            ourSecret: ourSecret, // Using the same secret as in ad creation
             imagePath: coverImage,
           );
           log('Cover photo upload completed');

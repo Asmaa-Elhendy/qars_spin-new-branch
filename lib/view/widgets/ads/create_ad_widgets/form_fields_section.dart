@@ -170,6 +170,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           onChanged: (value) {
             setState(() {
               selectedType = value;
+
             });
           },
         ),

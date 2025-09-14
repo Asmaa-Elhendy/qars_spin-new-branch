@@ -9,7 +9,8 @@ import '../../model/class_model.dart';
 import '../../model/car_model_class.dart';
 import '../../model/create_ad_model.dart';
 
-
+String ourSecret='1244';
+String userName= 'Asmaa2';
 class AdRepository {
   Future<List<CarBrand>> fetchCarMakes() async {
     final url = Uri.parse(
@@ -82,7 +83,8 @@ class AdRepository {
   /// إنشاء إعلان سيارة جديدة للبيع
   Future<Map<String, dynamic>> createCarAd({
     required CreateAdModel adModel,
-  }) async {
+  }) async
+  {
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/InsertCarForSalePost',
     );
@@ -96,6 +98,8 @@ class AdRepository {
       'UserName': adModel.userName,
       'Our_Secret': adModel.ourSecret,
       'Selected_Language': adModel.selectedLanguage,
+      'partnerID':''
+
     };
   log(requestBody.toString());
     try {
@@ -148,7 +152,8 @@ class AdRepository {
     required String postId,
     required String ourSecret,
     required String imagePath,
-  }) async {
+  }) async
+  {
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/UploadPostCoverPhoto',
     );

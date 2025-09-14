@@ -21,6 +21,11 @@ class AdCleanController extends GetxController {
   var carModels = <CarModelClass>[].obs;
   var selectedModel = Rxn<CarModelClass>();
 
+  // Create ad state
+  var isCreatingAd = false.obs;
+  var createAdError = Rxn<String>();
+  var createAdSuccess = Rxn<Map<String, dynamic>>();
+
   // loading flags
   var isLoadingMakes = false.obs;
   var isLoadingClasses = false.obs;
@@ -72,15 +77,13 @@ class AdCleanController extends GetxController {
     }
   }
 
-  // Create ad state
-  var isCreatingAd = false.obs;
-  var createAdError = Rxn<String>();
-  var createAdSuccess = Rxn<Map<String, dynamic>>();
+
 
   /// إنشاء إعلان جديد
   Future<void> createAd({
     required CreateAdModel adData,
-  }) async {
+  }) async
+  {
     isCreatingAd.value = true;
     createAdError.value = null;
     createAdSuccess.value = null;
@@ -142,7 +145,8 @@ class AdCleanController extends GetxController {
   /// Get missing required fields for validation
   List<String> getMissingRequiredFields({
     required CreateAdModel adData,
-  }) {
+  })
+  {
     List<String> missingFields = [];
 
     if (selectedMake.value == null) missingFields.add('Make');
