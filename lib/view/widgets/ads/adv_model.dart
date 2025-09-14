@@ -113,7 +113,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
       margin: EdgeInsets.only(top: height*.004), // ✅ يمنع أي فراغ خارجي
 
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      elevation: 4,
+      elevation: 5,
       clipBehavior: Clip.antiAlias, // 👈 مهم جداً
 
       child: Column(
@@ -157,7 +157,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               SizedBox(height: 4.2.h,),
-                              option.isChecked ?    Icgon(
+                              option.isChecked ?    Icon(
                                 Icons.check_box ,
                                 color:  Color(0xff00ff00),
                                 size: 15.w,
@@ -188,7 +188,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                 Padding(
                   padding:  EdgeInsets.only(bottom: 10.h),
                   child: Center(
-                    child: SizedBox(width: width*.75,
+                    child: SizedBox(width: width*.71,
                       height: height*.052,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
