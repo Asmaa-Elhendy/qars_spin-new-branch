@@ -155,7 +155,7 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                   Get.to(SpecsManagemnt());
                 },w: 90.w),
                 yellowButtons(title: "Gallery",onTap: (){
-                  Get.to(GalleryManagement());
+                  Get.to(GalleryManagement(postId:ad.postId));
                 },w: 90.w,),
                 yellowButtons(title: "Publish",onTap: (){},w: 90.w,green: true),
 

@@ -8,6 +8,8 @@ import 'package:qarsspin/controller/specs_controller.dart';
 import 'ads/ad_getx_controller_create_ad.dart';
 import 'ads/data_layer.dart';
 import 'brand_controller.dart';
+import 'my_ads/my_ad_getx_controller.dart';
+import 'my_ads/my_ad_data_layer.dart';
 
 class MyBinding implements  Bindings {
   @override
@@ -17,5 +19,6 @@ class MyBinding implements  Bindings {
     Get.lazyPut(() => RentalCarsController(),fenix: true);
     Get.lazyPut(() => SpecsController(),fenix:true);
     Get.lazyPut(() => AdCleanController(AdRepository()), fenix: true);
+    Get.lazyPut(() => MyAdCleanController(MyAdDataLayer()), fenix: true);
   }
 }

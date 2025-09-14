@@ -79,7 +79,7 @@ class AdCleanController extends GetxController {
     try {
       final models = await repository.fetchCarModels(classId);
       carModels.assignAll(models);
-    } catch (e) {
+    } catch (e) {//k
       print("Error fetching models: $e");
     } finally {
       isLoadingModels.value = false;
