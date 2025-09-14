@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/my_ads/my_ad_data_layer.dart';
 import '../../widgets/my_ads/my_ad_card.dart';
@@ -32,8 +33,8 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 6,
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 5.h,spreadRadius: 1,
                   offset: Offset(0, 2),
                 ),
               ],
@@ -86,7 +87,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
             child: Obx(() {
               if (controller.isLoadingMyAds.value) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(color: AppColors.primary,),
                 );
               }
               

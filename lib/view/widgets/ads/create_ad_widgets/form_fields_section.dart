@@ -299,7 +299,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           fromCreateAd: true,
           controller: widget.chassisNumberController,
           label: "Chassis Number",
-          keyboardType: TextInputType.number,
+          keyboardType: TextInputType.text,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
         ),

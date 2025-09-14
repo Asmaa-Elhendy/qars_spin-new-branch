@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../../controller/ads/data_layer.dart';
+import '../../../../controller/my_ads/my_ad_getx_controller.dart';
+import '../../../../controller/my_ads/my_ad_data_layer.dart';
 import '../../../../model/create_ad_model.dart';
 
 class AdSubmissionService {
@@ -94,6 +97,17 @@ class AdSubmissionService {
           log('Cover photo upload completed');
         }
         
+        // Upload gallery photos (all images except cover photo)
+        if (postId.isNotEmpty && images.isNotEmpty) {
+          log('Uploading gallery photos for post ID: $postId');
+          await _uploadGalleryPhotos(
+            postId: postId,
+            images: images,
+            coverImage: coverImage,
+          );
+          log('Gallery photos upload completed');
+        }
+        
         // Hide loading dialog only after both operations are complete
         hideLoadingDialog();
         
@@ -148,6 +162,53 @@ class AdSubmissionService {
     }
 
     return true;
+  }
+
+  /// Upload gallery photos (excluding cover photo)
+  static Future<void> _uploadGalleryPhotos({
+    required String postId,
+    required List<String> images,
+    required String coverImage,
+  }) async {
+    try {
+      // Get the MyAdCleanController instance
+      final MyAdCleanController myAdController = Get.put(
+        MyAdCleanController(MyAdDataLayer()),
+      );
+      
+      // Filter out cover photo from images list
+      final galleryImages = images.where((image) => image != coverImage).toList();
+      
+      log('Gallery images to upload: ${galleryImages.length} (excluding cover photo)');
+      
+      // Upload each gallery photo sequentially
+      for (int i = 0; i < galleryImages.length; i++) {
+        final imagePath = galleryImages[i];
+        final file = File(imagePath);
+        
+        if (await file.exists()) {
+          log('Uploading gallery photo ${i + 1}/${galleryImages.length}: $imagePath');
+          
+          final success = await myAdController.uploadPostGalleryPhoto(
+            postId: postId,
+            photoFile: file,
+            ourSecret: ourSecret,
+          );
+          
+          if (success) {
+            log('✅ Gallery photo ${i + 1} uploaded successfully');
+          } else {
+            log('❌ Failed to upload gallery photo ${i + 1}: ${myAdController.uploadError.value}');
+          }
+        } else {
+          log('❌ Gallery photo file not found: $imagePath');
+        }
+      }
+      
+      log('Gallery photos upload process completed');
+    } catch (e) {
+      log('❌ Error uploading gallery photos: $e');
+    }
   }
 
   static void logAdSubmission({

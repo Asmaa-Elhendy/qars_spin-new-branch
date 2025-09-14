@@ -181,9 +181,9 @@ class _GalleryManagementState extends State<GalleryManagement> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 5.h,spreadRadius: 1,
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
