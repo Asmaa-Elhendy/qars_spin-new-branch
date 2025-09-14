@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../model/car_brand.dart';
+import '../../model/car_category.dart';
 import '../../model/class_model.dart';
 import '../../model/car_model_class.dart';
 import '../../model/create_ad_model.dart';
@@ -21,6 +22,13 @@ class AdCleanController extends GetxController {
   var carModels = <CarModelClass>[].obs;
   var selectedModel = Rxn<CarModelClass>();
 
+  // قائمة أنواع السيارات
+  var carCategories = <CarCategory>[].obs;
+  var selectedCategory = Rxn<CarCategory>();
+
+  // loading flags
+  var isLoadingCategories = false.obs;
+
   // Create ad state
   var isCreatingAd = false.obs;
   var createAdError = Rxn<String>();
@@ -35,6 +43,7 @@ class AdCleanController extends GetxController {
   void onInit() {
     super.onInit();
     fetchMakes();
+    fetchCarCategories();
   }
 
   void fetchMakes() async {
@@ -74,6 +83,23 @@ class AdCleanController extends GetxController {
       print("Error fetching models: $e");
     } finally {
       isLoadingModels.value = false;
+    }
+  }
+
+  void fetchCarCategories() async {
+    print('fetchCarCategories called');
+    isLoadingCategories.value = true;
+    try {
+      print('Calling repository.fetchCarCategories()');
+      final categories = await repository.fetchCarCategories();
+      print('Received ${categories.length} categories from repository');
+      carCategories.assignAll(categories);
+      print('carCategories list now has ${carCategories.length} items');
+      print('carCategories content: ${carCategories.map((c) => "${c.id}-${c.name}").toList()}');
+    } catch (e) {
+      print("Error fetching categories: $e");
+    } finally {
+      isLoadingCategories.value = false;
     }
   }
 

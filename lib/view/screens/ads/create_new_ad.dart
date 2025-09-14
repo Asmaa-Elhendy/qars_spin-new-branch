@@ -287,7 +287,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       },
     );
   }
-  
+
   /// Submit ad to API
   void _submitAd() async {
     // Log the submission

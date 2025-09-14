@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../controller/const/base_url.dart';
 import '../../model/car_brand.dart';
+import '../../model/car_category.dart';
 import '../../model/class_model.dart';
 import '../../model/car_model_class.dart';
 import '../../model/create_ad_model.dart';
@@ -77,6 +78,38 @@ class AdRepository {
       }).toList();
     } else {
       throw Exception("Failed to load car models");
+    }
+  }
+
+  /// جلب أنواع السيارات
+  Future<List<CarCategory>> fetchCarCategories() async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/GetListOfCarCategories',
+    );
+
+    print('Fetching car categories from: $url');
+    final response = await http.get(url, headers: {'Accept': 'application/json'});
+    print('API Response status: ${response.statusCode}');
+    print('API Response body: ${response.body}');
+//k
+    if (response.statusCode == 200) {
+      final parsedJson = jsonDecode(response.body);
+      print('Parsed JSON: $parsedJson');
+      final List<dynamic> data = parsedJson['Data'];
+      print('Data list length: ${data.length}');
+      print('First data item: ${data.isNotEmpty ? data[0] : 'No data'}');
+      
+      final categories = data.map((item) {
+        final category = CarCategory.fromJson(item);
+        print('Parsed category: ${category.id} - ${category.name}');
+        return category;
+      }).toList();
+      
+      print('Total categories parsed: ${categories.length}');
+      return categories;
+    } else {
+      print('Failed to load car categories. Status: ${response.statusCode}');
+      throw Exception("Failed to load car categories");
     }
   }
 

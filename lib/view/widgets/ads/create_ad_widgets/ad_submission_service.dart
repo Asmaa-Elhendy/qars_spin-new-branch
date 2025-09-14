@@ -42,6 +42,7 @@ class AdSubmissionService {
       final selectedMake = brandController.selectedMake.value;
       final selectedClass = brandController.selectedClass.value;
       final selectedModel = brandController.selectedModel.value;
+      final selectedCategory = brandController.selectedCategory.value;
 
       // Convert warranty to boolean
       bool warrantyAvailable = warranty.toLowerCase() == 'yes';
@@ -55,7 +56,7 @@ class AdSubmissionService {
         makeId: selectedMake?.id.toString() ?? '',
         classId: selectedClass?.id.toString() ?? '',
         modelId: selectedModel?.id.toString() ?? '',
-        categoryId: _getCategoryId(type),
+        categoryId: selectedCategory?.id.toString() ?? '',
         manufactureYear: year,
         minimumPrice: minimumPrice.isNotEmpty ? minimumPrice : '0',
         askingPrice: askingPrice,
@@ -113,25 +114,7 @@ class AdSubmissionService {
     }
   }
 
-  static String _getCategoryId(String type) {
-    // Map car types to category IDs
-    switch (type.toLowerCase()) {
-      case '4*4':
-        return '1';
-      case 'bus':
-        return '2';
-      case 'convertible':
-        return '3';
-      case 'coupe':
-        return '4';
-      case 'crossover':
-        return '5';
-      case 'electric vehicle (ev)':
-        return '6';
-      default:
-        return '1'; // Default category
-    }
-  }
+  // Removed fixed category mapping - now using dynamic category ID from controller
 
   static Future<bool> validateImageFiles({
     required List<String> images,

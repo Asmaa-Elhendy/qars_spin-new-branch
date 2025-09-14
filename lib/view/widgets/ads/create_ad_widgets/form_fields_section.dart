@@ -64,8 +64,23 @@ class FormFieldsSection extends StatefulWidget {
 }
 
 class _FormFieldsSectionState extends State<FormFieldsSection> {
-  final AdCleanController brandController = Get.put(AdCleanController(AdRepository()));
+  late AdCleanController brandController;
   String? selectedType;
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      brandController = Get.find<AdCleanController>();
+      print('AdCleanController found successfully');
+      print('Categories count: ${brandController.carCategories.length}');
+    } catch (e) {
+      print('Error finding AdCleanController: $e');
+      // Fallback: create a new instance
+      brandController = Get.put(AdCleanController(AdRepository()));
+      print('Created new AdCleanController instance');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,18 +177,42 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         SizedBox(height: height * .01),
         
-        CustomDropDownTyping(
-          label: "Choose Type(*)",
-          controller: widget.typeController,
-          options: ["4*4", "Bus", "Convertible", "Coupe", "CrossOver", "Electric Vehicle (EV)"],
-          enableSearch: false,
-          onChanged: (value) {
-            setState(() {
-              selectedType = value;
-
-            });
-          },
-        ),
+        // Car Type Dropdown - Using dynamic categories from API
+        Obx(() {
+          print('Obx rebuilding for car categories. Count: ${brandController.carCategories.length}');
+          print('Loading state: ${brandController.isLoadingCategories.value}');
+          final categoryOptions = brandController.carCategories
+              .map((c) => c.name)
+              .toList()
+            ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+          print('Category options: $categoryOptions');
+          
+          return CustomDropDownTyping(
+            label: "Choose Type(*)",
+            controller: widget.typeController,
+            options: categoryOptions,
+            enableSearch: false,
+            onChanged: (value) {
+              print('Type selected: $value');
+              final selected = brandController.carCategories
+                  .firstWhereOrNull((c) => c.name == value);
+              if (selected != null) {
+                brandController.selectedCategory.value = selected;
+                widget.typeController.text = selected.name;
+                setState(() {
+                  selectedType = selected.name;
+                });
+                print('Selected category: ${selected.id} - ${selected.name}');
+              } else if (value.isEmpty) {
+                brandController.selectedCategory.value = null;
+                setState(() {
+                  selectedType = null;
+                });
+                print('Category cleared');
+              }
+            },
+          );
+        }),
 
         SizedBox(height: height * .01),
         

@@ -39,6 +39,8 @@ class MyAdDataLayer {
         // Parse JSON response
         return _parseJsonResponse(response.body);
       } else {
+        print('❌ HTTP Error: Status code ${response.statusCode}');
+        print('Response Body: ${response.body}');
         return {
           'Code': 'Error',
           'Desc': 'Failed to get posts. Status code: ${response.statusCode}',

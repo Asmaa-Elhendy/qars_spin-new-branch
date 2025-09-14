@@ -123,7 +123,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
               
               return RefreshIndicator(
                 onRefresh: controller.fetchMyAds,
-                child: ListView.builder(
+                child: ListView.builder(padding: EdgeInsets.zero,
                   itemCount: controller.myAds.length,
                   itemBuilder: (context, index) {
                     final ad = controller.myAds[index];

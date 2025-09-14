@@ -32,16 +32,23 @@ class MyAdCleanController extends GetxController {
       );
 
       if (response['Code'] == 'OK') {
-        // Parse the response
         final myAdResponse = MyAdResponse.fromJson(response);
         myAdsResponse.value = myAdResponse;
+        
+        // Print only Rectangle_Image_URL for each post
+        for (int i = 0; i < myAdResponse.data.length; i++) {
+          final post = myAdResponse.data[i];
+          print('${post.rectangleImageUrl}');
+        }
+        
         myAds.assignAll(myAdResponse.data);
       } else {
         myAdsError.value = response['Desc'] ?? 'Failed to fetch ads';
+        print('❌ API Error: ${response['Desc']}');
       }
     } catch (e) {
       myAdsError.value = 'Network error: ${e.toString()}';
-      print('Error fetching my ads: $e');
+      print('❌ Error fetching my ads: $e');
     } finally {
       isLoadingMyAds.value = false;
     }

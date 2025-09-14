@@ -38,9 +38,21 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
         Container(
           width:double.infinity,
           height: 260.h,
-          child: Image.asset("assets/images/car2-removebg-preview.png",
-            fit: BoxFit.fill,
-          ),
+          child: ad.rectangleImageUrl != null
+              ? Image.network(
+                  ad.rectangleImageUrl!,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/car2-removebg-preview.png",
+                      fit: BoxFit.fill,
+                    );
+                  },
+                )
+              : Image.asset(
+                  "assets/images/logo_the_q.png",
+                  fit: BoxFit.fill,
+                ),
         ),
         Padding(
           padding:  EdgeInsets.symmetric(horizontal: 10.w),
