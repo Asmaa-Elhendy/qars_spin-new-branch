@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../model/add_options_model.dart';
@@ -60,7 +61,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
               height: height,
               title: "Qars Spin Showroom Advertisement",
               options: showroomOptions,
-              buttonText: "Request appointment",
+              buttonText: "Request Appointment",
               onPressed: () {
                 // final checkedOptions = showroomOptions.where((opt) => opt.isChecked).toList();
                 // debugPrint('Checked options: ${checkedOptions.map((e) => e.text).toList()}');
@@ -73,13 +74,13 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                 });
               },
             ),
-            SizedBox(height: height*.02),
+            SizedBox(height: height*.015),
             _buildCard(
               width: width,
               height: height,
               title: "Free Personal Advertisement",
               options: personalOptions,
-              buttonText: "Post your ad",
+              buttonText: "Post Ad",
               onPressed: () {
                 // final checkedOptions = personalOptions.where((opt) => opt.isChecked).toList();
                 // debugPrint('Checked options: ${checkedOptions.map((e) => e.text).toList()}');
@@ -111,7 +112,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
     return Card(
       margin: EdgeInsets.only(top: height*.004), // ✅ يمنع أي فراغ خارجي
 
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 4,
       clipBehavior: Clip.antiAlias, // 👈 مهم جداً
 
@@ -120,7 +121,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(12), // هنا الحل، padding للعنوان
+            padding: const EdgeInsets.all(5), // هنا الحل، padding للعنوان
             width: double.infinity,
             color: Color(0xff7b7b7b),
 
@@ -149,22 +150,30 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          option.isChecked ?    Icon(
-                            Icons.check_box ,
-                            color:  Colors.green,
-                            size: 20,
-                          ):Container(
-                            margin: EdgeInsets.only(left: width*.007),
-                            color: Colors.black,width: width*.04,height: height*.02,),
+                          Column(mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 4.2.h,),
+                              option.isChecked ?    Icgon(
+                                Icons.check_box ,
+                                color:  Color(0xff00ff00),
+                                size: 15.w,
+                              ):Container(
+                                margin: EdgeInsets.only(left: width*.003),
+                                color: Colors.black,width: 11.w
+                                ,height:12.h,),
+                            ],
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               option.text,
                               style: TextStyle(
                                 fontSize: width * 0.034,
-                                fontWeight: FontWeight.bold,
+                              //  fontWeight: FontWeight.bold,
                                 color:  Colors.black,
                                 decoration: option.isChecked ? null : TextDecoration.none,
                               ),
@@ -176,24 +185,28 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                   );
                 }).toList(),
                 SizedBox(height: height*.01),
-                Center(
-                  child: SizedBox(width: width*.7,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:  Color(0xfff6c42d),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                      onPressed: onPressed,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            icon,
-                            width: width * .053,
+                Padding(
+                  padding:  EdgeInsets.only(bottom: 10.h),
+                  child: Center(
+                    child: SizedBox(width: width*.75,
+                      height: height*.052,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:  Color(0xfff6c42d),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
+                        onPressed: onPressed,
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              icon,
+                              width: width * .053,
 
-                          ),SizedBox(width: width*.02,),
-                          Text(buttonText,style: TextStyle(color: Colors.black,fontSize: width*.04,fontWeight: FontWeight.bold),),
-                        ],
+                            ),SizedBox(width: width*.02,),
+                            Text(buttonText,style: TextStyle(color: Colors.black,fontSize:16.w,fontWeight: FontWeight.bold),),
+                          ],
+                        ),
                       ),
                     ),
                   ),
