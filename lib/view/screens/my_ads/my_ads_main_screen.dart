@@ -68,7 +68,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                       ),
                       SizedBox(height: 3),
                       Obx(() => Text(
-                        "Active Ads ${controller.myAds.length} Of ${controller.myAds.length}",
+                        "Active Ads ${controller.activeAdsCount} Of ${controller.myAds.length}",
                         style: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Gilroy',

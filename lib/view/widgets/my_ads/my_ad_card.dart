@@ -144,23 +144,63 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
         ),
         6.verticalSpace,
         Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 10.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                yellowButtons(title: "Modify",onTap: (){
-                  Get.to(ModifyCarAd());
-                },w: 90.w),
-                yellowButtons(title: "Spaces",onTap: (){
-                  Get.to(SpecsManagemnt());
-                },w: 90.w),
-                yellowButtons(title: "Gallery",onTap: (){
-                  Get.to(GalleryManagement(postId:ad.postId));
-                },w: 90.w,),
-                yellowButtons(title: "Publish",onTap: (){},w: 90.w,green: true),
-
-
-              ]
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Left side buttons (Modify, Specs)
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: yellowButtons(
+                        title: "Modify",
+                        onTap: () {
+                          Get.to(ModifyCarAd());
+                        },
+                        w: double.infinity,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: yellowButtons(
+                        title: "Specs",
+                        onTap: () {
+                          Get.to(SpecsManagemnt());
+                        },
+                        w: double.infinity,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 15.w),
+              // Right side buttons (Gallery, Publish)
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: yellowButtons(
+                        title: "Gallery",
+                        onTap: () {
+                          Get.to(GalleryManagement(postId: ad.postId));
+                        },
+                        w: double.infinity,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: yellowButtons(
+                        title: "Publish",
+                        onTap: () {},
+                        green: true,
+                        w: double.infinity,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         6.verticalSpace,
