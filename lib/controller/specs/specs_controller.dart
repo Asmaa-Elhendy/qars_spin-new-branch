@@ -42,13 +42,13 @@ class SpecsController extends GetxController {
 
       if (response['Code'] == 'OK') {
         specsResponse.value = response;
-        
+
         // Parse specs from response - use 'Data' field and handle null case
         final specsList = response['Data'] as List? ?? <dynamic>[];
         final parsedSpecs = specsList.map((specJson) => Specs.fromJson(specJson)).toList();
-        
+
         specs.assignAll(parsedSpecs);
-        
+
         log('✅ Successfully fetched ${specs.length} specs');
         log('Specs data: ${specs.map((s) => '${s.specHeaderPl}: ${s.specValuePl}').toList()}');
       } else {
@@ -93,6 +93,57 @@ class SpecsController extends GetxController {
     currentPostId.value = null;
   }
 
+  /// Update spec value
+  Future<bool> updateSpecValue({
+    required String postId,
+    required String specId,
+    required String specValue,
+    String selectedLanguage = 'en',
+  }) async {
+    try {
+      log('Updating spec value - Post ID: $postId, Spec ID: $specId, Value: $specValue');
+
+      final response = await repository.updateSpecValue(
+        postId: postId,
+        selectedLanguage: selectedLanguage,
+        specId: specId,
+        specValue: specValue,
+      );
+
+      if (response['Code'] == 'OK') {
+        log('✅ Successfully updated spec value');
+
+        // Update the spec in the local list
+        final specIndex = specs.indexWhere((spec) => spec.specId == specId);
+        if (specIndex != -1) {
+          // Create updated spec
+          final updatedSpec = Specs(
+            postId: specs[specIndex].postId,
+            specId: specs[specIndex].specId,
+            specType: specs[specIndex].specType,
+            specHeaderPl: specs[specIndex].specHeaderPl,
+            specValuePl: specValue, // Update the value
+            specHeaderSl: specs[specIndex].specHeaderSl,
+            specValueSl: specs[specIndex].specValueSl,
+            isHidden: specs[specIndex].isHidden,
+          );
+
+          // Update the list
+          specs[specIndex] = updatedSpec;
+          log('✅ Updated spec in local list: ${updatedSpec.specHeaderPl} = ${updatedSpec.specValuePl}');
+        }
+
+        return true;
+      } else {
+        log('❌ API Error updating spec: ${response['Desc']}');
+        return false;
+      }
+    } catch (e) {
+      log('❌ Error updating spec value: $e');
+      return false;
+    }
+  }
+
   /// Log specs data for debugging
   void logSpecsData() {
     log('=== Specs Data ===');
@@ -100,7 +151,7 @@ class SpecsController extends GetxController {
     log('Total Specs: ${specs.length}');
     log('Visible Specs: ${visibleSpecs.length}');
     log('Hidden Specs: ${hiddenSpecs.length}');
-    
+
     for (int i = 0; i < specs.length; i++) {
       final spec = specs[i];
       log('Spec ${i + 1}:');

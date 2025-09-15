@@ -100,7 +100,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
             
             // Specs list with loading and error states
             Obx(() {
-              final controller = specsController;
+              final controller = Get.find<SpecsController>(tag: 'specs_${widget.postId}');
               
               if (controller.isLoadingSpecs.value) {
                 return Container(
@@ -243,16 +243,16 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
               fontWeight: FontWeight.w800,
             ),
           ),
-          spec.isHidden?
-          Text("(Hidden)",
+           5.verticalSpace,
+          Text(spec.specValuePl.isEmpty?'(Hidden)':spec.specValuePl,
             style: TextStyle(
               color: Colors.black,
               fontFamily: 'Gilroy',
               fontSize: 14.sp,
               fontWeight: FontWeight.w800,
             ),
-          ) :SizedBox(),
-          10.verticalSpace,
+          ) ,
+          5.verticalSpace,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -261,7 +261,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                   await showDialog(
                     context: context,
 
-                    builder: (_) =>  EditSpecsName(spec: spec,),
+                    builder: (_) =>  EditSpecsName(spec: spec),
                   );
 
                 },
@@ -280,9 +280,9 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                 onTap: (){
                //   Get.find<SpecsController>().deleteSpecs(spec.id);
                 },
-                child: Icon(Icons.delete_outline,
+                child: Icon(Icons.delete_outlined,
                   color: AppColors.danger,
-                  size: 22.w,
+                  size: 24.w,
 
                 ),
               )

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/specs/specs_controller.dart';
@@ -18,169 +17,98 @@ class EditSpecsName extends StatefulWidget {
 }
 
 class _EditSpecsNameState extends State<EditSpecsName> {
-  final TextEditingController _headerPlController = TextEditingController();
-  final TextEditingController _valuePlController = TextEditingController();
-  final TextEditingController _headerSlController = TextEditingController();
-  final TextEditingController _valueSlController = TextEditingController();
+  final TextEditingController _newNameController = TextEditingController();
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    // Initialize controllers with current spec values
-    _headerPlController.text = widget.spec.specHeaderPl;
-    _valuePlController.text = widget.spec.specValuePl;
-    _headerSlController.text = widget.spec.specHeaderSl;
-    _valueSlController.text = widget.spec.specValueSl;
+    _newNameController.text=widget.spec.specValuePl.isEmpty?'':widget.spec.specValuePl;
   }
-
-  @override
-  void dispose() {
-    _headerPlController.dispose();
-    _valuePlController.dispose();
-    _headerSlController.dispose();
-    _valueSlController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Colors.grey.shade200, // grey background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+
       child: Container(
-        height: 280.h,
+        // width: 800.w,
+        height: 160.h,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.black, width: 2.3.h),
           borderRadius: BorderRadius.circular(8),
+
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 16.w),
+          padding:  EdgeInsets.symmetric(vertical: 6.h,horizontal: 16.w),
           child: Column(
+
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               /// Title
               Center(
                 child: Text(
-                  'Edit Spec',
-                  style: TextStyle(
-                    fontSize: 14.sp, 
-                    fontFamily: fontFamily, 
-                    fontWeight: FontWeight.w800
-                  ),
+                  widget.spec.specHeaderPl,
+                  style: TextStyle(fontSize: 14.sp, fontFamily:fontFamily,fontWeight: FontWeight.w800),
                 ),
               ),
               10.verticalSpace,
 
-              /// English Header
               Container(
                 height: 40.h,
                 decoration: BoxDecoration(
+
                   border: Border.all(color: AppColors.lightGray),
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: TextField(
-                  controller: _headerPlController,
+                  controller: _newNameController,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(fontSize: 15.w,fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,  // ← Added this line
                   decoration: InputDecoration(
-                    hintText: "Header (English)",
+                    hintText: "",contentPadding: EdgeInsets.symmetric(vertical: 1.h),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: BorderSide.none
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide.none
                     ),
                   ),
                 ),
               ),
-              8.verticalSpace,
-
-              /// English Value
-              Container(
-                height: 40.h,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.lightGray),
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: TextField(
-                  controller: _valuePlController,
-                  decoration: InputDecoration(
-                    hintText: "Value (English)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: BorderSide.none
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
-
-              /// Arabic Header
-              Container(
-                height: 40.h,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.lightGray),
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: TextField(
-                  controller: _headerSlController,
-                  decoration: InputDecoration(
-                    hintText: "Header (Arabic)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: BorderSide.none
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
-
-              /// Arabic Value
-              Container(
-                height: 40.h,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.lightGray),
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: TextField(
-                  controller: _valueSlController,
-                  decoration: InputDecoration(
-                    hintText: "Value (Arabic)",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: BorderSide.none
-                    ),
-                  ),
-                ),
-              ),
-              12.verticalSpace,
-
-              /// Buttons Row
-              Row(
+              12.verticalSpace,/// Buttons Row
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: yellowButtons(
-                      title: "Cancel", 
-                      onTap: () {
-                        Navigator.pop(context);
-                      }, 
-                      w: 150.w, 
-                      grey: true
-                    ),
+                  Flexible(
+                    child: yellowButtons(title: "Cancel", onTap: (){
+                      Navigator.pop(context);
+                    }, w: double.infinity, grey: true),
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: yellowButtons(
-                      title: "Confirm", 
-                      onTap: () {
-                    //    Get.find<SpecsController>().editName(widget.spec.id, _headerPlController.text, _valuePlController.text, _headerSlController.text, _valueSlController.text);
+                  SizedBox(width: 7.w),
+                  Flexible(
+                    child: yellowButtons(title: "Confirm", onTap: () async {
+                      final controller = Get.find<SpecsController>(tag: 'specs_${widget.spec.postId}');
+                      final success = await controller.updateSpecValue(
+                        postId: widget.spec.postId,
+                        specId: widget.spec.specId,
+                        specValue: _newNameController.text,
+                      );
+                      
+                      if (success) {
                         Navigator.pop(context);
-                      }, 
-                      w: 150.w
-                    ),
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to update spec value'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }, w: double.infinity),
                   ),
                 ],
               ),
+
             ],
           ),
         ),
