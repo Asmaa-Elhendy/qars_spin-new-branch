@@ -136,7 +136,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       selectedModel = postData['Model_Name_PL']?.toString();
       selectedYear = postData['Manufacture_Year']?.toString();
       selectedClass = postData['Class_Name_PL']?.toString();
-      selectedType = "4*4"; // Default or get from post data if available
+      selectedType = ""; // Default or get from post data if available
       
       log(' selectedMake: $selectedMake');
      log(' selectedModel: $selectedModel');
@@ -175,8 +175,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
 // Set the type controller directly
 _type_controller.text = postData['Category_Name_PL']?.toString() ??
     (brandController.carCategories.isNotEmpty
-        ? brandController.carCategories.first.name
-        : "4*4");
+        ? brandController.carCategories.last.name
+        : "4*4");//k
       
       // Load existing image if available
       if (postData['Rectangle_Image_URL'] != null) {
@@ -222,8 +222,8 @@ _type_controller.text = postData['Category_Name_PL']?.toString() ??
       ever(brandController.carCategories, (List<CarCategory> categories) {
         if (categories.isNotEmpty) {//m
           log('Categories loaded in ever(), count: ${categories.length}');
-          log('First category: ${categories.first.name}');
-          _type_controller.text = categories.first.name;
+          log('First category: ${categories.last.name}');
+          _type_controller.text = categories.last.name;
           brandController.selectedCategory.value = categories.first;
           log('Type controller set to: ${_type_controller.text}');
         }
@@ -233,16 +233,16 @@ _type_controller.text = postData['Category_Name_PL']?.toString() ??
       ever(brandController.isLoadingCategories, (bool isLoading) {
         if (!isLoading && brandController.carCategories.isNotEmpty) {
           log('Categories finished loading, setting first category');
-          _type_controller.text = brandController.carCategories.first.name;
-          brandController.selectedCategory.value = brandController.carCategories.first;
+          _type_controller.text = brandController.carCategories.last.name;
+          brandController.selectedCategory.value = brandController.carCategories.last;
         }
       });
       
       // Set initial type if categories are already loaded
       if (brandController.carCategories.isNotEmpty) {
-        _type_controller.text = brandController.carCategories.first.name;
-        brandController.selectedCategory.value = brandController.carCategories.first;
-        log('Initial type set to: ${brandController.carCategories.first.name}');
+        _type_controller.text = brandController.carCategories.last.name;
+        brandController.selectedCategory.value = brandController.carCategories.last;
+        log('Initial type set to: ${brandController.carCategories.last.name}');
       } else {
         _type_controller.clear(); // Clear until categories load
         log('Waiting for categories to load...');
