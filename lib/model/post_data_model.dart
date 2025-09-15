@@ -63,8 +63,14 @@ class PostData {
   String? categoryNamePl;
   String? categoryNameSl;
   int? makeId;
+  String? makeNamePl;
+  String? makeNameSl;
   int? classId;
+  String? classNamePl;
+  String? classNameSl;
   int? modelId;
+  String? modelNamePl;
+  String? modelNameSl;
   String? carNamePl;
   String? carNameSl;
   String? carNameWithYearPl;
@@ -125,8 +131,14 @@ class PostData {
     this.categoryNamePl,
     this.categoryNameSl,
     this.makeId,
+    this.makeNamePl,
+    this.makeNameSl,
     this.classId,
+    this.classNamePl,
+    this.classNameSl,
     this.modelId,
+    this.modelNamePl,
+    this.modelNameSl,
     this.carNamePl,
     this.carNameSl,
     this.carNameWithYearPl,
@@ -188,8 +200,14 @@ class PostData {
     categoryNamePl = json['Category_Name_PL'];
     categoryNameSl = json['Category_Name_SL'];
     makeId = json['Make_ID'];
+    makeNamePl = json['Make_Name_PL'];
+    makeNameSl = json['Make_Name_SL'];
     classId = json['Class_ID'];
+    classNamePl = json['Class_Name_PL'];
+    classNameSl = json['Class_Name_SL'];
     modelId = json['Model_ID'];
+    modelNamePl = json['Model_Name_PL'];
+    modelNameSl = json['Model_Name_SL'];
     carNamePl = json['Car_Name_PL'];
     carNameSl = json['Car_Name_SL'];
     carNameWithYearPl = json['Car_Name_With_Year_PL'];
@@ -252,8 +270,14 @@ class PostData {
     data['Category_Name_PL'] = categoryNamePl;
     data['Category_Name_SL'] = categoryNameSl;
     data['Make_ID'] = makeId;
+    data['Make_Name_PL'] = makeNamePl;
+    data['Make_Name_SL'] = makeNameSl;
     data['Class_ID'] = classId;
+    data['Class_Name_PL'] = classNamePl;
+    data['Class_Name_SL'] = classNameSl;
     data['Model_ID'] = modelId;
+    data['Model_Name_PL'] = modelNamePl;
+    data['Model_Name_SL'] = modelNameSl;
     data['Car_Name_PL'] = carNamePl;
     data['Car_Name_SL'] = carNameSl;
     data['Car_Name_With_Year_PL'] = carNameWithYearPl;

@@ -41,7 +41,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   String? selectedMake;
   String? selectedModel;
-  String? selectedType = "4*4";
+  String? selectedType;
   String? selectedYear;
   String? selectedTrim;
   String? selectedClass;
@@ -83,14 +83,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   void _handleVideoSelected(String videoPath) {
-    log('Video selected: $videoPath');
+   log('Video selected: $videoPath');
     setState(() {
       _videoPath = videoPath;
       // Only set as cover if there are no other covers and no images
       if (_coverImage == null && _images.isEmpty) {
         _coverImage = videoPath;
       }
-      log('Video added. Cover image: $_coverImage');
+     log('Video added. Cover image: $_coverImage');
     });
   }
 
@@ -127,20 +127,20 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   void _populateFieldsFromPostData(dynamic postData) {
-    log('🔧 _populateFieldsFromPostData called with data: $postData');
+    log(' _populateFieldsFromPostData called with data: $postData');
     
     setState(() {
       // Populate car details from API response
-      selectedMake = postData['Car_Name_PL'] ?? postData['Car_Name_SL'];
-      selectedModel = postData['Model_ID']?.toString();
+      selectedMake = postData['Make_Name_PL'] ;
+      selectedModel = postData['Model_Name_PL']?.toString();
       selectedYear = postData['Manufacture_Year']?.toString();
-      selectedClass = postData['Class_ID']?.toString();
+      selectedClass = postData['Class_Name_PL']?.toString();
       selectedType = "4*4"; // Default or get from post data if available
       
-      log('🔧 selectedMake: $selectedMake');
-      log('🔧 selectedModel: $selectedModel');
-      log('🔧 selectedYear: $selectedYear');
-      log('🔧 selectedClass: $selectedClass');
+      log(' selectedMake: $selectedMake');
+     log(' selectedModel: $selectedModel');
+    log(' selectedYear: $selectedYear');
+     log(' selectedClass: $selectedClass');
       
       // Populate text controllers with correct API field names
       _mileageController.text = postData['Mileage']?.toString() ?? '';
@@ -158,31 +158,35 @@ class _SellCarScreenState extends State<SellCarScreen> {
       }
       
       // Populate warranty with correct API field name
-      selectedunderWarranty = postData['Warranty_isAvailable'] == 1 ? "Yes" : "No";
+      selectedunderWarranty = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
       
       // Populate description with correct API field names
       _descriptionController.text = postData['Technical_Description_PL'] ?? postData['Technical_Description_SL'] ?? '';
       
       // Populate other controllers directly from post data with correct field names
-      _make_contrller.text = postData['Car_Name_PL'] ?? postData['Car_Name_SL'] ?? '';
-      _model_controller.text = postData['Model_ID']?.toString() ?? '';
-      _class_controller.text = postData['Class_ID']?.toString() ?? '';
+      _make_contrller.text = postData['Make_Name_PL'] ?? postData['Make_Name_PL'] ?? '';
+      _model_controller.text = postData['Model_Name_PL']?.toString() ?? '';
+      _class_controller.text = postData['Class_Name_PL']?.toString() ?? '';
       _year_controller.text = postData['Manufacture_Year']?.toString() ?? '';
-      _warranty_controller.text = postData['Warranty_isAvailable'] == 1 ? "Yes" : "No";
-      
+      _warranty_controller.text = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
+
       // Set the type controller directly
-      _type_controller.text = selectedType ?? "4*4";
+// Set the type controller directly
+_type_controller.text = postData['Category_Name_PL']?.toString() ??
+    (brandController.carCategories.isNotEmpty
+        ? brandController.carCategories.first.name
+        : "4*4");
       
       // Load existing image if available
       if (postData['Rectangle_Image_URL'] != null) {
         _coverImage = postData['Rectangle_Image_URL'];
       }
       
-      log('🔧 _make_contrller.text: ${_make_contrller.text}');
-      log('🔧 _model_controller.text: ${_model_controller.text}');
-      log('🔧 _year_controller.text: ${_year_controller.text}');
-      log('🔧 _warranty_controller.text: ${_warranty_controller.text}');
-      log('🔧 _coverImage: $_coverImage');
+      log(' _make_contrller.text: ${_make_contrller.text}');
+      log(' _model_controller.text: ${_model_controller.text}');
+      log(' _year_controller.text: ${_year_controller.text}');
+      log(' _warranty_controller.text: ${_warranty_controller.text}');
+      log(' _coverImage: $_coverImage');
     });
   }
 
@@ -195,7 +199,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _populateFieldsFromPostData(widget.postData!);
     } else {
       // Only set default values if we don't have post data
-      _type_controller.text = selectedType ?? "4*4";
+      _type_controller.text = brandController.carCategories.isNotEmpty 
+          ? brandController.carCategories.first.name 
+          : "4*4";
       _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
       _warranty_controller.text = selectedunderWarranty ?? "No";
     }
@@ -463,7 +469,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                       onExteriorColorSelected: (color) {
                         setState(() {
                           _exteriorColor = color;
-                          log(color.hashCode.toString());
+                         log(color.hashCode.toString());
                         });
                       },
                       onInteriorColorSelected: (color) {
