@@ -197,7 +197,8 @@ class MyAdDataLayer {
   Future<Map<String, dynamic>> deleteGalleryImage({
     required String mediaId,
     required String ourSecret,
-  }) async {
+  }) async
+  {
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/DeleteGalleryImage',
     );
@@ -249,6 +250,71 @@ class MyAdDataLayer {
         'Code': 'Error',
         'Desc': 'Network error: ${e.toString()}',
         'Count': 0,
+      };
+    }
+  }
+
+  /// Get post details by post ID
+  Future<Map<String, dynamic>> getPostById({
+    required String postKind,
+    required String postId,
+    required String loggedInUser,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/GetPostByID',
+    );
+
+    // Prepare the request body
+    final requestBody = {
+      'Post_Kind': postKind,
+      'Post_ID': postId,
+      'Logged_In_User': loggedInUser,
+    };
+
+    log('Getting post details for post ID: $postId');
+    log('Request body: $requestBody');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        final parsedJson = jsonDecode(response.body);
+        log('Parsed JSON: $parsedJson');
+        
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'Count': parsedJson['Count'] ?? 0,
+          'Data': parsedJson['Data'] ?? [],
+        };
+      } else {
+        print('❌ HTTP Error: Status code ${response.statusCode}');
+        print('Response Body: ${response.body}');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to get post details. Status code: ${response.statusCode}',
+          'Count': 0,
+          'Data': [],
+        };
+      }
+    } catch (e) {
+      log('Error getting post details: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'Count': 0,
+        'Data': [],
       };
     }
   }

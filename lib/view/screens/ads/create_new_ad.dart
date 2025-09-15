@@ -9,7 +9,7 @@ import '../../../controller/const/colors.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
-import '../../widgets/ads/dialogs/error_dialog.dart'; 
+import '../../widgets/ads/dialogs/error_dialog.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';
@@ -17,6 +17,10 @@ import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 
 class SellCarScreen extends StatefulWidget {
+  final dynamic postData;
+
+  SellCarScreen({this.postData});
+
   @override
   _SellCarScreenState createState() => _SellCarScreenState();
 }
@@ -79,14 +83,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   void _handleVideoSelected(String videoPath) {
-    debugPrint('Video selected: $videoPath');
+    log('Video selected: $videoPath');
     setState(() {
       _videoPath = videoPath;
       // Only set as cover if there are no other covers and no images
       if (_coverImage == null && _images.isEmpty) {
         _coverImage = videoPath;
       }
-      debugPrint('Video added. Cover image: $_coverImage');
+      log('Video added. Cover image: $_coverImage');
     });
   }
 
@@ -122,17 +126,79 @@ class _SellCarScreenState extends State<SellCarScreen> {
     });
   }
 
+  void _populateFieldsFromPostData(dynamic postData) {
+    log('🔧 _populateFieldsFromPostData called with data: $postData');
+    
+    setState(() {
+      // Populate car details from API response
+      selectedMake = postData['Car_Name_PL'] ?? postData['Car_Name_SL'];
+      selectedModel = postData['Model_ID']?.toString();
+      selectedYear = postData['Manufacture_Year']?.toString();
+      selectedClass = postData['Class_ID']?.toString();
+      selectedType = "4*4"; // Default or get from post data if available
+      
+      log('🔧 selectedMake: $selectedMake');
+      log('🔧 selectedModel: $selectedModel');
+      log('🔧 selectedYear: $selectedYear');
+      log('🔧 selectedClass: $selectedClass');
+      
+      // Populate text controllers with correct API field names
+      _mileageController.text = postData['Mileage']?.toString() ?? '';
+      _plateNumberController.text = postData['Plate_Number'] ?? '';
+      _chassisNumberController.text = postData['Chassis_Number'] ?? '';
+      _askingPriceController.text = postData['Asking_Price'] ?? '';
+      _minimumPriceController.text = postData['Minimum_Price'] ?? '';
+      
+      // Populate colors with correct API field names
+      if (postData['Color_Exterior'] != null) {
+        _exteriorColor = Color(int.parse(postData['Color_Exterior'].replaceFirst('#', '0xFF')));
+      }
+      if (postData['Color_Interior'] != null) {
+        _interiorColor = Color(int.parse(postData['Color_Interior'].replaceFirst('#', '0xFF')));
+      }
+      
+      // Populate warranty with correct API field name
+      selectedunderWarranty = postData['Warranty_isAvailable'] == 1 ? "Yes" : "No";
+      
+      // Populate description with correct API field names
+      _descriptionController.text = postData['Technical_Description_PL'] ?? postData['Technical_Description_SL'] ?? '';
+      
+      // Populate other controllers directly from post data with correct field names
+      _make_contrller.text = postData['Car_Name_PL'] ?? postData['Car_Name_SL'] ?? '';
+      _model_controller.text = postData['Model_ID']?.toString() ?? '';
+      _class_controller.text = postData['Class_ID']?.toString() ?? '';
+      _year_controller.text = postData['Manufacture_Year']?.toString() ?? '';
+      _warranty_controller.text = postData['Warranty_isAvailable'] == 1 ? "Yes" : "No";
+      
+      // Set the type controller directly
+      _type_controller.text = selectedType ?? "4*4";
+      
+      // Load existing image if available
+      if (postData['Rectangle_Image_URL'] != null) {
+        _coverImage = postData['Rectangle_Image_URL'];
+      }
+      
+      log('🔧 _make_contrller.text: ${_make_contrller.text}');
+      log('🔧 _model_controller.text: ${_model_controller.text}');
+      log('🔧 _year_controller.text: ${_year_controller.text}');
+      log('🔧 _warranty_controller.text: ${_warranty_controller.text}');
+      log('🔧 _coverImage: $_coverImage');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    // Set default value for type controller
-    _type_controller.text = selectedType ?? "4*4";
-
-    // Set default value for year controller to first year (current year + 1)
-    _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
-
-    // Set default value for warranty controller
-    _warranty_controller.text = selectedunderWarranty ?? "No";
+    
+    // If we have post data, populate the fields first
+    if (widget.postData != null) {
+      _populateFieldsFromPostData(widget.postData!);
+    } else {
+      // Only set default values if we don't have post data
+      _type_controller.text = selectedType ?? "4*4";
+      _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
+      _warranty_controller.text = selectedunderWarranty ?? "No";
+    }
 
     // Add listener to make controller to clear class and model when make is cleared
     _makeListener = () {
@@ -242,12 +308,12 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Submit the ad using the service
     _submitAd();
   }
-  
+
   /// Show alert for missing fields
   void _showMissingFieldsAlert(String message) {
     MissingFieldsDialog.show(context, [message]);
   }
-  
+
   /// Show alert for missing cover image
   void _showMissingCoverImageAlert() {
     MissingCoverImageDialog.show(context);
@@ -270,7 +336,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     SuccessDialog.show(
       context,
       postId,
-      () {
+          () {
         Navigator.pop(context); // Navigate back from create ad screen
         brandController.resetCreateAdState(); // Reset controller state
       },
@@ -282,7 +348,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     ErrorDialog.show(
       context,
       message,
-      () {
+          () {
         brandController.resetCreateAdState(); // Reset controller state
       },
     );
@@ -328,7 +394,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       hideLoadingDialog: _hideLoadingDialog,
     );
   }
-  
+
 
   @override
   Widget build(BuildContext context) {

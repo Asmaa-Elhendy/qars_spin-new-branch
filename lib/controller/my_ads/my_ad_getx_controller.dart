@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_data_layer.dart';
@@ -27,6 +28,11 @@ class MyAdCleanController extends GetxController {
   final RxBool isUploading = RxBool(false);
   final Rxn<String> uploadError = Rxn<String>();
   final RxBool uploadSuccess = RxBool(false);
+
+  // Post details state
+  var postDetails = Rxn<Map<String, dynamic>>();
+  var isLoadingPostDetails = false.obs;
+  var postDetailsError = Rxn<String>();
 
   @override
   void onInit() {
@@ -169,5 +175,52 @@ class MyAdCleanController extends GetxController {
       print('❌ Error deleting gallery image: $e');
       return false;
     }
+  }
+  /// Get post details by ID for editing
+  Future<void> getPostById({
+    required String postKind,
+    required String postId,
+    required String loggedInUser,
+  }) async {
+    isLoadingPostDetails.value = true;
+    postDetailsError.value = null;
+    postDetails.value = null;
+
+    try {
+      log('Fetching post details for post ID: $postId');
+      final response = await repository.getPostById(
+        postKind: postKind,
+        postId: postId,
+        loggedInUser: loggedInUser,
+      );
+
+      if (response['Code'] == 'OK') {
+        final dataList = response['Data'] as List;
+        if (dataList.isNotEmpty) {
+          postDetails.value = dataList.first as Map<String, dynamic>;
+          log('✅ Successfully fetched post details');
+          log('Post data: ${postDetails.value}');
+        } else {
+          postDetailsError.value = 'No post data found';
+          log('❌ No post data found');
+        }
+      } else {
+        postDetailsError.value = response['Desc'] ?? 'Failed to fetch post details';
+        log('❌ API Error: ${response['Desc']}');
+      }
+    } catch (e) {
+      postDetailsError.value = 'Network error: ${e.toString()}';
+      log('❌ Error fetching post details: $e');
+    } finally {
+      isLoadingPostDetails.value = false;
+    }
+  }
+
+
+  /// Clear post details
+  void clearPostDetails() {
+    postDetails.value = null;
+    postDetailsError.value = null;
+    isLoadingPostDetails.value = false;
   }
 }

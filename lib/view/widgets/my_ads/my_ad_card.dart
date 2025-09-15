@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,9 @@ import 'package:qarsspin/view/screens/my_ads/gallery_management.dart';
 import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 
+import '../../../controller/ads/data_layer.dart';
+import '../../../controller/my_ads/my_ad_getx_controller.dart';
+import '../../screens/ads/create_new_ad.dart';
 import '../../screens/my_ads/modify_car_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
@@ -40,19 +45,19 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
           height: 260.h,
           child: ad.rectangleImageUrl != null
               ? Image.network(
-                  ad.rectangleImageUrl!,
-                  fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/car2-removebg-preview.png",
-                      fit: BoxFit.fill,
-                    );
-                  },
-                )
+            ad.rectangleImageUrl!,
+            fit: BoxFit.fill,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.asset(
+                "assets/images/car2-removebg-preview.png",
+                fit: BoxFit.fill,
+              );
+            },
+          )
               : Image.asset(
-                  "assets/images/logo_the_q.png",
-                  fit: BoxFit.fill,
-                ),
+            "assets/images/logo_the_q.png",
+            fit: BoxFit.fill,
+          ),
         ),
         Padding(
           padding:  EdgeInsets.symmetric(horizontal: 10.w),
@@ -155,8 +160,59 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                     Expanded(
                       child: yellowButtons(
                         title: "Modify",
-                        onTap: () {
-                          Get.to(ModifyCarAd());
+                        onTap: () async {
+                          // Show loading indicator
+                          Get.dialog(
+                            const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            barrierDismissible: false,
+                          );
+
+                          try {
+                            // Get the controller and fetch post details
+                            final myAdController = Get.find<MyAdCleanController>();
+                            
+                            await myAdController.getPostById(
+                              postKind: ad.postKind ?? 'CarForSale',
+                              postId: ad.postId.toString(),
+                              loggedInUser: userName, // You might want to get this from user session
+                            );
+
+                            // Close loading dialog
+                            Get.back();
+
+                            // Check if we got the data successfully
+                            if (myAdController.postDetails.value != null) {
+                              log('🔍 postDetails.value type: ${myAdController.postDetails.value.runtimeType}');
+                              log('🔍 postDetails.value keys: ${myAdController.postDetails.value!.keys.toList()}');
+                              log('🔍 postDetails.value: ${myAdController.postDetails.value}');
+                              
+                              // Navigate to SellCarScreen with post data
+                              Get.to(
+                                SellCarScreen(
+                                  postData: myAdController.postDetails.value,
+                                ),
+                              );
+                            } else {
+                              // Show error message
+                              Get.snackbar(
+                                'Error',
+                                myAdController.postDetailsError.value ?? 'Failed to load post data',
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          } catch (e) {
+                            // Close loading dialog
+                            Get.back();
+                            
+                            // Show error message
+                            Get.snackbar(
+                              'Error',
+                              'Failed to load post data: ${e.toString()}',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          }
                         },
                         w: double.infinity,
                       ),
