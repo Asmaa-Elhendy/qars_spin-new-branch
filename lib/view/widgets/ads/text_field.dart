@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
   final double? height;
   final Color? cursorColor;
   final double? cursorHeight;
+  final String? hintText;
 
   const CustomTextField({
     Key? key,
@@ -32,7 +33,8 @@ class CustomTextField extends StatelessWidget {
     this.fromCreateAd=false,
     this.height,
     this.cursorColor,
-    this.cursorHeight
+    this.cursorHeight,
+    this.hintText,
   }) : super(key: key);
 
   @override
@@ -62,8 +64,8 @@ class CustomTextField extends StatelessWidget {
             onChanged: onChanged,
             validator: validator,
             cursorColor: cursorColor,
-            cursorHeight: cursorHeight,style: TextStyle(fontSize: 15.w
-          ),
+            cursorHeight: cursorHeight,
+            style: TextStyle(fontSize: 15.w),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -87,7 +89,7 @@ class CustomTextField extends StatelessWidget {
               ),
               prefixText: prefixText,
               suffixText: suffixText,
-
+              hintText: hintText,
             ),
           ),
         ),

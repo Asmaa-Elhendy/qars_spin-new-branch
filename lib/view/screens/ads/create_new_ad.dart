@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:qarsspin/model/car_category.dart';
 import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
@@ -15,6 +15,7 @@ import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
+
 
 class SellCarScreen extends StatefulWidget {
   final dynamic postData;
@@ -194,16 +195,67 @@ _type_controller.text = postData['Category_Name_PL']?.toString() ??
   void initState() {
     super.initState();
     
-    // If we have post data, populate the fields first
+    // If we have post data, populate the fields first (editing existing ad)
     if (widget.postData != null) {
       _populateFieldsFromPostData(widget.postData!);
     } else {
-      // Only set default values if we don't have post data
-      _type_controller.text = brandController.carCategories.isNotEmpty 
-          ? brandController.carCategories.first.name 
-          : "4*4";
-      _year_controller.text = selectedYear ?? (DateTime.now().year + 1).toString();
-      _warranty_controller.text = selectedunderWarranty ?? "No";
+      // New ad creation - clear all controllers and set defaults
+      _make_contrller.clear();
+      _model_controller.clear();
+      _class_controller.clear();
+      _mileageController.clear();
+      _plateNumberController.clear();
+      _chassisNumberController.clear();
+      _askingPriceController.clear();
+      _minimumPriceController.clear();
+      _descriptionController.clear();
+      _exteriorColorController.clear();
+      _interiorColorController.clear();
+      
+      // Set year to most recent year
+      _year_controller.text = (DateTime.now().year + 1).toString();
+      
+      // Set warranty default to "No"
+      _warranty_controller.text = "No";
+      
+      // Wait for categories to load and set type to first category
+      ever(brandController.carCategories, (List<CarCategory> categories) {
+        if (categories.isNotEmpty) {//m
+          log('Categories loaded in ever(), count: ${categories.length}');
+          log('First category: ${categories.first.name}');
+          _type_controller.text = categories.first.name;
+          brandController.selectedCategory.value = categories.first;
+          log('Type controller set to: ${_type_controller.text}');
+        }
+      });
+      
+      // Also listen to loading state
+      ever(brandController.isLoadingCategories, (bool isLoading) {
+        if (!isLoading && brandController.carCategories.isNotEmpty) {
+          log('Categories finished loading, setting first category');
+          _type_controller.text = brandController.carCategories.first.name;
+          brandController.selectedCategory.value = brandController.carCategories.first;
+        }
+      });
+      
+      // Set initial type if categories are already loaded
+      if (brandController.carCategories.isNotEmpty) {
+        _type_controller.text = brandController.carCategories.first.name;
+        brandController.selectedCategory.value = brandController.carCategories.first;
+        log('Initial type set to: ${brandController.carCategories.first.name}');
+      } else {
+        _type_controller.clear(); // Clear until categories load
+        log('Waiting for categories to load...');
+      }
+      
+      // Add a delayed check as a fallback
+      Future.delayed(Duration(seconds: 2), () {
+        if (mounted && brandController.carCategories.isNotEmpty && _type_controller.text.isEmpty) {
+          log('Fallback: Setting type after delay');
+          _type_controller.text = brandController.carCategories.first.name;
+          brandController.selectedCategory.value = brandController.carCategories.first;
+        }
+      });
     }
 
     // Add listener to make controller to clear class and model when make is cleared

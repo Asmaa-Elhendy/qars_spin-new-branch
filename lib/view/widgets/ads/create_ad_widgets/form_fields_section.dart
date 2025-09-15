@@ -106,6 +106,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
               .map((b) => b.name)
               .toList()
             ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+          hintText: "Choose Make",
           onChanged: (value) {
             final selected = brandController.carBrands
                 .firstWhereOrNull((b) => b.name == value);
@@ -138,6 +139,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             label: "Choose Class(*)",
             controller: widget.classController,
             options: brandController.carClasses.map((c) => c.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+            hintText: "",
             onChanged: (value) {
               final selected = brandController.carClasses
                   .firstWhereOrNull((c) => c.name == value);
@@ -165,6 +167,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             label: "Choose Model(*)",
             controller: widget.modelController,
             options: brandController.carModels.map((m) => m.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+            hintText: "",
             onChanged: (value) {
               final selected = brandController.carModels
                   .firstWhereOrNull((m) => m.name == value);
@@ -192,6 +195,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             controller: widget.typeController,
             options: categoryOptions,
             enableSearch: false,
+            hintText: "",
             onChanged: (value) {
               print('Type selected: $value');
               final selected = brandController.carCategories
@@ -225,6 +229,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 (index) => (DateTime.now().year + 1 - index).toString(),
           ).toList(),
           enableSearch: false,
+          hintText: "",
           onChanged: (value) {
             setState(() {
               // Handle year selection if needed
@@ -242,6 +247,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
+          hintText: "Enter asking price",
         ),
         SizedBox(height: height * .01),
 
@@ -249,10 +255,11 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.minimumPriceController,
-          label: "Minimum biding price yoou want to see",
+          label: "Minimum biding price you want to see",
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
+          hintText: "Enter minimum price",
         ),
         SizedBox(height: height * .01),
 
@@ -262,6 +269,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           controller: widget.mileageController,
           label: "Mileage(*)",
           keyboardType: TextInputType.number,
+          hintText: "Enter mileage",
         ),
 
         SizedBox(height: height * .01),
@@ -291,6 +299,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
+          hintText: "Enter plate number",
         ),
         SizedBox(height: height * .01),
 
@@ -299,9 +308,10 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           fromCreateAd: true,
           controller: widget.chassisNumberController,
           label: "Chassis Number",
-          keyboardType: TextInputType.text,//k
+          keyboardType: TextInputType.text,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
+          hintText: "Enter chassis number",
         ),
         SizedBox(height: height * .01),
         
@@ -310,6 +320,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           controller: widget.warrantyController,
           options: ["No", "Yes"],
           enableSearch: false,
+          hintText: "",
           onChanged: (value) {
             setState(() {
               // Handle warranty selection if needed

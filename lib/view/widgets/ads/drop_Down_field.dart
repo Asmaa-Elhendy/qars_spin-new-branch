@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,6 +72,7 @@ class CustomDropDownTyping extends StatefulWidget {
   final List<String> options;
   final ValueChanged<String>? onChanged;
   final bool enableSearch;
+  final String? hintText;
 
   const CustomDropDownTyping({
     Key? key,
@@ -81,6 +81,7 @@ class CustomDropDownTyping extends StatefulWidget {
     required this.options,
     this.onChanged,
     this.enableSearch = true,
+    this.hintText,
   }) : super(key: key);
 
   @override
@@ -141,13 +142,13 @@ class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
                         fontWeight: FontWeight.w400,
                         fontSize: 15.sp,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
-
+                        hintText: widget.hintText,
                       ),
                     ),
                   ),
