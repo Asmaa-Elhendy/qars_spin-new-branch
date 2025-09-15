@@ -166,7 +166,7 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                       child: yellowButtons(
                         title: "Specs",
                         onTap: () {
-                          Get.to(SpecsManagemnt());
+                          Get.to(SpecsManagemnt(postId: ad.postId.toString(),));
                         },
                         w: double.infinity,
                       ),
