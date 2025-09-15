@@ -21,14 +21,14 @@ class Specs {
 
   factory Specs.fromJson(Map<String, dynamic> json) {
     return Specs(
-      postId: json['Post_ID'] ?? '',
-      specId: json['Spec_ID'] ?? '',
+      postId: json['Post_ID']?.toString() ?? '',
+      specId: json['Spec_ID']?.toString() ?? '',
       specType: json['Spec_Type'] ?? '',
       specHeaderPl: json['Spec_Header_PL'] ?? '',
       specValuePl: json['Spec_Value_PL'] ?? '',
       specHeaderSl: json['Spec_Header_SL'] ?? '',
       specValueSl: json['Spec_Value_SL'] ?? '',
-      isHidden: json['isHidden'] == '1',
+      isHidden: json['isHidden'] == 1 || json['isHidden'] == '1',
     );
   }
 

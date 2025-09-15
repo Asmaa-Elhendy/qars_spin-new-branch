@@ -99,134 +99,133 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
             22.verticalSpace,
             
             // Specs list with loading and error states
-            GetBuilder<SpecsController>(
-              tag: 'specs_${widget.postId}',
-              builder: (controller) {
-                if (controller.isLoadingSpecs.value) {
-                  return Container(
-                    height: 400.h,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          16.verticalSpace,
-                          Text(
-                            'Loading specs...',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: 'Gilroy',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                if (controller.specsError.value != null) {
-                  return Container(
-                    height: 400.h,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: AppColors.danger,
-                            size: 48.w,
-                          ),
-                          16.verticalSpace,
-                          Text(
-                            'Error loading specs',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: 'Gilroy',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          8.verticalSpace,
-                          Text(
-                            controller.specsError.value!,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontFamily: 'Gilroy',
-                              color: Colors.grey[600],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          16.verticalSpace,
-                          ElevatedButton(
-                            onPressed: () {
-                              controller.refreshSpecs();
-                            },
-                            child: Text('Retry'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                if (controller.specs.isEmpty) {
-                  return Container(
-                    height: 400.h,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: Colors.grey,
-                            size: 48.w,
-                          ),
-                          16.verticalSpace,
-                          Text(
-                            'No specs found',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: 'Gilroy',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          8.verticalSpace,
-                          Text(
-                            'This post has no specifications',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontFamily: 'Gilroy',
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
+            Obx(() {
+              final controller = specsController;
+              
+              if (controller.isLoadingSpecs.value) {
                 return Container(
-                  height: 800.h,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: controller.specs.length,
-                    itemBuilder: (context, index) {
-                      return specsContainer(controller.specs[index]);
-                    },
+                  height: 400.h,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: AppColors.primary,),
+                        16.verticalSpace,
+                        Text(
+                          'Loading specs...',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontFamily: 'Gilroy',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
-              },
-            ),
+              }
+
+              if (controller.specsError.value != null) {
+                return Container(
+                  height: 400.h,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: AppColors.danger,
+                          size: 48.w,
+                        ),
+                        16.verticalSpace,
+                        Text(
+                          'Error loading specs',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontFamily: 'Gilroy',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        8.verticalSpace,
+                        Text(
+                          controller.specsError.value!,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: 'Gilroy',
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        16.verticalSpace,
+                        ElevatedButton(
+                          onPressed: () {
+                            controller.refreshSpecs();
+                          },
+                          child: Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              if (controller.specs.isEmpty) {
+                return Container(
+                  height: 400.h,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.grey,
+                          size: 48.w,
+                        ),
+                        16.verticalSpace,
+                        Text(
+                          'No specs found',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontFamily: 'Gilroy',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        8.verticalSpace,
+                        Text(
+                          'This post has no specifications',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: 'Gilroy',
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return Container(
+                height: 800.h,
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: controller.specs.length,
+                  itemBuilder: (context, index) {
+                    return specsContainer(controller.specs[index]);
+                  },
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
-
-  Widget specsContainer(Specs spec) {
+  Widget specsContainer(Specs spec){
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      // height: 106.h,
+      padding: EdgeInsets.symmetric(horizontal: 12.w,vertical: 10.h),
       margin: EdgeInsets.only(bottom: 18.h),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -236,139 +235,65 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Spec header and value
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      spec.specHeaderPl,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Gilroy',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    4.verticalSpace,
-                    Text(
-                      spec.specValuePl,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontFamily: 'Gilroy',
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Hidden indicator
-              if (spec.isHidden)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[100],
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    "Hidden",
-                    style: TextStyle(
-                      color: Colors.orange[800],
-                      fontFamily: 'Gilroy',
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          
-          // Arabic translation if available
-          if (spec.specHeaderSl.isNotEmpty || spec.specValueSl.isNotEmpty) ...[
-            8.verticalSpace,
-            Divider(height: 1, color: AppColors.lightGray),
-            8.verticalSpace,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        spec.specHeaderSl,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Gilroy',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      4.verticalSpace,
-                      Text(
-                        spec.specValueSl,
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontFamily: 'Gilroy',
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          Text(spec.specHeaderPl,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Gilroy',
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
             ),
-          ],
-          
+          ),
+          spec.isHidden?
+          Text("(Hidden)",
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Gilroy',
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
+            ),
+          ) :SizedBox(),
           10.verticalSpace,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               InkWell(
-                onTap: () async {
-                  // TODO: Implement edit functionality
+                onTap: ()async{
                   await showDialog(
                     context: context,
-                    builder: (_) => EditSpecsName(spec: spec),
+
+                    builder: (_) =>  EditSpecsName(spec: spec,),
                   );
+
                 },
                 child: Container(
                   width: 23.w,
                   height: 28.h,
-                  child: Image.asset(
-                    "assets/images/edit3.png",
+                  child: Image.asset("assets/images/edit3.png",
                     color: Colors.black,
                     fit: BoxFit.fill,
                     scale: 1,
+
                   ),
                 ),
               ),
               InkWell(
-                onTap: () {
-                  // TODO: Implement delete functionality
-                  // Get.find<SpecsController>().deleteSpecs(spec.id);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Delete functionality not implemented yet'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                onTap: (){
+               //   Get.find<SpecsController>().deleteSpecs(spec.id);
                 },
-                child: Icon(
-                  Icons.delete_outline,
+                child: Icon(Icons.delete_outline,
                   color: AppColors.danger,
                   size: 22.w,
+
                 ),
-              ),
+              )
+
             ],
-          ),
+          )
         ],
+
       ),
     );
+
+
   }
 }

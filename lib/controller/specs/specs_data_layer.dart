@@ -12,7 +12,7 @@ class SpecsDataLayer {
   }) async {
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetSpecsOfPostForEditing',
-    );
+    );//
 
     log('Fetching specs for post ID: $postId, showHidden: $showHidden');
     log('API URL: $url');
@@ -57,16 +57,17 @@ class SpecsDataLayer {
       log('Parsed JSON: $parsedJson');
 
       return {
-        'Code': parsedJson['Response']['Code'] ?? 'Error',
-        'Desc': parsedJson['Response']['Desc'] ?? 'Unknown error',
-        'Count': parsedJson['Response']['Count'] ?? 0,
-        'Spec': parsedJson['Response']['Spec'] ?? [],
+        'Code': parsedJson['Code'] ?? 'Error',
+        'Desc': parsedJson['Desc'] ?? 'Unknown error',
+        'Count': parsedJson['Count'] ?? 0,
+        'Data': parsedJson['Data'] ?? <dynamic>[],
       };
     } catch (e) {
       log('❌ Error parsing response: $e');
       return {
         'Code': 'Error',
         'Desc': 'Failed to parse response: ${e.toString()}',
+        'Data': <dynamic>[],
       };
     }
   }

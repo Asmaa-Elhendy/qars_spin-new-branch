@@ -26,7 +26,7 @@ class SpecsController extends GetxController {
   /// Fetch specs for a specific post
   Future<void> fetchSpecsForPost({
     required String postId,
-    String showHidden = 'No',
+    String showHidden = 'Yes',
   }) async {
     isLoadingSpecs.value = true;
     specsError.value = null;
@@ -43,8 +43,8 @@ class SpecsController extends GetxController {
       if (response['Code'] == 'OK') {
         specsResponse.value = response;
         
-        // Parse specs from response
-        final specsList = response['Spec'] as List;
+        // Parse specs from response - use 'Data' field and handle null case
+        final specsList = response['Data'] as List? ?? <dynamic>[];
         final parsedSpecs = specsList.map((specJson) => Specs.fromJson(specJson)).toList();
         
         specs.assignAll(parsedSpecs);
