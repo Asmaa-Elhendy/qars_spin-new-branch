@@ -10,7 +10,6 @@ import 'package:qarsspin/model/my_ad_model.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../screens/ads/create_new_ad.dart';
-import '../../screens/my_ads/modify_car_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
 

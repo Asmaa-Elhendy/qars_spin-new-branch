@@ -64,7 +64,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                 ),
                 child: TextField(
                   controller: _newNameController,
-                  keyboardType: TextInputType.number,
+
                   style: TextStyle(fontSize: 15.w,fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,  // ← Added this line
                   decoration: InputDecoration(

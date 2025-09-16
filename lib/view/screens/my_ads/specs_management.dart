@@ -244,7 +244,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
             ),
           ),
            5.verticalSpace,
-          Text(spec.specValuePl.isEmpty?'(Hidden)':spec.specValuePl,
+          Text(spec.specValuePl.isEmpty||spec.specValuePl==" "?'(Hidden)':spec.specValuePl,
             style: TextStyle(
               color: Colors.black,
               fontFamily: 'Gilroy',
@@ -277,11 +277,34 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                 ),
               ),
               InkWell(
-                onTap: (){
-               //   Get.find<SpecsController>().deleteSpecs(spec.id);
+                onTap: () async {
+                  final controller = Get.find<SpecsController>(tag: 'specs_${widget.postId}');
+                  final success = await controller.updateSpecValue(
+                    postId: spec.postId,
+                    specId:spec.specId,
+                    specValue: " ",
+                  );
+
+                  if (success) {
+                    // Show success feedback
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Spec value cleared successfully'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    // Show error feedback
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to clear spec value'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 child: Icon(Icons.delete_outlined,
-                  color: AppColors.danger,
+                  color: Color(0xffEC6D64),
                   size: 24.w,
 
                 ),
