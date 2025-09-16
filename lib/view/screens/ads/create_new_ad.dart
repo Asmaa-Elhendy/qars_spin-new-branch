@@ -6,6 +6,7 @@ import 'package:qarsspin/model/car_category.dart';
 import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
+import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
@@ -15,7 +16,6 @@ import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
-
 
 class SellCarScreen extends StatefulWidget {
   final dynamic postData;
@@ -39,14 +39,16 @@ class _SellCarScreenState extends State<SellCarScreen> {
   String _previousMakeValue = '';
   String _previousClassValue = '';
 
-
   String? selectedMake;
   String? selectedModel;
   String? selectedType;
   String? selectedYear;
-  String? selectedTrim;
   String? selectedClass;
   String? selectedunderWarranty;
+  
+  // Loading state for modify mode
+  bool _isLoadingModifyData = false;
+
   Color _exteriorColor = const Color(0xffd54245);
   Color _interiorColor = const Color(0xff4242d4);
   bool _termsAccepted = false;
@@ -73,6 +75,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final AdCleanController brandController = Get.put(
     AdCleanController(AdRepository()),
   );
+
   void _handleImageSelected(String imagePath) {
     setState(() {
       _images.add(imagePath);
@@ -84,14 +87,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   void _handleVideoSelected(String videoPath) {
-   log('Video selected: $videoPath');
+    log('Video selected: $videoPath');
     setState(() {
       _videoPath = videoPath;
       // Only set as cover if there are no other covers and no images
       if (_coverImage == null && _images.isEmpty) {
         _coverImage = videoPath;
       }
-     log('Video added. Cover image: $_coverImage');
+      log('Video added. Cover image: $_coverImage');
     });
   }
 
@@ -129,27 +132,27 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   void _populateFieldsFromPostData(dynamic postData) {
     log(' _populateFieldsFromPostData called with data: $postData');
-    
+
     setState(() {
       // Populate car details from API response
-      selectedMake = postData['Make_Name_PL'] ;
+      selectedMake = postData['Make_Name_PL'];
       selectedModel = postData['Model_Name_PL']?.toString();
       selectedYear = postData['Manufacture_Year']?.toString();
       selectedClass = postData['Class_Name_PL']?.toString();
       selectedType = ""; // Default or get from post data if available
-      
+
       log(' selectedMake: $selectedMake');
-     log(' selectedModel: $selectedModel');
-    log(' selectedYear: $selectedYear');
-     log(' selectedClass: $selectedClass');
-      
+      log(' selectedModel: $selectedModel');
+      log(' selectedYear: $selectedYear');
+      log(' selectedClass: $selectedClass');
+
       // Populate text controllers with correct API field names
       _mileageController.text = postData['Mileage']?.toString() ?? '';
       _plateNumberController.text = postData['Plate_Number'] ?? '';
       _chassisNumberController.text = postData['Chassis_Number'] ?? '';
       _askingPriceController.text = postData['Asking_Price'] ?? '';
       _minimumPriceController.text = postData['Minimum_Price'] ?? '';
-      
+
       // Populate colors with correct API field names
       if (postData['Color_Exterior'] != null) {
         _exteriorColor = Color(int.parse(postData['Color_Exterior'].replaceFirst('#', '0xFF')));
@@ -157,13 +160,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
       if (postData['Color_Interior'] != null) {
         _interiorColor = Color(int.parse(postData['Color_Interior'].replaceFirst('#', '0xFF')));
       }
-      
+
       // Populate warranty with correct API field name
       selectedunderWarranty = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
-      
+
       // Populate description with correct API field names
       _descriptionController.text = postData['Technical_Description_PL'] ?? postData['Technical_Description_SL'] ?? '';
-      
+
       // Populate other controllers directly from post data with correct field names
       _make_contrller.text = postData['Make_Name_PL'] ?? postData['Make_Name_PL'] ?? '';
       _model_controller.text = postData['Model_Name_PL']?.toString() ?? '';
@@ -173,17 +176,17 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
       // Set the type controller directly from post data (for modify mode)
       _type_controller.text = postData['Category_Name_PL']?.toString() ?? '';
-      
+
       // Find the matching category in the list and set it
       if (_type_controller.text.isNotEmpty) {
         final matchingCategory = brandController.carCategories.firstWhereOrNull(
-          (c) => c.name == _type_controller.text
+          (c) => c.name == _type_controller.text,
         );
         if (matchingCategory != null) {
           brandController.selectedCategory.value = matchingCategory;
           log('Category set from post data: ${matchingCategory.name}');
         } else {
-          // If category from post data not found in list, keep the text but clear selected category
+          // If category from post data not found in list, keep the text but clear selected cateigory
           brandController.selectedCategory.value = null;
           log('Category from post data not found in list: ${_type_controller.text}');
         }
@@ -192,12 +195,12 @@ class _SellCarScreenState extends State<SellCarScreen> {
         brandController.selectedCategory.value = null;
         log('Category kept empty as per post data');
       }
-      
+
       // Load existing image if available
       if (postData['Rectangle_Image_URL'] != null) {
         _coverImage = postData['Rectangle_Image_URL'];
       }
-      
+
       log(' _make_contrller.text: ${_make_contrller.text}');
       log(' _model_controller.text: ${_model_controller.text}');
       log(' _year_controller.text: ${_year_controller.text}');
@@ -209,70 +212,17 @@ class _SellCarScreenState extends State<SellCarScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // If we have post data, populate the fields first (editing existing ad)
-    if (widget.postData != null) {
+
+    // Check if we're in modify mode with post ID
+    if (widget.postData != null && widget.postData['isModifyMode'] == true) {
+      // Load post data in the background
+      _loadPostDataForModify();
+    } else if (widget.postData != null) {
+      // If we have complete post data, populate the fields (existing behavior)
       _populateFieldsFromPostData(widget.postData!);
     } else {
-      // New ad creation - clear all controllers and set defaults
-      _make_contrller.clear();
-      _model_controller.clear();
-      _class_controller.clear();
-      _mileageController.clear();
-      _plateNumberController.clear();
-      _chassisNumberController.clear();
-      _askingPriceController.clear();
-      _minimumPriceController.clear();
-      _descriptionController.clear();
-      _exteriorColorController.clear();
-      _interiorColorController.clear();
-      
-      // Set year to most recent year
-      _year_controller.text = (DateTime.now().year + 1).toString();
-      
-      // Set warranty default to "No"
-      _warranty_controller.text = "No";
-      
-      // Wait for categories to load and set type to last category (for new ads only)
-      ever(brandController.carCategories, (List<CarCategory> categories) {
-        if (categories.isNotEmpty && widget.postData == null) {
-          // Only set default for new ads (when postData is null)
-          log('Categories loaded in ever() for new ad, count: ${categories.length}');
-          log('Last category: ${categories.last.name}');
-          _type_controller.text = categories.last.name;
-          brandController.selectedCategory.value = categories.last;
-          log('Type controller set to: ${_type_controller.text}');
-        }
-      });
-      
-      // Also listen to loading state
-      ever(brandController.isLoadingCategories, (bool isLoading) {
-        if (!isLoading && brandController.carCategories.isNotEmpty && widget.postData == null) {
-          // Only set default for new ads (when postData is null)
-          log('Categories finished loading, setting last category for new ad');
-          _type_controller.text = brandController.carCategories.last.name;
-          brandController.selectedCategory.value = brandController.carCategories.last;
-        }
-      });
-      
-      // Set initial type if categories are already loaded (for new ads only)
-      if (brandController.carCategories.isNotEmpty && widget.postData == null) {
-        _type_controller.text = brandController.carCategories.last.name;
-        brandController.selectedCategory.value = brandController.carCategories.last;
-        log('Initial type set to: ${brandController.carCategories.last.name}');
-      } else if (widget.postData == null) {
-        _type_controller.clear(); // Clear until categories load for new ads
-        log('Waiting for categories to load...');
-      }
-      
-      // Add a delayed check as a fallback (for new ads only)
-      Future.delayed(Duration(seconds: 2), () {
-        if (mounted && brandController.carCategories.isNotEmpty && _type_controller.text.isEmpty && widget.postData == null) {
-          log('Fallback: Setting type after delay for new ad');
-          _type_controller.text = brandController.carCategories.last.name;
-          brandController.selectedCategory.value = brandController.carCategories.last;
-        }
-      });
+      // Initialize for new ad
+      _initializeForNewAd();
     }
 
     // Add listener to make controller to clear class and model when make is cleared
@@ -307,6 +257,135 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _previousClassValue = _class_controller.text;
     };
     _class_controller.addListener(_classListener!);
+  }
+
+  Future<void> _loadPostDataForModify() async {
+    final postId = widget.postData?['postId']?.toString();
+    final postKind = widget.postData?['postKind'] ?? 'CarForSale';
+
+    if (postId == null) return;
+
+    log('🔍 Starting to load post data for modify mode...');
+
+    // Show loading indicator
+    setState(() {
+      _isLoadingModifyData = true;
+      log('🔍 Loader state set to true');
+    });
+
+    // Add a longer delay to ensure the loader is visible
+    // await Future.delayed(Duration(milliseconds: 1000));
+    // log('🔍 Delay completed, starting API call');
+
+    try {
+      // Get the controller and fetch post details
+      final myAdController = Get.find<MyAdCleanController>();
+
+      await myAdController.getPostById(
+        postKind: postKind,
+        postId: postId,
+        loggedInUser: widget.postData?['userName'] ?? '', // Get username from postData
+      );
+
+      // Check if we got the data successfully
+      if (myAdController.postDetails.value != null) {
+        log('🔍 Post data loaded successfully for modify mode');
+        log('🔍 postDetails.value: ${myAdController.postDetails.value}');
+
+        // Populate the fields with the loaded data
+        if (mounted) {
+          _populateFieldsFromPostData(myAdController.postDetails.value!);
+        }
+      } else {
+        // Show error message
+        if (mounted) {
+          Get.snackbar(
+            'Error',
+            myAdController.postDetailsError.value ?? 'Failed to load post data',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      }
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        Get.snackbar(
+          'Error',
+          'Failed to load post data: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } finally {
+      // Hide loading indicator
+      if (mounted) {
+        setState(() {
+          _isLoadingModifyData = false;
+          log('🔍 Loader state set to false');
+        });
+      }
+    }
+  }
+
+  void _initializeForNewAd() {
+    // New ad creation - clear all controllers and set defaults
+    _make_contrller.clear();
+    _model_controller.clear();
+    _class_controller.clear();
+    _mileageController.clear();
+    _plateNumberController.clear();
+    _chassisNumberController.clear();
+    _askingPriceController.clear();
+    _minimumPriceController.clear();
+    _descriptionController.clear();
+    _exteriorColorController.clear();
+    _interiorColorController.clear();
+
+    // Set year to most recent year
+    _year_controller.text = (DateTime.now().year + 1).toString();
+
+    // Set warranty default to "No"
+    _warranty_controller.text = "No";
+
+    // Wait for categories to load and set type to last category (for new ads only)
+    ever(brandController.carCategories, (List<CarCategory> categories) {
+      if (categories.isNotEmpty && widget.postData == null) {
+        // Only set default for new ads (when postData is null)
+        log('Categories loaded in ever() for new ad, count: ${categories.length}');
+        log('Last category: ${categories.last.name}');
+        _type_controller.text = categories.last.name;
+        brandController.selectedCategory.value = categories.last;
+        log('Type controller set to: ${_type_controller.text}');
+      }
+    });
+
+    // Also listen to loading state
+    ever(brandController.isLoadingCategories, (bool isLoading) {
+      if (!isLoading && brandController.carCategories.isNotEmpty && widget.postData == null) {
+        // Only set default for new ads (when postData is null)
+        log('Categories finished loading, setting last category for new ad');
+        _type_controller.text = brandController.carCategories.last.name;
+        brandController.selectedCategory.value = brandController.carCategories.last;
+      }
+    });
+
+    // Set initial type if categories are already loaded (for new ads only)
+    if (brandController.carCategories.isNotEmpty && widget.postData == null) {
+      _type_controller.text = brandController.carCategories.last.name;
+      brandController.selectedCategory.value = brandController.carCategories.last;
+      log('Initial type set to: ${brandController.carCategories.last.name}');
+    } else if (widget.postData == null) {
+      _type_controller.clear(); // Clear until categories load for new ads
+      log('Waiting for categories to load...');
+    }
+
+    // Add a delayed check as a fallback (for new ads only)
+    Future.delayed(Duration(seconds: 2), () {
+      if (mounted && brandController.carCategories.isNotEmpty && _type_controller.text.isEmpty && widget.postData == null) {
+        log('Fallback: Setting type after delay for new ad');
+        _type_controller.text = brandController.carCategories.last.name;
+        brandController.selectedCategory.value = brandController.carCategories.last;
+      }
+    });
   }
 
   @override
@@ -411,7 +490,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     SuccessDialog.show(
       context,
       postId,
-          () {
+      () {
         Navigator.pop(context); // Navigate back from create ad screen
         brandController.resetCreateAdState(); // Reset controller state
       },
@@ -423,7 +502,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     ErrorDialog.show(
       context,
       message,
-          () {
+      () {
         brandController.resetCreateAdState(); // Reset controller state
       },
     );
@@ -470,12 +549,11 @@ class _SellCarScreenState extends State<SellCarScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
@@ -483,14 +561,26 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.white,
           toolbarHeight: 60.h,
           shadowColor: Colors.grey.shade300,
-
-          elevation: .4,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5.h,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+          ),
+          elevation: 0, // نشيل الشادو الافتراضي
 
           title: Text(
-            "Sell Your Car",
+            widget.postData != null ? "Modify Car" : "Sell Your Car",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -498,80 +588,118 @@ class _SellCarScreenState extends State<SellCarScreen> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .06),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image Upload Section
-                    ImageUploadSection(
-                      images: _images,
-                      coverImage: _coverImage,
-                      videoPath: _videoPath,
-                      onImageSelected: _handleImageSelected,
-                      onVideoSelected: _handleVideoSelected,
-                      onCoverChanged: _handleCoverChanged,
-                      onImageRemoved: (index) => _handleImageRemoved(index),
-                    ),
+        body: Stack(
+          children: [
+            // Main content
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * .06),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Image Upload Section
+                        ImageUploadSection(
+                          images: _images,
+                          coverImage: _coverImage,
+                          videoPath: _videoPath,
+                          onImageSelected: _handleImageSelected,
+                          onVideoSelected: _handleVideoSelected,
+                          onCoverChanged: _handleCoverChanged,
+                          onImageRemoved: (index) => _handleImageRemoved(index),
+                        ),
 
-                    // Form Fields Section
-                    FormFieldsSection(
-                      makeController: _make_contrller,
-                      classController: _class_controller,
-                      modelController: _model_controller,
-                      typeController: _type_controller,
-                      yearController: _year_controller,
-                      warrantyController: _warranty_controller,
-                      askingPriceController: _askingPriceController,
-                      minimumPriceController: _minimumPriceController,
-                      mileageController: _mileageController,
-                      plateNumberController: _plateNumberController,
-                      chassisNumberController: _chassisNumberController,
-                      descriptionController: _descriptionController,
-                      exteriorColor: _exteriorColor,
-                      interiorColor: _interiorColor,
-                      onExteriorColorSelected: (color) {
-                        setState(() {
-                          _exteriorColor = color;
-                         log(color.hashCode.toString());
-                        });
-                      },
-                      onInteriorColorSelected: (color) {
-                        setState(() {
-                          _interiorColor = color;
-                          log(color.hashCode.toString());
-                        });
-                      },
-                      termsAccepted: _termsAccepted,
-                      infoConfirmed: _infoConfirmed,
-                      onTermsChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _termsAccepted = value;
-                          });
-                        }
-                      },
-                      onInfoChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _infoConfirmed = value;
-                          });
-                        }
-                      },
-                      onValidateAndSubmit: _validateAndSubmitForm,
+                        // Form Fields Section
+                        FormFieldsSection(
+                          makeController: _make_contrller,
+                          classController: _class_controller,
+                          modelController: _model_controller,
+                          typeController: _type_controller,
+                          yearController: _year_controller,
+                          warrantyController: _warranty_controller,
+                          askingPriceController: _askingPriceController,
+                          minimumPriceController: _minimumPriceController,
+                          mileageController: _mileageController,
+                          plateNumberController: _plateNumberController,
+                          chassisNumberController: _chassisNumberController,
+                          descriptionController: _descriptionController,
+                          exteriorColor: _exteriorColor,
+                          interiorColor: _interiorColor,
+                          onExteriorColorSelected: (color) {
+                            setState(() {
+                              _exteriorColor = color;
+                              log(color.hashCode.toString());
+                            });
+                          },
+                          onInteriorColorSelected: (color) {
+                            setState(() {
+                              _interiorColor = color;
+                              log(color.hashCode.toString());
+                            });
+                          },
+                          termsAccepted: _termsAccepted,
+                          infoConfirmed: _infoConfirmed,
+                          onTermsChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _termsAccepted = value;
+                              });
+                            }
+                          },
+                          onInfoChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _infoConfirmed = value;
+                              });
+                            }
+                          },
+                          onValidateAndSubmit: _validateAndSubmitForm,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            
+            // Loading overlay for modify mode
+            if (_isLoadingModifyData)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.all(20.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 3.w,
+                        ),
+                        16.verticalSpace,
+                        Text(
+                          'Loading car data...',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );
   }
-}//
+}

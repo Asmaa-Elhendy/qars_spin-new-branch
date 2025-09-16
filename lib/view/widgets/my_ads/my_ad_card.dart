@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -161,58 +159,17 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                       child: yellowButtons(
                         title: "Modify",
                         onTap: () async {
-                          // Show loading indicator
-                          Get.dialog(
-                            const Center(
-                              child: CircularProgressIndicator(),
+                          // Navigate to SellCarScreen first with post ID
+                          Get.to(
+                            SellCarScreen(
+                              postData: {
+                                'postId': ad.postId.toString(),
+                                'postKind': ad.postKind ?? 'CarForSale',
+                                'isModifyMode': true,
+                                'userName': ad.userName, // Add username from the ad model
+                              },
                             ),
-                            barrierDismissible: false,
                           );
-
-                          try {
-                            // Get the controller and fetch post details
-                            final myAdController = Get.find<MyAdCleanController>();
-                            
-                            await myAdController.getPostById(
-                              postKind: ad.postKind ?? 'CarForSale',
-                              postId: ad.postId.toString(),
-                              loggedInUser: userName, // You might want to get this from user session
-                            );
-
-                            // Close loading dialog
-                            Get.back();
-
-                            // Check if we got the data successfully
-                            if (myAdController.postDetails.value != null) {
-                              log('🔍 postDetails.value type: ${myAdController.postDetails.value.runtimeType}');
-                              log('🔍 postDetails.value keys: ${myAdController.postDetails.value!.keys.toList()}');
-                              log('🔍 postDetails.value: ${myAdController.postDetails.value}');
-                              
-                              // Navigate to SellCarScreen with post data
-                              Get.to(
-                                SellCarScreen(
-                                  postData: myAdController.postDetails.value,
-                                ),
-                              );
-                            } else {
-                              // Show error message
-                              Get.snackbar(
-                                'Error',
-                                myAdController.postDetailsError.value ?? 'Failed to load post data',
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            }
-                          } catch (e) {
-                            // Close loading dialog
-                            Get.back();
-                            
-                            // Show error message
-                            Get.snackbar(
-                              'Error',
-                              'Failed to load post data: ${e.toString()}',
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          }
                         },
                         w: double.infinity,
                       ),
