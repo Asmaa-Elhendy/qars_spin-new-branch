@@ -7,14 +7,15 @@ import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
+import '../../../controller/my_ads/my_ad_data_layer.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
 import '../../widgets/ads/dialogs/error_dialog.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
-import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
+import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 
 class SellCarScreen extends StatefulWidget {
@@ -158,10 +159,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _askingPriceController.text = postData['Asking_Price'] ?? '';
       _minimumPriceController.text = postData['Minimum_Price'] ?? '';
 
-      // Populate colors with correct API field names
-      log('🎨 Parsing colors from postData...');
-      log('🎨 Color_Exterior from API: ${postData['Color_Exterior']}');
-      log('🎨 Color_Interior from API: ${postData['Color_Interior']}');
+
       
       if (postData['Color_Exterior'] != null) {
         _exteriorColor = Color(int.parse(postData['Color_Exterior'].replaceFirst('#', '0xFF')));
@@ -179,12 +177,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         log('❌ Color_Interior is null in postData');
       }
 
-      // Log final color values after parsing
-      log('🎨 Final color values after parsing:');
-      log('🎨 _exteriorColor: $_exteriorColor');
-      log('🎨 _interiorColor: $_interiorColor');
-      log('🎨 _originalExteriorColorHex: $_originalExteriorColorHex');
-      log('🎨 _originalInteriorColorHex: $_originalInteriorColorHex');
+
 
       // Populate warranty with correct API field name
       selectedunderWarranty = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
@@ -513,7 +506,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   /// Show loading dialog
   void _showLoadingDialog() {
-    LoadingDialog.show(context);
+    LoadingDialog.show(context, isModifyMode: widget.postData != null);
   }
 
   /// Hide loading dialog
@@ -530,8 +523,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
       postId,
       () {
         Navigator.pop(context); // Navigate back from create ad screen
+        Get.find<MyAdCleanController>().fetchMyAds(); // Refresh My Ads screen
         brandController.resetCreateAdState(); // Reset controller state
       },
+      isModifyMode: widget.postData != null,
     );
   }
 
@@ -541,8 +536,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
       context,
       message,
       () {
-        brandController.resetCreateAdState(); // Reset controller state
+        Navigator.pop(context);
       },
+      isModifyMode: widget.postData != null,
     );
   }
 
@@ -689,18 +685,18 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           },
                         ),
 
-                        // Form Fields Section - Debug logs
-                        Builder(
-                          builder: (context) {
-                            log('🎨 Passing colors to FormFieldsSection:');
-                            log('🎨 _exteriorColor: $_exteriorColor');
-                            log('🎨 _interiorColor: $_interiorColor');
-                            log('🎨 exteriorColor parameter: ${_exteriorColor ?? Colors.white}');
-                            log('🎨 interiorColor parameter: ${_interiorColor ?? Colors.white}');
-                            return SizedBox.shrink(); // Return empty widget
-                          },
-                        ),
-                        
+                        // // Form Fields Section - Debug logs
+                        // Builder(
+                        //   builder: (context) {
+                        //     log('🎨 Passing colors to FormFieldsSection:');
+                        //     log('🎨 _exteriorColor: $_exteriorColor');
+                        //     log('🎨 _interiorColor: $_interiorColor');
+                        //     log('🎨 exteriorColor parameter: ${_exteriorColor ?? Colors.white}');
+                        //     log('🎨 interiorColor parameter: ${_interiorColor ?? Colors.white}');
+                        //     return SizedBox.shrink(); // Return empty widget
+                        //   },
+                        // ),
+
                         FormFieldsSection(
                           makeController: _make_controller,
                           classController: _class_controller,

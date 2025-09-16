@@ -365,14 +365,17 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 }
               },
               child: Container(
-                width: 30.w,
-                height: 30.h,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.delete, color: Colors.red, size: 20.w),
-              ),
+    width: 40.w,
+    height: 40.h,
+    decoration: BoxDecoration(
+    color: Color(0xffEC6D64),
+    borderRadius: BorderRadius.circular(4),
+    ),
+    child: Icon(
+    Icons.delete_outline,
+    color: Colors.white,
+    size: 28.w,
+              )),
             ),
           ),
 
@@ -456,14 +459,15 @@ class _GalleryManagementState extends State<GalleryManagement> {
               },
               child: Container(
                 width: 40.w,
-                height: 48.h,
+                height: 40.h,
                 decoration: BoxDecoration(
-                  color: AppColors.danger,
-                  borderRadius: BorderRadius.circular(8),
+                  color: Color(0xffEC6D64),
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.delete_outline,
                   color: Colors.white,
+                  size: 28.w,
                 ),
               ),
             ),

@@ -115,14 +115,14 @@ class ValidationMethods {
     }
 
     // Validate chassis number (if provided)
-    if (chassisNumber.isNotEmpty) {
-      try {
-        int.parse(chassisNumber);
-      } catch (e) {
-        showErrorDialog("Please enter a valid chassis number");
-        return false;
-      }
-    }
+    // if (chassisNumber.isNotEmpty) {
+    //   try {
+    //     int.parse(chassisNumber);
+    //   } catch (e) {
+    //     showErrorDialog("Please enter a valid chassis number");
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

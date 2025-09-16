@@ -2,19 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog {
-  static void show(BuildContext context) {
+  static void show(BuildContext context, {bool isModifyMode = false}) {
     showCupertinoDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Creating Ad'),
-        content: const Row(
+        title: Text(isModifyMode ? 'Updating Ad' : 'Creating Ad'),
+        content: Row(
           children: [
             CupertinoActivityIndicator(),
             SizedBox(width: 20),
             Expanded(
               child: Text(
-                'Please wait while your ad is being created...',
+                isModifyMode 
+                    ? 'Please wait while your ad is being updated...' 
+                    : 'Please wait while your ad is being created...',
               ),
             ),
           ],

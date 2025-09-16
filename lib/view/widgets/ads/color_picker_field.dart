@@ -32,7 +32,6 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
     super.initState();
     _selectedColor = widget.initialColor ?? const Color(0xff443a49);
     _pickerColor = _selectedColor;
-    log('🎨🎨🎨 initState called for ${widget.label}: _selectedColor=$_selectedColor, _pickerColor=$_pickerColor 🎨🎨🎨');
   }
 
   void _changeColor(Color color) {
@@ -48,10 +47,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
     final width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    log('🎨 Building ColorPickerField for ${widget.label}:');
-    log('🎨 _pickerColor: $_pickerColor');
-    log('🎨 _selectedColor: $_selectedColor');
-    log('🎨 widget.initialColor: ${widget.initialColor}');
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

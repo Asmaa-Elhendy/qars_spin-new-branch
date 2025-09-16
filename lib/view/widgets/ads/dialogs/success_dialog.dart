@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SuccessDialog {
-  static void show(BuildContext context, String postId, VoidCallback? onOkPressed) {
+  static void show(BuildContext context, String postId, VoidCallback? onOkPressed, {bool isModifyMode = false}) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: const Text('Success'),
-        content: Text('Ad created successfully!'),
+        content: Text(isModifyMode ? 'Ad updated successfully!' : 'Ad created successfully!'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
