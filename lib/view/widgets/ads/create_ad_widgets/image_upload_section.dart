@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../image_picker_field.dart';
 import '../video_player_widget.dart';
@@ -13,6 +14,8 @@ class ImageUploadSection extends StatefulWidget {
   final Function(String) onVideoSelected;
   final Function(String) onCoverChanged;
   final Function(int) onImageRemoved;
+  final bool isModifyMode;
+  final Function(bool) onCoverPhotoChanged;
 
   const ImageUploadSection({
     Key? key,
@@ -23,6 +26,8 @@ class ImageUploadSection extends StatefulWidget {
     required this.onVideoSelected,
     required this.onCoverChanged,
     required this.onImageRemoved,
+    this.isModifyMode = false,
+    required this.onCoverPhotoChanged,
   }) : super(key: key);
 
   @override
@@ -31,17 +36,13 @@ class ImageUploadSection extends StatefulWidget {
 
 class _ImageUploadSectionState extends State<ImageUploadSection> {
   bool _isVideo(String path) {
-    if (path.isEmpty) return false;
+    return path.toLowerCase().endsWith('.mp4') || 
+           path.toLowerCase().endsWith('.mov') || 
+           path.toLowerCase().endsWith('.avi');
+  }
 
-    // Trim any query parameters or fragments from the path
-    final cleanPath = path.split('?').first.split('#').first;
-
-    // Get the file extension without the dot
-    final fileName = cleanPath.split('/').last;
-    if (!fileName.contains('.')) return false;
-
-    final extension = fileName.split('.').last.toLowerCase();
-    return ['mp4', 'mov', 'avi', 'mkv', 'webm'].contains(extension);
+  bool _isNetworkUrl(String path) {
+    return path.startsWith('http');
   }
 
   Widget _buildPlaceholder() {
@@ -59,7 +60,7 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
 
     return Column(
       children: [
-        Padding(
+        widget.isModifyMode ?SizedBox(height: height*.02,):   Padding(
           padding: EdgeInsets.symmetric(vertical: height * .01),
           child: const Center(
             child: Text(
@@ -78,17 +79,37 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
               SizedBox(
                 width: double.infinity,
                 height: height * .35,
-                child: _isVideo(widget.coverImage!)
-                    ? VideoPlayerWidget(
-                  videoPath: widget.coverImage!,
-                  autoPlay: true,
-                  looping: true,
-                )
-                    : Image.file(
-                  File(widget.coverImage!),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildPlaceholder(),
+                child: GestureDetector(
+                  onTap: widget.isModifyMode ? () async {
+                    print('DEBUG: Cover photo tapped in modify mode');
+                    final ImagePicker _picker = ImagePicker();
+                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      print('DEBUG: Image selected: ${image.path}');
+                      widget.onCoverChanged(image.path);
+                    } else {
+                      print('DEBUG: No image selected');
+                    }
+                  } : null,
+                  child: _isVideo(widget.coverImage!)
+                      ? VideoPlayerWidget(
+                    videoPath: widget.coverImage!,
+                    autoPlay: true,
+                    looping: true,
+                  )
+                      : _isNetworkUrl(widget.coverImage!)
+                      ? Image.network(
+                    widget.coverImage!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholder(),
+                  )
+                      : Image.file(
+                    File(widget.coverImage!),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildPlaceholder(),
+                  ),
                 ),
               ),
               SizedBox(height: height * .02),
@@ -103,6 +124,7 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
           onVideoSelected: widget.onVideoSelected,
           onCoverChanged: widget.onCoverChanged,
           onImageRemoved: widget.onImageRemoved,
+          isModifyMode: widget.isModifyMode,
         ),
       ],
     );

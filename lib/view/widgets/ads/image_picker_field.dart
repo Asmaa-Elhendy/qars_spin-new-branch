@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -14,6 +15,7 @@ class ImagePickerField extends StatefulWidget {
   final Function(String)? onCoverChanged;
   final Function(int)? onImageRemoved;
   final Function()? onVideoRemoved;
+  final bool isModifyMode;
 
   const ImagePickerField({
     Key? key,
@@ -26,6 +28,7 @@ class ImagePickerField extends StatefulWidget {
     this.onCoverChanged,
     this.onImageRemoved,
     this.onVideoRemoved,
+    this.isModifyMode = false,
   }) : super(key: key);
 
   @override
@@ -37,6 +40,10 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   List<String> _images = [];
   String? _videoPath;
   String? _videoThumbnail;
+
+  bool _isNetworkUrl(String path) {
+    return path.startsWith('http');
+  }
 
   @override
   void initState() {
@@ -54,9 +61,10 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   void didUpdateWidget(ImagePickerField oldWidget) {
     super.didUpdateWidget(oldWidget);
     
-    // Update images if they've changed
-    if (widget.imagePaths != oldWidget.imagePaths) {
+    // Update images if they've changed (compare by content, not reference)
+    if (!listEquals(widget.imagePaths, oldWidget.imagePaths)) {
       _images = List.from(widget.imagePaths);
+      print('DEBUG: ImagePickerField updated images list: $_images');
     }
     
     // Update video if it's been removed
@@ -255,7 +263,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   image: DecorationImage(
                     image: isVideo && thumbnail != null 
                       ? FileImage(File(thumbnail))
-                      : FileImage(File(path)),
+                      : _isNetworkUrl(path) ? NetworkImage(path) : FileImage(File(path)),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -349,7 +357,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
             ],
           );
         }).toList(),
-        if (mediaItems.length < (widget.maxImages + (_videoPath != null ? 1 : 0)))
+        if (!widget.isModifyMode && mediaItems.length < (widget.maxImages + (_videoPath != null ? 1 : 0)))
           GestureDetector(
             onTap: _showMediaSelectionDialog,
             child: Container(

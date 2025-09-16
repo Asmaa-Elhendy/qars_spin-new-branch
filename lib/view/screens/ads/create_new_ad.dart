@@ -72,6 +72,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _warranty_controller = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  bool _coverPhotoChanged = false;
+
   final AdCleanController brandController = Get.put(
     AdCleanController(AdRepository()),
   );
@@ -198,14 +200,21 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
       // Load existing image if available
       if (postData['Rectangle_Image_URL'] != null) {
-        _coverImage = postData['Rectangle_Image_URL'];
+        setState(() {
+          _coverImage = postData['Rectangle_Image_URL'];
+          
+          // Also add it as the first item in the images list for modify mode
+          if (_images.isEmpty) {
+            _images.add(postData['Rectangle_Image_URL']);
+          } else {
+            // If list has items, insert at the beginning
+            _images.insert(0, postData['Rectangle_Image_URL']);
+          }
+        });
+        
+        log('Cover image set to: $_coverImage');
+        log('Images list updated with Rectangle_Image_URL as first item: $_images');
       }
-
-      log(' _make_contrller.text: ${_make_contrller.text}');
-      log(' _model_controller.text: ${_model_controller.text}');
-      log(' _year_controller.text: ${_year_controller.text}');
-      log(' _warranty_controller.text: ${_warranty_controller.text}');
-      log(' _coverImage: $_coverImage');
     });
   }
 
@@ -610,6 +619,12 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           onVideoSelected: _handleVideoSelected,
                           onCoverChanged: _handleCoverChanged,
                           onImageRemoved: (index) => _handleImageRemoved(index),
+                          isModifyMode: widget.postData != null,
+                          onCoverPhotoChanged: (bool changed) {
+                            setState(() {
+                              _coverPhotoChanged = changed;
+                            });
+                          },
                         ),
 
                         // Form Fields Section
