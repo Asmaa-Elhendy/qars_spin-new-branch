@@ -276,6 +276,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         // Exterior Color Picker
         ColorPickerField(
+          key: Key('exterior_color_${widget.exteriorColor.hashCode}'),
           label: "Exterior Color",
           initialColor: widget.exteriorColor,
           onColorSelected: widget.onExteriorColorSelected,
@@ -285,6 +286,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         // Interior Color Picker
         ColorPickerField(
+          key: Key('interior_color_${widget.interiorColor.hashCode}'),
           label: "Interior Color",
           initialColor: widget.interiorColor,
           onColorSelected: widget.onInteriorColorSelected,

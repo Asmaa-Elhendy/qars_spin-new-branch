@@ -49,10 +49,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
   // Loading state for modify mode
   bool _isLoadingModifyData = false;
 
-  Color _exteriorColor = const Color(0xffd54245);
-  Color _interiorColor = const Color(0xff4242d4);
+  Color? _exteriorColor;
+  Color? _interiorColor;
   bool _termsAccepted = false;
   bool _infoConfirmed = false;
+
+  String? _originalExteriorColorHex;
+  String? _originalInteriorColorHex;
 
   final TextEditingController _mileageController = TextEditingController();
   final TextEditingController _exteriorColorController = TextEditingController();
@@ -64,7 +67,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _chassisNumberController = TextEditingController();
 
   //new controllers
-  final TextEditingController _make_contrller = TextEditingController();
+  final TextEditingController _make_controller = TextEditingController();
   final TextEditingController _model_controller = TextEditingController();
   final TextEditingController _class_controller = TextEditingController();
   final TextEditingController _type_controller = TextEditingController();
@@ -156,12 +159,32 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _minimumPriceController.text = postData['Minimum_Price'] ?? '';
 
       // Populate colors with correct API field names
+      log('🎨 Parsing colors from postData...');
+      log('🎨 Color_Exterior from API: ${postData['Color_Exterior']}');
+      log('🎨 Color_Interior from API: ${postData['Color_Interior']}');
+      
       if (postData['Color_Exterior'] != null) {
         _exteriorColor = Color(int.parse(postData['Color_Exterior'].replaceFirst('#', '0xFF')));
+        _originalExteriorColorHex = postData['Color_Exterior'];
+        log('✅ Exterior color parsed: $_exteriorColor from ${postData['Color_Exterior']}');
+      } else {
+        log('❌ Color_Exterior is null in postData');
       }
+
       if (postData['Color_Interior'] != null) {
         _interiorColor = Color(int.parse(postData['Color_Interior'].replaceFirst('#', '0xFF')));
+        _originalInteriorColorHex = postData['Color_Interior'];
+        log('✅ Interior color parsed: $_interiorColor from ${postData['Color_Interior']}');
+      } else {
+        log('❌ Color_Interior is null in postData');
       }
+
+      // Log final color values after parsing
+      log('🎨 Final color values after parsing:');
+      log('🎨 _exteriorColor: $_exteriorColor');
+      log('🎨 _interiorColor: $_interiorColor');
+      log('🎨 _originalExteriorColorHex: $_originalExteriorColorHex');
+      log('🎨 _originalInteriorColorHex: $_originalInteriorColorHex');
 
       // Populate warranty with correct API field name
       selectedunderWarranty = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
@@ -170,7 +193,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _descriptionController.text = postData['Technical_Description_PL'] ?? postData['Technical_Description_SL'] ?? '';
 
       // Populate other controllers directly from post data with correct field names
-      _make_contrller.text = postData['Make_Name_PL'] ?? postData['Make_Name_PL'] ?? '';
+      _make_controller.text = postData['Make_Name_PL'] ?? postData['Make_Name_PL'] ?? '';
       _model_controller.text = postData['Model_Name_PL']?.toString() ?? '';
       _class_controller.text = postData['Class_Name_PL']?.toString() ?? '';
       _year_controller.text = postData['Manufacture_Year']?.toString() ?? '';
@@ -211,7 +234,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
             _images.insert(0, postData['Rectangle_Image_URL']);
           }
         });
-        
+
         log('Cover image set to: $_coverImage');
         log('Images list updated with Rectangle_Image_URL as first item: $_images');
       }
@@ -237,7 +260,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Add listener to make controller to clear class and model when make is cleared
     _makeListener = () {
       // Only clear if the controller was previously not empty and now is empty
-      if (_make_contrller.text.isEmpty && _previousMakeValue.isNotEmpty) {
+      if (_make_controller.text.isEmpty && _previousMakeValue.isNotEmpty) {
         // Clear class and model when make is cleared
         _class_controller.clear();
         brandController.selectedClass.value = null;
@@ -248,9 +271,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
         setState(() {});
       }
       // Update previous value
-      _previousMakeValue = _make_contrller.text;
+      _previousMakeValue = _make_controller.text;
     };
-    _make_contrller.addListener(_makeListener!);
+    _make_controller.addListener(_makeListener!);
 
     // Add listener to class controller to clear model when class is cleared
     _classListener = () {
@@ -337,7 +360,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   void _initializeForNewAd() {
     // New ad creation - clear all controllers and set defaults
-    _make_contrller.clear();
+    _make_controller.clear();
     _model_controller.clear();
     _class_controller.clear();
     _mileageController.clear();
@@ -395,6 +418,12 @@ class _SellCarScreenState extends State<SellCarScreen> {
         brandController.selectedCategory.value = brandController.carCategories.last;
       }
     });
+
+    // Set default colors for new ads
+    if (widget.postData == null) {
+      _exteriorColor = const Color(0xffd54245);
+      _interiorColor = const Color(0xff4242d4);
+    }
   }
 
   @override
@@ -409,13 +438,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _plateNumberController.dispose();
     // Remove listeners before disposing controllers
     if (_makeListener != null) {
-      _make_contrller.removeListener(_makeListener!);
+      _make_controller.removeListener(_makeListener!);
     }
     if (_classListener != null) {
       _class_controller.removeListener(_classListener!);
     }
 
-    _make_contrller.dispose();
+    _make_controller.dispose();
     _model_controller.dispose();
     _class_controller.dispose();
     _type_controller.dispose();
@@ -428,7 +457,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   void _validateAndSubmitForm() {
     // Validate form using validation methods
     bool isValid = ValidationMethods.validateForm(
-      make: _make_contrller.text,
+      make: _make_controller.text,
       carClass: _class_controller.text,
       model: _model_controller.text,
       type: _type_controller.text,
@@ -521,7 +550,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   void _submitAd() async {
     // Log the submission
     AdSubmissionService.logAdSubmission(
-      make: _make_contrller.text,
+      make: _make_controller.text,
       carClass: _class_controller.text,
       model: _model_controller.text,
       type: _type_controller.text,
@@ -541,7 +570,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         images: _images,
         coverImage: _coverImage ?? '',
         videoPath: _videoPath,
-        make: _make_contrller.text,
+        make: _make_controller.text,
         carClass: _class_controller.text,
         model: _model_controller.text,
         type: _type_controller.text,
@@ -553,8 +582,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
         plateNumber: _plateNumberController.text,
         chassisNumber: _chassisNumberController.text,
         description: _descriptionController.text,
-        exteriorColor: _exteriorColor,
-        interiorColor: _interiorColor,
+        exteriorColor: _exteriorColor ?? Colors.white,
+        interiorColor: _interiorColor ?? Colors.white,
         postId: postId,
         coverPhotoChanged: _coverPhotoChanged,
         showLoadingDialog: _showLoadingDialog,
@@ -569,7 +598,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         images: _images,
         coverImage: _coverImage ?? '',
         videoPath: _videoPath,
-        make: _make_contrller.text,
+        make: _make_controller.text,
         carClass: _class_controller.text,
         model: _model_controller.text,
         type: _type_controller.text,
@@ -581,8 +610,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
         plateNumber: _plateNumberController.text,
         chassisNumber: _chassisNumberController.text,
         description: _descriptionController.text,
-        exteriorColor: _exteriorColor,
-        interiorColor: _interiorColor,
+        exteriorColor: _exteriorColor ?? Colors.white,
+        interiorColor: _interiorColor ?? Colors.white,
         showLoadingDialog: _showLoadingDialog,
         showSuccessDialog: _showSuccessDialog,
         showErrorDialog: _showErrorAlert,
@@ -660,9 +689,20 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           },
                         ),
 
-                        // Form Fields Section
+                        // Form Fields Section - Debug logs
+                        Builder(
+                          builder: (context) {
+                            log('🎨 Passing colors to FormFieldsSection:');
+                            log('🎨 _exteriorColor: $_exteriorColor');
+                            log('🎨 _interiorColor: $_interiorColor');
+                            log('🎨 exteriorColor parameter: ${_exteriorColor ?? Colors.white}');
+                            log('🎨 interiorColor parameter: ${_interiorColor ?? Colors.white}');
+                            return SizedBox.shrink(); // Return empty widget
+                          },
+                        ),
+                        
                         FormFieldsSection(
-                          makeController: _make_contrller,
+                          makeController: _make_controller,
                           classController: _class_controller,
                           modelController: _model_controller,
                           typeController: _type_controller,
@@ -674,8 +714,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           plateNumberController: _plateNumberController,
                           chassisNumberController: _chassisNumberController,
                           descriptionController: _descriptionController,
-                          exteriorColor: _exteriorColor,
-                          interiorColor: _interiorColor,
+                          exteriorColor: _exteriorColor ?? Colors.white,
+                          interiorColor: _interiorColor ?? Colors.white,
                           onExteriorColorSelected: (color) {
                             setState(() {
                               _exteriorColor = color;

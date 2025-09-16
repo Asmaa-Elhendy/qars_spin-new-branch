@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'dart:developer';//kh
 
 class ColorPickerField extends StatefulWidget {
   final String label;
@@ -9,7 +10,7 @@ class ColorPickerField extends StatefulWidget {
   final bool showLabel;
   bool modify;
 
-   ColorPickerField({
+  ColorPickerField({
     Key? key,
     required this.label,
     this.modify = false,
@@ -31,6 +32,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
     super.initState();
     _selectedColor = widget.initialColor ?? const Color(0xff443a49);
     _pickerColor = _selectedColor;
+    log('🎨🎨🎨 initState called for ${widget.label}: _selectedColor=$_selectedColor, _pickerColor=$_pickerColor 🎨🎨🎨');
   }
 
   void _changeColor(Color color) {
@@ -44,23 +46,30 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    double height=MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
+
+    log('🎨 Building ColorPickerField for ${widget.label}:');
+    log('🎨 _pickerColor: $_pickerColor');
+    log('🎨 _selectedColor: $_selectedColor');
+    log('🎨 widget.initialColor: ${widget.initialColor}');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.showLabel) ...[
           Text(
             widget.label,
-            style: widget.modify? TextStyle(
-              color: Colors.black,
-              fontFamily: 'Gilroy',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w800,
-            ) :TextStyle(
-              fontSize: 15.w
-              ,
-              fontWeight: FontWeight.w500,
-            ),
+            style: widget.modify
+                ? TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Gilroy',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w800,
+                  )
+                : TextStyle(
+                    fontSize: 15.w,
+                    fontWeight: FontWeight.w500,
+                  ),
           ),
           const SizedBox(height: 8),
         ],
@@ -68,12 +77,12 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
           onTap: _showColorPickerDialog,
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            height: height*.05,
+            height: height * 0.05,
             width: width,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             decoration: BoxDecoration(
               color: _pickerColor,
-              border: Border.all(color: Colors.black,width: 0.3),
+              border: Border.all(color: Colors.black, width: 0.3),
               borderRadius: BorderRadius.circular(5),
             ),
             child: SizedBox(),
@@ -88,7 +97,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a ${widget.label.toLowerCase()}!',style: TextStyle(fontSize: 15.w),),
+          title: Text('Pick a ${widget.label.toLowerCase()}!', style: TextStyle(fontSize: 15.w)),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: _pickerColor,
@@ -99,7 +108,14 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                // Update the selected color and call the callback
+                setState(() {
+                  _selectedColor = _pickerColor;
+                });
+                widget.onColorSelected(_pickerColor);
+                Navigator.of(context).pop();
+              },
               child: const Text('Done'),
             ),
           ],

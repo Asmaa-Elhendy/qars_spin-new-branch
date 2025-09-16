@@ -122,11 +122,9 @@ class AdSubmissionService {
       // Convert warranty to boolean
       bool warrantyAvailable = warranty.toLowerCase() == 'yes';
 
-      // Get color values as hex strings
-      String exteriorColorHex = '#${exteriorColor.value.toRadixString(16).substring(2)}';
-      String interiorColorHex = '#${interiorColor.value.toRadixString(16).substring(2)}';
-
-
+      // Get color values as proper hex strings
+      String exteriorColorHex = '#${exteriorColor.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+      String interiorColorHex = '#${interiorColor.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 
       // Create the ad data model
       CreateAdModel adData = CreateAdModel(
@@ -224,9 +222,9 @@ class AdSubmissionService {
       // Convert warranty to boolean
       bool warrantyAvailable = warranty.toLowerCase() == 'yes';
 
-      // Get color values as hex strings
-      String exteriorColorHex = '#${exteriorColor.value.toRadixString(16).substring(2)}';
-      String interiorColorHex = '#${interiorColor.value.toRadixString(16).substring(2)}';
+      // Get color values as proper hex strings
+      String exteriorColorHex = '#${exteriorColor.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+      String interiorColorHex = '#${interiorColor.value.toRadixString(16).padLeft(8, '0').substring(2)}';
 
       // Define user credentials (these should be properly configured)
 
