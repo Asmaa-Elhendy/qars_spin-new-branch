@@ -171,12 +171,27 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _year_controller.text = postData['Manufacture_Year']?.toString() ?? '';
       _warranty_controller.text = (postData['Warranty_isAvailable']?.toString() == '1' || postData['Warranty_isAvailable'] == 1) ? "Yes" : "No";
 
-      // Set the type controller directly
-// Set the type controller directly
-_type_controller.text = postData['Category_Name_PL']?.toString() ??
-    (brandController.carCategories.isNotEmpty
-        ? brandController.carCategories.last.name
-        : "4*4");//k
+      // Set the type controller directly from post data (for modify mode)
+      _type_controller.text = postData['Category_Name_PL']?.toString() ?? '';
+      
+      // Find the matching category in the list and set it
+      if (_type_controller.text.isNotEmpty) {
+        final matchingCategory = brandController.carCategories.firstWhereOrNull(
+          (c) => c.name == _type_controller.text
+        );
+        if (matchingCategory != null) {
+          brandController.selectedCategory.value = matchingCategory;
+          log('Category set from post data: ${matchingCategory.name}');
+        } else {
+          // If category from post data not found in list, keep the text but clear selected category
+          brandController.selectedCategory.value = null;
+          log('Category from post data not found in list: ${_type_controller.text}');
+        }
+      } else {
+        // Keep empty if post data has empty category
+        brandController.selectedCategory.value = null;
+        log('Category kept empty as per post data');
+      }
       
       // Load existing image if available
       if (postData['Rectangle_Image_URL'] != null) {
@@ -218,42 +233,44 @@ _type_controller.text = postData['Category_Name_PL']?.toString() ??
       // Set warranty default to "No"
       _warranty_controller.text = "No";
       
-      // Wait for categories to load and set type to first category
+      // Wait for categories to load and set type to last category (for new ads only)
       ever(brandController.carCategories, (List<CarCategory> categories) {
-        if (categories.isNotEmpty) {//m
-          log('Categories loaded in ever(), count: ${categories.length}');
-          log('First category: ${categories.last.name}');
+        if (categories.isNotEmpty && widget.postData == null) {
+          // Only set default for new ads (when postData is null)
+          log('Categories loaded in ever() for new ad, count: ${categories.length}');
+          log('Last category: ${categories.last.name}');
           _type_controller.text = categories.last.name;
-          brandController.selectedCategory.value = categories.first;
+          brandController.selectedCategory.value = categories.last;
           log('Type controller set to: ${_type_controller.text}');
         }
       });
       
       // Also listen to loading state
       ever(brandController.isLoadingCategories, (bool isLoading) {
-        if (!isLoading && brandController.carCategories.isNotEmpty) {
-          log('Categories finished loading, setting first category');
+        if (!isLoading && brandController.carCategories.isNotEmpty && widget.postData == null) {
+          // Only set default for new ads (when postData is null)
+          log('Categories finished loading, setting last category for new ad');
           _type_controller.text = brandController.carCategories.last.name;
           brandController.selectedCategory.value = brandController.carCategories.last;
         }
       });
       
-      // Set initial type if categories are already loaded
-      if (brandController.carCategories.isNotEmpty) {
+      // Set initial type if categories are already loaded (for new ads only)
+      if (brandController.carCategories.isNotEmpty && widget.postData == null) {
         _type_controller.text = brandController.carCategories.last.name;
         brandController.selectedCategory.value = brandController.carCategories.last;
         log('Initial type set to: ${brandController.carCategories.last.name}');
-      } else {
-        _type_controller.clear(); // Clear until categories load
+      } else if (widget.postData == null) {
+        _type_controller.clear(); // Clear until categories load for new ads
         log('Waiting for categories to load...');
       }
       
-      // Add a delayed check as a fallback
+      // Add a delayed check as a fallback (for new ads only)
       Future.delayed(Duration(seconds: 2), () {
-        if (mounted && brandController.carCategories.isNotEmpty && _type_controller.text.isEmpty) {
-          log('Fallback: Setting type after delay');
-          _type_controller.text = brandController.carCategories.first.name;
-          brandController.selectedCategory.value = brandController.carCategories.first;
+        if (mounted && brandController.carCategories.isNotEmpty && _type_controller.text.isEmpty && widget.postData == null) {
+          log('Fallback: Setting type after delay for new ad');
+          _type_controller.text = brandController.carCategories.last.name;
+          brandController.selectedCategory.value = brandController.carCategories.last;
         }
       });
     }
@@ -557,4 +574,4 @@ _type_controller.text = postData['Category_Name_PL']?.toString() ??
       ),
     );
   }
-}
+}//
