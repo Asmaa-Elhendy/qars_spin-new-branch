@@ -57,7 +57,8 @@ class SpecsDataLayer {
     required String selectedLanguage,
     required String specId,
     required String specValue,
-  }) async {
+  }) async
+  {
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/UpdateSpecValue',
     );
