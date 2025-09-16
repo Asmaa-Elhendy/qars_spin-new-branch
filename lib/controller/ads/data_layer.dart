@@ -162,20 +162,54 @@ class AdRepository {
     }
   }
 
-  /// Parse JSON response from API
-  Map<String, dynamic> _parseJsonResponse(String jsonString) {
-    try {
-      final parsedJson = jsonDecode(jsonString);
+  /// تحديث إعلان سيارة موجود
+  Future<Map<String, dynamic>> updateCarAd({
+    required String postId,
+    required CreateAdModel adModel,
+  }) async
+  {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/UpdateCarForSalePost',
+    );
 
-      return {
-        'Code': parsedJson['Code'] ?? 'Error',
-        'Desc': parsedJson['Desc'] ?? 'Unknown error',
-        'ID': parsedJson['Created_ID'],
-      };
+    // Create JSON payload
+    String postDetails = jsonEncode(adModel.toApiPayload());
+
+    // Prepare the request body
+    final requestBody = {
+      'Post_ID': postId,
+      'Post_Details': postDetails,
+      'UserName': adModel.userName,
+      'Our_Secret': adModel.ourSecret,
+      'Selected_Language': adModel.selectedLanguage,
+    };
+
+    log('body req for update ${requestBody.toString()}');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        log('body response of update ${_parseJsonResponse(response.body)}');
+        return _parseJsonResponse(response.body);
+      } else {
+        return {
+          'Code': 'Error',
+          'Desc': 'HTTP ${response.statusCode}: ${response.reasonPhrase}',
+        };
+      }
     } catch (e) {
       return {
         'Code': 'Error',
-        'Desc': 'Failed to parse response: ${e.toString()}',
+        'Desc': 'Network error: $e',
       };
     }
   }
@@ -233,6 +267,24 @@ class AdRepository {
       return {
         'Code': 'Error',
         'Desc': 'Network error: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Parse JSON response from API
+  Map<String, dynamic> _parseJsonResponse(String jsonString) {
+    try {
+      final parsedJson = jsonDecode(jsonString);
+
+      return {
+        'Code': parsedJson['Code'] ?? 'Error',
+        'Desc': parsedJson['Desc'] ?? 'Unknown error',
+        'ID': parsedJson['Created_ID'],
+      };
+    } catch (e) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Failed to parse response: ${e.toString()}',
       };
     }
   }

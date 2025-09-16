@@ -23,7 +23,7 @@ class MyAdDataLayer {
     };
 
     log('Getting posts for user: $userName');
-    log('Request body: $requestBody');
+
 
     try {
       final response = await http.post(
@@ -36,7 +36,6 @@ class MyAdDataLayer {
       );
 
       log('Response status: ${response.statusCode}');
-      log('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Parse JSON response
@@ -73,7 +72,6 @@ class MyAdDataLayer {
     };
 
     log('Getting media for post ID: $postId');
-    log('Request body: $requestBody');
 
     try {
       final response = await http.post(
@@ -86,7 +84,6 @@ class MyAdDataLayer {
       );
 
       log('Response status: ${response.statusCode}');
-      log('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Parse JSON response
@@ -210,7 +207,6 @@ class MyAdDataLayer {
     };
 
     log('Deleting gallery image with media ID: $mediaId');
-    log('Request body: $requestBody');
 
     try {
       final response = await http.post(
@@ -272,7 +268,6 @@ class MyAdDataLayer {
     };
 
     log('Getting post details for post ID: $postId');
-    log('Request body: $requestBody');
 
     try {
       final response = await http.post(

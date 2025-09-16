@@ -87,6 +87,7 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
                     if (image != null) {
                       print('DEBUG: Image selected: ${image.path}');
                       widget.onCoverChanged(image.path);
+                      widget.onCoverPhotoChanged(true);
                     } else {
                       print('DEBUG: No image selected');
                     }

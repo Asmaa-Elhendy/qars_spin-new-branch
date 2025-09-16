@@ -16,6 +16,7 @@ class CreateAdModel {
   final String userName;
   final String ourSecret;
   final String selectedLanguage;
+  final String? postId; // Add postId field for update mode
 
   CreateAdModel({
     required this.makeId,
@@ -35,6 +36,7 @@ class CreateAdModel {
     required this.userName,
     required this.ourSecret,
     this.selectedLanguage = 'en',
+    this.postId, // Add postId parameter
   });
 
   /// Convert to JSON for API request

@@ -531,31 +531,64 @@ class _SellCarScreenState extends State<SellCarScreen> {
       hasVideo: _videoPath != null && _videoPath!.isNotEmpty,
     );
 
-    // Submit the ad using the service
-    await AdSubmissionService.submitAd(
-      context: context,
-      images: _images,
-      coverImage: _coverImage ?? '',
-      videoPath: _videoPath,
-      make: _make_contrller.text,
-      carClass: _class_controller.text,
-      model: _model_controller.text,
-      type: _type_controller.text,
-      year: _year_controller.text,
-      warranty: _warranty_controller.text,
-      askingPrice: _askingPriceController.text,
-      minimumPrice: _minimumPriceController.text,
-      mileage: _mileageController.text,
-      plateNumber: _plateNumberController.text,
-      chassisNumber: _chassisNumberController.text,
-      description: _descriptionController.text,
-      exteriorColor: _exteriorColor,
-      interiorColor: _interiorColor,
-      showLoadingDialog: _showLoadingDialog,
-      showSuccessDialog: _showSuccessDialog,
-      showErrorDialog: _showErrorAlert,
-      hideLoadingDialog: _hideLoadingDialog,
-    );
+    // Check if we're in modify mode
+    final String? postId = widget.postData?['ID']?.toString() ?? widget.postData?['postId']?.toString();
+
+    if (postId != null && postId.isNotEmpty) {
+      // Update mode
+      await AdSubmissionService.updateAd(
+        context: context,
+        images: _images,
+        coverImage: _coverImage ?? '',
+        videoPath: _videoPath,
+        make: _make_contrller.text,
+        carClass: _class_controller.text,
+        model: _model_controller.text,
+        type: _type_controller.text,
+        year: _year_controller.text,
+        warranty: _warranty_controller.text,
+        askingPrice: _askingPriceController.text,
+        minimumPrice: _minimumPriceController.text,
+        mileage: _mileageController.text,
+        plateNumber: _plateNumberController.text,
+        chassisNumber: _chassisNumberController.text,
+        description: _descriptionController.text,
+        exteriorColor: _exteriorColor,
+        interiorColor: _interiorColor,
+        postId: postId,
+        coverPhotoChanged: _coverPhotoChanged,
+        showLoadingDialog: _showLoadingDialog,
+        showSuccessDialog: _showSuccessDialog,
+        showErrorDialog: _showErrorAlert,
+        hideLoadingDialog: _hideLoadingDialog,
+      );
+    } else {
+      // Create mode
+      await AdSubmissionService.submitAd(
+        context: context,
+        images: _images,
+        coverImage: _coverImage ?? '',
+        videoPath: _videoPath,
+        make: _make_contrller.text,
+        carClass: _class_controller.text,
+        model: _model_controller.text,
+        type: _type_controller.text,
+        year: _year_controller.text,
+        warranty: _warranty_controller.text,
+        askingPrice: _askingPriceController.text,
+        minimumPrice: _minimumPriceController.text,
+        mileage: _mileageController.text,
+        plateNumber: _plateNumberController.text,
+        chassisNumber: _chassisNumberController.text,
+        description: _descriptionController.text,
+        exteriorColor: _exteriorColor,
+        interiorColor: _interiorColor,
+        showLoadingDialog: _showLoadingDialog,
+        showSuccessDialog: _showSuccessDialog,
+        showErrorDialog: _showErrorAlert,
+        hideLoadingDialog: _hideLoadingDialog,
+      );
+    }
   }
 
   @override
