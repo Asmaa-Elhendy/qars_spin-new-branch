@@ -714,7 +714,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           exteriorColor: _exteriorColor ?? Colors.white,
                           interiorColor: _interiorColor ?? Colors.white,
                           onExteriorColorSelected: (color) {
-                            setState(() {
+                            setState(() {//kتن
                               _exteriorColor = color;
                               log(color.hashCode.toString());
                             });
