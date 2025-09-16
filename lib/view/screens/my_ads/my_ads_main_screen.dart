@@ -5,8 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/my_ads/my_ad_data_layer.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/my_ads/my_ad_card.dart';
-
 
 class MyAdsMainScreen extends StatefulWidget {
   const MyAdsMainScreen({super.key});
@@ -87,7 +87,9 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
             child: Obx(() {
               if (controller.isLoadingMyAds.value) {
                 return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary,),
+                  child: AppLoadingWidget(
+                    title: 'Loading your ads...',
+                  ),
                 );
               }
               
@@ -142,4 +144,3 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
     );
   }
 }
-

@@ -18,6 +18,7 @@ import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 
+
 class SellCarScreen extends StatefulWidget {
   final dynamic postData;
 
@@ -754,30 +755,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
               Container(
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressIndicator(
-                          color: AppColors.primary,
-                          strokeWidth: 3.w,
-                        ),
-                        16.verticalSpace,
-                        Text(
-                          'Loading car data...',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: AppLoadingWidget(
+                    title: 'Loading car data...',
                   ),
                 ),
               ),
