@@ -9,8 +9,8 @@ class PaymentMethodDialog extends StatefulWidget {
 
   const PaymentMethodDialog({Key? key, required this.amount}) : super(key: key);
 
-  static void show({required BuildContext context, required double amount}) {
-    showDialog(
+  static Future<bool?> show({required BuildContext context, required double amount}) {
+    return showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (_) => PaymentMethodDialog(amount: amount),
@@ -37,7 +37,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
     } catch (e) {
       debugPrint("Error loading payment methods: $e");
     }
-    setState(() => loading = false);
+    if (mounted) setState(() => loading = false);
   }
 
   @override
@@ -78,12 +78,13 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                     final method = methods[index];
                     return InkWell(
                       onTap: () async {
-                        Navigator.pop(context);
-                        await PaymentService.executePaymentWithPolling(
+                        // Keep dialog open while processing, then pop with result
+                        final success = await PaymentService.executePaymentWithPolling(
                           context,
                           method.paymentMethodId!,
                           widget.amount,
                         );
+                        if (mounted) Navigator.pop(context, success);
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(
@@ -125,7 +126,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _cancelButton(() => Navigator.pop(context), "Cancel"),
+                _cancelButton(() => Navigator.pop(context, false), "Cancel"),
               ],
             )
           ],

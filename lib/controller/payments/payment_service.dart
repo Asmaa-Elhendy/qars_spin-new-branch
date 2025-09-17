@@ -1,68 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
-//
-// class PaymentService {
-//   /// 🔹 رجع كل طرق الدفع المتاحة
-//   static Future<List<MFPaymentMethod>> getPaymentMethods(double amount) async {
-//     MFInitiatePaymentRequest request = MFInitiatePaymentRequest(
-//       invoiceAmount: amount,
-//       currencyIso: MFCurrencyISO.KUWAIT_KWD,
-//     );
-//
-//     final response = await MFSDK.initiatePayment(request, MFLanguage.ENGLISH);
-//     return response.paymentMethods ?? [];
-//   }
-//
-//   /// 🔹 نفذ الدفع بالطريقة المختارة
-//   static Future<void> executePayment(
-//       BuildContext context, int paymentMethodId, double amount) async {
-//     try {
-//       MFExecutePaymentRequest request = MFExecutePaymentRequest(
-//         invoiceValue: amount,
-//       );
-//       request.paymentMethodId = paymentMethodId;
-//
-//       await MFSDK.executePayment(
-//         request,
-//         MFLanguage.ENGLISH,
-//             (invoiceId) {
-//           // 🔹 طباعة الـ Invoice ID
-//           debugPrint("Invoice ID: $invoiceId");
-//
-//           // 🔹 عرض SnackBar مباشرة داخل الـ callback
-//           if (context.mounted) {
-//             ScaffoldMessenger.of(context).showSnackBar(
-//               SnackBar(content: Text("✅ Payment Successful: $invoiceId")),
-//             );
-//           }
-//         },
-//       ).then((response) {
-//         // ممكن تستخدم هنا لمتابعة حالة الفاتورة بعد التنفيذ
-//         debugPrint("Invoice Status: ${response.invoiceStatus}");
-//         if (context.mounted) {
-//           if (response.invoiceStatus == "Paid") {
-//             ScaffoldMessenger.of(context).showSnackBar(
-//               SnackBar(content: Text("✅ Payment Successful")),
-//             );
-//           } else {
-//             ScaffoldMessenger.of(context).showSnackBar(
-//               SnackBar(content: Text("❌ Payment Failed: ${response.invoiceStatus}")),
-//             );
-//           }
-//         }
-//       }).catchError((error) {
-//         if (context.mounted) {
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             SnackBar(content: Text("⚠ Error: ${error.message}")),
-//           );
-//         }
-//         debugPrint("Payment Error: $error");
-//       });
-//     } catch (e) {
-//       debugPrint("Exception in payment: $e");
-//     }
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
 
@@ -73,70 +8,14 @@ class PaymentService {
   static Future<List<MFPaymentMethod>> getPaymentMethods(double amount) async {
     MFInitiatePaymentRequest request = MFInitiatePaymentRequest(
       invoiceAmount: amount,
-      currencyIso: MFCurrencyISO.KUWAIT_KWD,
+      currencyIso: MFCurrencyISO.QATAR_QAR,
     );
 
     final response = await MFSDK.initiatePayment(request, MFLanguage.ENGLISH);
     return response.paymentMethods ?? [];
   }
 
-  /// 🔹 تنفيذ الدفع وعرض حالة الفاتورة مباشرة حتى لو Pending
-  // static Future<void> executePayment(
-  //     BuildContext context, int paymentMethodId, double amount) async
-  // {
-  //   try {
-  //     MFExecutePaymentRequest request = MFExecutePaymentRequest(
-  //       invoiceValue: amount,
-  //     );
-  //     request.paymentMethodId = paymentMethodId;
-  //
-  //     await MFSDK.executePayment(request, MFLanguage.ENGLISH, (invoiceId) async {
-  //       debugPrint("Invoice ID: $invoiceId");
-  //
-  //       try {
-  //         MFGetPaymentStatusRequest statusRequest = MFGetPaymentStatusRequest(
-  //           key: invoiceId,
-  //           keyType: MFKeyType.INVOICEID,
-  //         );
-  //
-  //         final statusResponse = await MFSDK.getPaymentStatus(
-  //           statusRequest,
-  //           MFLanguage.ENGLISH,
-  //         );
-  //
-  //         debugPrint("Invoice Status: ${statusResponse.invoiceStatus}");
-  //
-  //         if (context.mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(
-  //               content: Text(
-  //                 "Invoice ID: $invoiceId | Status: ${statusResponse.invoiceStatus}",
-  //               ),
-  //               duration: const Duration(seconds: 5),
-  //             ),
-  //           );
-  //         }
-  //       } catch (e) {
-  //         debugPrint("Error fetching invoice status: $e");
-  //         if (context.mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             const SnackBar(content: Text("⚠ Error checking payment status")),
-  //           );
-  //         }
-  //       }
-  //     }).catchError((error) {
-  //       debugPrint("Payment Error: $error");
-  //       if (context.mounted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text("⚠ Payment Error: ${error.message}")),
-  //         );
-  //       }
-  //     });
-  //   } catch (e) {
-  //     debugPrint("Exception in payment: $e");
-  //   }
-  // }
-  static Future<void> executePaymentWithPolling(
+  static Future<bool> executePaymentWithPolling(
       BuildContext context, int paymentMethodId, double amount) async {
     try {
       MFExecutePaymentRequest request = MFExecutePaymentRequest(
@@ -144,12 +23,11 @@ class PaymentService {
       );
       request.paymentMethodId = paymentMethodId;
 
-      await MFSDK.executePayment(request, MFLanguage.ENGLISH, (invoiceId) async {
-        debugPrint("Invoice ID: $invoiceId");
+      bool success = false;
 
+      await MFSDK.executePayment(request, MFLanguage.ENGLISH, (invoiceId) async {
         if (!context.mounted) return;
 
-        // SnackBar فوري مع حالة مؤقتة
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Invoice created: $invoiceId | Status: Pending..."),
@@ -157,7 +35,6 @@ class PaymentService {
           ),
         );
 
-        // 🔹 Polling للتحقق من حالة الفاتورة كل 5 ثواني حتى تتحول من Pending
         bool done = false;
         while (!done && context.mounted) {
           try {
@@ -169,16 +46,17 @@ class PaymentService {
               MFLanguage.ENGLISH,
             );
 
-            debugPrint("Invoice Status: ${statusResponse.invoiceStatus}");
+            final status = statusResponse.invoiceStatus;
 
-            if (statusResponse.invoiceStatus != "Pending") {
+            if (status != "Pending") {
               done = true;
+              success = status == "Paid";
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    statusResponse.invoiceStatus == "Paid"
+                    success
                         ? "✅ Payment Successful: $invoiceId"
-                        : "❌ Payment Failed: ${statusResponse.invoiceStatus}",
+                        : "❌ Payment Failed: $status",
                   ),
                   duration: const Duration(seconds: 5),
                 ),
@@ -187,8 +65,8 @@ class PaymentService {
               await Future.delayed(const Duration(seconds: 5));
             }
           } catch (e) {
-            debugPrint("Error checking invoice status: $e");
             done = true;
+            success = false;
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("⚠ Error checking payment status")),
@@ -197,15 +75,16 @@ class PaymentService {
           }
         }
       }).catchError((error) {
-        debugPrint("Payment Error: $error");
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("⚠ Payment Error: ${error.message}")),
           );
         }
       });
+
+      return success;
     } catch (e) {
-      debugPrint("Exception in payment: $e");
+      return false;
     }
   }
 

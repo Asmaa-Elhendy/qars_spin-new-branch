@@ -10,6 +10,7 @@ import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../screens/ads/create_new_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
+import 'package:qarsspin/view/widgets/payments/payment_methods_dialog.dart';
 
 const String fontFamily = 'Gilroy';
 
@@ -38,28 +39,25 @@ Widget MyAdCard(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        /// صورة الإعلان
         Container(
           width: double.infinity,
           height: 260.h,
           child: ad.rectangleImageUrl != null
               ? Image.network(
-            ad.rectangleImageUrl!,
-            fit: BoxFit.fill,
-            errorBuilder: (context, error, stackTrace) {
-              return Image.asset(
-                "assets/images/car2-removebg-preview.png",
-                fit: BoxFit.fill,
-              );
-            },
-          )
+                  ad.rectangleImageUrl!,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/car2-removebg-preview.png",
+                      fit: BoxFit.fill,
+                    );
+                  },
+                )
               : Image.asset(
-            "assets/images/logo_the_q.png",
-            fit: BoxFit.fill,
-          ),
+                  "assets/images/logo_the_q.png",
+                  fit: BoxFit.fill,
+                ),
         ),
-
-        /// العنوان + الحالة
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
@@ -99,8 +97,6 @@ Widget MyAdCard(
             ],
           ),
         ),
-
-        /// رسالة لو مرفوض
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Text(
@@ -132,35 +128,56 @@ Widget MyAdCard(
                     context: context,
                     title: "Ready to showCase your vehicle like a pro?",
                     message:
-                    "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                        "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
                     onClose: () {},
                     onTappp: () async {
+                      // 1) Close confirmation dialog
                       Navigator.pop(context);
-                      final myAdController = Get.find<MyAdCleanController>();
 
-                      onShowLoader();
-                      final ok = await myAdController.request360Session(
-                        userName: userName,
-                        postId: ad.postId.toString(),
-                        ourSecret: ourSecret,
+                      // 2) Take payment first
+                      final paid = await PaymentMethodDialog.show(
+                        context: context,
+                        amount: 1.0,
                       );
-                      onHideLoader();
 
-                      if (ok) {
-                        SuccessDialog.show(
-                          request: true,
-                          context: context,
-                          title: "Confirmation",
-                          message: "We Have Received Your Request",
-                          onClose: () {},
-                          onTappp: () {},
+                      if (paid == true) {
+                        final myAdController = Get.find<MyAdCleanController>();
+
+                        // 3) After successful payment, send request to server
+                        onShowLoader();
+                        final ok = await myAdController.request360Session(
+                          userName: userName,
+                          postId: ad.postId.toString(),
+                          ourSecret: ourSecret,
                         );
+                        onHideLoader();
+
+                        if (ok) {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Confirmation",
+                            message: "We Have Received Your Request",
+                            onClose: () {},
+                            onTappp: () {},
+                          );
+                        } else {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Cancellation",
+                            message: "Failed To Send A Request",
+                            onClose: () {},
+                            onTappp: () {},
+                          );
+                        }
                       } else {
+
                         SuccessDialog.show(
                           request: true,
                           context: context,
-                          title: "Cancellation",
-                          message: "Failed To Send A Request",
+                          title:    'Payment',
+                          message:   'Payment was cancelled or failed',
                           onClose: () {},
                           onTappp: () {},
                         );
@@ -178,35 +195,56 @@ Widget MyAdCard(
                     context: context,
                     title: "Let's make your post the center \n of orientation",
                     message:
-                    "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
+                        "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
                     onClose: () {},
                     onTappp: () async {
+                      // 1) Close confirmation dialog
                       Navigator.pop(context);
-                      final myAdController = Get.find<MyAdCleanController>();
 
-                      onShowLoader();
-                      final ok = await myAdController.requestFeatureAd(
-                        userName: userName,
-                        postId: ad.postId.toString(),
-                        ourSecret: ourSecret,
+                      // 2) Take payment first
+                      final paid = await PaymentMethodDialog.show(
+                        context: context,
+                        amount: 1.0,
                       );
-                      onHideLoader();
 
-                      if (ok) {
-                        SuccessDialog.show(
-                          request: true,
-                          context: context,
-                          title: "Confirmation",
-                          message: "We Have Received Your Request",
-                          onClose: () {},
-                          onTappp: () {},
+                      if (paid == true) {
+                        final myAdController = Get.find<MyAdCleanController>();
+
+                        // 3) After successful payment, send request to server
+                        onShowLoader();
+                        final ok = await myAdController.requestFeatureAd(
+                          userName: userName,
+                          postId: ad.postId.toString(),
+                          ourSecret: ourSecret,
                         );
+                        onHideLoader();
+
+                        if (ok) {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Confirmation",
+                            message: "We Have Received Your Request",
+                            onClose: () {},
+                            onTappp: () {},
+                          );
+                        } else {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Cancellation",
+                            message: "Failed To Send A Request",
+                            onClose: () {},
+                            onTappp: () {},
+                          );
+                        }
                       } else {
+
                         SuccessDialog.show(
-                          request: true,
+                          request: true,//
                           context: context,
-                          title: "Cancellation",
-                          message: "Failed To Send A Request",
+                          title:    'Payment',
+                          message:   'Payment was cancelled or failed',
                           onClose: () {},
                           onTappp: () {},
                         );
@@ -278,38 +316,37 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         title: "Publish",
-                        onTap: ()async {
+                        onTap: () async {
+                          final myAdController = Get.find<MyAdCleanController>();
 
-                            final myAdController = Get.find<MyAdCleanController>();
+                          onShowLoader();
+                          final ok = await myAdController.requestPublishAd(
+                            userName: userName,
+                            postId: ad.postId.toString(),
+                            ourSecret: ourSecret,
+                          );
+                          onHideLoader();
 
-                            onShowLoader();
-                            final ok = await myAdController.requestPublishAd(
-                              userName: userName,
-                              postId: ad.postId.toString(),
-                              ourSecret: ourSecret,
+                          if (ok) {
+                            SuccessDialog.show(
+                              request: true,
+                              context: context,
+                              title: "Information",
+                              message:
+                                  "This ad is pending approval, Please wait \n while we review your ad",
+                              onClose: () {},
+                              onTappp: () {},
                             );
-                            onHideLoader();
-
-                            if (ok) {
-                              SuccessDialog.show(
-                                request: true,
-                                context: context,
-                                title: "Information",
-                                message: "This ad is pending approval, Please wait \n while we review your ad",
-                                onClose: () {},
-                                onTappp: () {},
-                              );
-                            } else {
-                              SuccessDialog.show(
-                                request: true,
-                                context: context,
-                                title: "Cancellation",
-                                message: "Failed To Send A Request",
-                                onClose: () {},
-                                onTappp: () {},
-                              );
-                            }
-
+                          } else {
+                            SuccessDialog.show(
+                              request: true,
+                              context: context,
+                              title: "Cancellation",
+                              message: "Failed To Send A Request",
+                              onClose: () {},
+                              onTappp: () {},
+                            );
+                          }
                         },
                         green: true,
                         w: double.infinity,

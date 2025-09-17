@@ -80,15 +80,7 @@ class SuccessDialog extends StatelessWidget {
                 },"Cancel",request),
                 10.horizontalSpace,
                   yellowButtons(title:"Confirm",onTap:onTap
-                //       ()async{
-                //     //electronic payment
-                //     Navigator.pop(context);
-                //     PaymentMethodDialog.show(
-                //       context: context,
-                //       amount: 10.0, // المبلغ المطلوب
-                //     );
-                //
-                // }
+                    
                 ,w: 95.w)
 
               ],
