@@ -313,4 +313,108 @@ class MyAdDataLayer {
       };
     }
   }
+
+  // Request types for RegisterPostRequest
+  static const String requestTypeFeaturePost = 'Request to Feature a Post';
+  static const String requestType360Session = 'Request 360 Photo Session';
+  // static const String requestTypePublish = 'Publish Post';
+  // static const String requestTypeArchive = 'Archive Post';
+
+  /// Register Post Request (e.g., Feature Post, 360 Session)
+  Future<Map<String, dynamic>> registerPostRequest({
+    required String userName,
+    required String postId,
+    required String requestType,
+    required String ourSecret,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/RegisterPostRequest',
+    );
+
+    // Basic validation to avoid backend "Missing One or More Parameter"
+    if (userName.trim().isEmpty || postId.trim().isEmpty || requestType.trim().isEmpty || ourSecret.trim().isEmpty) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Missing one or more required parameters',
+        'Count': 0,
+        'Data': null,
+      };
+    }
+
+    final requestBody = {
+      'UserName': userName,
+      'Post_ID': postId,
+      'Request_Type': requestType,
+      'Our_Secret': ourSecret,
+    };
+
+    log('Registering post request: user=$userName, postId=$postId, type=$requestType');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'Count': parsedJson['Count'] ?? 0,
+          'Data': parsedJson['Data'],
+        };
+      } else {
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to register post request. Status code: ${response.statusCode}',
+          'Count': 0,
+          'Data': null,
+        };
+      }
+    } catch (e) {
+      log('Error registering post request: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'Count': 0,
+        'Data': null,
+      };
+    }
+  }
+
+  /// Convenience: request to feature a post (pin to top)
+  Future<Map<String, dynamic>> requestToFeaturePost({
+    required String userName,
+    required String postId,
+    required String ourSecret,
+  }) {
+    return registerPostRequest(
+      userName: userName,
+      postId: postId,
+      requestType: requestTypeFeaturePost,
+      ourSecret: ourSecret,
+    );
+  }
+
+  /// Convenience: request a 360 photo session
+  Future<Map<String, dynamic>> request360PhotoSession({
+    required String userName,
+    required String postId,
+    required String ourSecret,
+  }) {
+    return registerPostRequest(
+      userName: userName,
+      postId: postId,
+      requestType: requestType360Session,
+      ourSecret: ourSecret,
+    );
+  }
 }

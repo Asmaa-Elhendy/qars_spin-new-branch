@@ -34,6 +34,11 @@ class MyAdCleanController extends GetxController {
   var isLoadingPostDetails = false.obs;
   var postDetailsError = Rxn<String>();
 
+  // Request Feature / 360 state
+  final RxBool isSubmittingRequest = false.obs;
+  final Rxn<String> requestError = Rxn<String>();
+  final RxBool requestSuccess = RxBool(false);
+
   @override
   void onInit() {
     super.onInit();
@@ -176,6 +181,7 @@ class MyAdCleanController extends GetxController {
       return false;
     }
   }
+
   /// Get post details by ID for editing
   Future<void> getPostById({
     required String postKind,
@@ -216,11 +222,74 @@ class MyAdCleanController extends GetxController {
     }
   }
 
-
   /// Clear post details
   void clearPostDetails() {
     postDetails.value = null;
     postDetailsError.value = null;
     isLoadingPostDetails.value = false;
+  }
+
+  /// Request to feature (pin) a post
+  Future<bool> requestFeatureAd({
+    required String userName,
+    required String postId,
+    required String ourSecret,
+  }) async {
+    isSubmittingRequest.value = true;
+    requestError.value = null;
+    requestSuccess.value = false;
+
+    try {
+      final result = await repository.requestToFeaturePost(
+        userName: userName,
+        postId: postId,
+        ourSecret: ourSecret,
+      );
+
+      if ((result['Code']?.toString().toUpperCase() ?? '') == 'OK') {
+        requestSuccess.value = true;
+        return true;
+      } else {
+        requestError.value = result['Desc']?.toString() ?? 'Request failed';
+        return false;
+      }
+    } catch (e) {
+      requestError.value = 'Network error: ${e.toString()}';
+      return false;
+    } finally {
+      isSubmittingRequest.value = false;
+    }
+  }
+
+  /// Request a 360 photo session for a post
+  Future<bool> request360Session({
+    required String userName,
+    required String postId,
+    required String ourSecret,
+  }) async {
+    isSubmittingRequest.value = true;
+    requestError.value = null;
+    requestSuccess.value = false;
+
+    try {
+      final result = await repository.request360PhotoSession(
+        userName: userName,
+        postId: postId,
+        ourSecret: ourSecret,
+      );
+
+      if ((result['Code']?.toString().toUpperCase() ?? '') == 'OK') {
+        requestSuccess.value = true;
+        return true;
+      } else {
+        requestError.value = result['Desc']?.toString() ?? 'Request failed';
+        return false;
+      }
+    } catch (e) {
+      requestError.value = 'Network error: ${e.toString()}';
+      return false;
+    } finally {
+      isSubmittingRequest.value = false;
+    }
   }
 }

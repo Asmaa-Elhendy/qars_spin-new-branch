@@ -10,12 +10,17 @@ class SuccessDialog extends StatelessWidget {
   final String title;
   final String message;
   final VoidCallback onClose;
+  final dynamic onTap;
+   final bool request; //for request 360, feature confirmation alert
 
   const SuccessDialog({
     Key? key,
     required this.title,
     required this.message,
     required this.onClose,
+    required this.onTap,
+     required this.request //for request 360, feature confirmation alert
+
   }) : super(key: key);
 
   @override
@@ -30,7 +35,7 @@ class SuccessDialog extends StatelessWidget {
       //insetPadding:  EdgeInsets.symmetric(horizontal: 20.w,vertical: 16.h),
       child: Container(
         padding:  EdgeInsets.symmetric(horizontal: 25.w,vertical: 16.h),
-        height: 264.h,
+        height: request?160.h:264.h,
         decoration: BoxDecoration(
           //color: Colors.white,
           borderRadius: BorderRadius.zero,
@@ -61,22 +66,29 @@ class SuccessDialog extends StatelessWidget {
 
             ),
             18.verticalSpace,
-            Row(
+          request?
+          cancelButton((){
+            Navigator.pop(context);
+          },"Close",request)
+          :Row(
+
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 cancelButton((){
                   Navigator.pop(context);
-                },"Cancel"),
+                },"Cancel",request),
                 10.horizontalSpace,
-                  yellowButtons(title:"Confirm",onTap: ()async{
-                    //electronic payment
-                    Navigator.pop(context);
-                    PaymentMethodDialog.show(
-                      context: context,
-                      amount: 10.0, // المبلغ المطلوب
-                    );
-
-                },w: 95.w)
+                  yellowButtons(title:"Confirm",onTap:onTap
+                //       ()async{
+                //     //electronic payment
+                //     Navigator.pop(context);
+                //     PaymentMethodDialog.show(
+                //       context: context,
+                //       amount: 10.0, // المبلغ المطلوب
+                //     );
+                //
+                // }
+                ,w: 95.w)
 
               ],
             )
@@ -93,6 +105,8 @@ class SuccessDialog extends StatelessWidget {
     required String title,
     required String message,
     VoidCallback? onClose,
+    final dynamic onTappp,
+    required final bool request //for request 360, feature confirmation alert
   }) {
     showDialog(
       context: context,
@@ -104,14 +118,16 @@ class SuccessDialog extends StatelessWidget {
           Navigator.of(context).pop();
           onClose?.call();
         },
+        onTap: onTappp,
+          request:request
       ),
     );
   }
-  cancelButton(ontap,title){
+  cancelButton(ontap,title,reuest){
     return InkWell(
       onTap: ontap,
       child: Container(
-        width: 95.w,
+        width:reuest?230.w: 95.w,
         padding: EdgeInsets.symmetric(horizontal: 18.w,vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.logoGray,

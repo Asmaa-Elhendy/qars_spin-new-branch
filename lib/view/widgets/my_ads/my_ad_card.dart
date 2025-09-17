@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/screens/my_ads/gallery_management.dart';
 import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
-
-import '../../../controller/ads/data_layer.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../screens/ads/create_new_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
@@ -118,18 +117,11 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 yellowButtons(title: "Request 360 Service",onTap: (){
-                  SuccessDialog.show(
-                    context: context,
-                    title: "Ready to showCase your vehicle like a pro?",
-                    message: "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
-                    onClose: () {
-                      // Do something after closing dialog
-                      print("Dialog closed");
-                    },
-                  );
+              
                 },w: 185.w,),
                 yellowButtons(title: "Feature Your Ad",onTap: (){
-                  SuccessDialog.show(
+
+                  SuccessDialog.show(request: false,
                     context: context,
                     title: "Let's make your post the center \n of orientation",
                     message: "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
@@ -137,6 +129,49 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                       // Do something after closing dialog
                       print("Dialog closed");
                     },
+                    onTappp: ()async{
+                      Navigator.pop(context);
+                      // Inside onTap of "Feature Your Ad"
+                      final myAdController = Get.find<MyAdCleanController>();
+
+// Show loading
+                      Get.dialog(
+                        const Center(child: CircularProgressIndicator()),
+                        barrierDismissible: false,
+                      );
+
+                      myAdController
+                          .requestFeatureAd(
+                        userName:userName,
+                        postId: ad.postId.toString(),
+                        ourSecret: ourSecret, // TODO: replace with your real secret from auth/state
+                      )
+                          .then((ok) {
+                        Get.back(); // close loading
+                        if (ok) {
+                          SuccessDialog.show(
+                              request:true,
+                              context: context,
+                              title: "Confirmation",
+                              message: "We Have Received Your Request",
+                              onClose: () {
+                                // Do something after closing dialog
+                                print("Dialog closed");
+                              },
+                              onTappp: (){},
+
+                          );
+                        } else {
+                          Get.snackbar(
+                            'Request Failed',
+                            myAdController.requestError.value ?? 'Unknown error',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.redAccent.withOpacity(0.2),
+                          );
+                        }
+                      });
+
+                    }
                   );
                 },w: 185.w,),
 
