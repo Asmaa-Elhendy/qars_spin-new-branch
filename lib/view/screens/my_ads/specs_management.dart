@@ -246,7 +246,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
               color: Colors.black.withOpacity(0.5),
               child: Center(
                 child: AppLoadingWidget(
-                  title: 'Loading...',
+                    title: 'Loading...\n Please Wait...'
                 ),
               ),
             ),

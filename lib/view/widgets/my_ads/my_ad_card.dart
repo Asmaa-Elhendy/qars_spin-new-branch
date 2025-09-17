@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/screens/my_ads/gallery_management.dart';
@@ -13,32 +11,36 @@ import '../../screens/ads/create_new_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
 
-
 const String fontFamily = 'Gilroy';
 
-Widget MyAdCard(MyAdModel ad, BuildContext context){
-  return  Container(
-    margin: EdgeInsets.symmetric(horizontal: 18.w,vertical: 10.h),
+Widget MyAdCard(
+    MyAdModel ad,
+    BuildContext context, {
+      required VoidCallback onShowLoader,
+      required VoidCallback onHideLoader,
+    }) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
     padding: EdgeInsets.only(bottom: 12.h),
-    //height: 455.h,
     width: double.infinity,
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(4), // optional rounded corners
+      borderRadius: BorderRadius.circular(4),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.22), // shadow color
-          blurRadius: 8, // how soft the shadow is
-          spreadRadius: 2, // how wide it spreads
-          offset: Offset(0, 2), // no offset = shadow all around
+          color: Colors.black.withOpacity(0.22),
+          blurRadius: 8,
+          spreadRadius: 2,
+          offset: Offset(0, 2),
         ),
       ],
     ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        /// صورة الإعلان
         Container(
-          width:double.infinity,
+          width: double.infinity,
           height: 260.h,
           child: ad.rectangleImageUrl != null
               ? Image.network(
@@ -56,9 +58,10 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
             fit: BoxFit.fill,
           ),
         ),
-        Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 10.w),
 
+        /// العنوان + الحالة
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -78,11 +81,11 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
                   decoration: BoxDecoration(
-                    color: AppColors.extraLightGray.withOpacity(.6), // grey background
-                    borderRadius: BorderRadius.circular(3), // optional rounded corners
+                    color: AppColors.extraLightGray.withOpacity(.6),
+                    borderRadius: BorderRadius.circular(3),
                   ),
                   child: Text(
-                    ad.postStatus ,
+                    ad.postStatus,
                     style: TextStyle(
                       fontFamily: fontFamily,
                       fontSize: 14.sp,
@@ -92,16 +95,18 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              )
-
-
+              ),
             ],
           ),
         ),
+
+        /// رسالة لو مرفوض
         Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 10.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Text(
-            ad.postStatus=='Rejected'?'upload the car photos and publish the post then request for 360':'',
+            ad.postStatus == 'Rejected'
+                ? 'upload the car photos and publish the post then request for 360'
+                : '',
             style: TextStyle(
               fontFamily: fontFamily,
               fontSize: 14.sp,
@@ -112,154 +117,130 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
           ),
         ),
         6.verticalSpace,
-        Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 10.w),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                yellowButtons(title: "Request 360 Service",onTap: (){
-                  SuccessDialog.show(
-                    request: false,
-                    context: context,
-                      title: "Ready to showCase your vehicle like a pro?",
-                      message: "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
-                    onClose: () {
-                      // Do something after closing dialog
-                      print("Dialog closed");
-                    },
-                    onTappp: () async {
-                      Navigator.pop(context);
 
-                      final myAdController = Get.find<MyAdCleanController>();
-
-                      // Show loading
-                      Get.dialog(
-                        const Center(child: CircularProgressIndicator()),
-                        barrierDismissible: false,
-                      );
-
-                      myAdController
-                          .request360Session(
-                        userName:userName,
-                        postId: ad.postId.toString(),
-                        ourSecret: ourSecret, // TODO: replace with your real secret from auth/state
-                      )
-                          .then((ok) {
-                        Get.back(); // close loading
-                        if (ok) {
-                          SuccessDialog.show(
-                            request: true,
-                            context: context,
-                            title: "Confirmation",
-                            message: "We Have Received Your Request",
-                            onClose: () {
-                              print("Dialog closed");
-                            },
-                            onTappp: () {},
-                          );
-                        } else {
-                          SuccessDialog.show(
-                            request: true,
-                            context: context,
-                            title: "Cancellation",
-                            message: "Failed To Send A Request",
-                            onClose: () {
-                              print("Dialog closed");
-                            },
-                            onTappp: () {},
-                          );
-                        }
-                      });
-
-                    }
-                  );
-                },w: 185.w,),
-                yellowButtons(title: "Feature Your Ad",onTap: (){
-
-                  SuccessDialog.show(request: false,
-                    context: context,
-                    title: "Let's make your post the center \n of orientation",
-                    message: "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
-                    onClose: () {
-                      // Do something after closing dialog
-                      print("Dialog closed");
-                    },
-                    onTappp: ()async{
-                      Navigator.pop(context);
-                      // Inside onTap of "Feature Your Ad"
-                      final myAdController = Get.find<MyAdCleanController>();
-
-// Show loading
-                      Get.dialog(
-                        const Center(child: CircularProgressIndicator()),
-                        barrierDismissible: false,
-                      );
-
-                      myAdController
-                          .requestFeatureAd(
-                        userName:userName,
-                        postId: ad.postId.toString(),
-                        ourSecret: ourSecret, // TODO: replace with your real secret from auth/state
-                      )
-                          .then((ok) {
-                        Get.back(); // close loading
-                        if (ok) {
-                          SuccessDialog.show(
-                              request:true,
-                              context: context,
-                              title: "Confirmation",
-                              message: "We Have Received Your Request",
-                              onClose: () {
-                                // Do something after closing dialog
-                                print("Dialog closed");
-                              },
-                              onTappp: (){},
-
-                          );
-                        } else {
-                          SuccessDialog.show(
-                            request: true,
-                            context: context,
-                            title: "Cancellation",
-                            message: "Failed To Send A Request",
-                            onClose: () {
-                              print("Dialog closed");
-                            },
-                            onTappp: () {},
-                          );
-                        }
-                      });
-
-                    }
-                  );
-                },w: 185.w,),
-
-
-              ]
-          ),
-        ),
-        6.verticalSpace,
+        /// أزرار (360 و Feature)
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Left side buttons (Modify, Specs)
+              yellowButtons(
+                title: "Request 360 Service",
+                onTap: () {
+                  SuccessDialog.show(
+                    request: false,
+                    context: context,
+                    title: "Ready to showCase your vehicle like a pro?",
+                    message:
+                    "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                    onClose: () {},
+                    onTappp: () async {
+                      Navigator.pop(context);
+                      final myAdController = Get.find<MyAdCleanController>();
+
+                      onShowLoader();
+                      final ok = await myAdController.request360Session(
+                        userName: userName,
+                        postId: ad.postId.toString(),
+                        ourSecret: ourSecret,
+                      );
+                      onHideLoader();
+
+                      if (ok) {
+                        SuccessDialog.show(
+                          request: true,
+                          context: context,
+                          title: "Confirmation",
+                          message: "We Have Received Your Request",
+                          onClose: () {},
+                          onTappp: () {},
+                        );
+                      } else {
+                        SuccessDialog.show(
+                          request: true,
+                          context: context,
+                          title: "Cancellation",
+                          message: "Failed To Send A Request",
+                          onClose: () {},
+                          onTappp: () {},
+                        );
+                      }
+                    },
+                  );
+                },
+                w: 185.w,
+              ),
+              yellowButtons(
+                title: "Feature Your Ad",
+                onTap: () {
+                  SuccessDialog.show(
+                    request: false,
+                    context: context,
+                    title: "Let's make your post the center \n of orientation",
+                    message:
+                    "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
+                    onClose: () {},
+                    onTappp: () async {
+                      Navigator.pop(context);
+                      final myAdController = Get.find<MyAdCleanController>();
+
+                      onShowLoader();
+                      final ok = await myAdController.requestFeatureAd(
+                        userName: userName,
+                        postId: ad.postId.toString(),
+                        ourSecret: ourSecret,
+                      );
+                      onHideLoader();
+
+                      if (ok) {
+                        SuccessDialog.show(
+                          request: true,
+                          context: context,
+                          title: "Confirmation",
+                          message: "We Have Received Your Request",
+                          onClose: () {},
+                          onTappp: () {},
+                        );
+                      } else {
+                        SuccessDialog.show(
+                          request: true,
+                          context: context,
+                          title: "Cancellation",
+                          message: "Failed To Send A Request",
+                          onClose: () {},
+                          onTappp: () {},
+                        );
+                      }
+                    },
+                  );
+                },
+                w: 185.w,
+              ),
+            ],
+          ),
+        ),
+        6.verticalSpace,
+
+        /// أزرار (Modify, Specs, Gallery, Publish)
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Expanded(
                 child: Row(
                   children: [
                     Expanded(
                       child: yellowButtons(
                         title: "Modify",
-                        onTap: () async {
-                          // Navigate to SellCarScreen first with post ID
+                        onTap: () {
                           Get.to(
                             SellCarScreen(
                               postData: {
                                 'postId': ad.postId.toString(),
                                 'postKind': ad.postKind ?? 'CarForSale',
                                 'isModifyMode': true,
-                                'userName': ad.userName, // Add username from the ad model
+                                'userName': ad.userName,
                               },
                             ),
                           );
@@ -272,7 +253,7 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                       child: yellowButtons(
                         title: "Specs",
                         onTap: () {
-                          Get.to(SpecsManagemnt(postId: ad.postId.toString(),));
+                          Get.to(SpecsManagemnt(postId: ad.postId.toString()));
                         },
                         w: double.infinity,
                       ),
@@ -281,7 +262,6 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                 ),
               ),
               SizedBox(width: 15.w),
-              // Right side buttons (Gallery, Publish)
               Expanded(
                 child: Row(
                   children: [
@@ -310,23 +290,20 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
           ),
         ),
         6.verticalSpace,
+
+        /// التاريخ
         Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 10.w),
-          child: Text("Creation Date: ${ad.createdDateTime.split(' ')[0]}-Expiry Date: ${ad.expirationDate.split(' ')[0]}",
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Text(
+            "Creation Date: ${ad.createdDateTime.split(' ')[0]} - Expiry Date: ${ad.expirationDate.split(' ')[0]}",
             style: TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 12.5.sp,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.w400
+              color: AppColors.textMuted,
+              fontSize: 12.5.sp,
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.w400,
             ),
-
           ),
-        )
-
-
-
-
-
+        ),
       ],
     ),
   );
