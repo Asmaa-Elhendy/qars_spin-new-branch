@@ -117,7 +117,61 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 yellowButtons(title: "Request 360 Service",onTap: (){
-              
+                  SuccessDialog.show(
+                    request: false,
+                    context: context,
+                      title: "Ready to showCase your vehicle like a pro?",
+                      message: "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                    onClose: () {
+                      // Do something after closing dialog
+                      print("Dialog closed");
+                    },
+                    onTappp: () async {
+                      Navigator.pop(context);
+
+                      final myAdController = Get.find<MyAdCleanController>();
+
+                      // Show loading
+                      Get.dialog(
+                        const Center(child: CircularProgressIndicator()),
+                        barrierDismissible: false,
+                      );
+
+                      myAdController
+                          .request360Session(
+                        userName:userName,
+                        postId: ad.postId.toString(),
+                        ourSecret: ourSecret, // TODO: replace with your real secret from auth/state
+                      )
+                          .then((ok) {
+                        Get.back(); // close loading
+                        if (ok) {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Confirmation",
+                            message: "We Have Received Your Request",
+                            onClose: () {
+                              print("Dialog closed");
+                            },
+                            onTappp: () {},
+                          );
+                        } else {
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Cencellation",
+                            message: "Failed To Send A Request",
+                            onClose: () {
+                              print("Dialog closed");
+                            },
+                            onTappp: () {},
+                          );
+                        }
+                      });
+
+                    }
+                  );
                 },w: 185.w,),
                 yellowButtons(title: "Feature Your Ad",onTap: (){
 
@@ -162,11 +216,15 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
 
                           );
                         } else {
-                          Get.snackbar(
-                            'Request Failed',
-                            myAdController.requestError.value ?? 'Unknown error',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.redAccent.withOpacity(0.2),
+                          SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: "Cencellation",
+                            message: "Failed To Send A Request",
+                            onClose: () {
+                              print("Dialog closed");
+                            },
+                            onTappp: () {},
                           );
                         }
                       });
