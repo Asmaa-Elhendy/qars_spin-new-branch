@@ -11,6 +11,7 @@ import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
 import 'package:qarsspin/model/post_media.dart';
 
 import '../../../controller/ads/data_layer.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 
 class GalleryManagement extends StatefulWidget {
 int postId;
@@ -171,113 +172,130 @@ class _GalleryManagementState extends State<GalleryManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
+      body: Stack(
         children: [
-          /// Header
-          Container(
-            height: 106.h,
-            padding: EdgeInsets.only(top: 13.h, left: 14.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 5.h,spreadRadius: 1,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              spacing: 66.w,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.arrow_back_outlined,
-                      color: Colors.black, size: 30.w),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Gallery Management",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Gilroy',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
+          Column(
+            children: [
+              /// Header
+              Container(
+                height: 106.h,
+                padding: EdgeInsets.only(top: 13.h, left: 14.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 5.h,
+                      spreadRadius: 1,
+                      offset: Offset(0, 2),
                     ),
-                    SizedBox(height: 3),
-                    Obx(() {
-                      final totalImages = images.length + (controller.postMedia.value?.data.length ?? 0);
-                      return Text(
-                        "$totalImages of 15 images",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: fontFamily,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      );
-                    }),
                   ],
                 ),
-                InkWell(
-                  onTap: _pickImages,
-                  child: Image.asset("assets/images/add.png", scale: 25.w),
-                )
-              ],
-            ),
+                child: Row(
+                  spacing: 66.w,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.arrow_back_outlined,
+                          color: Colors.black, size: 30.w),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Gallery Management",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Gilroy',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Obx(() {
+                          final totalImages = images.length +
+                              (controller.postMedia.value?.data.length ?? 0);
+                          return Text(
+                            "$totalImages of 15 images",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: fontFamily,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: _pickImages,
+                      child: Image.asset("assets/images/add.png", scale: 25.w),
+                    )
+                  ],
+                ),
+              ),
+
+              40.verticalSpace,
+
+              /// Images List
+              Expanded(
+                child: Obx(() {
+                  if (controller.mediaError.value != null) {
+                    return Center(
+                      child: Text(
+                        'Error loading images: ${controller.mediaError.value}',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+
+                  final apiImages = controller.postMedia.value?.data ?? [];
+                  final allImages = [
+                    ...apiImages.map((mediaItem) => _buildApiImageItem(mediaItem)),
+                    ...images.map((file) => _buildLocalImageItem(file)),
+                  ];
+
+                  if (allImages.isEmpty) {
+                    return Center(
+                      child: Text('No images found'),
+                    );
+                  }
+
+                  return ListView.separated(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: allImages.length,
+                    separatorBuilder: (_, __) => 16.verticalSpace,
+                    itemBuilder: (context, index) {
+                      return allImages[index];
+                    },
+                  );
+                }),
+              ),
+            ],
           ),
 
-          40.verticalSpace,
-
-
-          /// Images List
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingMedia.value) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
-
-              if (controller.mediaError.value != null) {
-                return Center(
-                  child: Text(
-                    'Error loading images: ${controller.mediaError.value}',
-                    style: TextStyle(color: Colors.red),
+          /// 🌟 Global Loader يغطي الشاشة كلها زي SpecsManagement
+          Obx(() {
+            if (controller.isLoadingMedia.value) {
+              return Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: AppLoadingWidget(
+                      title: 'Loading...\nPlease Wait...',
+                    ),
                   ),
-                );
-              }
-
-              final apiImages = controller.postMedia.value?.data ?? [];
-              final allImages = [
-                ...apiImages.map((mediaItem) => _buildApiImageItem(mediaItem)),
-                ...images.map((file) => _buildLocalImageItem(file)),
-              ];
-
-              if (allImages.isEmpty) {
-                return Center(
-                  child: Text('No images found'),
-                );
-              }
-
-              return ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                itemCount: allImages.length,
-                separatorBuilder: (_, __) => 16.verticalSpace,
-                itemBuilder: (context, index) {
-                  return allImages[index];
-                },
+                ),
               );
-            }),
-          ),
+            }
+            return SizedBox.shrink();
+          }),
         ],
       ),
     );
   }
+
 
   Widget _buildApiImageItem(MediaItem mediaItem) {
     return Container(
@@ -347,19 +365,19 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           controller.postMedia.value = updatedPostMedia;
                         }
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Image deleted successfully'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     content: Text('Image deleted successfully'),
+                      //     backgroundColor: Colors.green,
+                      //   ),
+                      // );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Failed to delete image'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     content: Text('Failed to delete image'),
+                      //     backgroundColor: Colors.red,
+                      //   ),
+                   //   );
                     }
                   }
                 }
