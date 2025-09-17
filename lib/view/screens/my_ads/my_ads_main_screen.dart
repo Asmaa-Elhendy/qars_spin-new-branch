@@ -22,16 +22,41 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   bool _isGlobalLoading = false;
 
   void _showGlobalLoader() {
-    setState(() {
-      _isGlobalLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isGlobalLoading = true;
+      });
+    }
   }
 
   void _hideGlobalLoader() {
-    setState(() {
-      _isGlobalLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isGlobalLoading = false;
+      });
+    }
   }
+
+  @override
+  @override
+  void initState() {
+    super.initState();
+
+    // راقب حالة التحميل
+    ever(controller.isLoadingMyAds, (isLoading) {
+      if (isLoading == true) {
+        _showGlobalLoader();
+      } else {
+        _hideGlobalLoader();
+      }
+    });
+
+    // ✨ مهم: اعمل check أول مرة
+    if (controller.isLoadingMyAds.value == true) {
+      _showGlobalLoader();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +66,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
         children: [
           Column(
             children: [
-              // AppBar القديم
+              /// AppBar
               Container(
                 height: 106.h,
                 padding: EdgeInsets.only(top: 13.h, left: 14.w),
@@ -59,9 +84,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                      onTap: () => Navigator.pop(context),
                       child: Icon(
                         Icons.arrow_back_outlined,
                         color: Colors.black,
@@ -101,17 +124,9 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
               ),
               25.verticalSpace,
 
-              // الـ List
+              /// الـ List
               Expanded(
                 child: Obx(() {
-                  if (controller.isLoadingMyAds.value) {
-                    return Center(
-                      child: AppLoadingWidget(
-                        title: 'Loading your ads...',
-                      ),
-                    );
-                  }
-
                   if (controller.myAdsError.value != null) {
                     return Center(
                       child: Column(
@@ -131,7 +146,8 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                     );
                   }
 
-                  if (controller.myAds.isEmpty) {
+                  if (controller.myAds.isEmpty &&
+                      !controller.isLoadingMyAds.value) {
                     return Center(
                       child: Text(
                         'No ads found',
@@ -164,13 +180,15 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
             ],
           ),
 
-          // Loader يغطي الشاشة كلها
+          /// Loader يغطي الشاشة كلها
           if (_isGlobalLoading)
             Positioned.fill(
               child: Container(
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
-                  child: AppLoadingWidget(title: 'Loading...\n Please Wait...'),
+                  child: AppLoadingWidget(
+                    title: 'Loading...\nPlease Wait...',
+                  ),
                 ),
               ),
             ),
