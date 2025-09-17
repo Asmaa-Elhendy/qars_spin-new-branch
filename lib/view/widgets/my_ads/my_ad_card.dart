@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -160,7 +161,7 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Cencellation",
+                            title: "Cancellation",
                             message: "Failed To Send A Request",
                             onClose: () {
                               print("Dialog closed");
@@ -219,7 +220,7 @@ Widget MyAdCard(MyAdModel ad, BuildContext context){
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Cencellation",
+                            title: "Cancellation",
                             message: "Failed To Send A Request",
                             onClose: () {
                               print("Dialog closed");
