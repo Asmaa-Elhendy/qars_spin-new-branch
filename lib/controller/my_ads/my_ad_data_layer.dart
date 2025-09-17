@@ -417,4 +417,72 @@ class MyAdDataLayer {
       ourSecret: ourSecret,
     );
   }
+
+  /// Request publish/approval for a post
+  Future<Map<String, dynamic>> requestPostApproval({
+    required String userName,
+    required String postId,
+    required String ourSecret,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/RequestPostApproval',
+    );
+
+    // Basic validation
+    if (userName.trim().isEmpty || postId.trim().isEmpty || ourSecret.trim().isEmpty) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Missing one or more required parameters',
+        'Count': 0,
+        'Data': null,
+      };
+    }
+
+    final requestBody = {
+      'UserName': userName,
+      'Post_ID': postId,
+      'Our_Secret': ourSecret,
+    };
+
+    log('Requesting post approval: user=$userName, postId=$postId');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      log('Approval Response status: ${response.statusCode}');
+      log('Approval Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'Count': parsedJson['Count'] ?? 0,
+          'Data': parsedJson['Data'],
+        };
+      } else {
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to request post approval. Status code: ${response.statusCode}',
+          'Count': 0,
+          'Data': null,
+        };
+      }
+    } catch (e) {
+      log('Error requesting post approval: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'Count': 0,
+        'Data': null,
+      };
+    }
+  }
 }

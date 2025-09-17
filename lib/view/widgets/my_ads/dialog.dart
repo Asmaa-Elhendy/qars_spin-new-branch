@@ -35,7 +35,7 @@ class SuccessDialog extends StatelessWidget {
       //insetPadding:  EdgeInsets.symmetric(horizontal: 20.w,vertical: 16.h),
       child: Container(
         padding:  EdgeInsets.symmetric(horizontal: 25.w,vertical: 16.h),
-        height: request?160.h:264.h,
+        height: request?180.h:264.h,
         decoration: BoxDecoration(
           //color: Colors.white,
           borderRadius: BorderRadius.zero,
@@ -43,6 +43,7 @@ class SuccessDialog extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(title,
                 textAlign: TextAlign.center,

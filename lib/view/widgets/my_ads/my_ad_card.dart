@@ -278,7 +278,39 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         title: "Publish",
-                        onTap: () {},
+                        onTap: ()async {
+
+                            final myAdController = Get.find<MyAdCleanController>();
+
+                            onShowLoader();
+                            final ok = await myAdController.requestPublishAd(
+                              userName: userName,
+                              postId: ad.postId.toString(),
+                              ourSecret: ourSecret,
+                            );
+                            onHideLoader();
+
+                            if (ok) {
+                              SuccessDialog.show(
+                                request: true,
+                                context: context,
+                                title: "Information",
+                                message: "This ad is pending approval, Please wait \n while we review your ad",
+                                onClose: () {},
+                                onTappp: () {},
+                              );
+                            } else {
+                              SuccessDialog.show(
+                                request: true,
+                                context: context,
+                                title: "Cancellation",
+                                message: "Failed To Send A Request",
+                                onClose: () {},
+                                onTappp: () {},
+                              );
+                            }
+
+                        },
                         green: true,
                         w: double.infinity,
                       ),
