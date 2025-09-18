@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
 import 'package:qarsspin/view/screens/home_screen.dart';
 
 import 'controller/binding.dart';
@@ -12,11 +11,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize MyFatoorah SDK
-    MFSDK.init( //test token (api key)
-      PaymentService. apiKey,
-      MFCountry.QATAR, // Choose country
-    MFEnvironment.TEST, // Change to LIVE later
-  );
+  PaymentService.initialize();
 
 
 

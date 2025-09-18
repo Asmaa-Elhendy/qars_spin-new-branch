@@ -11,6 +11,7 @@ import 'ads/data_layer.dart';
 import 'brand_controller.dart';
 import 'my_ads/my_ad_getx_controller.dart';
 import 'my_ads/my_ad_data_layer.dart';
+import 'payments/payment_service.dart';
 
 class MyBinding implements  Bindings {
   @override
@@ -21,5 +22,6 @@ class MyBinding implements  Bindings {
     Get.lazyPut(() => SpecsController(SpecsDataLayer()),fenix:true);
     Get.lazyPut(() => AdCleanController(AdRepository()), fenix: true);
     Get.lazyPut(() => MyAdCleanController(MyAdDataLayer()), fenix: true);
+    Get.put(PaymentService());
   }
 }

@@ -57,7 +57,7 @@ Widget MyAdCard(
                   "assets/images/logo_the_q.png",
                   fit: BoxFit.fill,
                 ),
-        ),
+        ),5.verticalSpace,
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
@@ -97,12 +97,12 @@ Widget MyAdCard(
             ],
           ),
         ),
-        Padding(
+      ad.postStatus == 'Rejected' ?  Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Text(
-            ad.postStatus == 'Rejected'
-                ? 'upload the car photos and publish the post then request for 360'
-                : '',
+
+              'upload the car photos and publish the post then request for 360',
+
             style: TextStyle(
               fontFamily: fontFamily,
               fontSize: 14.sp,
@@ -110,8 +110,8 @@ Widget MyAdCard(
             ),
             maxLines: 2,
             softWrap: true,
-          ),
-        ),
+          )):SizedBox(),5.verticalSpace
+        ,
         6.verticalSpace,
 
         /// أزرار (360 و Feature)
@@ -137,7 +137,7 @@ Widget MyAdCard(
                       // 2) Take payment first
                       final paid = await PaymentMethodDialog.show(
                         context: context,
-                        amount: 1.0,
+                        amount: 10.0,
                       );
 
                       if (paid == true) {
@@ -204,7 +204,7 @@ Widget MyAdCard(
                       // 2) Take payment first
                       final paid = await PaymentMethodDialog.show(
                         context: context,
-                        amount: 1.0,
+                        amount: 10.0,
                       );
 
                       if (paid == true) {
