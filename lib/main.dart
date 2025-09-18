@@ -11,7 +11,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize MyFatoorah SDK
-  PaymentService.initialize();
+ // PaymentService.initialize();
 
 
 
