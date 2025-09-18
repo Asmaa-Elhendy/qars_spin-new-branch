@@ -85,7 +85,7 @@ class SuccessDialog extends StatelessWidget {
 
               ],
             )
-          ],
+          ],//l
         ),
 
       ),

@@ -24,6 +24,7 @@ class PaymentMethodDialog extends StatefulWidget {
 class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
   List<MFPaymentMethod> methods = [];
   bool loading = true;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -36,8 +37,40 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
       methods = await PaymentService.getPaymentMethods(widget.amount);
     } catch (e) {
       debugPrint("Error loading payment methods: $e");
+      errorMessage = "Failed to load payment methods.";
     }
     if (mounted) setState(() => loading = false);
+  }
+
+  void _startPayment(MFPaymentMethod method) async {
+    setState(() {
+      errorMessage = null;
+      loading = true;
+    });
+
+    try {
+      final success = await PaymentService.executePaymentWithPolling(
+        context,
+        method.paymentMethodId!, // استخدمي الـ ID وليس الكائن كله
+        widget.amount,
+      );
+      if (method.isDirectPayment == true) {
+        if (mounted) Navigator.pop(context, success);
+      } else {
+        // Redirect: فقط نعلم المستخدم
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Redirecting to payment page...")),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = "Payment failed: ${e.toString()}";
+      });
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
   }
 
   @override
@@ -63,7 +96,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
             ),
             16.verticalSpace,
             if (loading)
-              const Center(child: CircularProgressIndicator(color: AppColors.primary,))
+              const Center(child: CircularProgressIndicator(color: AppColors.primary))
             else if (methods.isEmpty)
               Text(
                 "No payment methods available",
@@ -77,18 +110,9 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                   itemBuilder: (context, index) {
                     final method = methods[index];
                     return InkWell(
-                      onTap: () async {
-                        // Keep dialog open while processing, then pop with result
-                        final success = await PaymentService.executePaymentWithPolling(
-                          context,
-                          method.paymentMethodId!,
-                          widget.amount,
-                        );
-                        if (mounted) Navigator.pop(context, success);
-                      },
+                      onTap: () => _startPayment(method),
                       child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 12.h, horizontal: 12.w),
+                        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
                         decoration: BoxDecoration(
                           color: AppColors.logoGray.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -100,8 +124,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                                 method.imageUrl!,
                                 width: 40.w,
                                 height: 40.w,
-                                errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.payment),
+                                errorBuilder: (_, __, ___) => const Icon(Icons.payment),
                               ),
                             12.horizontalSpace,
                             Expanded(
@@ -113,8 +136,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                                 ),
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios,
-                                size: 16, color: Colors.white),
+                            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
                           ],
                         ),
                       ),
@@ -122,6 +144,14 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                   },
                 ),
               ),
+            if (errorMessage != null) ...[
+              12.verticalSpace,
+              Text(
+                errorMessage!,
+                style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                textAlign: TextAlign.center,
+              ),
+            ],
             16.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

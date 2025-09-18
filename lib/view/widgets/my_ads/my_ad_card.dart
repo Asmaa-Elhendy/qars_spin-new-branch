@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:qarsspin/view/screens/my_ads/gallery_management.dart';
 import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
+import '../../../controller/payments/payment_service.dart';
 import '../../screens/ads/create_new_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
@@ -131,19 +134,63 @@ Widget MyAdCard(
                         "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
                     onClose: () {},
                     onTappp: () async {
-                      // 1) Close confirmation dialog
-                      Navigator.pop(context);
+                      // // 1) Close confirmation dialog
+                      // Navigator.pop(context);
+                      //
+                      // // 2) Take payment first
+                      // final paid = await PaymentMethodDialog.show(
+                      //   context: context,
+                      //   amount: 10.0,
+                      // );
+                      //
+                      // if (paid == true) {
+                      //   final myAdController = Get.find<MyAdCleanController>();
+                      //
+                      //   // 3) After successful payment, send request to server
+                      //   onShowLoader();
+                      //   final ok = await myAdController.request360Session(
+                      //     userName: userName,
+                      //     postId: ad.postId.toString(),
+                      //     ourSecret: ourSecret,
+                      //   );
+                      //   onHideLoader();
+                      //
+                      //   if (ok) {
+                      //     SuccessDialog.show(
+                      //       request: true,
+                      //       context: context,
+                      //       title: "Confirmation",
+                      //       message: "We Have Received Your Request",
+                      //       onClose: () {},
+                      //       onTappp: () {},
+                      //     );
+                      //   } else {
+                      //     SuccessDialog.show(
+                      //       request: true,
+                      //       context: context,
+                      //       title: "Cancellation",
+                      //       message: "Failed To Send A Request",
+                      //       onClose: () {},
+                      //       onTappp: () {},
+                      //     );
+                      //   }
+                      // } else {
+                      //
+                      //   SuccessDialog.show(
+                      //     request: true,
+                      //     context: context,
+                      //     title:    'Payment',
+                      //     message:   'Payment was cancelled or failed',
+                      //     onClose: () {},
+                      //     onTappp: () {},
+                      //   );
+                      // }
+                      Navigator.pop(context);//j
+                  //    final paid = await PaymentMethodDialog.show(context: context,amount:  10.0);
 
-                      // 2) Take payment first
-                      final paid = await PaymentMethodDialog.show(
-                        context: context,
-                        amount: 10.0,
-                      );
-
-                      if (paid == true) {
+                //     if (paid == true) {
+                        // 🟢 نجاح الدفع
                         final myAdController = Get.find<MyAdCleanController>();
-
-                        // 3) After successful payment, send request to server
                         onShowLoader();
                         final ok = await myAdController.request360Session(
                           userName: userName,
@@ -171,17 +218,20 @@ Widget MyAdCard(
                             onTappp: () {},
                           );
                         }
-                      } else {
+                   //   }
+                     // else {
+                     //    SuccessDialog.show(
+                     //      request: true,
+                     //      context: context,
+                     //      title: 'Payment Failed',
+                     //      message: 'Payment failed or cancelled.',
+                     //      onClose: () {},
+                     //      onTappp: () {},
+                     //    );
+                     //  }
 
-                        SuccessDialog.show(
-                          request: true,
-                          context: context,
-                          title:    'Payment',
-                          message:   'Payment was cancelled or failed',
-                          onClose: () {},
-                          onTappp: () {},
-                        );
-                      }
+
+
                     },
                   );
                 },
@@ -192,7 +242,7 @@ Widget MyAdCard(
                 onTap: () {
                   SuccessDialog.show(
                     request: false,
-                    context: context,
+                    context: context,//
                     title: "Let's make your post the center \n of orientation",
                     message:
                         "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
@@ -202,12 +252,11 @@ Widget MyAdCard(
                       Navigator.pop(context);
 
                       // 2) Take payment first
-                      final paid = await PaymentMethodDialog.show(
-                        context: context,
-                        amount: 10.0,
-                      );
-
-                      if (paid == true) {
+                      // final paid = await PaymentMethodDialog.show(context: context,amount:  10.0);
+                      //
+                      //
+                      // if (paid == true)
+                      // {
                         final myAdController = Get.find<MyAdCleanController>();
 
                         // 3) After successful payment, send request to server
@@ -238,17 +287,17 @@ Widget MyAdCard(
                             onTappp: () {},
                           );
                         }
-                      } else {
-
-                        SuccessDialog.show(
-                          request: true,//
-                          context: context,
-                          title:    'Payment',
-                          message:   'Payment was cancelled or failed',
-                          onClose: () {},
-                          onTappp: () {},
-                        );
-                      }
+                      // } else {
+                      //
+                      //   SuccessDialog.show(
+                      //     request: true,//
+                      //     context: context,
+                      //     title:    'Payment',
+                      //     message:   'Payment was cancelled or failed',
+                      //     onClose: () {},
+                      //     onTappp: () {},
+                      //   );
+                      // }
                     },
                   );
                 },
