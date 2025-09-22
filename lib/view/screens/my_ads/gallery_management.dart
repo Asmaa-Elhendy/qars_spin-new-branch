@@ -15,10 +15,17 @@ import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
 
 class GalleryManagement extends StatefulWidget {
-  int postId;
-  String? coverImage;
+  final int postId;
 
-  GalleryManagement({required this.postId, required this.coverImage});
+  final String postKind;
+  final String userName;
+
+  GalleryManagement({
+    required this.postId,
+
+    required this.postKind,
+    required this.userName,
+  });
 
   @override
   State<GalleryManagement> createState() => _GalleryManagementState();
@@ -29,6 +36,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
   final MyAdCleanController controller = Get.find<MyAdCleanController>();
   List<File> images = [];
   List<MediaItem> apiImages = [];
+  String? currentCoverImage;
+  Map<String, dynamic>? postDetails;
 
   Future<void> _pickImages() async {
     log('🚀 [DEBUG] _pickImages method started!');
@@ -293,7 +302,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         skipRefresh: true, // Skip refresh after each upload
       );
 
-      if (success) {
+      if (success) {//k
         log('✅ Upload SUCCESS for: ${imageFile.path}');
       } else {
         log('❌ Upload FAILED for: ${imageFile.path}');
@@ -340,13 +349,74 @@ class _GalleryManagementState extends State<GalleryManagement> {
   @override
   void initState() {
     super.initState();
+    
     _fetchPostImages();
+    _fetchPostDetails();
+  }
+
+  // Method to load cover image from postDetails (similar to create_new_ad.dart)
+  void _loadCoverImageFromPostDetails() {
+    if (postDetails != null && postDetails!['Rectangle_Image_URL'] != null) {
+      setState(() {
+        // Set currentCoverImage equal to Rectangle_Image_URL from postDetails
+        currentCoverImage = postDetails!['Rectangle_Image_URL'];
+        
+        // Also set widget.coverImage equal to Rectangle_Image_URL
+        // Note: widget.coverImage is final, so we can't modify it directly
+        // But currentCoverImage is now synchronized with the latest Rectangle_Image_URL
+      });
+      log('✅ [DEBUG] Cover image set from postDetails: $currentCoverImage');
+      log('✅ [DEBUG] Rectangle_Image_URL: ${postDetails!['Rectangle_Image_URL']}');
+    }
   }
 
   Future<void> _fetchPostImages() async {
     log('Fetching images for post ID: ${widget.postId}');
     await controller.fetchPostMedia(widget.postId.toString());
   }
+
+  Future<void> _fetchPostDetails() async {
+    log('🚀 [DEBUG] Fetching post details for post ID: ${widget.postId}');
+    log('🚀 [DEBUG] Post Kind: ${widget.postKind}');
+    log('🚀 [DEBUG] User Name: ${widget.userName}');
+    
+    try {
+      // Fetch complete post details using getPostById
+      await controller.getPostById(
+        postKind: widget.postKind,
+        postId: widget.postId.toString(),
+        loggedInUser: widget.userName,
+      );
+      
+      // Check if post details were fetched successfully
+      if (controller.postDetails.value != null) {
+        log('✅ [DEBUG] Post details fetched successfully');
+        log('✅ [DEBUG] Post details: ${controller.postDetails.value}');
+        
+        // Store post details in local variable
+        setState(() {
+          postDetails = controller.postDetails.value;
+        });
+        
+        // Load cover image from postDetails (similar to create_new_ad.dart)
+        _loadCoverImageFromPostDetails();
+        
+        // Now fetch the media/images for this post
+        await controller.fetchPostMedia(widget.postId.toString());
+        
+        log('✅ [DEBUG] Post media fetched successfully');
+      } else {
+        log('❌ [DEBUG] Failed to fetch post details');
+        // Fallback to just fetching media if post details fail
+        await controller.fetchPostMedia(widget.postId.toString());
+      }
+    } catch (e) {
+      log('❌ [DEBUG] Error fetching post details: $e');
+      // Fallback to just fetching media if there's an error
+      await controller.fetchPostMedia(widget.postId.toString());
+    }
+  }
+
 
   Future<bool> _showDeleteConfirmationDialog() async {
     return await showDialog(
@@ -386,6 +456,109 @@ class _GalleryManagementState extends State<GalleryManagement> {
     } catch (e) {
       log('❌ Error deleting API image: $e');
       return false;
+    }
+  }
+
+
+  /// Pick cover image from gallery
+  Future<void> _pickCoverImageFromGallery() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        await _uploadAndSetCoverImage(imageFile);
+      }
+    } catch (e) {
+      log('❌ Error picking image from gallery: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to pick image from gallery'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Upload image and set as cover
+  Future<void> _uploadAndSetCoverImage(File imageFile) async {
+    try {
+      // Show loading indicator
+      controller.isLoadingMedia.value = true;
+      
+      // Upload the cover image using the new method
+      final uploadSuccess = await controller.uploadCoverImage(
+        postId: widget.postId.toString(),
+        photoFile: imageFile,
+        ourSecret: ourSecret,
+      );
+      
+      if (!uploadSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload cover image. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      
+      // After successful upload, the media list is already refreshed
+      // Get the latest uploaded image (should be the last one)
+      final updatedApiImages = controller.postMedia.value?.data ?? [];
+      String newCoverUrl = '';
+      
+      if (updatedApiImages.isNotEmpty) {
+        newCoverUrl = updatedApiImages.last.mediaUrl;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not get uploaded image URL'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      
+      // Update the cover image using the controller method
+      final updateSuccess = await controller.updateCoverImage(
+        postId: widget.postId.toString(),
+        newCoverImageUrl: newCoverUrl,
+        ourSecret: '1244',
+      );
+      
+      if (updateSuccess) {
+        // Reload media and cover photo like when first entering the page
+        await _fetchPostImages();     // Reload media/images
+        await _fetchPostDetails();    // Reload post details and cover photo
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cover image updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update cover image'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      log('❌ Error uploading and setting cover image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred while updating cover image'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      controller.isLoadingMedia.value = false;
     }
   }
 
@@ -496,16 +669,15 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     separatorBuilder: (_, __) => 16.verticalSpace,
                     itemBuilder: (context, index) {
                       if (index==0){
-                        return   _buildApiImageItem(
-                          MediaItem(
-                            mediaId: 0,
+                        return   _buildApiImageItem(MediaItem(
+                            mediaId: 0,//l
                             mediaFileName: 'CoverPhotoForPostGalleryManagement',
-                            mediaUrl: widget.coverImage!,
+                            mediaUrl: currentCoverImage!,
                             displayOrder: 0,
                           ),
                         );
                       }
-                      return allImages[index];
+                      return allImages[index - 1];
                     },
                   );
                 }),
@@ -609,7 +781,9 @@ class _GalleryManagementState extends State<GalleryManagement> {
                       right: 8.w,
                       top: 8.h,
                       child: GestureDetector(
-                        onTap: () async {},
+                        onTap: () async {
+                          await _pickCoverImageFromGallery();
+                        },
                         child: Container(
                           width: 40.w,
                           height: 40.h,

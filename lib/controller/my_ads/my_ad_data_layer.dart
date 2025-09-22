@@ -190,6 +190,70 @@ class MyAdDataLayer {
     }
   }
 
+  /// Upload cover photo for a post
+  Future<Map<String, dynamic>> uploadCoverPhoto({
+    required String postId,
+    required String ourSecret,
+    required String imagePath,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/UploadPostCoverPhoto',
+    );
+
+    try {
+      log('Uploading cover photo for post ID: $postId');
+      
+      // Read the image file
+      final file = File(imagePath);
+      if (!await file.exists()) {
+        return {
+          'Code': 'Error',
+          'Desc': 'Image file not found',
+        };
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', url);
+      
+      // Add form fields
+      request.fields['Post_ID'] = postId;
+      request.fields['Our_Secret'] = ourSecret;
+      
+      // Add image file
+      final imageFile = await http.MultipartFile.fromPath(
+        'PhotoBytes',
+        imagePath,
+        filename: 'cover.jpg',
+      );
+      request.files.add(imageFile);
+
+      // Send the request
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: $responseBody');
+
+      if (response.statusCode == 200) {
+        // Parse XML response
+        return _parseUploadResponse(responseBody);
+      } else {
+        print('❌ HTTP Error: Status code ${response.statusCode}');
+        print('Response Body: $responseBody');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to upload cover photo. Status code: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      print('❌ Error uploading cover photo: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Error uploading cover photo: $e',
+      };
+    }
+  }
+
   /// Delete gallery image
   Future<Map<String, dynamic>> deleteGalleryImage({
     required String mediaId,
@@ -482,6 +546,23 @@ class MyAdDataLayer {
         'Desc': 'Network error: ${e.toString()}',
         'Count': 0,
         'Data': null,
+      };
+    }
+  }
+
+  /// Parse JSON response from upload endpoint
+  Map<String, dynamic> _parseUploadResponse(String jsonString) {
+    try {
+      final parsedJson = jsonDecode(jsonString);
+      
+      return {
+        'Code': parsedJson['Code'] ?? 'Error',
+        'Desc': parsedJson['Desc'] ?? 'Upload failed',
+      };
+    } catch (e) {
+      return {
+        'Code': 'Error',
+        'Desc': 'Failed to parse upload response: ${e.toString()}',
       };
     }
   }

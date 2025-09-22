@@ -160,6 +160,52 @@ class MyAdCleanController extends GetxController {
     uploadSuccess.value = false;
   }
 
+  /// Upload cover image for post
+  Future<bool> uploadCoverImage({
+    required String postId,
+    required File photoFile,
+    required String ourSecret,
+  }) async {
+    isUploading.value = true;
+    uploadError.value = null;
+    uploadSuccess.value = false;
+
+    try {
+      log('Uploading cover photo for post ID: $postId');
+      final response = await repository.uploadCoverPhoto(
+        postId: postId,
+        ourSecret: ourSecret, // Using the same secret as in ad creation
+        imagePath: photoFile.path,
+      );
+      
+      print('📤 [CONTROLLER] Raw response from repository: $response');
+      print('📤 [CONTROLLER] Response Code: ${response['Code']}');
+      print('📤 [CONTROLLER] Response Desc: ${response['Desc']}');
+      
+      if (response['Code'] == 'OK') {
+        uploadSuccess.value = true;
+        print('✅ Cover image uploaded successfully');
+        print('📤 Upload response: $response');
+        
+        // Refresh media list after successful upload
+        await fetchPostMedia(postId);
+        
+        return true;
+      } else {
+        uploadError.value = response['Desc'] ?? 'Unknown upload error';
+        print('❌ Cover image upload failed: ${uploadError.value}');
+        print('❌ [CONTROLLER] Response Code: ${response['Code']}, Desc: ${response['Desc']}');
+        return false;
+      }
+    } catch (e) {
+      uploadError.value = 'Network error: ${e.toString()}';
+      print('❌ Error uploading cover image: $e');
+      return false;
+    } finally {
+      isUploading.value = false;
+    }
+  }
+
   Future<bool> deletePostGalleryPhoto({
     required String mediaId,
     required String postId,
@@ -186,6 +232,30 @@ class MyAdCleanController extends GetxController {
       }
     } catch (e) {
       print('❌ Error deleting gallery image: $e');
+      return false;
+    }
+  }
+
+  /// Update cover image for post
+  Future<bool> updateCoverImage({
+    required String postId,
+    required String newCoverImageUrl,
+    required String ourSecret,
+  }) async {
+    try {
+      print('🖼️ Updating cover image for post ID: $postId');
+      print('🖼️ New cover image URL: $newCoverImageUrl');
+      
+      // For now, we'll simulate the update by storing the new cover image URL
+      // In a real implementation, this would call an API to update the Rectangle_Image_URL
+      // Since there's no specific API for this, we'll need to use the general post update API
+      
+      // TODO: Implement actual API call when available
+      // For now, we'll just return success and let the UI handle the local update
+      print('✅ Cover image updated successfully (simulated)');
+      return true;
+    } catch (e) {
+      print('❌ Error updating cover image: $e');
       return false;
     }
   }
