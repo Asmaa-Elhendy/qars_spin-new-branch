@@ -12,6 +12,7 @@ import 'package:qarsspin/model/post_media.dart';
 
 import '../../../controller/ads/data_layer.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
+import 'dart:developer';
 
 class GalleryManagement extends StatefulWidget {
 int postId;
@@ -28,6 +29,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
   List<MediaItem> apiImages = [];
 
   Future<void> _pickImages() async {
+    log('🚀 [DEBUG] _pickImages method started!');
+    
     final totalImages = images.length + (controller.postMedia.value?.data.length ?? 0);
     if (totalImages >= 15) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -37,58 +40,218 @@ class _GalleryManagementState extends State<GalleryManagement> {
     }
 
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
+    
+    log('🚀 [DEBUG] pickMultiImage completed. Files: ${pickedFiles?.length ?? 0}');
 
     if (pickedFiles != null) {
-      for (var file in pickedFiles) {
-        final editedImage = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ImageEditor(
-              image: File(file.path).readAsBytesSync(),
+      log('=== DEBUG: Selected ${pickedFiles.length} images ===');
+      
+      // STEP 1: Batch Editing - Edit all images first
+      List<File> editedImages = [];
+      
+      log('=== STEP 1: Batch Editing Phase ===');
+      for (int i = 0; i < pickedFiles.length; i++) {
+        final file = pickedFiles[i];
+        log('🎨 [EDITING] Opening editor for image ${i + 1}/${pickedFiles.length}: ${file.path}');
+        
+        // Edit the image
+        log('🎨 [EDITING] About to open ImageEditor for image ${i + 1}/${pickedFiles.length}');
+        log('🎨 [EDITING] Image file path: ${file.path}');
+        log('🎨 [EDITING] Image file size: ${await file.length()} bytes');
+        
+        dynamic editedImage;
+        try {
+          // Show a snackbar to guide the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please edit image ${i + 1} and tap SAVE when done'),
+              duration: Duration(seconds: 3),
             ),
-          ),
-        );
+          );
+          
+          // Wait a bit for the snackbar to show
+          await Future.delayed(Duration(milliseconds: 500));
+          
+          log('🎨 [EDITING] Opening ImageEditor dialog...');
+          editedImage = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ImageEditor(
+                image: File(file.path).readAsBytesSync(),
+              ),
+            ),
+          );
+          log('🎨 [EDITING] Navigator.push completed successfully');
+          log('🎨 [EDITING] User interaction completed - checking result...');
+        } catch (e) {
+          log('❌ [EDITING] Exception during ImageEditor navigation: $e');
+          log('❌ [EDITING] Exception type: ${e.runtimeType}');
+          editedImage = null;
+        }
+        
+        log('🎨 [EDITING] Returned from ImageEditor for image ${i + 1} - Result: ${editedImage != null ? "SUCCESS" : "CANCELLED"}');
+        log('🎨 [EDITING] Edited image type: ${editedImage?.runtimeType}');
+        log('🎨 [EDITING] Edited image size: ${editedImage?.length ?? 0} bytes');
+        
+        // Additional check - sometimes ImageEditor returns empty list or invalid data
+        // ImageEditor can return different types: List<int> or _Uint8ArrayView
+        bool isValidImage = editedImage != null && 
+                           ((editedImage is List<int> && editedImage.isNotEmpty) ||
+                            (editedImage.toString().contains('Uint8Array') && editedImage.length > 0)) &&
+                           editedImage.length > 100; // At least 100 bytes
+        
+        log('🎨 [EDITING] Is valid image check: $isValidImage');
+        
+        if (!isValidImage && editedImage != null) {
+          log('⚠️ [EDITING] Image returned null or invalid data - treating as cancelled');
+        }
 
-        if (editedImage != null) {
+        if (isValidImage) {
           // Create the file with edited image
-          final imageFile = File(file.path)..writeAsBytesSync(editedImage);
-          
-          // Upload to API
-          final success = await _uploadImageToApi(imageFile);
-          
-          if (success) {
-            // Show success message
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Photo uploaded successfully!"),
-                backgroundColor: Colors.green,
-              ),
-            );
+          // Convert _Uint8ArrayView to List<int> if needed
+          List<int> imageBytes;
+          if (editedImage is List<int>) {
+            imageBytes = editedImage;
           } else {
-            // Show error message - image is NOT added to list
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Upload failed: ${controller.uploadError.value ?? 'Unknown error'}"),
-                backgroundColor: Colors.red,
-              ),
-            );
+            // Handle _Uint8ArrayView or other byte array types
+            imageBytes = List<int>.from(editedImage);
+          }
+          
+          final imageFile = File(file.path)..writeAsBytesSync(imageBytes);
+          editedImages.add(imageFile);
+          log('✅ [EDITING] Image ${i + 1} edited successfully');
+          log('✅ [EDITING] Converted ${editedImage.runtimeType} to List<int> (${imageBytes.length} bytes)');
+        } else {
+          log('❌ [EDITING] Image ${i + 1} cancelled or invalid in editor');
+          
+          // Ask user if they want to retry
+          bool shouldRetry = await _showRetryDialog(context, i + 1);
+          if (shouldRetry) {
+            log('🔄 [EDITING] Retrying image ${i + 1}...');
+            i--; // Retry the same image
           }
         }
+      }
+      
+      log('=== STEP 1 COMPLETE: ${editedImages.length} images ready for upload ===');
+      
+      // STEP 2: Sequential Uploading - Upload each edited image one by one
+      if (editedImages.isNotEmpty) {
+        int successCount = 0;
+        int failCount = 0;
+        
+        log('=== STEP 2: Sequential Upload Phase ===');
+        log('📊 [DEBUG] Starting upload loop for ${editedImages.length} images');
+        
+        for (int i = 0; i < editedImages.length; i++) {
+          final imageFile = editedImages[i];
+          log('📤 [UPLOADING] Starting upload for image ${i + 1}/${editedImages.length}: ${imageFile.path}');
+          
+          // Show loader for this specific image
+          controller.isLoadingMedia.value = true;
+          log('⏳ [UPLOADING] Loader ON for image ${i + 1}');
+          
+          // Upload this single image with skipRefresh=true
+          try {
+            log('⏳ [UPLOADING] Calling _uploadImageToApiWithSkipRefresh for image ${i + 1}');
+            final success = await _uploadImageToApiWithSkipRefresh(imageFile);
+            log('⏳ [UPLOADING] Completed _uploadImageToApiWithSkipRefresh for image ${i + 1} - Result: $success');
+            
+            if (success) {
+              successCount++;
+              log('✅ [UPLOADING] Image ${i + 1} uploaded successfully - Total success: $successCount');
+            } else {
+              failCount++;
+              log('❌ [UPLOADING] Image ${i + 1} upload failed - Total failed: $failCount');
+            }
+          } catch (e) {
+            failCount++;
+            log('❌ [UPLOADING] Exception uploading image ${i + 1}: $e - Total failed: $failCount');
+          }
+          
+          // Hide loader after this image is done
+          controller.isLoadingMedia.value = false;
+          log('⏳ [UPLOADING] Loader OFF for image ${i + 1}');
+          
+          // Small delay before processing next image
+          log('⏳ [UPLOADING] Waiting 500ms before next image...');
+          await Future.delayed(const Duration(milliseconds: 500));
+          log('⏳ [UPLOADING] Delay completed, moving to next image if any');
+        }
+        
+        log('=== STEP 2 COMPLETE: Upload results - Success: $successCount, Failed: $failCount ===');
+        
+        // Show final result message
+        if (successCount > 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Successfully uploaded $successCount image${successCount > 1 ? 's' : ''}!"),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        
+        if (failCount > 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Failed to upload $failCount image${failCount > 1 ? 's' : ''}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        
+        // Final refresh to make sure everything is up to date (ONLY ONCE at the end)
+        if (successCount > 0) {
+          log('🔄 [FINAL] Refreshing media list after all uploads...');
+          await controller.fetchPostMedia(widget.postId.toString());
+        }
+      } else {
+        log('=== STEP 2: No images to upload ===');
       }
     }
   }
 
-  Future<bool> _uploadImageToApi(File imageFile) async {
+  Future<bool> _showRetryDialog(BuildContext context, int imageNumber) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Image Editing Cancelled'),
+        content: Text('Image $imageNumber was cancelled. Do you want to retry editing it?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Skip',style: TextStyle(color: AppColors.primary),),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Retry',style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
 
+  Future<bool> _uploadImageToApiWithSkipRefresh(File imageFile) async {
+    log('🔍 Starting upload with skipRefresh for: ${imageFile.path}');//lhjjن
+    
     try {
+      log('📤 Calling controller.uploadPostGalleryPhoto with skipRefresh=true...');
       final success = await controller.uploadPostGalleryPhoto(
         postId: widget.postId.toString(),
         photoFile: imageFile,
         ourSecret: ourSecret,
+        skipRefresh: true, // Skip refresh after each upload
       );
-      return success;//f
+      
+      if (success) {
+        log('✅ Upload SUCCESS for: ${imageFile.path}');
+      } else {
+        log('❌ Upload FAILED for: ${imageFile.path}');
+      }
+      
+      return success;
     } catch (e) {
-      print('❌ Error uploading image: $e');
+      log('❌ EXCEPTION during upload for ${imageFile.path}: $e');
       return false;
     }
   }
@@ -130,7 +293,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   Future<void> _fetchPostImages() async {
-    print('Fetching images for post ID: ${widget.postId}');
+    log('Fetching images for post ID: ${widget.postId}');
     await controller.fetchPostMedia(widget.postId.toString());
   }
 
@@ -163,7 +326,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       );
       return success;
     } catch (e) {
-      print('❌ Error deleting API image: $e');
+      log('❌ Error deleting API image: $e');
       return false;
     }
   }
@@ -282,7 +445,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 child: Container(
                   color: Colors.black.withOpacity(0.5),
                   child: Center(
-                    child: AppLoadingWidget(
+                    child: AppLoadingWidget(//kj
                       title: 'Loading...\nPlease Wait...',
                     ),
                   ),
@@ -307,7 +470,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       ),
       child: Stack(
         children: [
-          /// Network Image
+          /// Network Imagehkنه
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),

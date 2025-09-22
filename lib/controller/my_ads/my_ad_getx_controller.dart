@@ -110,6 +110,7 @@ class MyAdCleanController extends GetxController {
     required String postId,
     required File photoFile,
     required String ourSecret,
+    bool skipRefresh = false,
   }) async {
     isUploading.value = true;
     uploadError.value = null;
@@ -123,18 +124,25 @@ class MyAdCleanController extends GetxController {
         ourSecret: ourSecret,
       );
       
+      print('📤 [CONTROLLER] Raw response from repository: $response');
+      print('📤 [CONTROLLER] Response Code: ${response['Code']}');
+      print('📤 [CONTROLLER] Response Desc: ${response['Desc']}');
+      
       if (response['Code'] == 'OK') {
         uploadSuccess.value = true;
         print('✅ Photo uploaded successfully');
         print('📤 Upload response: $response');
         
-        // Refresh media list after successful upload
-        await fetchPostMedia(postId);
+        // Refresh media list after successful upload (unless skipRefresh is true)
+        if (!skipRefresh) {
+          await fetchPostMedia(postId);
+        }
         
         return true;
       } else {
         uploadError.value = response['Desc'] ?? 'Unknown upload error';
         print('❌ Upload failed: ${uploadError.value}');
+        print('❌ [CONTROLLER] Response Code: ${response['Code']}, Desc: ${response['Desc']}');
         return false;
       }
     } catch (e) {
