@@ -30,7 +30,7 @@ class SellCarScreen extends StatefulWidget {
 
 class _SellCarScreenState extends State<SellCarScreen> {
   List<String> _images = [];
-  String? _coverImage;
+  String? _coverImage;//jk
   String? _videoPath;
 
   // Store listener references
@@ -92,6 +92,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
         _coverImage = imagePath;
       }
     });
+    
+
   }
 
   void _handleVideoSelected(String videoPath) {
@@ -229,6 +231,29 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
         log('Cover image set to: $_coverImage');
         log('Images list updated with Rectangle_Image_URL as first item: $_images');
+      }
+
+      // Load gallery images if available
+      if (postData['Gallery_Photos'] != null) {
+        List<dynamic> galleryPhotos = postData['Gallery_Photos'];
+        setState(() {
+          for (var photo in galleryPhotos) {
+            String photoUrl = photo.toString();
+            // Don't add the cover image again if it's already in the gallery
+            if (photoUrl != postData['Rectangle_Image_URL'] && !_images.contains(photoUrl)) {
+              _images.add(photoUrl);
+            }
+          }
+        });
+        log('Gallery images loaded: ${_images.length} total images');
+      }
+
+      // Load video if available
+      if (postData['Video_URL'] != null) {
+        setState(() {
+          _videoPath = postData['Video_URL'];
+        });
+        log('Video loaded: $_videoPath');
       }
     });
   }

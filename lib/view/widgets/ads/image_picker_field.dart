@@ -130,24 +130,42 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
           });
         }
       } else {
-        if (_images.length >= widget.maxImages) return;
+        if (_images.length >= widget.maxImages) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Maximum ${widget.maxImages} images allowed')),
+          );
+          return;
+        }
         
-        if (_images.length >= widget.maxImages) return;
+        // Calculate how many more images can be added
+        int remainingSlots = widget.maxImages - _images.length;
         
-        final XFile? image = await _picker.pickImage(
-          source: ImageSource.gallery,
+        final List<XFile>? selectedImages = await _picker.pickMultiImage(
           imageQuality: 85,
         );
 
-        if (image != null) {
-          widget.onImageSelected(image.path);
+        if (selectedImages != null && selectedImages.isNotEmpty) {
+          // Limit the number of images to remaining slots
+          int imagesToAdd = selectedImages.length > remainingSlots ? remainingSlots : selectedImages.length;
+          
           setState(() {
-            _images.add(image.path);
-            // If this is the first media item, set it as cover
-            if (widget.coverImage == null && _images.length == 1 && _videoPath == null) {
-              widget.onCoverChanged?.call(image.path);
+            for (int i = 0; i < imagesToAdd; i++) {
+              String imagePath = selectedImages[i].path;
+              _images.add(imagePath);
+              widget.onImageSelected(imagePath);
+              
+              // If this is the first media item, set it as cover
+              if (widget.coverImage == null && _images.length == 1 && _videoPath == null) {
+                widget.onCoverChanged?.call(imagePath);
+              }
             }
           });
+          
+          if (selectedImages.length > remainingSlots) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Only $remainingSlots more images can be added')),
+            );
+          }
         }
       }
     } catch (e) {
@@ -249,9 +267,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
       spacing: 8,
       runSpacing: 8,
       children: [
-        ...mediaItems.asMap().entries.map((entry) {
-          final index = entry.key;
-          final media = entry.value;
+        ...mediaItems.map((media) {
           final isVideo = media['isVideo'] as bool;
           final path = media['path'] as String;
           // Check if this media item is the cover (either image or video)
@@ -319,6 +335,18 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                     ),
                   ),
                 ),
+
+              // Make the whole media item tappable to set as cover (but not for videos)
+              if (widget.onCoverChanged != null && !isCover && !isVideo)
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => widget.onCoverChanged?.call(path),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
               Positioned(
                 top: 2,
                 right: 2,
@@ -357,17 +385,6 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   ),
                 ),
               ),
-              // Make the whole media item tappable to set as cover (but not for videos)
-              if (widget.onCoverChanged != null && !isCover && !isVideo)
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => widget.onCoverChanged?.call(path),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
             ],
           );
         }).toList(),
