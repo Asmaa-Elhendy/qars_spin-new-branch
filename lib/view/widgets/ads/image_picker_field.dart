@@ -15,6 +15,7 @@ class ImagePickerField extends StatefulWidget {
   final Function(String)? onCoverChanged;
   final Function(int)? onImageRemoved;
   final Function()? onVideoRemoved;
+  final Function(bool)? onVideoChanged;
   final bool isModifyMode;
 
   const ImagePickerField({
@@ -28,6 +29,7 @@ class ImagePickerField extends StatefulWidget {
     this.onCoverChanged,
     this.onImageRemoved,
     this.onVideoRemoved,
+    this.onVideoChanged,
     this.isModifyMode = false,
   }) : super(key: key);
 
@@ -96,6 +98,12 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
       }
     } catch (e) {
       debugPrint('Error generating video thumbnail: $e');
+      // If thumbnail generation fails, set a placeholder
+      if (mounted) {
+        setState(() {
+          _videoThumbnail = null; // Will use video icon placeholder
+        });
+      }
     }
   }
 
@@ -115,11 +123,10 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
 
         if (video != null) {
           widget.onVideoSelected?.call(video.path);
+          widget.onVideoChanged?.call(true); // Mark video as changed
           setState(() {
             _videoPath = video.path;
             _loadVideoThumbnail();
-            // Set video as cover when selected
-            widget.onCoverChanged?.call(video.path);
           });
         }
       } else {
@@ -160,7 +167,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
 
         // If the removed image was the cover, update the cover
         if (widget.coverImage == removedImage) {
-          widget.onCoverChanged?.call(_images.isNotEmpty ? _images[0] : (_videoPath ?? ''));
+          widget.onCoverChanged?.call(_images.isNotEmpty ? _images[0] : '');
         }
       });
     }
@@ -260,12 +267,18 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300),
-                  image: DecorationImage(
-                    image: isVideo && thumbnail != null 
-                      ? FileImage(File(thumbnail))
-                      : _isNetworkUrl(path) ? NetworkImage(path) : FileImage(File(path)),
-                    fit: BoxFit.cover,
-                  ),
+                  image: isVideo
+                    ? (thumbnail != null 
+                        ? DecorationImage(
+                            image: FileImage(File(thumbnail)),
+                            fit: BoxFit.cover,
+                          )
+                        : null) // No image for video if no thumbnail
+                    : DecorationImage(
+                        image: _isNetworkUrl(path) ? NetworkImage(path) : FileImage(File(path)),
+                        fit: BoxFit.cover,
+                      ),
+                  color: isVideo && thumbnail == null ? Colors.grey[300] : null,
                 ),
                 child: isVideo 
                   ? Center(
@@ -284,7 +297,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                     )
                   : null,
               ),
-              if (widget.onCoverChanged != null && isCover)
+              if (widget.onCoverChanged != null && isCover && !isVideo)
                 Positioned.fill(
                   child: GestureDetector(
                     onTap: () => widget.onCoverChanged?.call(path),
@@ -314,6 +327,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                     if (isVideo) {
                       final wasCover = _videoPath == widget.coverImage;
                       widget.onVideoRemoved?.call();
+                      widget.onVideoChanged?.call(true); // Mark video as changed when removed
                       setState(() {
                         _videoPath = null;
                         _videoThumbnail = null;
@@ -343,8 +357,8 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   ),
                 ),
               ),
-              // Make the whole media item tappable to set as cover
-              if (widget.onCoverChanged != null && !isCover)
+              // Make the whole media item tappable to set as cover (but not for videos)
+              if (widget.onCoverChanged != null && !isCover && !isVideo)
                 Positioned.fill(
                   child: Material(
                     color: Colors.transparent,

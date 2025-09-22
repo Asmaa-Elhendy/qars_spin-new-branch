@@ -16,6 +16,7 @@ class ImageUploadSection extends StatefulWidget {
   final Function(int) onImageRemoved;
   final bool isModifyMode;
   final Function(bool) onCoverPhotoChanged;
+  final Function(bool)? onVideoChanged;
 
   const ImageUploadSection({
     Key? key,
@@ -28,6 +29,7 @@ class ImageUploadSection extends StatefulWidget {
     required this.onImageRemoved,
     this.isModifyMode = false,
     required this.onCoverPhotoChanged,
+    this.onVideoChanged,
   }) : super(key: key);
 
   @override
@@ -126,6 +128,7 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
           onCoverChanged: widget.onCoverChanged,
           onImageRemoved: widget.onImageRemoved,
           isModifyMode: widget.isModifyMode,
+          onVideoChanged: widget.onVideoChanged,
         ),
       ],
     );

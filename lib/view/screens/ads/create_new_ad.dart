@@ -78,6 +78,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _descriptionController = TextEditingController();
 
   bool _coverPhotoChanged = false;
+  bool _videoChanged = false;
 
   final AdCleanController brandController = Get.put(
     AdCleanController(AdRepository()),
@@ -97,10 +98,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     log('Video selected: $videoPath');
     setState(() {
       _videoPath = videoPath;
-      // Only set as cover if there are no other covers and no images
-      if (_coverImage == null && _images.isEmpty) {
-        _coverImage = videoPath;
-      }
+      _videoChanged = true; // Mark video as changed
       log('Video added. Cover image: $_coverImage');
     });
   }
@@ -583,6 +581,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         interiorColor: _interiorColor ?? Colors.white,
         postId: postId,
         coverPhotoChanged: _coverPhotoChanged,
+        videoChanged: _videoChanged,
         showLoadingDialog: _showLoadingDialog,
         showSuccessDialog: _showSuccessDialog,
         showErrorDialog: _showErrorAlert,
@@ -609,6 +608,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         description: _descriptionController.text,
         exteriorColor: _exteriorColor ?? Colors.white,
         interiorColor: _interiorColor ?? Colors.white,
+        videoChanged: _videoChanged,
         showLoadingDialog: _showLoadingDialog,
         showSuccessDialog: _showSuccessDialog,
         showErrorDialog: _showErrorAlert,
@@ -682,6 +682,11 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           onCoverPhotoChanged: (bool changed) {
                             setState(() {
                               _coverPhotoChanged = changed;
+                            });
+                          },
+                          onVideoChanged: (bool changed) {
+                            setState(() {
+                              _videoChanged = changed;
                             });
                           },
                         ),

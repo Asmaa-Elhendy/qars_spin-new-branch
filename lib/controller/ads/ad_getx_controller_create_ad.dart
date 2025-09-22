@@ -34,6 +34,11 @@ class AdCleanController extends GetxController {
   var createAdError = Rxn<String>();
   var createAdSuccess = Rxn<Map<String, dynamic>>();
 
+  // Video upload state
+  var isUploadingVideo = false.obs;
+  var videoUploadError = Rxn<String>();
+  var videoUploadSuccess = Rxn<Map<String, dynamic>>();
+
   // loading flags
   var isLoadingMakes = false.obs;
   var isLoadingClasses = false.obs;
@@ -166,6 +171,43 @@ class AdCleanController extends GetxController {
     isCreatingAd.value = false;
     createAdError.value = null;
     createAdSuccess.value = null;
+  }
+
+  /// Upload video for a post
+  Future<void> uploadVideo({
+    required String postId,
+    required String ourSecret,
+    required String videoPath,
+  }) async {
+    isUploadingVideo.value = true;
+    videoUploadError.value = null;
+    videoUploadSuccess.value = null;
+
+    try {
+      final result = await repository.uploadVideoForPost(
+        postId: postId,
+        ourSecret: ourSecret,
+        videoPath: videoPath,
+      );
+
+      if (result['Code'] == 'OK') {
+        videoUploadSuccess.value = result;
+      } else {
+        throw Exception(result['Desc'] ?? 'Failed to upload video');
+      }
+    } catch (e) {
+      videoUploadError.value = e.toString();
+      print("Error uploading video: $e");
+    } finally {
+      isUploadingVideo.value = false;
+    }
+  }
+
+  /// Reset video upload state
+  void resetVideoUploadState() {
+    isUploadingVideo.value = false;
+    videoUploadError.value = null;
+    videoUploadSuccess.value = null;
   }
 
   /// Get missing required fields for validation

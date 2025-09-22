@@ -30,6 +30,7 @@ class AdSubmissionService {
     required String description,
     required Color exteriorColor,
     required Color interiorColor,
+    required bool videoChanged,
     required Function() showLoadingDialog,
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
@@ -68,6 +69,7 @@ class AdSubmissionService {
         description: description,
         exteriorColor: exteriorColor,
         interiorColor: interiorColor,
+        videoChanged: videoChanged,
         showLoadingDialog: showLoadingDialog,
         showSuccessDialog: showSuccessDialog,
         showErrorDialog: showErrorDialog,
@@ -102,6 +104,7 @@ class AdSubmissionService {
     required Color interiorColor,
     required String postId,
     required bool coverPhotoChanged,
+    required bool videoChanged,
     required Function() showLoadingDialog,
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
@@ -172,6 +175,19 @@ class AdSubmissionService {
           log('Cover photo not changed, skipping upload');
         }
         
+        // Upload video if we have a post ID and video path AND it was changed
+        if (postId.isNotEmpty && videoPath != null && videoPath.isNotEmpty && videoChanged) {
+          log('Uploading video for post ID: $postId');
+          await adRepository.uploadVideoForPost(
+            postId: postId,
+            ourSecret: ourSecret, // Using the same secret as in ad creation
+            videoPath: videoPath,
+          );
+          log('Video upload completed');
+        } else if (!videoChanged) {
+          log('Video not changed, skipping upload');
+        }
+        
         // Note: Gallery photos are NOT uploaded during update - only during create
         
         // Hide loading dialog only after all operations are complete
@@ -211,6 +227,7 @@ class AdSubmissionService {
     required String description,
     required Color exteriorColor,
     required Color interiorColor,
+    required bool videoChanged,
     required Function() showLoadingDialog,
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
@@ -306,6 +323,22 @@ class AdSubmissionService {
             coverImage: coverImage,
           );
           log('Gallery photos upload completed');
+        }
+        
+        // Upload video if we have a post ID and video path
+        if (responsePostId.isNotEmpty && videoPath != null && videoPath.isNotEmpty) {
+          // Only upload video if it's a new post or if video was changed
+          if (postId == null || videoChanged) {
+            log('Uploading video for post ID: $responsePostId');
+            await adRepository.uploadVideoForPost(
+              postId: responsePostId,
+              ourSecret: ourSecret, // Using the same secret as in ad creation
+              videoPath: videoPath,
+            );
+            log('Video upload completed');
+          } else {
+            log('Video not changed, skipping upload');
+          }
         }
         
         // Hide loading dialog only after both operations are complete

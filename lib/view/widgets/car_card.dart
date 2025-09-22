@@ -94,14 +94,16 @@ Widget carCard({
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
   Padding(
-                padding: EdgeInsets.only(top: 6.h, bottom: 3.h), // no horizontal padding
-                child: Text(
-                  car.carNamePl,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
+                padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left: 6.w), // no horizontal padding
+                child: SizedBox(height: 40.h,
+                  child: Text(
+                    car.carNamePl.trim(),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
                 ),
             ),
 
@@ -196,7 +198,7 @@ Widget carCard({
 Widget carStatus(CarStatus status) {
   return Container(
     width: 80.w,   //update asmaa
-  //  height: 22.h,
+    height: 20.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 
     decoration: BoxDecoration(
@@ -211,8 +213,8 @@ Widget carStatus(CarStatus status) {
 
     child: status == CarStatus.QarsSpin
         ? SizedBox(
-            width: 30,
-            height: 40,
+            // width: 80.w,
+            // height: 20.h,
             child: Image.asset(
               "assets/images/ic_top_logo_colored.png",
               fit: BoxFit.cover,

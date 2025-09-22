@@ -271,6 +271,65 @@ class AdRepository {
     }
   }
 
+  /// Upload video for a post
+  Future<Map<String, dynamic>> uploadVideoForPost({
+    required String postId,
+    required String ourSecret,
+    required String videoPath,
+  }) async
+  {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/UploadVideoForPost',
+    );
+
+    try {
+      // Read the video file
+      final file = File(videoPath);
+      if (!await file.exists()) {
+        return {
+          'Code': 'Error',
+          'Desc': 'Video file not found',
+        };
+      }
+
+      // Since UploadVideoForPost doesn't accept multipart, we need to send it differently
+      // The API description says "Upload Video, Update Post, Add Media & Post Log (fixed fields except video)"
+      // This suggests the video might be handled separately or through a different mechanism
+      
+      // For now, let's try sending the basic parameters as form-urlencoded with video path
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'Post_ID': postId,
+          'Our_Secret': ourSecret,
+          'VideoPath': videoPath, // Try adding video path as parameter
+        },
+      );
+
+      log('Video upload response status: ${response.statusCode}');
+      log('Video upload response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        return _parseUploadResponse(response.body);
+      } else {
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to upload video. Status code: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      log('Video upload error: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+      };
+    }
+  }
+
   /// Parse JSON response from API
   Map<String, dynamic> _parseJsonResponse(String jsonString) {
     try {

@@ -74,7 +74,7 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                     title: 'Create Car Ads',fromHome: 'true',
                     imageAsset:
                     'assets/images/new_svg/home1.svg',
-                    large: false,
+                    large: false,//f
                   ),
                   HomeServiceCard(
                     onTap: () {
