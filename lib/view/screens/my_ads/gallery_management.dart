@@ -527,13 +527,21 @@ class _GalleryManagementState extends State<GalleryManagement> {
       final updateSuccess = await controller.updateCoverImage(
         postId: widget.postId.toString(),
         newCoverImageUrl: newCoverUrl,
-        ourSecret: '1244',
+        ourSecret: ourSecret,
       );
       
       if (updateSuccess) {
-        // Reload media and cover photo like when first entering the page
-        await _fetchPostImages();     // Reload media/images
-        await _fetchPostDetails();    // Reload post details and cover photo
+        // Update the local cover image state directly without refreshing media
+        setState(() {
+          currentCoverImage = newCoverUrl;
+        });
+        
+        // Only refresh post details to get the latest Rectangle_Image_URL
+        // No need to refresh media since we already have the new cover URL
+        await _fetchPostDetails();
+        
+        log('✅ [DEBUG] Cover image updated locally: $currentCoverImage');
+        log('✅ [DEBUG] Skipped media refresh for better performance');
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -659,7 +667,26 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     ...images.map((file) => _buildLocalImageItem(file)),
                   ];
 
-                  if (allImages.isEmpty) {
+                  // Show cover image even if media list is empty
+                  if (allImages.isEmpty && currentCoverImage != null && currentCoverImage!.isNotEmpty) {
+                    return ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      itemCount: 1, // Only show cover image
+                      separatorBuilder: (_, __) => 16.verticalSpace,
+                      itemBuilder: (context, index) {
+                        return _buildApiImageItem(MediaItem(
+                          mediaId: 0,
+                          mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                          mediaUrl: currentCoverImage!,
+                          displayOrder: 0,
+                        ),
+                      );
+                      },
+                    );
+                  }
+                  
+                  // Show "No images found" only if no cover image either
+                  if (allImages.isEmpty && (currentCoverImage == null || currentCoverImage!.isEmpty)) {
                     return Center(child: Text('No images found'));
                   }
 
@@ -670,7 +697,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     itemBuilder: (context, index) {
                       if (index==0){
                         return   _buildApiImageItem(MediaItem(
-                            mediaId: 0,//l
+                            mediaId: 0,//ljت
                             mediaFileName: 'CoverPhotoForPostGalleryManagement',
                             mediaUrl: currentCoverImage!,
                             displayOrder: 0,

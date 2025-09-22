@@ -356,12 +356,19 @@ Widget MyAdCard(
                       child: yellowButtons(
                         title: "Gallery",
                         onTap: () {
-                          Get.to(GalleryManagement(
-                            postId: ad.postId,
-
-                            postKind: ad.postKind,
-                            userName: ad.userName,
-                          ));
+                          // Navigate to GalleryManagement and auto-refresh when returning
+                          Get.to(
+                            GalleryManagement(
+                              postId: ad.postId,
+                              postKind: ad.postKind,
+                              userName: ad.userName,
+                            ),
+                          )?.then((_) {
+                            // Auto-refresh MyAdsMainScreen when returning from GalleryManagement
+                            log('✅ [DEBUG] Returned from GalleryManagement, refreshing MyAdsMainScreen');
+                            final controller = Get.find<MyAdCleanController>();
+                            controller.fetchMyAds(); // Refresh the ads list
+                          });
                         },
                         w: double.infinity,
                       ),
