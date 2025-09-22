@@ -15,8 +15,10 @@ import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
 
 class GalleryManagement extends StatefulWidget {
-int postId;
-GalleryManagement({required this.postId});
+  int postId;
+  String? coverImage;
+
+  GalleryManagement({required this.postId, required this.coverImage});
 
   @override
   State<GalleryManagement> createState() => _GalleryManagementState();
@@ -30,8 +32,9 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<void> _pickImages() async {
     log('🚀 [DEBUG] _pickImages method started!');
-    
-    final totalImages = images.length + (controller.postMedia.value?.data.length ?? 0);
+
+    final totalImages =
+        images.length + (controller.postMedia.value?.data.length ?? 0);
     if (totalImages >= 15) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("You can only select up to 15 images.")),
@@ -40,45 +43,52 @@ class _GalleryManagementState extends State<GalleryManagement> {
     }
 
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
-    
-    log('🚀 [DEBUG] pickMultiImage completed. Files: ${pickedFiles?.length ?? 0}');
+
+    log(
+      '🚀 [DEBUG] pickMultiImage completed. Files: ${pickedFiles?.length ?? 0}',
+    );
 
     if (pickedFiles != null) {
       log('=== DEBUG: Selected ${pickedFiles.length} images ===');
-      
+
       // STEP 1: Batch Editing - Edit all images first
       List<File> editedImages = [];
-      
+
       log('=== STEP 1: Batch Editing Phase ===');
       for (int i = 0; i < pickedFiles.length; i++) {
         final file = pickedFiles[i];
-        log('🎨 [EDITING] Opening editor for image ${i + 1}/${pickedFiles.length}: ${file.path}');
-        
+        log(
+          '🎨 [EDITING] Opening editor for image ${i + 1}/${pickedFiles.length}: ${file.path}',
+        );
+
         // Edit the image
-        log('🎨 [EDITING] About to open ImageEditor for image ${i + 1}/${pickedFiles.length}');
+        log(
+          '🎨 [EDITING] About to open ImageEditor for image ${i + 1}/${pickedFiles.length}',
+        );
         log('🎨 [EDITING] Image file path: ${file.path}');
         log('🎨 [EDITING] Image file size: ${await file.length()} bytes');
-        
+
         dynamic editedImage;
         try {
           // Show a snackbar to guide the user
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Please edit image ${i + 1} and tap SAVE when done'),
+              content: Text(
+                'Please edit image ${i + 1} and tap SAVE when done',
+              ),
               duration: Duration(seconds: 3),
             ),
           );
-          
+
           // Wait a bit for the snackbar to show
           await Future.delayed(Duration(milliseconds: 500));
-          
+
           log('🎨 [EDITING] Opening ImageEditor dialog...');
           editedImage = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ImageEditor(
-                image: File(file.path).readAsBytesSync(),
-              ),
+              builder: (context) =>
+                  ImageEditor(image: File(file.path).readAsBytesSync()),
             ),
           );
           log('🎨 [EDITING] Navigator.push completed successfully');
@@ -88,22 +98,30 @@ class _GalleryManagementState extends State<GalleryManagement> {
           log('❌ [EDITING] Exception type: ${e.runtimeType}');
           editedImage = null;
         }
-        
-        log('🎨 [EDITING] Returned from ImageEditor for image ${i + 1} - Result: ${editedImage != null ? "SUCCESS" : "CANCELLED"}');
+
+        log(
+          '🎨 [EDITING] Returned from ImageEditor for image ${i + 1} - Result: ${editedImage != null ? "SUCCESS" : "CANCELLED"}',
+        );
         log('🎨 [EDITING] Edited image type: ${editedImage?.runtimeType}');
-        log('🎨 [EDITING] Edited image size: ${editedImage?.length ?? 0} bytes');
-        
+        log(
+          '🎨 [EDITING] Edited image size: ${editedImage?.length ?? 0} bytes',
+        );
+
         // Additional check - sometimes ImageEditor returns empty list or invalid data
         // ImageEditor can return different types: List<int> or _Uint8ArrayView
-        bool isValidImage = editedImage != null && 
-                           ((editedImage is List<int> && editedImage.isNotEmpty) ||
-                            (editedImage.toString().contains('Uint8Array') && editedImage.length > 0)) &&
-                           editedImage.length > 100; // At least 100 bytes
-        
+        bool isValidImage =
+            editedImage != null &&
+            ((editedImage is List<int> && editedImage.isNotEmpty) ||
+                (editedImage.toString().contains('Uint8Array') &&
+                    editedImage.length > 0)) &&
+            editedImage.length > 100; // At least 100 bytes
+
         log('🎨 [EDITING] Is valid image check: $isValidImage');
-        
+
         if (!isValidImage && editedImage != null) {
-          log('⚠️ [EDITING] Image returned null or invalid data - treating as cancelled');
+          log(
+            '⚠️ [EDITING] Image returned null or invalid data - treating as cancelled',
+          );
         }
 
         if (isValidImage) {
@@ -116,14 +134,16 @@ class _GalleryManagementState extends State<GalleryManagement> {
             // Handle _Uint8ArrayView or other byte array types
             imageBytes = List<int>.from(editedImage);
           }
-          
+
           final imageFile = File(file.path)..writeAsBytesSync(imageBytes);
           editedImages.add(imageFile);
           log('✅ [EDITING] Image ${i + 1} edited successfully');
-          log('✅ [EDITING] Converted ${editedImage.runtimeType} to List<int> (${imageBytes.length} bytes)');
+          log(
+            '✅ [EDITING] Converted ${editedImage.runtimeType} to List<int> (${imageBytes.length} bytes)',
+          );
         } else {
           log('❌ [EDITING] Image ${i + 1} cancelled or invalid in editor');
-          
+
           // Ask user if they want to retry
           bool shouldRetry = await _showRetryDialog(context, i + 1);
           if (shouldRetry) {
@@ -132,74 +152,96 @@ class _GalleryManagementState extends State<GalleryManagement> {
           }
         }
       }
-      
-      log('=== STEP 1 COMPLETE: ${editedImages.length} images ready for upload ===');
-      
+
+      log(
+        '=== STEP 1 COMPLETE: ${editedImages.length} images ready for upload ===',
+      );
+
       // STEP 2: Sequential Uploading - Upload each edited image one by one
       if (editedImages.isNotEmpty) {
         int successCount = 0;
         int failCount = 0;
-        
+
         log('=== STEP 2: Sequential Upload Phase ===');
-        log('📊 [DEBUG] Starting upload loop for ${editedImages.length} images');
-        
+        log(
+          '📊 [DEBUG] Starting upload loop for ${editedImages.length} images',
+        );
+
         for (int i = 0; i < editedImages.length; i++) {
           final imageFile = editedImages[i];
-          log('📤 [UPLOADING] Starting upload for image ${i + 1}/${editedImages.length}: ${imageFile.path}');
-          
+          log(
+            '📤 [UPLOADING] Starting upload for image ${i + 1}/${editedImages.length}: ${imageFile.path}',
+          );
+
           // Show loader for this specific image
           controller.isLoadingMedia.value = true;
           log('⏳ [UPLOADING] Loader ON for image ${i + 1}');
-          
+
           // Upload this single image with skipRefresh=true
           try {
-            log('⏳ [UPLOADING] Calling _uploadImageToApiWithSkipRefresh for image ${i + 1}');
+            log(
+              '⏳ [UPLOADING] Calling _uploadImageToApiWithSkipRefresh for image ${i + 1}',
+            );
             final success = await _uploadImageToApiWithSkipRefresh(imageFile);
-            log('⏳ [UPLOADING] Completed _uploadImageToApiWithSkipRefresh for image ${i + 1} - Result: $success');
-            
+            log(
+              '⏳ [UPLOADING] Completed _uploadImageToApiWithSkipRefresh for image ${i + 1} - Result: $success',
+            );
+
             if (success) {
               successCount++;
-              log('✅ [UPLOADING] Image ${i + 1} uploaded successfully - Total success: $successCount');
+              log(
+                '✅ [UPLOADING] Image ${i + 1} uploaded successfully - Total success: $successCount',
+              );
             } else {
               failCount++;
-              log('❌ [UPLOADING] Image ${i + 1} upload failed - Total failed: $failCount');
+              log(
+                '❌ [UPLOADING] Image ${i + 1} upload failed - Total failed: $failCount',
+              );
             }
           } catch (e) {
             failCount++;
-            log('❌ [UPLOADING] Exception uploading image ${i + 1}: $e - Total failed: $failCount');
+            log(
+              '❌ [UPLOADING] Exception uploading image ${i + 1}: $e - Total failed: $failCount',
+            );
           }
-          
+
           // Hide loader after this image is done
           controller.isLoadingMedia.value = false;
           log('⏳ [UPLOADING] Loader OFF for image ${i + 1}');
-          
+
           // Small delay before processing next image
           log('⏳ [UPLOADING] Waiting 500ms before next image...');
           await Future.delayed(const Duration(milliseconds: 500));
           log('⏳ [UPLOADING] Delay completed, moving to next image if any');
         }
-        
-        log('=== STEP 2 COMPLETE: Upload results - Success: $successCount, Failed: $failCount ===');
-        
+
+        log(
+          '=== STEP 2 COMPLETE: Upload results - Success: $successCount, Failed: $failCount ===',
+        );
+
         // Show final result message
         if (successCount > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Successfully uploaded $successCount image${successCount > 1 ? 's' : ''}!"),
+              content: Text(
+                "Successfully uploaded $successCount image${successCount > 1 ? 's' : ''}!",
+              ),
               backgroundColor: Colors.green,
             ),
           );
         }
-        
+
         if (failCount > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Failed to upload $failCount image${failCount > 1 ? 's' : ''}"),
+              content: Text(
+                "Failed to upload $failCount image${failCount > 1 ? 's' : ''}",
+              ),
               backgroundColor: Colors.red,
             ),
           );
         }
-        
+
         // Final refresh to make sure everything is up to date (ONLY ONCE at the end)
         if (successCount > 0) {
           log('🔄 [FINAL] Refreshing media list after all uploads...');
@@ -213,48 +255,57 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<bool> _showRetryDialog(BuildContext context, int imageNumber) async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Image Editing Cancelled'),
-        content: Text('Image $imageNumber was cancelled. Do you want to retry editing it?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Skip',style: TextStyle(color: AppColors.primary),),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Image Editing Cancelled'),
+            content: Text(
+              'Image $imageNumber was cancelled. Do you want to retry editing it?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('Skip', style: TextStyle(color: AppColors.primary)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  'Retry',
+                  style: TextStyle(color: AppColors.primary),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Retry',style: TextStyle(color: AppColors.primary)),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   Future<bool> _uploadImageToApiWithSkipRefresh(File imageFile) async {
-    log('🔍 Starting upload with skipRefresh for: ${imageFile.path}');//lhjjن
-    
+    log('🔍 Starting upload with skipRefresh for: ${imageFile.path}'); //lhjjن
+
     try {
-      log('📤 Calling controller.uploadPostGalleryPhoto with skipRefresh=true...');
+      log(
+        '📤 Calling controller.uploadPostGalleryPhoto with skipRefresh=true...',
+      );
       final success = await controller.uploadPostGalleryPhoto(
         postId: widget.postId.toString(),
         photoFile: imageFile,
         ourSecret: ourSecret,
         skipRefresh: true, // Skip refresh after each upload
       );
-      
+
       if (success) {
         log('✅ Upload SUCCESS for: ${imageFile.path}');
       } else {
         log('❌ Upload FAILED for: ${imageFile.path}');
       }
-      
+
       return success;
     } catch (e) {
       log('❌ EXCEPTION during upload for ${imageFile.path}: $e');
       return false;
     }
   }
+
   void _swapImages(int oldIndex, int newIndex) {
     if (newIndex < 0 || newIndex >= images.length) return;
     setState(() {
@@ -267,12 +318,12 @@ class _GalleryManagementState extends State<GalleryManagement> {
   void _swapApiImages(int oldIndex, int newIndex) {
     final apiImages = controller.postMedia.value?.data ?? [];
     if (newIndex < 0 || newIndex >= apiImages.length) return;
-    
+
     setState(() {
       final temp = apiImages[oldIndex];
       apiImages[oldIndex] = apiImages[newIndex];
       apiImages[newIndex] = temp;
-      
+
       // Update the controller's postMedia to reflect the change
       if (controller.postMedia.value != null) {
         final updatedPostMedia = PostMedia(
@@ -299,22 +350,29 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<bool> _showDeleteConfirmationDialog() async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete Image'),
-        content: Text('Are you sure you want to delete this image?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel' ,style: TextStyle(color: AppColors.textPrimary),)
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Delete Image'),
+            content: Text('Are you sure you want to delete this image?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  'Delete',
+                  style: TextStyle(color: AppColors.brandBlue),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Delete',style: TextStyle(color: AppColors.brandBlue)),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   Future<bool> _deleteApiImage(String mediaId) async {
@@ -360,8 +418,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   children: [
                     InkWell(
                       onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back_outlined,
-                          color: Colors.black, size: 30.w),
+                      child: Icon(
+                        Icons.arrow_back_outlined,
+                        color: Colors.black,
+                        size: 30.w,
+                      ),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -377,7 +438,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
                         ),
                         SizedBox(height: 3),
                         Obx(() {
-                          final totalImages = images.length +
+                          final totalImages =
+                              images.length +
                               (controller.postMedia.value?.data.length ?? 0);
                           return Text(
                             "$totalImages of 15 images",
@@ -394,12 +456,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     InkWell(
                       onTap: _pickImages,
                       child: Image.asset("assets/images/add.png", scale: 25.w),
-                    )
+                    ),
                   ],
                 ),
               ),
 
-              40.verticalSpace,
+              10.verticalSpace,
+
+            //  16.verticalSpace,
 
               /// Images List
               Expanded(
@@ -414,22 +478,33 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   }
 
                   final apiImages = controller.postMedia.value?.data ?? [];
+
                   final allImages = [
-                    ...apiImages.map((mediaItem) => _buildApiImageItem(mediaItem)),
+                    ...apiImages.map(
+                      (mediaItem) => _buildApiImageItem(mediaItem),
+                    ),
                     ...images.map((file) => _buildLocalImageItem(file)),
                   ];
 
                   if (allImages.isEmpty) {
-                    return Center(
-                      child: Text('No images found'),
-                    );
+                    return Center(child: Text('No images found'));
                   }
 
                   return ListView.separated(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    itemCount: allImages.length,
+                    itemCount: allImages.length+1,
                     separatorBuilder: (_, __) => 16.verticalSpace,
                     itemBuilder: (context, index) {
+                      if (index==0){
+                        return   _buildApiImageItem(
+                          MediaItem(
+                            mediaId: 0,
+                            mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                            mediaUrl: widget.coverImage!,
+                            displayOrder: 0,
+                          ),
+                        );
+                      }
                       return allImages[index];
                     },
                   );
@@ -445,7 +520,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 child: Container(
                   color: Colors.black.withOpacity(0.5),
                   child: Center(
-                    child: AppLoadingWidget(//kj
+                    child: AppLoadingWidget(
+                      //kj
                       title: 'Loading...\nPlease Wait...',
                     ),
                   ),
@@ -459,158 +535,217 @@ class _GalleryManagementState extends State<GalleryManagement> {
     );
   }
 
-
   Widget _buildApiImageItem(MediaItem mediaItem) {
-    return Container(
-      width: double.infinity,
-      height: 300.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: Stack(
-        children: [
-          /// Network Imagehkنه
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                mediaItem.mediaUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Icon(Icons.broken_image, size: 50),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')
+          Stack(
+            children: [
+              Image.asset("assets/images/featured.png"),
+              Positioned(
+                left: 20.w,
+                child: Center(
+                  child: const Text(
+                    "Cover",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
+                  ),
+                ),
               ),
+            ],
+          ),
+        Container(
+          width: double.infinity,
+          height: 300.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(
+              width: 2,
+              color:
+                  mediaItem.mediaFileName ==
+                      'CoverPhotoForPostGalleryManagement'
+                  ? AppColors.danger
+                  : Colors.grey,
             ),
           ),
-          
-          /// Delete Icon
-          Positioned(
-            right: 8.w,
-            top: 8.h,
-            child: GestureDetector(
-              onTap: () async {
-                final apiImages = controller.postMedia.value?.data ?? [];
-                final index = apiImages.indexOf(mediaItem);
-                if (index != -1) {
-                  // Show confirmation dialog
-                  final shouldDelete = await _showDeleteConfirmationDialog();
-                  if (shouldDelete) {
-                    final success = await _deleteApiImage(mediaItem.mediaId.toString());
-                    if (success) {
-                      // Remove from local list immediately for better UX
-                      setState(() {
-                        apiImages.removeAt(index);
-                        // Update the controller's postMedia to reflect the change
-                        if (controller.postMedia.value != null) {
-                          final updatedPostMedia = PostMedia(
-                            code: controller.postMedia.value!.code,
-                            desc: controller.postMedia.value!.desc,
-                            count: controller.postMedia.value!.count - 1,
-                            data: List<MediaItem>.from(apiImages),
-                          );
-                          controller.postMedia.value = updatedPostMedia;
-                        }
-                      });
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text('Image deleted successfully'),
-                      //     backgroundColor: Colors.green,
-                      //   ),
-                      // );
-                    } else {
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text('Failed to delete image'),
-                      //     backgroundColor: Colors.red,
-                      //   ),
-                   //   );
+          child: Stack(
+            children: [
+              /// Network Imagehkنه
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.network(
+                    mediaItem.mediaUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Icon(Icons.broken_image, size: 50),
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              /// Delete Icon
+              (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')
+                  ? Positioned(
+                      right: 8.w,
+                      top: 8.h,
+                      child: GestureDetector(
+                        onTap: () async {},
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            color: Color(0xffEC6D64),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 28.w,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Positioned(
+                      right: 8.w,
+                      top: 8.h,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final apiImages =
+                              controller.postMedia.value?.data ?? [];
+                          final index = apiImages.indexOf(mediaItem);
+                          if (index != -1) {
+                            // Show confirmation dialog
+                            final shouldDelete =
+                                await _showDeleteConfirmationDialog();
+                            if (shouldDelete) {
+                              final success = await _deleteApiImage(
+                                mediaItem.mediaId.toString(),
+                              );
+                              if (success) {
+                                // Remove from local list immediately for better UX
+                                setState(() {
+                                  apiImages.removeAt(index);
+                                  // Update the controller's postMedia to reflect the change
+                                  if (controller.postMedia.value != null) {
+                                    final updatedPostMedia = PostMedia(
+                                      code: controller.postMedia.value!.code,
+                                      desc: controller.postMedia.value!.desc,
+                                      count:
+                                          controller.postMedia.value!.count - 1,
+                                      data: List<MediaItem>.from(apiImages),
+                                    );
+                                    controller.postMedia.value =
+                                        updatedPostMedia;
+                                  }
+                                });
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     content: Text('Image deleted successfully'),
+                                //     backgroundColor: Colors.green,
+                                //   ),
+                                // );
+                              } else {
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     content: Text('Failed to delete image'),
+                                //     backgroundColor: Colors.red,
+                                //   ),
+                                //   );
+                              }
+                            }
+                          }
+                        },
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            color: Color(0xffEC6D64),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Icon(
+                            Icons.delete_outline,
+                            color: Colors.white,
+                            size: 28.w,
+                          ),
+                        ),
+                      ),
+                    ),
+
+              /// Up Arrow
+              (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')
+                  ? SizedBox():     Positioned(
+                left: 8.w,
+                top: 8.h,
+                child: GestureDetector(
+                  onTap: () {
+                    final apiImages = controller.postMedia.value?.data ?? [];
+                    final index = apiImages.indexOf(mediaItem);
+                    if (index > 0) {
+                      _swapApiImages(index, index - 1);
                     }
-                  }
-                }
-              },
-              child: Container(
-    width: 40.w,
-    height: 40.h,
-    decoration: BoxDecoration(
-    color: Color(0xffEC6D64),
-    borderRadius: BorderRadius.circular(4),
-    ),
-    child: Icon(
-    Icons.delete_outline,
-    color: Colors.white,
-    size: 28.w,
-              )),
-            ),
-          ),
-
-          /// Up Arrow
-          Positioned(
-            left: 8.w,
-            top: 8.h,
-            child: GestureDetector(
-              onTap: () {
-                final apiImages = controller.postMedia.value?.data ?? [];
-                final index = apiImages.indexOf(mediaItem);
-                if (index > 0) {
-                  _swapApiImages(index, index - 1);
-                }
-              },
-              child: Container(
-                width: 40.w,
-                height: 48.h,
-                padding: EdgeInsets.all(12).r,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4),
+                  },
+                  child: Container(
+                    width: 40.w,
+                    height: 48.h,
+                    padding: EdgeInsets.all(12).r,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Image.asset("assets/images/up-arrow.png"),
+                  ),
                 ),
-                child: Image.asset("assets/images/up-arrow.png"),
               ),
-            ),
-          ),
 
-          /// Down Arrow
-          Positioned(
-            left: 8.w,
-            bottom: 8.h,
-            child: GestureDetector(
-              onTap: () {
-                final apiImages = controller.postMedia.value?.data ?? [];
-                final index = apiImages.indexOf(mediaItem);
-                if (index < apiImages.length - 1) {
-                  _swapApiImages(index, index + 1);
-                }
-              },
-              child: Container(
-                width: 40.w,
-                height: 48.h,
-                padding: EdgeInsets.all(12).r,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4),
+              /// Down Arrow
+              (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')
+                  ? SizedBox():    Positioned(
+                left: 8.w,
+                bottom: 8.h,
+                child: GestureDetector(
+                  onTap: () {
+                    final apiImages = controller.postMedia.value?.data ?? [];
+                    final index = apiImages.indexOf(mediaItem);
+                    if (index < apiImages.length - 1) {
+                      _swapApiImages(index, index + 1);
+                    }
+                  },
+                  child: Container(
+                    width: 40.w,
+                    height: 48.h,
+                    padding: EdgeInsets.all(12).r,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Image.asset("assets/images/down-arrow.png"),
+                  ),
                 ),
-                child: Image.asset("assets/images/down-arrow.png"),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -621,10 +756,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey),
-        image: DecorationImage(
-          image: FileImage(image),
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: FileImage(image), fit: BoxFit.cover),
       ),
       child: Stack(
         children: [

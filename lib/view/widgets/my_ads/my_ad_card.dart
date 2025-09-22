@@ -356,7 +356,7 @@ Widget MyAdCard(
                       child: yellowButtons(
                         title: "Gallery",
                         onTap: () {
-                          Get.to(GalleryManagement(postId: ad.postId));
+                          Get.to(GalleryManagement(postId: ad.postId,coverImage:ad.rectangleImageUrl));
                         },
                         w: double.infinity,
                       ),
