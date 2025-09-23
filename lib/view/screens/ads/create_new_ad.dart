@@ -476,7 +476,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   /// Validate form and submit ad
-  void _validateAndSubmitForm() {
+  void _validateAndSubmitForm({bool shouldPublish = false}) {
     // Validate form using validation methods
     bool isValid = ValidationMethods.validateForm(
       postData:widget.postData,
@@ -521,7 +521,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     if (!yearValid) return;
 
     // Submit the ad using the service
-    _submitAd();
+    _submitAd(shouldPublish: shouldPublish);
   }
 
   /// Show alert for missing fields
@@ -583,7 +583,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   /// Submit ad to API
-  void _submitAd() async {
+  void _submitAd({bool shouldPublish = false}) async {
     // Log the submission
     AdSubmissionService.logAdSubmission(
       make: _make_controller.text,
@@ -631,6 +631,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
     } else {
       // Create mode
       await AdSubmissionService.submitAd(
+        request360controller: request360Controller,
+        featureyouradcontroller: requestFeatureController,
+        shouldPublish: shouldPublish,
         context: context,
         images: _images,
         coverImage: _coverImage ?? '',
@@ -664,6 +667,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
     final width = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(

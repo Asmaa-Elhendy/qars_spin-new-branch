@@ -107,12 +107,16 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                       children: [
                         Flexible(
                           child: yellowButtons(title: "Cancel", onTap: (){
+                            FocusManager.instance.primaryFocus?.unfocus();
+
                             Navigator.pop(context);
                           }, w: double.infinity, grey: true),
                         ),
                         SizedBox(width: 7.w),
                         Flexible(
                           child: yellowButtons(title: "Confirm", onTap: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+
                             Navigator.pop(context);
                             _showLoadingDialog();
                             final controller = Get.find<SpecsController>();

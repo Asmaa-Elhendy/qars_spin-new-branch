@@ -13,6 +13,9 @@ import '../../../../model/create_ad_model.dart';
 
 class AdSubmissionService {
   static Future<void> submitAd({
+    required bool shouldPublish,
+    required TextEditingController request360controller,
+    required TextEditingController featureyouradcontroller,
     required BuildContext context,
     required List<String> images,
     required String coverImage,
@@ -37,6 +40,7 @@ class AdSubmissionService {
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
     required Function() navigateToMyAds,
+
     String? postId,
     bool coverPhotoChanged = false,
   }) async {
@@ -53,6 +57,9 @@ class AdSubmissionService {
       final selectedCategory = brandController.selectedCategory.value;
 
       await _submitOrUpdateAd(
+        shouldPublish: shouldPublish,
+        request360controller:  request360controller,
+        featureyouradcontroller:  featureyouradcontroller,
         context: context,
         images: images,
         coverImage: coverImage,
@@ -112,7 +119,8 @@ class AdSubmissionService {
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
-  }) async {
+  }) async
+  {
     try {
       showLoadingDialog();
 
@@ -212,6 +220,9 @@ class AdSubmissionService {
   }
 
   static Future<void> _submitOrUpdateAd({
+    required shouldPublish,
+    required request360controller,
+    required featureyouradcontroller,
     required BuildContext context,
     required List<String> images,
     required String coverImage,
@@ -238,7 +249,8 @@ class AdSubmissionService {
     required Function() navigateToMyAds,
     String? postId,
     bool coverPhotoChanged = false,
-  }) async {
+  }) async
+  {
     try {
       // Convert warranty to boolean
       bool warrantyAvailable = warranty.toLowerCase() == 'yes';
@@ -332,16 +344,19 @@ class AdSubmissionService {
         log('Uploading modified specs for post ID: $responsePostId');
         await _uploadModifiedSpecs(postId: responsePostId);//k
         log('Modified specs upload completed');
-        
+
         // Request 360 photo session - ONLY IN CREATE MODE
-        log('Requesting 360 photo session for post ID: $responsePostId');
-        await _request360Session(postId: responsePostId);
-        log('360 photo session request completed');
-        
+        if (postId == null && request360controller.text == "Yes" && responsePostId.isNotEmpty) {
+          log('Requesting 360 photo session for post ID: $responsePostId');
+          await _request360Session(postId: responsePostId);
+        }
+
         // Request to feature ad - ONLY IN CREATE MODE
-        log('Requesting to feature ad for post ID: $responsePostId');
-        await _requestFeatureAd(postId: responsePostId);
-        log('Feature ad request completed');
+        if (postId == null && featureyouradcontroller.text == "Yes" && responsePostId.isNotEmpty) {
+          log('Requesting to feature ad for post ID: $responsePostId');
+          await _requestFeatureAd(postId: responsePostId);
+          log('Feature ad request completed');
+        }
 
         // Upload video if we have a post ID and video path
         if (responsePostId.isNotEmpty && videoPath != null && videoPath.isNotEmpty) {
@@ -359,6 +374,8 @@ class AdSubmissionService {
           }
         }
 
+
+
         // Hide loading dialog only after both operations are complete
         hideLoadingDialog();
 
@@ -366,17 +383,56 @@ class AdSubmissionService {
             ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId"
             : "Ad ${postId == null ? 'created' : 'updated'} successfully!";
         
-        // For create mode, show success dialog and navigate
+        // For create mode, handle success dialog and navigation
         if (postId == null) {
           log('🧭 [NAVIGATION] Navigating to MyAds screen after successful ad creation');
-          // Show success dialog first
-          showSuccessDialog(successMessage, responsePostId);
           
-          // Add a small delay to ensure dialog is shown, then navigate
-          Future.delayed(Duration(milliseconds: 500), () {
-            log('🧭 [NAVIGATION] Executing navigation after delay');
-            navigateToMyAds();
-          });
+          // Check if we should also request publish
+          if (shouldPublish && responsePostId.isNotEmpty) {
+            log('📤 [PUBLISH] Requesting publish for newly created ad: $responsePostId');
+            
+            // Request publish after a short delay
+            Future.delayed(Duration(milliseconds: 300), () async {
+              try {
+                final MyAdCleanController myAdController = Get.find<MyAdCleanController>();
+                bool publishSuccess = await myAdController.requestPublishAd(
+                  userName: userName, // This should come from user session
+                  postId: responsePostId,
+                  ourSecret: ourSecret, // This should come from app config
+                );
+                
+                if (publishSuccess) {
+                  log('✅ [PUBLISH] Publish request sent successfully for ad: $responsePostId');
+                  // Update success message to include publish info
+                  String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
+                  showSuccessDialog(publishSuccessMessage, responsePostId);
+                } else {
+                  log('❌ [PUBLISH] Failed to send publish request for ad: $responsePostId');
+                  String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
+                  showSuccessDialog(publishErrorMessage, responsePostId);
+                }
+              } catch (e) {
+                log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
+                String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
+                showSuccessDialog(publishErrorMessage, responsePostId);
+              }
+              
+              // Navigate after showing publish result
+              Future.delayed(Duration(milliseconds: 500), () {
+                log('🧭 [NAVIGATION] Executing navigation after publish request');
+                navigateToMyAds();
+              });
+            });
+          } else {
+            // Show success dialog first
+            showSuccessDialog(successMessage, responsePostId);
+            
+            // Add a small delay to ensure dialog is shown, then navigate
+            Future.delayed(Duration(milliseconds: 500), () {
+              log('🧭 [NAVIGATION] Executing navigation after delay');
+              navigateToMyAds();
+            });
+          }
         } else {
           // For update mode, just show success dialog
           showSuccessDialog(successMessage, responsePostId);
@@ -398,7 +454,8 @@ class AdSubmissionService {
     required String postId,
     required List<String> images,
     required String coverImage,
-  }) async {
+  }) async
+  {
     try {
       // Get the MyAdCleanController instance
       final MyAdCleanController  myAdController = Get.put(
@@ -500,7 +557,8 @@ class AdSubmissionService {
   /// Upload modified specs to the server after gallery photos upload
   static Future<void> _uploadModifiedSpecs({
     required String postId,
-  }) async {
+  }) async
+  {
     try {
       log('🔧 [SPECS] Starting upload of modified specs for post ID: $postId');
       
@@ -548,7 +606,8 @@ class AdSubmissionService {
   /// Request 360 photo session for the newly created ad
   static Future<void> _request360Session({
     required String postId,
-  }) async {
+  }) async
+  {
     try {
       log('🔄 [360] Starting 360 photo session request for post ID: $postId');
       
@@ -575,7 +634,8 @@ class AdSubmissionService {
   /// Request to feature the newly created ad
   static Future<void> _requestFeatureAd({
     required String postId,
-  }) async {
+  }) async
+  {
     try {
       log('⭐ [FEATURE] Starting feature ad request for post ID: $postId');
       

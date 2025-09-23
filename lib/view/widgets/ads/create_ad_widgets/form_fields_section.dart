@@ -39,7 +39,7 @@ class FormFieldsSection extends StatefulWidget {
   final bool infoConfirmed;
   final ValueChanged<bool?>? onTermsChanged;
   final ValueChanged<bool?>? onInfoChanged;
-  final Function() onValidateAndSubmit;
+  final Function({bool shouldPublish}) onValidateAndSubmit;
   final VoidCallback? onUnfocusDescription;
 
   const FormFieldsSection({
@@ -510,14 +510,15 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         SizedBox(height: height * .01),
 
-        // Submit Button
+        //save and request publish
+        widget.postData==null?
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * .03),
+          padding: EdgeInsets.only(right: width * .03,left:  width * .03,bottom: height*.01),
           child: SizedBox(
             width: double.infinity,
             height: height * .05,
             child: ElevatedButton(
-              onPressed: widget.onValidateAndSubmit,
+              onPressed: () => widget.onValidateAndSubmit(shouldPublish: true),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xfff6c42d),
                 shape: RoundedRectangleBorder(
@@ -525,7 +526,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 ),
               ),
               child: Text(
-                "Save As Draft",
+                "Publish",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.w,
@@ -534,7 +535,37 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
               ),
             ),
           ),
+        )
+            :SizedBox(),
+
+        // Save as draft Button
+        Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: width * .03),
+            child: SizedBox(
+              width: widget.postData==null? width*.6:double.infinity,
+              height: height * .05,
+              child: ElevatedButton(
+                onPressed: () => widget.onValidateAndSubmit(shouldPublish: false),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xfff6c42d),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                child: Text(
+                  "Save As Draft",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.w,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
+
         SizedBox(height: 10.h),
         Center(
           child: Text(
