@@ -222,7 +222,8 @@ class SpecsController extends GetxController {
     required String specId,
     required String specValuePl,
     String? specValueSl,
-  }) {
+  })
+  {
     try {
       log('🔧 [LOCAL] Updating spec value - Spec ID: $specId, Value: $specValuePl');
 
@@ -257,6 +258,46 @@ class SpecsController extends GetxController {
       }
     } catch (e) {
       log('❌ [LOCAL] Error updating spec value locally: $e');
+    }
+  }
+
+  /// Clear spec value locally in specsStatic list
+  void clearLocal({
+    required String specId,
+  }) {
+    try {
+      log('🔧 [LOCAL] Clearing spec value - Spec ID: $specId');
+
+      // Find the spec in specsStatic list
+      final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
+
+      if (specIndex != -1) {
+        // Create updated spec with cleared value
+        final updatedSpec = Specs(
+          postId: specsStatic[specIndex].postId,
+          specId: specsStatic[specIndex].specId,
+          specType: specsStatic[specIndex].specType,
+          specHeaderPl: specsStatic[specIndex].specHeaderPl,
+          specValuePl: "", // Clear the Polish value
+          specHeaderSl: specsStatic[specIndex].specHeaderSl,
+          specValueSl: "", // Clear the Slovenian value
+          isHidden: specsStatic[specIndex].isHidden,
+        );
+
+        // Update the specsStatic list
+        specsStatic[specIndex] = updatedSpec;
+        
+        // Trigger UI update for GetBuilder
+        update();
+
+        log('✅ [LOCAL] Successfully cleared spec value in specsStatic:');
+        log('  Header: ${updatedSpec.specHeaderPl}');
+        log('  Spec ID: ${updatedSpec.specId}');
+      } else {
+        log('❌ [LOCAL] Spec not found in specsStatic with ID: $specId');
+      }
+    } catch (e) {
+      log('❌ [LOCAL] Error clearing spec value locally: $e');
     }
   }
 }

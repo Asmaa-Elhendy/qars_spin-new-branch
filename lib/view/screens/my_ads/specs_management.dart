@@ -253,31 +253,35 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                onTap: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (_) => EditSpecsName(spec: spec,fromCreateAd:fromCreateAd),
-                  );
-                },
-                child: SizedBox(
-                  width: 23.w,
-                  height: 28.h,
-                  child: Image.asset(
-                    "assets/images/edit3.png",
-                    color: Colors.black,
-                    fit: BoxFit.fill,
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (_) => EditSpecsName(spec: spec,fromCreateAd:fromCreateAd),
+                      );
+                    },
+                    child: SizedBox(
+                      width: 23.w,
+                      height: 28.h,
+                      child: Image.asset(
+                        "assets/images/edit3.png",
+                        color: Colors.black,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
-                ),
+                  8.horizontalSpace,
+
+                ],
               ),
               InkWell(
                 onTap: () async {
                   _showGlobalLoader();
                   if (fromCreateAd) {
-                    // Use local update for create ad flow
-                    specsController.updateSpecValueLocal(
+                    specsController.clearLocal(
                       specId: spec.specId,
-                      specValuePl: " ",
                     );
                   } else {
                     // Use API update for specs management flow
