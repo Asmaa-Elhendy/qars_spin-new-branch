@@ -217,42 +217,44 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
         
         // Car Type Dropdown - Using dynamic categories from API
-        Obx(() {
-          print('Obx rebuilding for car categories. Count: ${brandController.carCategories.length}');
-          print('Loading state: ${brandController.isLoadingCategories.value}');
-          final categoryOptions = brandController.carCategories
-              .map((c) => c.name)
-              .toList()
-            ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-          print('Category options: $categoryOptions');
-          
-          return CustomDropDownTyping(
-            label: "Choose Type(*)",
-            controller: widget.typeController,
-            options: categoryOptions,
-            enableSearch: false,
-            hintText: "",
-            onChanged: (value) {
-              print('Type selected: $value');
-              final selected = brandController.carCategories
-                  .firstWhereOrNull((c) => c.name == value);
-              if (selected != null) {
-                brandController.selectedCategory.value = selected;
-                widget.typeController.text = selected.name;
-                setState(() {
-                  selectedType = selected.name;
-                });
-                print('Selected category: ${selected.id} - ${selected.name}');
-              } else if (value.isEmpty) {
-                brandController.selectedCategory.value = null;
-                setState(() {
-                  selectedType = null;
-                });
-                print('Category cleared');
-              }
-            },
-          );
-        }),
+        GetBuilder<AdCleanController>(
+          id: 'car_categories',
+          builder: (controller) {
+            print('GetBuilder rebuilding for car categories. Count: ${controller.carCategories.length}');
+            print('Loading state: ${controller.isLoadingCategories.value}');
+            final categoryOptions = controller.carCategories
+                .map((c) => c.name)
+                .toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+            print('Category options: $categoryOptions');
+            
+            return CustomDropDownTyping(
+              label: "Choose Type(*)",
+              controller: widget.typeController,
+              options: categoryOptions,
+              enableSearch: false,
+              hintText: "",
+              onChanged: (value) {
+                print('Type selected: $value');
+                final selected = controller.carCategories
+                    .firstWhereOrNull((c) => c.name == value);
+                if (selected != null) {
+                  controller.selectedCategory.value = selected;
+                  widget.typeController.text = selected.name;
+                  setState(() {
+                    selectedType = selected.name;
+                  });
+                  print('Selected category: ${selected.id} - ${selected.name}');
+                } else if (value.isEmpty) {
+                  controller.selectedCategory.value = null;
+                  setState(() {
+                    selectedType = null;
+                  });
+                }
+              },
+            );
+          },
+        ),
 
         SizedBox(height: height * .01),
         

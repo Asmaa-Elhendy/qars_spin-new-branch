@@ -8,6 +8,7 @@ import '../../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../../controller/ads/data_layer.dart';
 import '../../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../../controller/my_ads/my_ad_data_layer.dart';
+import '../../../../controller/specs/specs_controller.dart';
 import '../../../../model/create_ad_model.dart';
 
 class AdSubmissionService {
@@ -297,7 +298,7 @@ class AdSubmissionService {
 
       if (response['Code'] == 'OK' || response['Code']?.toString().toLowerCase() == 'ok') {
         String responsePostId = postId ?? response['ID']?.toString() ?? '';
-        
+
         // Upload cover photo if we have a post ID and cover image
         if (responsePostId.isNotEmpty && coverImage.isNotEmpty) {
           // Only upload cover photo if it's a new post or if cover photo was changed
@@ -313,7 +314,7 @@ class AdSubmissionService {
             log('Cover photo not changed, skipping upload');
           }
         }
-        
+
         // Upload gallery photos (all images except cover photo) - ONLY IN CREATE MODE
         if (postId == null && responsePostId.isNotEmpty && images.isNotEmpty) {
           log('Uploading gallery photos for post ID: $responsePostId');
@@ -323,8 +324,12 @@ class AdSubmissionService {
             coverImage: coverImage,
           );
           log('Gallery photos upload completed');
-        }
-        
+        }//k
+        // Upload modified specs after gallery photos - ONLY IN CREATE MODE
+        log('Uploading modified specs for post ID: $responsePostId');
+        await _uploadModifiedSpecs(postId: responsePostId);//k
+        log('Modified specs upload completed');
+
         // Upload video if we have a post ID and video path
         if (responsePostId.isNotEmpty && videoPath != null && videoPath.isNotEmpty) {
           // Only upload video if it's a new post or if video was changed
@@ -340,12 +345,12 @@ class AdSubmissionService {
             log('Video not changed, skipping upload');
           }
         }
-        
+
         // Hide loading dialog only after both operations are complete
         hideLoadingDialog();
-        
-        String successMessage = responsePostId.isNotEmpty 
-            ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId" 
+
+        String successMessage = responsePostId.isNotEmpty
+            ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId"
             : "Ad ${postId == null ? 'created' : 'updated'} successfully!";
         showSuccessDialog(successMessage, responsePostId);
       } else {
@@ -462,5 +467,53 @@ class AdSubmissionService {
     }
 
     return true;
+  }
+
+  /// Upload modified specs to the server after gallery photos upload
+  static Future<void> _uploadModifiedSpecs({
+    required String postId,
+  }) async {
+    try {
+      log('🔧 [SPECS] Starting upload of modified specs for post ID: $postId');
+      
+      // Get the SpecsController instance
+      final specsController = Get.find<SpecsController>();
+      
+      // Get only the specs that have been modified (non-empty values)
+      final modifiedSpecs = specsController.getModifiedSpecs();
+      
+      if (modifiedSpecs.isEmpty) {
+        log('🔧 [SPECS] No modified specs to upload');
+        return;
+      }
+      
+      log('🔧 [SPECS] Uploading ${modifiedSpecs.length} modified specs');
+      
+      // Upload each modified spec
+      for (final spec in modifiedSpecs) {
+        try {
+          log('🔧 [SPECS] Uploading spec: ${spec.specHeaderPl} = ${spec.specValuePl}');
+          
+          // Use the existing API method to update spec value
+          final success = await specsController.updateSpecValue(
+            postId: postId, // Use the post ID from the ad creation
+            specId: spec.specId,
+            specValue: spec.specValuePl.isNotEmpty ? spec.specValuePl : spec.specValueSl,
+          );
+          
+          if (success) {
+            log('✅ [SPECS] Successfully uploaded spec: ${spec.specHeaderPl}');
+          } else {
+            log('❌ [SPECS] Failed to upload spec: ${spec.specHeaderPl}');
+          }
+        } catch (e) {
+          log('❌ [SPECS] Error uploading spec ${spec.specHeaderPl}: $e');
+        }
+      }
+      
+      log('✅ [SPECS] Completed uploading modified specs');
+    } catch (e) {
+      log('❌ [SPECS] Error in _uploadModifiedSpecs: $e');
+    }
   }
 }

@@ -690,23 +690,36 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     return Center(child: Text('No images found'));
                   }
 
-                  return ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    itemCount: allImages.length+1,
-                    separatorBuilder: (_, __) => 16.verticalSpace,
-                    itemBuilder: (context, index) {
-                      if (index==0){
-                        return   _buildApiImageItem(MediaItem(
-                            mediaId: 0,//ljت
-                            mediaFileName: 'CoverPhotoForPostGalleryManagement',
-                            mediaUrl: currentCoverImage!,
-                            displayOrder: 0,
-                          ),
-                        );
-                      }
-                      return allImages[index - 1];
-                    },
-                  );
+                  // Only show cover image if it exists
+                  if (currentCoverImage != null && currentCoverImage!.isNotEmpty) {
+                    return ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      itemCount: allImages.length+1,
+                      separatorBuilder: (_, __) => 16.verticalSpace,
+                      itemBuilder: (context, index) {
+                        if (index==0){
+                          return   _buildApiImageItem(MediaItem(
+                              mediaId: 0,//ljت
+                              mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                              mediaUrl: currentCoverImage!,
+                              displayOrder: 0,
+                            ),
+                          );
+                        }
+                        return allImages[index - 1];
+                      },
+                    );
+                  } else {
+                    // Show only gallery images without cover image
+                    return ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      itemCount: allImages.length,
+                      separatorBuilder: (_, __) => 16.verticalSpace,
+                      itemBuilder: (context, index) {
+                        return allImages[index];
+                      },
+                    );
+                  }
                 }),
               ),
             ],

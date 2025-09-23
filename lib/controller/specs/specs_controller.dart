@@ -300,4 +300,26 @@ class SpecsController extends GetxController {
       log('❌ [LOCAL] Error clearing spec value locally: $e');
     }
   }
+
+  /// Get only the specs that have been modified (non-empty values)
+  List<Specs> getModifiedSpecs() {
+    try {
+      log('🔍 [FILTER] Getting modified specs from specsStatic');
+      
+      // Filter specs that have non-empty values
+      final modifiedSpecs = specsStatic.where((spec) => 
+        spec.specValuePl.isNotEmpty 
+      ).toList();
+      
+      log('✅ [FILTER] Found ${modifiedSpecs.length} modified specs:');
+      for (final spec in modifiedSpecs) {
+        log('  - ${spec.specHeaderPl}: ${spec.specValuePl} (ID: ${spec.specId})');
+      }
+      
+      return modifiedSpecs;
+    } catch (e) {
+      log('❌ [FILTER] Error getting modified specs: $e');
+      return [];
+    }
+  }
 }
