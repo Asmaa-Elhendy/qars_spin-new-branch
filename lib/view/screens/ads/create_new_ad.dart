@@ -7,7 +7,6 @@ import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
-import '../../../controller/my_ads/my_ad_data_layer.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
@@ -17,6 +16,7 @@ import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
+import '../../screens/my_ads/my_ads_main_screen.dart';
 
 
 class SellCarScreen extends StatefulWidget {
@@ -551,11 +551,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     SuccessDialog.show(
       context,
       postId,
-      () {
-        Navigator.pop(context); // Navigate back from create ad screen
-        Get.find<MyAdCleanController>().fetchMyAds(); // Refresh My Ads screen
-        brandController.resetCreateAdState(); // Reset controller state
-      },
+      _navigateToMyAds,
       isModifyMode: widget.postData != null,
     );
   }
@@ -570,6 +566,20 @@ class _SellCarScreenState extends State<SellCarScreen> {
       },
       isModifyMode: widget.postData != null,
     );
+  }
+
+  /// Navigate to MyAds screen
+  void _navigateToMyAds() {
+    // Use Get.offAll to ensure we always navigate to MyAds screen
+    // This works for both create and modify flows
+    Get.offAll(() => const MyAdsMainScreen());
+    Get.find<MyAdCleanController>().fetchMyAds(); // Refresh My Ads screen
+    brandController.resetCreateAdState(); // Reset controller state
+  }
+
+  /// Unfocus description field to prevent auto-focus
+  void _unfocusDescription() {
+    FocusScope.of(context).unfocus();
   }
 
   /// Submit ad to API
@@ -644,6 +654,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         showSuccessDialog: _showSuccessDialog,
         showErrorDialog: _showErrorAlert,
         hideLoadingDialog: _hideLoadingDialog,
+        navigateToMyAds: _navigateToMyAds,
       );
     }
   }
@@ -780,6 +791,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             }
                           },
                           onValidateAndSubmit: _validateAndSubmitForm,
+                          onUnfocusDescription: _unfocusDescription,
                         ),
                       ],
                     ),

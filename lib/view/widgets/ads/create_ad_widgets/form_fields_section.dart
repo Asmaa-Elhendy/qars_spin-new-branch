@@ -40,6 +40,7 @@ class FormFieldsSection extends StatefulWidget {
   final ValueChanged<bool?>? onTermsChanged;
   final ValueChanged<bool?>? onInfoChanged;
   final Function() onValidateAndSubmit;
+  final VoidCallback? onUnfocusDescription;
 
   const FormFieldsSection({
     Key? key,
@@ -50,12 +51,12 @@ class FormFieldsSection extends StatefulWidget {
     required this.typeController,
     required this.yearController,
     required this.warrantyController,
+    required this.request360Controller,
+    required this.requestFeatureController,
     required this.askingPriceController,
     required this.minimumPriceController,
     required this.mileageController,
     required this.plateNumberController,
-    required this.request360Controller,
-    required this.requestFeatureController,
     required this.chassisNumberController,
     required this.descriptionController,
     required this.exteriorColor,
@@ -67,6 +68,7 @@ class FormFieldsSection extends StatefulWidget {
     required this.onTermsChanged,
     required this.onInfoChanged,
     required this.onValidateAndSubmit,
+    this.onUnfocusDescription,
   }) : super(key: key);
 
   @override
@@ -76,6 +78,7 @@ class FormFieldsSection extends StatefulWidget {
 class _FormFieldsSectionState extends State<FormFieldsSection> {
 
   late SpecsController specsController;
+  late FocusNode _descriptionFocusNode;
 
   bool _isGlobalLoading = false;
 
@@ -102,6 +105,8 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
   void initState() {
     super.initState();
 
+    _descriptionFocusNode = FocusNode();
+    
     specsController = Get.put(
       SpecsController(SpecsDataLayer()),
       tag: 'specs_${0}',
@@ -115,6 +120,21 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
       // Fallback: create a new instance
       brandController = Get.put(AdCleanController(AdRepository()));
       print('Created new AdCleanController instance');
+    }
+  }
+
+  @override
+  void dispose() {
+    _descriptionFocusNode.dispose();
+    super.dispose();
+  }
+
+  /// Method to unfocus the description field
+  void unfocusDescription() {
+    _descriptionFocusNode.unfocus();
+    // Also call the callback if provided
+    if (widget.onUnfocusDescription != null) {
+      widget.onUnfocusDescription!();
     }
   }
 
@@ -386,6 +406,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           ),
           child: TextField(
             controller: widget.descriptionController,
+            focusNode: _descriptionFocusNode,
             maxLines: 5,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(12),

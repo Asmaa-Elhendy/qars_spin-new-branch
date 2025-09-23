@@ -26,9 +26,10 @@ class ValidationMethods {
         type.isEmpty ||
         year.isEmpty ||
         askingPrice.isEmpty ||
-        mileage.isEmpty ||
-        description.isEmpty) {
-      showMissingFieldsDialog("Please fill all mandatory fields");
+        mileage.isEmpty
+      //  ||  description.isEmpty
+    ) {
+      showMissingFieldsDialog("Please fill all (*)  mandatory fields");
       return false;
     }
 
@@ -36,7 +37,7 @@ class ValidationMethods {
     if (coverImage.isEmpty) {
       showMissingCoverImageDialog();
       return false;
-    }
+    }//k
 
     // Check if terms are accepted
     if (!termsAccepted) {

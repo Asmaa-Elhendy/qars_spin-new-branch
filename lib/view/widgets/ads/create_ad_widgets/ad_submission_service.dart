@@ -36,6 +36,7 @@ class AdSubmissionService {
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
+    required Function() navigateToMyAds,
     String? postId,
     bool coverPhotoChanged = false,
   }) async {
@@ -75,6 +76,7 @@ class AdSubmissionService {
         showSuccessDialog: showSuccessDialog,
         showErrorDialog: showErrorDialog,
         hideLoadingDialog: hideLoadingDialog,
+        navigateToMyAds: navigateToMyAds,
         postId: postId,
         coverPhotoChanged: coverPhotoChanged,
       );
@@ -233,6 +235,7 @@ class AdSubmissionService {
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
+    required Function() navigateToMyAds,
     String? postId,
     bool coverPhotoChanged = false,
   }) async {
@@ -329,6 +332,16 @@ class AdSubmissionService {
         log('Uploading modified specs for post ID: $responsePostId');
         await _uploadModifiedSpecs(postId: responsePostId);//k
         log('Modified specs upload completed');
+        
+        // Request 360 photo session - ONLY IN CREATE MODE
+        log('Requesting 360 photo session for post ID: $responsePostId');
+        await _request360Session(postId: responsePostId);
+        log('360 photo session request completed');
+        
+        // Request to feature ad - ONLY IN CREATE MODE
+        log('Requesting to feature ad for post ID: $responsePostId');
+        await _requestFeatureAd(postId: responsePostId);
+        log('Feature ad request completed');
 
         // Upload video if we have a post ID and video path
         if (responsePostId.isNotEmpty && videoPath != null && videoPath.isNotEmpty) {
@@ -352,7 +365,22 @@ class AdSubmissionService {
         String successMessage = responsePostId.isNotEmpty
             ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId"
             : "Ad ${postId == null ? 'created' : 'updated'} successfully!";
-        showSuccessDialog(successMessage, responsePostId);
+        
+        // For create mode, show success dialog and navigate
+        if (postId == null) {
+          log('🧭 [NAVIGATION] Navigating to MyAds screen after successful ad creation');
+          // Show success dialog first
+          showSuccessDialog(successMessage, responsePostId);
+          
+          // Add a small delay to ensure dialog is shown, then navigate
+          Future.delayed(Duration(milliseconds: 500), () {
+            log('🧭 [NAVIGATION] Executing navigation after delay');
+            navigateToMyAds();
+          });
+        } else {
+          // For update mode, just show success dialog
+          showSuccessDialog(successMessage, responsePostId);
+        }
       } else {
         String errorMessage = response['Desc'] ?? 'Failed to ${postId == null ? 'create' : 'update'} ad';
         log('Error response: Code=${response['Code']}, Desc=$errorMessage');
@@ -393,7 +421,7 @@ class AdSubmissionService {
           final success = await myAdController.uploadPostGalleryPhoto(
             postId: postId,
             photoFile: file,
-            ourSecret: '1244', // Using the same secret as in ad creation
+            ourSecret: ourSecret, // Using the same secret as in ad creation
           );
           
           if (success) {
@@ -514,6 +542,60 @@ class AdSubmissionService {
       log('✅ [SPECS] Completed uploading modified specs');
     } catch (e) {
       log('❌ [SPECS] Error in _uploadModifiedSpecs: $e');
+    }
+  }
+
+  /// Request 360 photo session for the newly created ad
+  static Future<void> _request360Session({
+    required String postId,
+  }) async {
+    try {
+      log('🔄 [360] Starting 360 photo session request for post ID: $postId');
+      
+      // Get the MyAdCleanController instance
+      final myAdController = Get.find<MyAdCleanController>();
+      
+      // Request 360 photo session
+      final success = await myAdController.request360Session(
+        userName: userName, // You might want to get this from user session
+        postId: postId,
+        ourSecret: ourSecret, // Using the same secret as in ad creation
+      );
+      
+      if (success) {
+        log('✅ [360] Successfully requested 360 photo session');
+      } else {
+        log('❌ [360] Failed to request 360 photo session');
+      }
+    } catch (e) {
+      log('❌ [360] Error in _request360Session: $e');
+    }
+  }
+
+  /// Request to feature the newly created ad
+  static Future<void> _requestFeatureAd({
+    required String postId,
+  }) async {
+    try {
+      log('⭐ [FEATURE] Starting feature ad request for post ID: $postId');
+      
+      // Get the MyAdCleanController instance
+      final myAdController = Get.find<MyAdCleanController>();
+      
+      // Request to feature ad
+      final success = await myAdController.requestFeatureAd(
+        userName: userName, // You might want to get this from user session
+        postId: postId,
+        ourSecret: ourSecret, // Using the same secret as in ad creation
+      );
+      
+      if (success) {
+        log('✅ [FEATURE] Successfully requested to feature ad');
+      } else {
+        log('❌ [FEATURE] Failed to request to feature ad');
+      }
+    } catch (e) {
+      log('❌ [FEATURE] Error in _requestFeatureAd: $e');
     }
   }
 }

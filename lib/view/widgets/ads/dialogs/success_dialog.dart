@@ -12,6 +12,7 @@ class SuccessDialog {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
+              FocusScope.of(context).unfocus(); // Unfocus all fields to prevent auto-focus
               Navigator.pop(context);
               if (onOkPressed != null) {
                 onOkPressed();
