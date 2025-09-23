@@ -99,7 +99,8 @@ class SpecsController extends GetxController {
     required String specId,
     required String specValue,
     String selectedLanguage = 'en',
-  }) async {
+  }) async
+  {
     try {
       log('Updating spec value - Post ID: $postId, Spec ID: $specId, Value: $specValue');
 
@@ -164,5 +165,98 @@ class SpecsController extends GetxController {
       log('  ---');
     }
     log('==================');
+  }
+
+  List<Specs> specsStatic = <Specs>[
+    Specs(postId: "0", specId: "1", specType: "Number", specHeaderPl: "Cylinders", specValuePl: "", specHeaderSl: "الاسطوانات", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "2", specType: "Number", specHeaderPl: "Seats Type", specValuePl: "", specHeaderSl: "المقاعد", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "3", specType: "Text", specHeaderPl: "Slide Roof", specValuePl: "", specHeaderSl: "فتحة السقف", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "4", specType: "Yes - No", specHeaderPl: "Park Sensors", specValuePl: "", specHeaderSl: "حساسات", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "5", specType: "Yes - No", specHeaderPl: "Camera", specValuePl: "", specHeaderSl: "كاميرا", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "6", specType: "Yes - No", specHeaderPl: "Bluetooth", specValuePl: "", specHeaderSl: "بلوتوث", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "7", specType: "Yes - No", specHeaderPl: "GPS", specValuePl: "", specHeaderSl: "نظام الخرائط", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "10", specType: "Text", specHeaderPl: "Engine Power", specValuePl: "", specHeaderSl: "قوة المحرك", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "11", specType: "Text", specHeaderPl: "Torque", specValuePl: "", specHeaderSl: "عزم الدوران", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "9", specType: "Color", specHeaderPl: "Interior color", specValuePl: "", specHeaderSl: "اللون الداخلي", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "12", specType: "Text", specHeaderPl: "Fuel Type", specValuePl: "", specHeaderSl: "نوع الوقود", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "13", specType: "Text", specHeaderPl: "Transmission", specValuePl: "", specHeaderSl: "ناقل الحركة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "14", specType: "Text", specHeaderPl: "Drivetrain", specValuePl: "", specHeaderSl: "نظام القيادة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "15", specType: "Text", specHeaderPl: "Upholstery Material", specValuePl: "", specHeaderSl: "مواد التنجيد", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "16", specType: "Number", specHeaderPl: "Infotainment Screen Size", specValuePl: "", specHeaderSl: "حجم شاشة الترفيه", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "17", specType: "Text", specHeaderPl: "Climate Control", specValuePl: "", specHeaderSl: "نظام التحكم بالمناخ", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "18", specType: "Yes - No", specHeaderPl: "Heated Seats", specValuePl: "", specHeaderSl: "المقاعد المدفأة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "19", specType: "Yes - No", specHeaderPl: "Ventilated Seats", specValuePl: "", specHeaderSl: "المقاعد المهوّاة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "20", specType: "Text", specHeaderPl: "Steering Wheel Features", specValuePl: "", specHeaderSl: "خصائص عجلة القيادة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "21", specType: "Text", specHeaderPl: "Wheels", specValuePl: "", specHeaderSl: "العجلات", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "22", specType: "Text", specHeaderPl: "Headlights", specValuePl: "", specHeaderSl: "المصابيح الأمامية", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "23", specType: "Text", specHeaderPl: "Tail Lights", specValuePl: "", specHeaderSl: "المصابيح الخلفية", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "24", specType: "Yes - No", specHeaderPl: "Fog Lamps", specValuePl: "", specHeaderSl: "مصابيح الضباب", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "25", specType: "Text", specHeaderPl: "Body Type", specValuePl: "", specHeaderSl: "نوع الهيكل", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "26", specType: "Number", specHeaderPl: "Airbags", specValuePl: "", specHeaderSl: "الوسائد الهوائية", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "27", specType: "Yes - No", specHeaderPl: "ABS", specValuePl: "", specHeaderSl: "نظام المكابح المانعة للانغلاق", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "28", specType: "Yes - No", specHeaderPl: "Traction Control", specValuePl: "", specHeaderSl: "نظام التحكم بالجر", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "29", specType: "Yes - No", specHeaderPl: "Lane Assist", specValuePl: "", specHeaderSl: "مساعد المسار", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "30", specType: "Yes - No", specHeaderPl: "Adaptive Cruise Control", specValuePl: "", specHeaderSl: "التحكم الذكي بالسرعة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "31", specType: "Yes - No", specHeaderPl: "Automatic Emergency Braking", specValuePl: "", specHeaderSl: "الفرامل التلقائية الطارئة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "32", specType: "Number", specHeaderPl: "Top Speed", specValuePl: "", specHeaderSl: "السرعة القصوى", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "33", specType: "Number", specHeaderPl: "0-100 km/h Acceleration", specValuePl: "", specHeaderSl: "التسارع من 0-100 كم/س", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "34", specType: "Number", specHeaderPl: "Fuel Efficiency", specValuePl: "", specHeaderSl: "كفاءة استهلاك الوقود", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "35", specType: "Number", specHeaderPl: "Battery Range", specValuePl: "", specHeaderSl: "نطاق البطارية", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "36", specType: "Yes - No", specHeaderPl: "Wireless Charging", specValuePl: "", specHeaderSl: "الشحن اللاسلكي", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "37", specType: "Yes - No", specHeaderPl: "Apple CarPlay/Android Auto", specValuePl: "", specHeaderSl: "آبل كار بلاي/أندرويد أوتو", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "38", specType: "Number", specHeaderPl: "USB Ports", specValuePl: "", specHeaderSl: "منافذ USB", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "39", specType: "Yes - No", specHeaderPl: "Voice Commands", specValuePl: "", specHeaderSl: "أوامر صوتية", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "40", specType: "Text", specHeaderPl: "Exterior Colors", specValuePl: "", specHeaderSl: "ألوان الهيكل الخارجي", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "41", specType: "Text", specHeaderPl: "Interior Themes", specValuePl: "", specHeaderSl: "أشكال التصميم الداخلي", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "42", specType: "Text", specHeaderPl: "Warranty Period", specValuePl: "", specHeaderSl: "فترة الضمان", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "43", specType: "Text", specHeaderPl: "Service Intervals", specValuePl: "", specHeaderSl: "فترات الصيانة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "44", specType: "Number", specHeaderPl: "Cargo Space", specValuePl: "", specHeaderSl: "مساحة التخزين", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "45", specType: "Number", specHeaderPl: "Towing Capacity", specValuePl: "", specHeaderSl: "قدرة السحب", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "46", specType: "Yes - No", specHeaderPl: "Roof Rails", specValuePl: "", specHeaderSl: "قضبان السقف", specValueSl: "", isHidden: false),
+  ];
+  
+  // No need for reactive counter with GetBuilder
+
+  /// Update spec value locally in specsStatic list
+  void updateLocal({
+    required String specId,
+    required String specValuePl,
+    String? specValueSl,
+  }) {
+    try {
+      log('🔧 [LOCAL] Updating spec value - Spec ID: $specId, Value: $specValuePl');
+
+      // Find the spec in specsStatic list
+      final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
+
+      if (specIndex != -1) {
+        // Create updated spec with new value
+        final updatedSpec = Specs(
+          postId: specsStatic[specIndex].postId,
+          specId: specsStatic[specIndex].specId,
+          specType: specsStatic[specIndex].specType,
+          specHeaderPl: specsStatic[specIndex].specHeaderPl,
+          specValuePl: specValuePl, // Update the Polish value
+          specHeaderSl: specsStatic[specIndex].specHeaderSl,
+          specValueSl: specValueSl ?? specsStatic[specIndex].specValueSl, // Update Slovenian if provided
+          isHidden: specsStatic[specIndex].isHidden,
+        );
+
+        // Update the specsStatic list
+        specsStatic[specIndex] = updatedSpec;
+        
+        // Trigger UI update for GetBuilder
+        update();
+
+        log('✅ [LOCAL] Successfully updated spec in specsStatic:');
+        log('  Header: ${updatedSpec.specHeaderPl}');
+        log('  New Value: ${updatedSpec.specValuePl}');
+        log('  Spec ID: ${updatedSpec.specId}');
+      } else {
+        log('❌ [LOCAL] Spec not found in specsStatic with ID: $specId');
+      }
+    } catch (e) {
+      log('❌ [LOCAL] Error updating spec value locally: $e');
+    }
   }
 }

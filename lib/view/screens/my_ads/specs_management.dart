@@ -76,6 +76,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
         children: [
           Column(
             children: [
+
               /// AppBar
               Container(
                 height: 88.h,
@@ -121,7 +122,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
               Expanded(
                 child: Obx(() {
                   if (specsController.specsError.value != null) {
-                    return _buildErrorState();
+                    return _buildErrorState(specsController);
                   }
 
                   if (specsController.specs.isEmpty &&
@@ -133,7 +134,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     itemCount: specsController.specs.length,
                     itemBuilder: (context, index) {
-                      return specsContainer(specsController.specs[index]);
+                      return specsContainer(specsController.specs[index],context,specsController,_showGlobalLoader,_hideGlobalLoader,false);
                     },
                   );
                 }),
@@ -159,8 +160,8 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
       ),
     );
   }
-
-  Widget _buildErrorState() {
+}
+  Widget _buildErrorState(specsController) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -218,7 +219,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
     );
   }
 
-  Widget specsContainer(Specs spec) {
+  Widget specsContainer(Specs spec,BuildContext context,specsController,_showGlobalLoader,_hideGlobalLoader,bool fromCreateAd) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       margin: EdgeInsets.only(bottom: 18.h),
@@ -256,7 +257,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                 onTap: () async {
                   await showDialog(
                     context: context,
-                    builder: (_) => EditSpecsName(spec: spec),
+                    builder: (_) => EditSpecsName(spec: spec,fromCreateAd:fromCreateAd),
                   );
                 },
                 child: SizedBox(
@@ -272,11 +273,20 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
               InkWell(
                 onTap: () async {
                   _showGlobalLoader();
-                  await specsController.updateSpecValue(
-                    postId: spec.postId,
-                    specId: spec.specId,
-                    specValue: " ",
-                  );
+                  if (fromCreateAd) {
+                    // Use local update for create ad flow
+                    specsController.updateSpecValueLocal(
+                      specId: spec.specId,
+                      specValuePl: " ",
+                    );
+                  } else {
+                    // Use API update for specs management flow
+                    await specsController.updateSpecValue(
+                      postId: spec.postId,
+                      specId: spec.specId,
+                      specValue: " ",
+                    );
+                  }
                   _hideGlobalLoader();
                 },
                 child: Icon(Icons.delete_outlined,
@@ -288,4 +298,4 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
       ),
     );
   }
-}
+

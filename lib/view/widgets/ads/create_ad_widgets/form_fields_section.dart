@@ -6,18 +6,25 @@ import 'package:get/get.dart';
 
 import '../../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../../controller/ads/data_layer.dart';
+import '../../../../controller/const/base_url.dart';
 import '../../../../controller/const/colors.dart';
+import '../../../../controller/specs/specs_controller.dart';
+import '../../../../controller/specs/specs_data_layer.dart';
+import '../../../screens/my_ads/specs_management.dart';
 import '../color_picker_field.dart';
 import '../drop_Down_field.dart';
 import '../text_field.dart';
 
 class FormFieldsSection extends StatefulWidget {
+  final dynamic postData;
   final TextEditingController makeController;
   final TextEditingController classController;
   final TextEditingController modelController;
   final TextEditingController typeController;
   final TextEditingController yearController;
   final TextEditingController warrantyController;
+  final TextEditingController request360Controller;
+  final TextEditingController requestFeatureController;
   final TextEditingController askingPriceController;
   final TextEditingController minimumPriceController;
   final TextEditingController mileageController;
@@ -36,6 +43,7 @@ class FormFieldsSection extends StatefulWidget {
 
   const FormFieldsSection({
     Key? key,
+    required this.postData,
     required this.makeController,
     required this.classController,
     required this.modelController,
@@ -46,6 +54,8 @@ class FormFieldsSection extends StatefulWidget {
     required this.minimumPriceController,
     required this.mileageController,
     required this.plateNumberController,
+    required this.request360Controller,
+    required this.requestFeatureController,
     required this.chassisNumberController,
     required this.descriptionController,
     required this.exteriorColor,
@@ -64,12 +74,38 @@ class FormFieldsSection extends StatefulWidget {
 }
 
 class _FormFieldsSectionState extends State<FormFieldsSection> {
+
+  late SpecsController specsController;
+
+  bool _isGlobalLoading = false;
+
+  void _showGlobalLoader() {
+    if (mounted) {
+      setState(() => _isGlobalLoading = true);
+    }
+  }
+
+  void _hideGlobalLoader() {
+    if (mounted) {
+      setState(() => _isGlobalLoading = false);
+    }
+  }
+
   late AdCleanController brandController;
   String? selectedType;
+  
+  // Variables to store results of request 360 service and feature your ad
+  bool? request360ServiceResult;
+  bool? featureYourAdResult;
 
   @override
   void initState() {
     super.initState();
+
+    specsController = Get.put(
+      SpecsController(SpecsDataLayer()),
+      tag: 'specs_${0}',
+    );
     try {
       brandController = Get.find<AdCleanController>();
       print('AdCleanController found successfully');
@@ -357,6 +393,54 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             ),
           ),
         ),
+        SizedBox(height: height * .01),
+
+        // request 360 and feature
+        widget.postData==null?   Column(crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           CustomDropDownTyping(
+              label: "Request 360 Service",
+              controller: widget.request360Controller,
+              options: ["No", "Yes"],
+              enableSearch: false,
+              hintText: "",
+              onChanged: (value) {
+                setState(() {
+
+                  // Handle warranty selection if needed
+                });
+              },
+            ),
+            SizedBox(height: height * .01),
+
+              CustomDropDownTyping(
+              label: "Feature Your Ad",
+              controller: widget.requestFeatureController,
+              options: ["No", "Yes"],
+              enableSearch: false,
+              hintText: "",
+              onChanged: (value) {
+                setState(() {
+                  // Handle warranty selection if needed
+                });
+              },
+            ),
+            SizedBox(height: height * .02),
+           Text('Car Specifications',style: TextStyle(fontSize: 15.w,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,)),
+            SizedBox(height: height * .01),
+               GetBuilder<SpecsController>(
+                 builder: (controller) {
+                   return Column(
+                     children: controller.specsStatic.map((spec) {
+                       return specsContainer( spec, context,controller,_showGlobalLoader,_hideGlobalLoader,true);
+                     }).toList(),
+                   );
+                 },
+               ),
+         ],
+       ):SizedBox(),
 
         // Terms and Conditions Checkbox
         Row(
@@ -418,7 +502,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 ),
               ),
               child: Text(
-                "Confirm",
+                "Save As Draft",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.w,

@@ -75,6 +75,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _type_controller = TextEditingController();
   final TextEditingController _year_controller = TextEditingController();
   final TextEditingController _warranty_controller = TextEditingController();
+  final TextEditingController request360Controller = TextEditingController();
+  final TextEditingController requestFeatureController = TextEditingController();
+
   final TextEditingController _descriptionController = TextEditingController();
 
   bool _coverPhotoChanged = false;
@@ -142,6 +145,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     setState(() {
       // Populate car details from API response
+
       selectedMake = postData['Make_Name_PL'];
       selectedModel = postData['Model_Name_PL']?.toString();
       selectedYear = postData['Manufacture_Year']?.toString();
@@ -261,7 +265,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   @override
   void initState() {
     super.initState();
-
+    request360Controller.text='No';
+    requestFeatureController.text='No';
     // Check if we're in modify mode with post ID
     if (widget.postData != null && widget.postData['isModifyMode'] == true) {
       // Load post data in the background
@@ -474,6 +479,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   void _validateAndSubmitForm() {
     // Validate form using validation methods
     bool isValid = ValidationMethods.validateForm(
+      postData:widget.postData,
       make: _make_controller.text,
       carClass: _class_controller.text,
       model: _model_controller.text,
@@ -728,7 +734,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         //   },
                         // ),
 
-                        FormFieldsSection(
+                        FormFieldsSection(postData: widget.postData,
+                          request360Controller: request360Controller,
+                          requestFeatureController:requestFeatureController ,
                           makeController: _make_controller,
                           classController: _class_controller,
                           modelController: _model_controller,

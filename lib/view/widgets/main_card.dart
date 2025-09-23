@@ -117,7 +117,7 @@ class HomeServiceCard extends StatelessWidget {
                   SvgPicture.asset(
                     imageAsset,
                     width:title.contains('Ads')?65.w:fromHomeSmall?48.58.w: 95.37.w,
-                    height:title=='Create Car Ads'?68.h :title.contains('Ads')?60.h:fromHomeSmall?30:73.33.h,
+                    height:title=='Create Car Ads'?85.h :title.contains('Ads')?72.h:fromHomeSmall?30:73.33.h,
                   ):  Image.asset(
                     imageAsset,
                     width: 58.w,

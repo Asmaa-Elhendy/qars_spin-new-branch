@@ -17,7 +17,7 @@ class ValidationMethods {
     required bool infoConfirmed,
     required BuildContext context,
     required Function(String) showMissingFieldsDialog,
-    required Function() showMissingCoverImageDialog,
+    required Function() showMissingCoverImageDialog, required postData,
   }) {
     // Check if all mandatory fields are filled
     if (make.isEmpty ||

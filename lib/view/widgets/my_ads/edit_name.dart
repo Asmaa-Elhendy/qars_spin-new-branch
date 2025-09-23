@@ -11,7 +11,8 @@ import '../../../model/specs.dart';
 
 class EditSpecsName extends StatefulWidget {
   final Specs spec;
-  const EditSpecsName({required this.spec, super.key});
+  final bool fromCreateAd;
+  const EditSpecsName({required this.spec,required this.fromCreateAd, super.key});
 
   @override
   State<EditSpecsName> createState() => _EditSpecsNameState();
@@ -114,14 +115,17 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                           child: yellowButtons(title: "Confirm", onTap: () async {
                             Navigator.pop(context);
                             _showLoadingDialog();
-                            final controller = Get.find<SpecsController>(tag: 'specs_${widget.spec.postId}');
-                            final success = await controller.updateSpecValue(
+                            final controller = Get.find<SpecsController>();
+                            final success =widget.fromCreateAd?
+                                controller.updateLocal(specId: widget.spec.specId, specValuePl: _newNameController.text)
+                                :
+                            await controller.updateSpecValue(
                               postId: widget.spec.postId,
                               specId: widget.spec.specId,
                               specValue: _newNameController.text,
                             );
                             _hideLoadingDialog();
-                            
+
                             // if (success) {
                             //   Navigator.pop(context);
                             // } else {
