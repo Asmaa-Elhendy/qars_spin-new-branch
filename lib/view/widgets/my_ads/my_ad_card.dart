@@ -328,9 +328,11 @@ Widget MyAdCard(
                                 'postKind': ad.postKind ?? 'CarForSale',
                                 'isModifyMode': true,
                                 'userName': ad.userName,
+                                'PostStatus':ad.postStatus
                               },
                             ),
                           );
+
                         },
                         w: double.infinity,
                       ),

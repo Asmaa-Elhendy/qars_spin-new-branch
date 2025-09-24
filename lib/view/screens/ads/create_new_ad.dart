@@ -601,7 +601,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     if (postId != null && postId.isNotEmpty) {
       // Update mode
+      log("beeeeeeeeeeeeeee  ${widget.postData['PostStatus']}");
       await AdSubmissionService.updateAd(
+        PostStaus:widget.postData['PostStatus'],
         context: context,
         images: _images,
         coverImage: _coverImage ?? '',

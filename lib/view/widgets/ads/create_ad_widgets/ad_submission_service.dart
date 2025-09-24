@@ -97,6 +97,7 @@ class AdSubmissionService {
   }
 
   static Future<void> updateAd({
+    required String PostStaus,
     required BuildContext context,
     required List<String> images,
     required String coverImage,
@@ -209,10 +210,9 @@ class AdSubmissionService {
         hideLoadingDialog();
         
         String successMessage = "Ad updated successfully!\nPost ID: $postId";
-        
+        log("pooooooooooooooooooooooooo $PostStaus");
         // Check if we should also request publish (for modify mode)
-       // if (shouldPublish) {
-        //here if status if approved
+        if (PostStaus=="Approved"||PostStaus=="Pending Approval") { //here if approved
           log('📤 [PUBLISH] Requesting publish for ad: $postId (Mode: Modify)');
           
           // Request publish after a short delay
@@ -241,11 +241,11 @@ class AdSubmissionService {
               showSuccessDialog(publishErrorMessage, postId);
             }
           });
-      //  }
-        // else {
-        //   // Show success dialog
-        //   showSuccessDialog(successMessage, postId);
-        // }
+        }
+        else {
+          // Show success dialog
+          showSuccessDialog(successMessage, postId);
+        }
       } else {
         String errorMessage = response['Desc'] ?? 'Failed to update ad';
         log('Error response: Code=${response['Code']}, Desc=$errorMessage');

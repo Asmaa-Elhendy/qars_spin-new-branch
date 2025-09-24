@@ -556,7 +556,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   ),
                 ),
                 child: Text(
-                  widget.postData==null?  "Save As Draft":"RePublish",
+                  widget.postData==null?  "Save As Draft":widget.postData['PostStatus'].toString()=="Approved"?"RePublish":"Save",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16.w,
