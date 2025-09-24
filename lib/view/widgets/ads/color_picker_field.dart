@@ -33,12 +33,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   @override
   void initState() {
     super.initState();
-    // Set default color based on whether it's exterior or interior
-    if (widget.initialColor != null) {
-      _selectedColor = widget.initialColor!;
-    } else {
-      _selectedColor = widget.isExterior ? const Color(0xff800000) : const Color(0xff4682B4); // Steel blue for interior
-    }
+    _selectedColor = widget.initialColor ?? const Color(0xffd54245);
     _initializeColors();
   }
 
@@ -70,7 +65,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
       ColorData(colorId: 22, hexCode: '#FA8072', namePL: 'Salmon', nameSL: 'مرجاني', isExterior: true, displayOrder: 22),
       ColorData(colorId: 23, hexCode: '#2F4F4F', namePL: 'Dark Slate Gray', nameSL: 'رمادي أردوازي غامق', isExterior: true, displayOrder: 23),
       ColorData(colorId: 24, hexCode: '#4682B4', namePL: 'Steel Blue', nameSL: 'أزرق فولاذي', isExterior: true, displayOrder: 24),
-      
+
       // Interior colors (isExterior: false)
       ColorData(colorId: 25, hexCode: '#FFFFFF', namePL: 'White', nameSL: 'أبيض', isExterior: false, displayOrder: 1),
       ColorData(colorId: 26, hexCode: '#000000', namePL: 'Black', nameSL: 'أسود', isExterior: false, displayOrder: 2),
@@ -91,23 +86,18 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
 
     // Filter colors based on exterior/interior
     _filteredColors = allColors.where((color) => color.isExterior == widget.isExterior).toList();
-    
+
     // Sort by display order
     _filteredColors.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
-    
+
     // Find the initial color data that matches the initial color
     _selectedColorData = _filteredColors.firstWhere(
-      (colorData) => colorData.color == _selectedColor,
+          (colorData) => colorData.color == _selectedColor,
       orElse: () => _filteredColors.first,
     );
-    
-    // Debug logging to verify default color selection
-    print('🎨 [COLOR_PICKER] Default color selected: ${_selectedColorData.nameSL} (${_selectedColorData.hexCode}) for ${widget.isExterior ? "exterior" : "interior"}');
   }
 
   void _showColorPickerDialog() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-
     final selectedColorData = await showColorPickerDialog(
       context: context,
       colors: _filteredColors,
@@ -139,15 +129,15 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
             widget.label,
             style: widget.modify
                 ? TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Gilroy',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w800,
-                  )
+              color: Colors.black,
+              fontFamily: 'Gilroy',
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w800,
+            )
                 : TextStyle(
-                    fontSize: 15.w,
-                    fontWeight: FontWeight.w500,
-                  ),
+              fontSize: 15.w,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
         ],
