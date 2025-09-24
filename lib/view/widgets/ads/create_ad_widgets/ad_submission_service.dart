@@ -211,7 +211,7 @@ class AdSubmissionService {
         
         String successMessage = "Ad updated successfully!\nPost ID: $postId";
         log("pooooooooooooooooooooooooo $PostStaus");
-        // Check if we should also request publish (for modify mode)
+        // Publish again approved/ pending approval posts (for modify mode)
         if (PostStaus=="Approved"||PostStaus=="Pending Approval") { //here if approved
           log('📤 [PUBLISH] Requesting publish for ad: $postId (Mode: Modify)');
           
