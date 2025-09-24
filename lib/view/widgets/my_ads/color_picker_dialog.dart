@@ -85,7 +85,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                 itemBuilder: (context, index) {
                   final colorData = widget.colors[index];
                   final isSelected = colorData.colorId == selectedColor.colorId;
-
+                  
                   return GestureDetector(
                     onTap: () {
                       setState(() {
@@ -102,19 +102,19 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                         ),
                         boxShadow: isSelected
                             ? [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          )
-                        ]
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: Offset(0, 2),
+                                )
+                              ]
                             : [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 2,
-                            offset: Offset(0, 1),
-                          )
-                        ],
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1),
+                                )
+                              ],
                       ),
                       child: Stack(
                         children: [
