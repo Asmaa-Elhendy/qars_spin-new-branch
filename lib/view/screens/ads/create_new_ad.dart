@@ -443,8 +443,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     // Set default colors for new ads
     if (widget.postData == null) {
-      _exteriorColor = const Color(0xffd54245);
-      _interiorColor = const Color(0xff4242d4);
+      _exteriorColor = const Color(0xff800000); // Maroon color
+      _interiorColor = const Color(0xff4682B4); // Steel blue color
+      print('🎨 [SELL_CAR] Default colors set for new ad: Exterior=Maroon (#800000), Interior=Steel Blue (#4682B4)');
     }
   }
 

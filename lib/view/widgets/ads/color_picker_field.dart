@@ -33,7 +33,12 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   @override
   void initState() {
     super.initState();
-    _selectedColor = widget.initialColor ?? const Color(0xffd54245);
+    // Set default color based on whether it's exterior or interior
+    if (widget.initialColor != null) {
+      _selectedColor = widget.initialColor!;
+    } else {
+      _selectedColor = widget.isExterior ? const Color(0xff800000) : const Color(0xff4682B4); // Steel blue for interior
+    }
     _initializeColors();
   }
 
@@ -95,6 +100,9 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
       (colorData) => colorData.color == _selectedColor,
       orElse: () => _filteredColors.first,
     );
+    
+    // Debug logging to verify default color selection
+    print('🎨 [COLOR_PICKER] Default color selected: ${_selectedColorData.nameSL} (${_selectedColorData.hexCode}) for ${widget.isExterior ? "exterior" : "interior"}');
   }
 
   void _showColorPickerDialog() async {

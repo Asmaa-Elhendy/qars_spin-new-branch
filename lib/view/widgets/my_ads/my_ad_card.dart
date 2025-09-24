@@ -403,7 +403,7 @@ Widget MyAdCard(
                                 print('🔄 [REFRESH] Closing dialog, refreshing ads...');
                                 final myAdController = Get.find<MyAdCleanController>();
                                 myAdController.fetchMyAds();
-                                print('🔄 [REFRESH] Ads refresh initiated');
+                                print('🔄 [REFRESH] Ads refresh initiated');//k
                               },
                               onTappp: () {},
                             );
