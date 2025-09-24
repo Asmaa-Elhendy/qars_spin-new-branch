@@ -120,9 +120,9 @@ class MyAdModel {
       visitsCount: json['Visits_Count'] ?? 0,
       biddersCount: json['Bidders_Count'] ?? 0,
       offersCount: json['Offers_Count'] ?? 0,
-      leastPrice: json['Least_Price'] ?? '0.000',
-      highestPrice: json['Highest_Price'] ?? '0.000',
-      avgPrice: json['Avg_Price'] ?? '0.000000',
+      leastPrice: json['Least_Price'] ?? '',
+      highestPrice: json['Highest_Price'] ?? '',
+      avgPrice: json['Avg_Price'] ?? '',
       firstOffer: json['First_Offer'] ?? '',
       latestOffer: json['Latest_Offer'] ?? '',
     );

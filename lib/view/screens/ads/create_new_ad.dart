@@ -623,6 +623,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         postId: postId,
         coverPhotoChanged: _coverPhotoChanged,
         videoChanged: _videoChanged,
+        shouldPublish: shouldPublish,
         showLoadingDialog: _showLoadingDialog,
         showSuccessDialog: _showSuccessDialog,
         showErrorDialog: _showErrorAlert,

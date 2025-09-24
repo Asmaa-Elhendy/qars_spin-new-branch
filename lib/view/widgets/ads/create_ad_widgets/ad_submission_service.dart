@@ -12,6 +12,9 @@ import '../../../../controller/specs/specs_controller.dart';
 import '../../../../model/create_ad_model.dart';
 
 class AdSubmissionService {
+  // User credentials - these should be moved to a proper configuration/session management
+  static const String userName = 'Asmaa2';
+  static const String ourSecret = '1244';
   static Future<void> submitAd({
     required bool shouldPublish,
     required TextEditingController request360controller,
@@ -115,6 +118,7 @@ class AdSubmissionService {
     required String postId,
     required bool coverPhotoChanged,
     required bool videoChanged,
+    required bool shouldPublish,
     required Function() showLoadingDialog,
     required Function(String, String) showSuccessDialog,
     required Function(String) showErrorDialog,
@@ -205,7 +209,42 @@ class AdSubmissionService {
         hideLoadingDialog();
         
         String successMessage = "Ad updated successfully!\nPost ID: $postId";
-        showSuccessDialog(successMessage, postId);
+        
+        // Check if we should also request publish (for modify mode)
+       // if (shouldPublish) {
+          log('📤 [PUBLISH] Requesting publish for ad: $postId (Mode: Modify)');
+          
+          // Request publish after a short delay
+          Future.delayed(Duration(milliseconds: 300), () async {
+            try {
+              final MyAdCleanController myAdController = Get.find<MyAdCleanController>();
+              bool publishSuccess = await myAdController.requestPublishAd(
+                userName: userName, // This should come from user session
+                postId: postId,
+                ourSecret: ourSecret, // This should come from app config
+              );
+              
+              if (publishSuccess) {
+                log('✅ [PUBLISH] Publish request sent successfully for ad: $postId');
+                // Update success message to include publish info
+                String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
+                showSuccessDialog(publishSuccessMessage, postId);
+              } else {
+                log('❌ [PUBLISH] Failed to send publish request for ad: $postId');
+                String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
+                showSuccessDialog(publishErrorMessage, postId);
+              }
+            } catch (e) {
+              log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
+              String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
+              showSuccessDialog(publishErrorMessage, postId);
+            }
+          });
+      //  }
+        // else {
+        //   // Show success dialog
+        //   showSuccessDialog(successMessage, postId);
+        // }
       } else {
         String errorMessage = response['Desc'] ?? 'Failed to update ad';
         log('Error response: Code=${response['Code']}, Desc=$errorMessage');
@@ -383,59 +422,51 @@ class AdSubmissionService {
             ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId"
             : "Ad ${postId == null ? 'created' : 'updated'} successfully!";
         
-        // For create mode, handle success dialog and navigation
-        if (postId == null) {
-          log('🧭 [NAVIGATION] Navigating to MyAds screen after successful ad creation');
+        // Check if we should also request publish (for both create and modify modes)
+        if (shouldPublish && responsePostId.isNotEmpty) {
+          log('📤 [PUBLISH] Requesting publish for ad: $responsePostId (Mode: ${postId == null ? 'Create' : 'Modify'})');
           
-          // Check if we should also request publish
-          if (shouldPublish && responsePostId.isNotEmpty) {
-            log('📤 [PUBLISH] Requesting publish for newly created ad: $responsePostId');
-            
-            // Request publish after a short delay
-            Future.delayed(Duration(milliseconds: 300), () async {
-              try {
-                final MyAdCleanController myAdController = Get.find<MyAdCleanController>();
-                bool publishSuccess = await myAdController.requestPublishAd(
-                  userName: userName, // This should come from user session
-                  postId: responsePostId,
-                  ourSecret: ourSecret, // This should come from app config
-                );
-                
-                if (publishSuccess) {
-                  log('✅ [PUBLISH] Publish request sent successfully for ad: $responsePostId');
-                  // Update success message to include publish info
-                  String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
-                  showSuccessDialog(publishSuccessMessage, responsePostId);
-                } else {
-                  log('❌ [PUBLISH] Failed to send publish request for ad: $responsePostId');
-                  String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
-                  showSuccessDialog(publishErrorMessage, responsePostId);
-                }
-              } catch (e) {
-                log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
-                String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
+          // Request publish after a short delay
+          Future.delayed(Duration(milliseconds: 300), () async {
+            try {
+              final MyAdCleanController myAdController = Get.find<MyAdCleanController>();
+              bool publishSuccess = await myAdController.requestPublishAd(
+                userName: userName, // This should come from user session
+                postId: responsePostId,
+                ourSecret: ourSecret, // This should come from app config
+              );
+              
+              if (publishSuccess) {
+                log('✅ [PUBLISH] Publish request sent successfully for ad: $responsePostId');
+                // Update success message to include publish info
+                String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
+                showSuccessDialog(publishSuccessMessage, responsePostId);
+              } else {
+                log('❌ [PUBLISH] Failed to send publish request for ad: $responsePostId');
+                String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
                 showSuccessDialog(publishErrorMessage, responsePostId);
               }
-              
-              // Navigate after showing publish result
-              Future.delayed(Duration(milliseconds: 500), () {
-                log('🧭 [NAVIGATION] Executing navigation after publish request');
-                navigateToMyAds();
-              });
-            });
-          } else {
-            // Show success dialog first
-            showSuccessDialog(successMessage, responsePostId);
+            } catch (e) {
+              log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
+              String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
+              showSuccessDialog(publishErrorMessage, responsePostId);
+            }
             
-            // Add a small delay to ensure dialog is shown, then navigate
+            // Navigate after showing publish result
             Future.delayed(Duration(milliseconds: 500), () {
-              log('🧭 [NAVIGATION] Executing navigation after delay');
+              log('🧭 [NAVIGATION] Executing navigation after publish request');
               navigateToMyAds();
             });
-          }
+          });
         } else {
-          // For update mode, just show success dialog
+          // Show success dialog first
           showSuccessDialog(successMessage, responsePostId);
+          
+          // Add a small delay to ensure dialog is shown, then navigate
+          Future.delayed(Duration(milliseconds: 500), () {
+            log('🧭 [NAVIGATION] Executing navigation after delay');
+            navigateToMyAds();
+          });
         }
       } else {
         String errorMessage = response['Desc'] ?? 'Failed to ${postId == null ? 'create' : 'update'} ad';
