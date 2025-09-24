@@ -194,12 +194,12 @@ class AdSubmissionService {
         // Upload video if we have a post ID and video path AND it was changed
         if (postId.isNotEmpty && videoPath != null && videoPath.isNotEmpty && videoChanged) {
           log('Uploading video for post ID: $postId');
-          await adRepository.uploadVideoForPost(
+         var res= await adRepository.uploadVideoForPost(
             postId: postId,
             ourSecret: ourSecret, // Using the same secret as in ad creation
             videoPath: videoPath,
           );
-          log('Video upload completed');
+          log('Video upload completed ${res}');
         } else if (!videoChanged) {
           log('Video not changed, skipping upload');
         }

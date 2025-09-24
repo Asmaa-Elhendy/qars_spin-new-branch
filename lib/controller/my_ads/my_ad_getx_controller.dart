@@ -47,6 +47,7 @@ class MyAdCleanController extends GetxController {
 
   /// Fetch user's ads
   Future<void> fetchMyAds() async {
+    print('🔄 [CONTROLLER] fetchMyAds() called');
     isLoadingMyAds.value = true;
     myAdsError.value = null;
     myAdsResponse.value = null;

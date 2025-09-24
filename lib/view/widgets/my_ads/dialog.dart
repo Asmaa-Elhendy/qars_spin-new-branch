@@ -101,6 +101,15 @@ class SuccessDialog extends StatelessWidget {
     final dynamic onTappp,
     required final bool request //for request 360, feature confirmation alert
   }) {
+    bool callbackCalled = false;
+    
+    void callOnCloseOnce() {
+      if (!callbackCalled && onClose != null) {
+        callbackCalled = true;
+        onClose();
+      }
+    }
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -109,12 +118,15 @@ class SuccessDialog extends StatelessWidget {
         message: message,
         onClose: () {
           Navigator.of(context).pop();
-          onClose?.call();
+          callOnCloseOnce();
         },
         onTap: onTappp,
           request:request
       ),
-    );
+    ).then((_) {
+      // This will be called when the dialog is dismissed in any way
+      callOnCloseOnce();
+    });
   }}
   cancelButton(ontap,title,reuest){
     return InkWell(

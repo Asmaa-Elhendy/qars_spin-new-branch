@@ -391,13 +391,20 @@ Widget MyAdCard(
                           onHideLoader();
 
                           if (ok) {
+                            // Show success dialog and refresh ads when it's closed
                             SuccessDialog.show(
                               request: true,
                               context: context,
                               title: "Information",
                               message:
                                   "This ad is pending approval, Please wait \n while we review your ad",
-                              onClose: () {},
+                              onClose: () {//l
+                                // Refresh the ads list when the dialog is closed
+                                print('🔄 [REFRESH] Closing dialog, refreshing ads...');
+                                final myAdController = Get.find<MyAdCleanController>();
+                                myAdController.fetchMyAds();
+                                print('🔄 [REFRESH] Ads refresh initiated');
+                              },
                               onTappp: () {},
                             );
                           } else {

@@ -98,6 +98,8 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   }
 
   void _showColorPickerDialog() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
     final selectedColorData = await showColorPickerDialog(
       context: context,
       colors: _filteredColors,
