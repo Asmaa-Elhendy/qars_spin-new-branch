@@ -115,7 +115,7 @@ class SuccessDialog extends StatelessWidget {
           request:request
       ),
     );
-  }
+  }}
   cancelButton(ontap,title,reuest){
     return InkWell(
       onTap: ontap,
@@ -142,4 +142,4 @@ class SuccessDialog extends StatelessWidget {
 
     );
   }
-}
+

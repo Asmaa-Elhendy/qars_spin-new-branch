@@ -212,6 +212,7 @@ class AdSubmissionService {
         
         // Check if we should also request publish (for modify mode)
        // if (shouldPublish) {
+        //here if status if approved
           log('📤 [PUBLISH] Requesting publish for ad: $postId (Mode: Modify)');
           
           // Request publish after a short delay

@@ -338,6 +338,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           label: "Exterior Color",
           initialColor: widget.exteriorColor,
           onColorSelected: widget.onExteriorColorSelected,
+          isExterior: true, // Show exterior colors
         ),
 
         SizedBox(height: height * .01),
@@ -348,6 +349,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           label: "Interior Color",
           initialColor: widget.interiorColor,
           onColorSelected: widget.onInteriorColorSelected,
+          isExterior: false, // Show interior colors
         ),
         SizedBox(height: height * .01),
 
