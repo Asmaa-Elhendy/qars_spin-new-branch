@@ -574,7 +574,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Use Get.offAll to ensure we always navigate to MyAds screen
     // This works for both create and modify flows
     //navigate direct to MyAdsMainScreen
-   widget.postData==null? Get.off(() => const MyAdsMainScreen()): Get.to(() => const MyAdsMainScreen());
+  // widget.postData==null?
+   Get.off(() => const MyAdsMainScreen());
+       //: Get.to(() => const MyAdsMainScreen());
     Get.find<MyAdCleanController>().fetchMyAds(); // Refresh My Ads screen
     brandController.resetCreateAdState(); // Reset controller state
   }

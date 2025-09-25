@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/brand_controller.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 import '../../controller/const/colors.dart';
 
 class MakeOfferDialog extends StatefulWidget {
-  const MakeOfferDialog({super.key});
+  bool offer;
+  bool requestToBuy;
+  String price;
+  MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
 
   @override
   State<MakeOfferDialog> createState() => _MakeOfferDialogState();
@@ -13,12 +20,20 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
   final TextEditingController _offerController = TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _offerController.text = widget.price;
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.grey.shade200, // grey background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:  EdgeInsets.only(top: 22.h,left: 16.w,right: 16.w,bottom: 12.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
 
@@ -27,19 +42,22 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
             /// Title
             Center(
               child: Text(
-                "Make Offer",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                widget.offer?"Make Offer":"Request To Buy",
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
               ),
             ),
-            10.verticalSpace,
+            14.verticalSpace,
 
             /// Label
-            Text(
-              textAlign: TextAlign.center,
-              "What is your offer?",
-              style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w400),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 16.w),
+              child: Text(
+                textAlign: TextAlign.center,
+                widget.offer? "What is your offer?":"You are making an offer matching the request price",
+                style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily),
+              ),
             ),
-            12.verticalSpace,
+            14.verticalSpace,
 
             /// Offer Row (TextField + Currency)
             Row(
@@ -49,18 +67,26 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                     height: 40.h,
                     decoration: BoxDecoration(
 
-                      border: Border.all(color: AppColors.black),
+                      border: Border.all(color: AppColors.inputBorder),
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: TextField(
                       controller: _offerController,
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.sp
+                      ),
+
                       keyboardType: TextInputType.number,
+
                       decoration: InputDecoration(
                         hintText: "",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide.none
+                          borderSide: BorderSide.none,
+
                         ),
                       ),
                     ),
@@ -72,7 +98,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                   padding:  EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: AppColors.black,
+                    border: Border.all(color: AppColors.inputBorder,
                     ),
                     borderRadius: BorderRadius.circular(6),
                   ),
@@ -93,7 +119,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
+                      backgroundColor: AppColors.buttonsGray,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
@@ -106,6 +132,11 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+                      if(widget.offer){
+                        Get.find<BrandController>().makeOffer(offerPrice: _offerController.text);
+                      }else{
+                        Get.find<BrandController>().makeOffer(offerPrice: widget.price);
+                      }
                       Navigator.pop(context, _offerController.text);
                     },
                     style: ElevatedButton.styleFrom(

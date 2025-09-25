@@ -6,7 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../controller/const/colors.dart';
 
 
- carListAppBar({required int notificationCount}){
+carListAppBar({required int notificationCount}){
 
   return AppBar(
     centerTitle: true,
@@ -89,7 +89,7 @@ import '../../controller/const/colors.dart';
       height: 140,
       width: 140,
       child: Image.asset(
-        'assets/images/ic_top_logo_colored.png',
+        'assets/images/black_logo.png',
         fit: BoxFit.cover,
       ),
     ),

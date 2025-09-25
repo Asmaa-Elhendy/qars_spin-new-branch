@@ -24,35 +24,31 @@ class _AllRentalCarsState extends State<AllRentalCars> {
         children: [
           adContainer(),
           8.verticalSpace,
-          carListGreyBar(title: "All Rental Cars"),
+          carListGreyBar(onSearchResult:(_){},title: "All Rental Cars",context: context,squareIcon: true,rental: true),
           8.verticalSpace,
           GetBuilder<RentalCarsController>(
-            init:  RentalCarsController(),
-            builder: (controller) {
-              return GridView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+              init:  RentalCarsController(),
+              builder: (controller) {
+                return GridView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
 
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 25.h,
-                  crossAxisSpacing: 33.w,
-                  childAspectRatio: .68,
-
-                  // crossAxisSpacing: 5.w,
-                  // mainAxisSpacing: 15.w,
-                  // mainAxisExtent: (constraints.maxWidth - 24.w) / itemsPerRow * 1.2,
-                ),
-                itemCount: controller.rentalCars.length,
-                itemBuilder: (context, index) {
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20.h,
+                    crossAxisSpacing: 18.w,
+                    childAspectRatio: .62,
+                  ),
+                  itemCount: controller.rentalCars.length,
+                  itemBuilder: (context, index) {
 
 
-                  return  RentalCarCard(
-                    car: controller.rentalCars[index],
-                  );
-                },
-              );
-            }
+                    return  RentalCarCard(
+                      car: controller.rentalCars[index],
+                    );
+                  },
+                );
+              }
           ),
 
         ],

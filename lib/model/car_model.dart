@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 
 import 'car_brand.dart';
@@ -37,12 +39,26 @@ class CarModel{
   final String askingPrice;
   final String rectangleImageFileName;
   final String rectangleImageUrl;
+  Color? interiorColor;
+  Color? exteriorColor;
+  String? description;
+  int? offersCount;
+  String? warrantyAvailable;
+  int? visitsCount;
+  bool? isFavorite;
 
   CarModel({
     required this.postId,
     required this.pinToTop,
     required this.postCode,
     required this.carNamePl,
+    this.interiorColor,
+    this.exteriorColor,
+    this.description,
+    this.offersCount,
+    this.visitsCount,
+    this.isFavorite,
+    this.warrantyAvailable,
     required this.carNameSl,
     required this.carNameWithYearPl,
     required this.carNameWithYearSl,
@@ -53,11 +69,11 @@ class CarModel{
     required this.askingPrice,
     required this.rectangleImageFileName,
     required this.rectangleImageUrl,
-});
+  });
 
 
 }
-  /// Converts a string to CarType enum
+/// Converts a string to CarType enum
 //   factory CarType.fromString(String value) {
 //   switch (value.toLowerCase()) {
 //     case 'forrent':

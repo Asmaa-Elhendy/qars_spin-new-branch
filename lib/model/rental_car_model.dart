@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class RentalCar {
   final int postId;
   final String countryCode;
@@ -48,10 +50,10 @@ class RentalCar {
   final String technicalDescriptionPL;
   final String technicalDescriptionSL;
   final int mileage;
-  final String colorInterior;
+  final Color colorInterior;
   final String interiorColorNamePL;
   final String interiorColorNameSL;
-  final String colorExterior;
+  final Color colorExterior;
   final String exteriorColorNamePL;
   final String exteriorColorNameSL;
   final int isReadyForRent;

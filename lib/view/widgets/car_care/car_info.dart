@@ -28,7 +28,7 @@ class CareInfo extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(show.name,
+                  Text(show.partnerNamePl,
                     style: TextStyle(
                         color: AppColors.black,
                         fontFamily: fontFamily,
@@ -39,7 +39,7 @@ class CareInfo extends StatelessWidget {
                   4.verticalSpace,
                   Row(
                     children: [
-                      Text("join Date: 5 Minute ago",
+                      Text(show.joiningDate,
                         style: TextStyle(
                             color: AppColors.inputBorder,
                             fontFamily: fontFamily,
@@ -52,7 +52,7 @@ class CareInfo extends StatelessWidget {
                         children: [
                           Icon(Icons.remove_red_eye,color: AppColors.accent,),
                           4.horizontalSpace,
-                          Text("87",
+                          Text(show.visitsCount.toString(),
                             style: TextStyle(
                                 color: AppColors.mutedGray,
                                 fontFamily: fontFamily,
@@ -84,7 +84,7 @@ class CareInfo extends StatelessWidget {
                           2.verticalSpace,
                           Row(
                             children: [
-                              Text("1",
+                              Text(show.followersCount.toString(),
                                 style: TextStyle(
                                     color: AppColors.mutedGray,
                                     fontFamily: fontFamily,
@@ -108,7 +108,7 @@ class CareInfo extends StatelessWidget {
             ],
           ),
           16.verticalSpace,
-          Text("Protection - Widow Tending - Car Detailing",
+          Text(show.partnerDescPl,
             style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: fontFamily,

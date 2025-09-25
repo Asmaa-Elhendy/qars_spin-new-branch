@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
+import 'package:qarsspin/controller/rental_cars_controller.dart';
+import 'package:qarsspin/controller/showrooms_controller.dart';
 import 'package:qarsspin/model/showroom_model.dart';
 
 import '../../../widgets/car_care/car_info.dart';
 import '../../../widgets/car_care/tab_Bar.dart';
+import '../../../widgets/showrooms_widgets/action_buttons.dart';
+import '../../../widgets/showrooms_widgets/bottom_bar.dart';
+import '../../../widgets/showrooms_widgets/dealer_info_section.dart';
 import '../../../widgets/showrooms_widgets/header_section.dart';
 
 class CarCareDetails extends StatefulWidget {
@@ -22,6 +28,7 @@ class _CarCareDetailsState extends State<CarCareDetails> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: AppColors.white,
+      bottomNavigationBar: ShowRoomBottomBar(showRoom: widget.carCare,),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,11 +82,25 @@ class _CarCareDetailsState extends State<CarCareDetails> {
               ],
             ),
           ),
-          HeaderSection(),
-          20.verticalSpace,
+          HeaderSection(realImage: widget.carCare.spin360Url,),
+          // 15.verticalSpace,
+
+
           CareInfo(show: widget.carCare,),
-          18.verticalSpace,
-          Expanded(child: CarCareTapBar())
+          //14.verticalSpace,
+          GetBuilder<ShowRoomsController>(
+              init: ShowRoomsController(),
+              builder: (controller) {
+                return Expanded(child: SizedBox(
+                    height: 600.h,
+                    child: CarCareTapBar(
+                      rate: controller.partnerRating,
+                      showroom: widget.carCare,
+
+                      cars: widget.carCare.rentalCars??[],avgRating: widget.carCare.avgRating.toString(),)));
+              }
+          )
+
 
 
 

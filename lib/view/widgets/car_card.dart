@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:qarsspin/controller/brand_controller.dart';
 import '../../controller/const/colors.dart';
 import '../../model/car_model.dart';
 import '../screens/cars_for_sale/car_details.dart';
@@ -16,6 +17,7 @@ Widget carCard({
   bool large = false,
   required double w,
   required double h,
+  required String postKind,
   bool tooSmall = false,
 }) {
 // }) {
@@ -30,7 +32,14 @@ Widget carCard({
 
   return GestureDetector(
     onTap: () {
-      Get.to(CarDetails(carModel: car));
+      if(postKind!=""){
+        Get.find<BrandController>().getCarDetails(postKind, car.postId.toString());
+        Get.to(CarDetails(postKind: car.sourceKind,id: car.postId,));
+
+
+      }else{
+        print("un available source kind");
+      }
     },
     child: Padding(
       padding:  EdgeInsets.symmetric(horizontal: 8.w),
@@ -57,26 +66,30 @@ Widget carCard({
             // الصورة
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-                  child: CachedNetworkImage(
-                    //edit placeholder for now asmaa
-                    imageUrl: car.rectangleImageUrl.isNotEmpty
-                        ? car.rectangleImageUrl
-                        : "https://via.placeholder.com/150",
-                    height: tooSmall
-                        ? 120.h
-                        : large
-                        ? 150.h
-                        : 124.9.h,
-                    //i update default height for all cars card car asmaa
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(
-                      child: CircularProgressIndicator(color: AppColors.star),
+                SizedBox(
+                  //height: 70.h,
+                  child: ClipRRect(
+
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                    child: CachedNetworkImage(
+                      //edit placeholder for now asmaa
+                      imageUrl: car.rectangleImageUrl.isNotEmpty
+                          ? car.rectangleImageUrl
+                          : "https://via.placeholder.com/150",
+                      height: tooSmall
+                          ? 120.h
+                          : large
+                          ? 150.h
+                          : 124.9.h,
+                      //i update default height for all cars card car asmaa
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(color: AppColors.star),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.broken_image, size: 50, color: Colors.grey),
                     ),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.broken_image, size: 50, color: Colors.grey),
                   ),
                 ),
                 if (car.pinToTop == 1)
@@ -88,24 +101,24 @@ Widget carCard({
             Flexible(
               fit: FlexFit.loose,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: .7.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-  Padding(
-                padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left: 6.w), // no horizontal padding
-                child: SizedBox(height: 40.h,
-                  child: Text(
-                    car.carNamePl.trim(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
+                    Padding(
+                      padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left: 6.w), // no horizontal padding
+                      child: SizedBox(height: 40.h,
+                        child: Text(
+                          car.carNamePl.trim(),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-            ),
 
                     SizedBox(height: tooSmall ? 8.h : 12.h),
                     Container(padding: EdgeInsets.only(left: 6.w), //update asmaa
@@ -122,7 +135,7 @@ Widget carCard({
                           Row(
                             children: [
                               Text(
-                               formattedPrice ,
+                                formattedPrice ,
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 16.sp,
@@ -213,19 +226,19 @@ Widget carStatus(CarStatus status) {
 
     child: status == CarStatus.QarsSpin
         ? SizedBox(
-            // width: 80.w,
-            // height: 20.h,
-            child: Image.asset(
-              "assets/images/ic_top_logo_colored.png",
-              fit: BoxFit.cover,
-            ),
-          )
+      // width: 30.w,
+      // height: 35.h,
+      child: Image.asset(
+        "assets/images/ic_top_logo_colored.png",
+        fit: BoxFit.cover,
+      ),
+    )
         : Center(
-            child: Text(
-              status.name,
+      child: Text(
+        status.name,
 
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
-            ),
-          ),
+        style: TextStyle(color: Colors.white, fontSize: 14.sp),
+      ),
+    ),
   );
 }

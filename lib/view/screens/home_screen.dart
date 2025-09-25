@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   HomeServiceCard(
                                     onTap: () {
                                       Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop");
-                                      Get.to(CarsShowRoom(carCare: true,title: "Car Care",));
+                                      Get.to(CarsShowRoom(carCare: true,title: "Car Care",rentRoom: false,));
                                     },
                                     title: 'Car Care',
                                     imageAsset: 'assets/images/new_svg/home3.svg',
@@ -392,8 +392,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               HomeServiceCard(
                 onTap: () {
+                  // qar spin show room
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
-                  Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",));
+                  Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",postKind: "",));
                 },
                 title: 'Qars Spin Showrooms',fromHome: 'true',
                 imageAsset: 'assets/images/new_svg/Group (1).svg',
@@ -402,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(
                 onTap: () {
                   Get.find<ShowRoomsController>().fetchShowrooms();
-                  Get.to(CarsShowRoom(title: "Cars Showrooms",));
+                  Get.to(CarsShowRoom(title: "Cars Showrooms",rentRoom: false,));
                 },
                 title: 'Cars Showrooms',fromHome: 'true',
                 imageAsset: 'assets/images/new_svg/Group (2).svg',
@@ -411,9 +412,10 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(fromHome: 'true',
                 title: 'Personal Cars',
                 onTap: () {
+                  // personal cars
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
 
-                  Get.to(CarsBrandList(brandName: "Personal Cars",));
+                  Get.to(CarsBrandList(brandName: "Personal Cars",postKind: "",));
                 },
                 imageAsset: 'assets/images/new_svg/Group (3).svg',
                 large: false,
@@ -450,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(
                 onTap: () {
                   Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Rent a Car");
-                  Get.to(CarsShowRoom(title: "Rental Showrooms",));
+                  Get.to(CarsShowRoom(title: "Rental Showrooms",rentRoom: true,));
                 },
                 title: 'Rental Showrooms',fromHome: 'true',
                 imageAsset: 'assets/images/new_svg/Group (5).svg',

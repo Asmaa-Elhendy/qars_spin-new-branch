@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../controller/communications.dart';
+import '../../controller/const/colors.dart';
+
 class BottomActionBar extends StatelessWidget {
   final VoidCallback onMakeOffer;
   final VoidCallback onWhatsApp;
   final VoidCallback onCall;
+
 
   const BottomActionBar({
     super.key,
@@ -48,17 +52,19 @@ class BottomActionBar extends StatelessWidget {
             ),
           ),
           SizedBox(width: 8.w),
-          InkWell(
-            onTap: onWhatsApp,
-            child: SizedBox(
-              width: 55.w,
-               height: 55.h,
-              child: Image.asset("assets/images/whatsgreen.png",
-                fit: BoxFit.cover,
+          squareButton(Image.asset("assets/images/whats.png",),(){ openWhatsApp("011", message: "Hello 👋");},green: true),
 
-              ),
-            )
-          ),
+          // InkWell(
+          //   onTap: onWhatsApp,
+          //   child: SizedBox(
+          //     width: 55.w,
+          //      height: 55.h,
+          //     child: Image.asset("assets/images/whatsgreen.png",
+          //       fit: BoxFit.cover,
+          //
+          //     ),
+          //   )
+          // ),
           SizedBox(width: 8.w),
           InkWell(
             onTap: onCall,
@@ -73,6 +79,24 @@ class BottomActionBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  squareButton(icon, onTap,{bool green = false}){
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+          width: 48.w,
+          height: 48.w,
+          // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
+          decoration: BoxDecoration(
+            color:!green? AppColors.star:AppColors.success,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: icon,
+          )
       ),
     );
   }

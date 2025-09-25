@@ -5,8 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/colors.dart';
+import 'package:qarsspin/controller/rental_cars_controller.dart';
+import 'package:qarsspin/controller/showrooms_controller.dart';
 
 import '../../model/showroom_model.dart';
+import '../screens/cars_for_rent/all_rental_cars.dart';
 import '../screens/showrooms/car_care/car_care_details.dart';
 import '../screens/showrooms/showrooms_details.dart';
 import 'my_ads/yellow_buttons.dart';
@@ -14,7 +17,8 @@ import 'my_ads/yellow_buttons.dart';
 class ShowroomCard extends StatelessWidget {
   final Showroom showroom;
   bool carCare;
-  ShowroomCard({super.key,required this.carCare, required this.showroom});
+  bool rental;
+  ShowroomCard({super.key,this.rental = true,required this.carCare, required this.showroom});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,7 @@ class ShowroomCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (showroom.isFeatured)
+          if (showroom.pinToTop)
             Stack(
               children: [
                 Image.asset("assets/images/featured.png"),
@@ -59,7 +63,9 @@ class ShowroomCard extends StatelessWidget {
                 // Buttons
 
                 40.horizontalSpace,
-                yellowButtons(title: "Details",w: 100.w,onTap: (){Get.to(CarCareDetails(carCare: showroom,));}),
+                yellowButtons(title: "Details",w: 100.w,onTap: (){
+                  Get.find<ShowRoomsController>().getShowRoomRating(showroom.partnerId);
+                  Get.to(CarCareDetails(carCare: showroom,));}),
 
 
                 35.horizontalSpace,
@@ -77,7 +83,7 @@ class ShowroomCard extends StatelessWidget {
                   children: [
                     Icon(Icons.remove_red_eye, size: 18, color: Colors.blue),
                     SizedBox(width: 2),
-                    Text("${showroom.views}"),
+                    Text("${showroom.visitsCount}"),
                   ],
                 ),
                 25.horizontalSpace,
@@ -92,7 +98,7 @@ class ShowroomCard extends StatelessWidget {
                   children: [
                     Icon(Icons.star, size: 25.w, color: Colors.amber),
                     const SizedBox(width: 2),
-                    Text("${showroom.rating}"),
+                    Text("${showroom.avgRating}"),
                     10.horizontalSpace,
 
                   ],
@@ -103,7 +109,11 @@ class ShowroomCard extends StatelessWidget {
               children: [
                 // Buttons
 
-                yellowButtons(title: "Details",w: 100.w,onTap: (){Get.to(CarDealerScreen());}),
+                yellowButtons(title: "Details",w: 100.w,onTap: (){
+                  Get.find<ShowRoomsController>().getShowRoomRating(showroom.partnerId);
+
+                  print("debugggg${showroom.rentalCars?.length}");
+                  Get.to(CarCareDetails(carCare: showroom,));}),
 
                 10.horizontalSpace,
                 Container(
@@ -113,7 +123,12 @@ class ShowroomCard extends StatelessWidget {
                 ),
                 10.horizontalSpace,
 
-                yellowButtons(title: "Cars (${showroom.carsCount})",w: 100.w,onTap: (){}),
+                yellowButtons(title: "Cars (${showroom.carsCount})",w: 100.w,onTap: (){
+                  if(rental){
+                    Get.find<RentalCarsController>().setRentalCars(showroom.rentalCars??[]);
+                    Get.to(AllRentalCars());
+                  }
+                }),
                 10.horizontalSpace,
                 Container(
                   height: 40.h,
@@ -128,7 +143,7 @@ class ShowroomCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.remove_red_eye, size: 18, color: Colors.blue),
                     const SizedBox(width: 2),
-                    Text("${showroom.views}"),
+                    Text("${showroom.visitsCount}"),
                   ],
                 ),
                 10.horizontalSpace,
@@ -143,7 +158,7 @@ class ShowroomCard extends StatelessWidget {
                   children: [
                     Icon(Icons.star, size: 25.w, color: Colors.amber),
                     8.horizontalSpace,
-                    Text("${showroom.rating}"),
+                    Text("${showroom.avgRating}"),
                     10.horizontalSpace,
 
                   ],

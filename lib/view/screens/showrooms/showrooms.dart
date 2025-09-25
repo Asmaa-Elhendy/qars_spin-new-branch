@@ -11,7 +11,7 @@ import '../../widgets/show_room_card.dart';
 class CarsShowRoom extends StatefulWidget {
   bool carCare;
   String title;
-   CarsShowRoom({required this.title,this.carCare = false,super.key});
+  CarsShowRoom({required this.title,this.carCare = false,super.key});
 
   @override
   State<CarsShowRoom> createState() => _CarsShowRoomState();
@@ -26,20 +26,20 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
         children: [
           adContainer(),
           8.verticalSpace,
-          carListGreyBar(title: widget.title),
+          carListGreyBar(onSearchResult:(_){},title: widget.title,context: context),
           8.verticalSpace,
           Expanded(
             child: GetBuilder<ShowRoomsController>(
-              builder: (controller) {
-                return ListView.builder(
+                builder: (controller) {
+                  return ListView.builder(
 
-                  padding:  EdgeInsets.symmetric(vertical: 10.h,horizontal: 8.w),
-                  itemCount: controller.showRoomForSale.length,
-                  itemBuilder: (context, index) {
-                    return ShowroomCard(showroom:  controller.showRoomForSale[index],carCare: widget.carCare,);
-                  },
-                );
-              }
+                    padding:  EdgeInsets.symmetric(vertical: 10.h,horizontal: 8.w),
+                    itemCount: controller.showRooms.length,
+                    itemBuilder: (context, index) {
+                      return ShowroomCard(showroom:  controller.showRooms[index],carCare: widget.carCare,);
+                    },
+                  );
+                }
             ),
           ),
 

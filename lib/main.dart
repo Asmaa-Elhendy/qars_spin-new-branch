@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
 import 'package:qarsspin/view/screens/home_screen.dart';
 
+import 'controller/auth/secret.dart';
 import 'controller/binding.dart';
-import 'controller/payments/payment_service.dart';
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize MyFatoorah SDK
- // PaymentService.initialize();
+  // PaymentService.initialize();
+  settings();
 
 
 
@@ -56,4 +58,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

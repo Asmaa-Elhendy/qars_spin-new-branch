@@ -26,7 +26,7 @@ class _AllCarsState extends State<AllCars> {
         children: [
           adContainer(),
           8.verticalSpace,
-          carListGreyBar(title: "All Makes"),
+          carListGreyBar(onSearchResult:(_){},title: "All Makes",context: context,makes: true),
           8.verticalSpace,
           GetBuilder<BrandController>(
             init: BrandController(),
@@ -46,11 +46,12 @@ class _AllCarsState extends State<AllCars> {
                   itemBuilder: (context, index) {
                     return HomeServiceCard(
                       onTap: () {
-                        controller.getCars(
+                        controller.getCars(  // in case care for sale list
                           make_id: controller.carBrands[index].id,
                           makeName: controller.carBrands[index].name,
                         );
                         Get.to(CarsBrandList(
+                            postKind: "CarForSale", //makes only in car for sale
                             brandName: controller.carBrands[index].name));
                       },
                       brand: true,
