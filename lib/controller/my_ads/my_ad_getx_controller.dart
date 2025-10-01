@@ -167,7 +167,6 @@ class MyAdCleanController extends GetxController {
     required File photoFile,
     required String ourSecret,
   }) async {
-    isUploading.value = true;
     uploadError.value = null;
     uploadSuccess.value = false;
 
@@ -188,9 +187,6 @@ class MyAdCleanController extends GetxController {
         print('✅ Cover image uploaded successfully');
         print('📤 Upload response: $response');
         
-        // Refresh media list after successful upload
-        await fetchPostMedia(postId);
-        
         return true;
       } else {
         uploadError.value = response['Desc'] ?? 'Unknown upload error';
@@ -202,8 +198,6 @@ class MyAdCleanController extends GetxController {
       uploadError.value = 'Network error: ${e.toString()}';
       print('❌ Error uploading cover image: $e');
       return false;
-    } finally {
-      isUploading.value = false;
     }
   }
 
@@ -233,40 +227,6 @@ class MyAdCleanController extends GetxController {
       }
     } catch (e) {
       print('❌ Error deleting gallery image: $e');
-      return false;
-    }
-  }
-
-  /// Update display order for gallery image
-  Future<bool> updateDisplayOrderForGalleryImage({
-    required String postId,
-    required String mediaId,
-    required String direction,
-    required String ourSecret,
-  }) async {
-    try {
-      print('🔄 Updating display order for gallery image - Post ID: $postId, Media ID: $mediaId, Direction: $direction');
-      final response = await repository.updateDisplayOrderForGalleryImage(
-        postId: postId,
-        mediaId: mediaId,
-        direction: direction,
-        ourSecret: ourSecret,
-      );
-      
-      if (response['Code'] == 'OK') {
-        print('✅ Display order updated successfully');
-        print('🔄 Update response: $response');
-        
-        // Refresh media list after successful update
-        await fetchPostMedia(postId);
-        
-        return true;
-      } else {
-        print('❌ Update failed: ${response['Desc']}');
-        return false;
-      }
-    } catch (e) {
-      print('❌ Error updating display order for gallery image: $e');
       return false;
     }
   }

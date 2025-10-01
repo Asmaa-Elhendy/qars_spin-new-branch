@@ -5,21 +5,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
-import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
 import 'package:qarsspin/model/post_media.dart';
 
+import '../../../controller/ads/data_layer.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
 import 'dart:async';
 import 'package:flutter/services.dart';
-
-// API secret constant
-const String galleryOurSecret = '1244';
 
 class GalleryManagement extends StatefulWidget {
   final int postId;
@@ -351,7 +349,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       final success = await controller.uploadPostGalleryPhoto(
         postId: widget.postId.toString(),
         photoFile: imageFile,
-        ourSecret: galleryOurSecret,
+        ourSecret: ourSecret,
         skipRefresh: true, // Skip refresh after each upload
       );
 
@@ -377,60 +375,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
     });
   }
 
-  Future<void> _swapApiImages(int oldIndex, int newIndex) async {
-    final apiImages = controller.postMedia.value?.data ?? [];
-    if (newIndex < 0 || newIndex >= apiImages.length) return;
-
-    // Determine direction based on index movement
-    final direction = newIndex < oldIndex ? 'up' : 'down';
-    final mediaItem = apiImages[oldIndex];
-    
-    // Show loading indicator using the same pattern as other functions
-    controller.isLoadingMedia.value = true;
-    log('⏳ [SWAPPING] Loader ON for image order update');
-    
-    try {
-      final success = await controller.updateDisplayOrderForGalleryImage(
-        postId: widget.postId.toString(),
-        mediaId: mediaItem.mediaId.toString(),
-        direction: direction,
-        ourSecret: ourSecret, // Using the same secret as other API calls
-      );
-      
-      // Hide loading indicator
-      controller.isLoadingMedia.value = false;
-      log('⏳ [SWAPPING] Loader OFF for image order update');
-      
-      if (success) {
-        // The controller already refreshes the media list, so no need to manually update
-        print('✅ Image order updated successfully');
-
-      } else {
-        // Revert to local swap if server call fails
-        print('❌ Server update failed, falling back to local swap');
-        _performLocalSwap(oldIndex, newIndex);
-
-      }
-    } catch (e) {
-      // Hide loading indicator
-      controller.isLoadingMedia.value = false;
-      log('⏳ [SWAPPING] Loader OFF for image order update (error)');
-      
-      // Revert to local swap if there's an error
-      print('❌ Error updating image order: $e');
-      _performLocalSwap(oldIndex, newIndex);
-      Get.snackbar(
-        'Error',
-        'Failed to update image order. Changes saved locally only.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
-  }
-  
-  /// Perform local image swap as fallback
-  void _performLocalSwap(int oldIndex, int newIndex) {
+  void _swapApiImages(int oldIndex, int newIndex) {
     final apiImages = controller.postMedia.value?.data ?? [];
     if (newIndex < 0 || newIndex >= apiImages.length) return;
 
@@ -652,86 +597,52 @@ class _GalleryManagementState extends State<GalleryManagement> {
   /// Upload image and set as cover
   Future<void> _uploadAndSetCoverImage(File imageFile) async {
     try {
-      // Show loading indicator
+      // Show ONE loading indicator for the entire process
       controller.isLoadingMedia.value = true;
       
-      // Upload the cover image using the new method
+      // Step 1: Upload the cover image (this will also refresh media internally)
       final uploadSuccess = await controller.uploadCoverImage(
         postId: widget.postId.toString(),
         photoFile: imageFile,
-        ourSecret: galleryOurSecret,
+        ourSecret: ourSecret,
       );
       
       if (!uploadSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to upload cover image. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        log('❌ [DEBUG] Upload failed');
         return;
       }
       
-      // After successful upload, the media list is already refreshed
-      // Get the latest uploaded image (should be the last one)
+      // Step 2: Get the uploaded image URL from the already refreshed media
       final updatedApiImages = controller.postMedia.value?.data ?? [];
       String newCoverUrl = '';
       
       if (updatedApiImages.isNotEmpty) {
         newCoverUrl = updatedApiImages.last.mediaUrl;
+        log('✅ [DEBUG] Found uploaded image URL: $newCoverUrl');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not get uploaded image URL'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        log('❌ [DEBUG] No images found after upload');
         return;
       }
       
-      // Update the cover image using the controller method
+      // Step 3: Update the cover image reference
       final updateSuccess = await controller.updateCoverImage(
         postId: widget.postId.toString(),
         newCoverImageUrl: newCoverUrl,
-        ourSecret: galleryOurSecret,
+        ourSecret: ourSecret,
       );
       
       if (updateSuccess) {
-        // Update the local cover image state directly without refreshing media
-        setState(() {
-          currentCoverImage = newCoverUrl;
-        });
-        
-        // Only refresh post details to get the latest Rectangle_Image_URL
-        // No need to refresh media since we already have the new cover URL
+        // Step 4: Refresh details - this will update the state including currentCoverImage
         await _fetchPostDetails();
         
-        log('✅ [DEBUG] Cover image updated locally: $currentCoverImage');
-        log('✅ [DEBUG] Skipped media refresh for better performance');
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Cover image updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        log('✅ [DEBUG] Cover image updated successfully: $currentCoverImage');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update cover image'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        log('❌ [DEBUG] Failed to update cover image reference');
       }
     } catch (e) {
-      log('❌ Error uploading and setting cover image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('An error occurred while updating cover image'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      log('❌ Error in cover image process: $e');
     } finally {
+      // Hide loading indicator - process complete
       controller.isLoadingMedia.value = false;
     }
   }
@@ -767,7 +678,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                       onTap: () => Navigator.pop(context),
                       child: Icon(
                         Icons.arrow_back_outlined,
-                        color: Colors.black,
+                        color: Colors.black,//تالت
                         size: 30.w,
                       ),
                     ),
@@ -1105,11 +1016,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 left: 8.w,
                 top: 8.h,
                 child: GestureDetector(
-                  onTap: () async {
+                  onTap: () {
                     final apiImages = controller.postMedia.value?.data ?? [];
                     final index = apiImages.indexOf(mediaItem);
                     if (index > 0) {
-                      await _swapApiImages(index, index - 1);
+                      _swapApiImages(index, index - 1);
                     }
                   },
                   child: Container(
@@ -1131,11 +1042,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 left: 8.w,
                 bottom: 8.h,
                 child: GestureDetector(
-                  onTap: () async {
+                  onTap: () {
                     final apiImages = controller.postMedia.value?.data ?? [];
                     final index = apiImages.indexOf(mediaItem);
                     if (index < apiImages.length - 1) {
-                      await _swapApiImages(index, index + 1);
+                      _swapApiImages(index, index + 1);
                     }
                   },
                   child: Container(
