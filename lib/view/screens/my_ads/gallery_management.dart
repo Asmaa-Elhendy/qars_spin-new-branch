@@ -107,7 +107,6 @@ class _GalleryManagementState extends State<GalleryManagement> {
     log(
       '🚀 [DEBUG] pickMultiImage completed. Files: ${pickedFiles?.length ?? 0}',
     );
-
     if (pickedFiles != null) {
       log('=== DEBUG: Selected ${pickedFiles.length} images ===');
 
@@ -483,8 +482,154 @@ class _GalleryManagementState extends State<GalleryManagement> {
     return fileName.toLowerCase().endsWith('.mp4');
   }
 
-  /// Launch video player using external app
-  Future<void> _launchVideoPlayer(String videoUrl) async {
+  /// Play video in-app within the dialog
+  Future<void> _playVideoInApp(String videoUrl) async {
+    log('🎬 [VIDEO] Playing video in-app for URL: $videoUrl');
+    
+    try {
+      // Check if we already have a controller for this video
+      if (!_videoControllers.containsKey(videoUrl)) {
+        // Create video controller with error handling
+        final videoController = VideoPlayerController.network(videoUrl);
+        
+        try {
+          await videoController.initialize();
+          log('✅ [VIDEO] Video initialized successfully');
+        } catch (initError) {
+          log('❌ [VIDEO] Failed to initialize video: $initError');
+          videoController.dispose();
+          
+          // Show error dialog with fallback option
+          await _showVideoErrorDialog(videoUrl, initError.toString());
+          return;
+        }
+        
+        // Create chewie controller with better error handling
+        final chewieController = ChewieController(
+          videoPlayerController: videoController,
+          autoPlay: true,
+          looping: false,
+          aspectRatio: videoController.value.aspectRatio,
+          allowFullScreen: true,
+          allowMuting: true,
+          showControls: true,
+          materialProgressColors: ChewieProgressColors(
+            playedColor: Colors.red,
+            handleColor: Colors.blue,
+            backgroundColor: Colors.grey,
+            bufferedColor: Colors.lightBlue,
+          ),
+          placeholder: Container(
+            color: Colors.black,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          errorBuilder: (context, errorMessage) {
+            log('❌ [VIDEO] Chewie error: $errorMessage');
+            return Container(
+              color: Colors.black,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red, size: 50),
+                    SizedBox(height: 10),
+                    Text(
+                      'Video cannot be played',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'This video format may not be supported on your device',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _launchVideoPlayerExternally(videoUrl);
+                      },
+                      child: Text('Open in External Player'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+        
+        // Store the controller
+        _videoControllers[videoUrl] = chewieController;
+      }
+      
+      // Show video in dialog
+      await showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.zero,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Chewie(
+              controller: _videoControllers[videoUrl]!,
+            ),
+          ),
+        ),
+      );
+      
+    } catch (e) {
+      log('❌ [VIDEO] Error playing video in-app: $e');
+      await _showVideoErrorDialog(videoUrl, e.toString());
+    }
+  }
+  
+  /// Show video error dialog with fallback options
+  Future<void> _showVideoErrorDialog(String videoUrl, String errorMessage) async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Video Playback Error'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('This video cannot be played on your device.'),
+            SizedBox(height: 8),
+            Text(
+              'Error: ${errorMessage.contains('NO_EXCEEDS_CAPABILITIES') ? 'Video resolution too high for your device' : 'Format not supported'}',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+            SizedBox(height: 16),
+            Text('Would you like to try opening it in an external player?'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel',style: TextStyle(color: AppColors.textPrimary),),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _launchVideoPlayerExternally(videoUrl);
+            },
+            child: Text('Open Externally'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.textPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// Launch video player using external app as fallback
+  Future<void> _launchVideoPlayerExternally(String videoUrl) async {
     log('🎬 [VIDEO] Launching external video player for URL: $videoUrl');
     
     try {
@@ -508,7 +653,6 @@ class _GalleryManagementState extends State<GalleryManagement> {
       );
     }
   }
-
 
   Future<bool> _showDeleteConfirmationDialog(MediaItem mediaItem) async {
     final isVideo = _isVideoFile(mediaItem.mediaFileName);
@@ -889,7 +1033,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                                 SizedBox(height: 20),
                                 ElevatedButton(
                                   onPressed: () {
-                                    _launchVideoPlayer(mediaItem.mediaUrl);
+                                    _playVideoInApp(mediaItem.mediaUrl);
                                   },
                                   child: Text('Play Video'),
                                   style: ElevatedButton.styleFrom(
