@@ -314,6 +314,69 @@ class MyAdDataLayer {
     }
   }
 
+  /// Update display order for gallery image
+  Future<Map<String, dynamic>> updateDisplayOrderForGalleryImage({
+    required String postId,
+    required String mediaId,
+    required String direction,
+    required String ourSecret,
+  }) async {
+    final url = Uri.parse(
+      '$base_url/BrowsingRelatedApi.asmx/UpdateDisplayOrderForGalleryImage',
+    );
+
+    // Prepare the request body
+    final requestBody = {
+      'Post_ID': postId,
+      'Media_ID': mediaId,
+      'Direction': direction,
+      'Our_Secret': ourSecret,
+    };
+
+    log('Updating display order for gallery image - Post ID: $postId, Media ID: $mediaId, Direction: $direction');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: requestBody,
+      );
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse JSON response
+        final parsedJson = jsonDecode(response.body);
+        log('Parsed JSON: $parsedJson');
+        
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'Count': parsedJson['Count'] ?? 0,
+        };
+      } else {
+        print('❌ HTTP Error: Status code ${response.statusCode}');
+        print('Response Body: ${response.body}');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to update display order. Status code: ${response.statusCode}',
+          'Count': 0,
+        };
+      }
+    } catch (e) {
+      log('Error updating display order for gallery image: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'Count': 0,
+      };
+    }
+  }
+
   /// Get post details by post ID
   Future<Map<String, dynamic>> getPostById({
     required String postKind,

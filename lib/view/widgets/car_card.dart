@@ -210,7 +210,7 @@ Widget carCard({
 
 Widget carStatus(CarStatus status) {
   return Container(
-    width: 80.w,   //update asmaa
+    width: 90.w,   //update asmaa
     height: 20.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 

@@ -237,6 +237,40 @@ class MyAdCleanController extends GetxController {
     }
   }
 
+  /// Update display order for gallery image
+  Future<bool> updateDisplayOrderForGalleryImage({
+    required String postId,
+    required String mediaId,
+    required String direction,
+    required String ourSecret,
+  }) async {
+    try {
+      print('🔄 Updating display order for gallery image - Post ID: $postId, Media ID: $mediaId, Direction: $direction');
+      final response = await repository.updateDisplayOrderForGalleryImage(
+        postId: postId,
+        mediaId: mediaId,
+        direction: direction,
+        ourSecret: ourSecret,
+      );
+      
+      if (response['Code'] == 'OK') {
+        print('✅ Display order updated successfully');
+        print('🔄 Update response: $response');
+        
+        // Refresh media list after successful update
+        await fetchPostMedia(postId);
+        
+        return true;
+      } else {
+        print('❌ Update failed: ${response['Desc']}');
+        return false;
+      }
+    } catch (e) {
+      print('❌ Error updating display order for gallery image: $e');
+      return false;
+    }
+  }
+
   /// Update cover image for post
   Future<bool> updateCoverImage({
     required String postId,

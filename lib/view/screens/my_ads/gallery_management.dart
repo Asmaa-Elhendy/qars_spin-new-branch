@@ -1,10 +1,13 @@
 import 'dart:io';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
@@ -13,6 +16,8 @@ import 'package:qarsspin/model/post_media.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
+import 'dart:async';
+import 'package:flutter/services.dart';
 
 class GalleryManagement extends StatefulWidget {
   final int postId;
@@ -38,6 +43,52 @@ class _GalleryManagementState extends State<GalleryManagement> {
   List<MediaItem> apiImages = [];
   String? currentCoverImage;
   Map<String, dynamic>? postDetails;
+  
+  // Map to store video controllers for proper disposal
+  final Map<String, ChewieController> _videoControllers = {};
+
+  /// Check if video file exists locally and return local path if available
+  Future<String> _getLocalVideoPath(String networkUrl) async {
+    try {
+      // Extract filename from network URL
+      final Uri uri = Uri.parse(networkUrl);
+      final filename = uri.pathSegments.last;
+      
+      // Check common local storage paths
+      final List<String> possiblePaths = [
+        // Application documents directory
+        '${(await getApplicationDocumentsDirectory()).path}/$filename',
+        // Application temporary directory
+        '${(await getTemporaryDirectory()).path}/$filename',
+        // External storage directory
+        '${(await getExternalStorageDirectory())?.path}/$filename',
+        // Downloads directory
+        '/storage/emulated/0/Download/$filename',
+        '/storage/emulated/0/Downloads/$filename',
+        // Movies directory
+        '/storage/emulated/0/Movies/$filename',
+        // DCIM/Camera directory
+        '/storage/emulated/0/DCIM/Camera/$filename',
+      ];
+      
+      // Check each possible path
+      for (final path in possiblePaths) {
+        if (path.isNotEmpty) {
+          final file = File(path);
+          if (await file.exists()) {
+            log('🎬 [VIDEO] Found local video file: $path');
+            return path;
+          }
+        }
+      }
+      
+      log('🎬 [VIDEO] No local file found, using network URL: $networkUrl');
+      return networkUrl;
+    } catch (e) {
+      log('❌ [VIDEO] Error checking local video path: $e');
+      return networkUrl;
+    }
+  }
 
   Future<void> _pickImages() async {
     log('🚀 [DEBUG] _pickImages method started!');
@@ -354,6 +405,16 @@ class _GalleryManagementState extends State<GalleryManagement> {
     _fetchPostDetails();
   }
 
+  @override
+  void dispose() {
+    // Dispose all video controllers to prevent memory leaks
+    for (var controller in _videoControllers.values) {
+      controller.dispose();
+    }
+    _videoControllers.clear();
+    super.dispose();
+  }
+
   // Method to load cover image from postDetails (similar to create_new_ad.dart)
   void _loadCoverImageFromPostDetails() {
     if (postDetails != null && postDetails!['Rectangle_Image_URL'] != null) {
@@ -417,13 +478,47 @@ class _GalleryManagementState extends State<GalleryManagement> {
     }
   }
 
+  /// Helper method to check if media file is a video (.mp4)
+  bool _isVideoFile(String fileName) {
+    return fileName.toLowerCase().endsWith('.mp4');
+  }
 
-  Future<bool> _showDeleteConfirmationDialog() async {
+  /// Launch video player using external app
+  Future<void> _launchVideoPlayer(String videoUrl) async {
+    log('🎬 [VIDEO] Launching external video player for URL: $videoUrl');
+    
+    try {
+      final Uri uri = Uri.parse(videoUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        log('❌ [VIDEO] Could not launch URL: $videoUrl');
+        Get.snackbar(
+          'Error',
+          'Could not play video. Please check your video player app.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      log('❌ [VIDEO] Error launching video player: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to play video. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+
+  Future<bool> _showDeleteConfirmationDialog(MediaItem mediaItem) async {
+    final isVideo = _isVideoFile(mediaItem.mediaFileName);
+    final mediaType = isVideo ? 'video' : 'image';
+    
     return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Delete Image'),
-            content: Text('Are you sure you want to delete this image?'),
+            title: Text('Delete $mediaType'),
+            content: Text('Are you sure you want to delete this $mediaType?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -447,6 +542,22 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<bool> _deleteApiImage(String mediaId) async {
     try {
+      // Find the media item to check if it's a video
+      final apiImages = controller.postMedia.value?.data ?? [];
+      final mediaItem = apiImages.firstWhere(
+        (item) => item.mediaId.toString() == mediaId,
+        orElse: () => apiImages.first,
+      );
+      
+      // If it's a video, dispose its controller
+      if (_isVideoFile(mediaItem.mediaFileName)) {
+        final controller = _videoControllers[mediaItem.mediaUrl];
+        if (controller != null) {
+          controller.dispose();
+          _videoControllers.remove(mediaItem.mediaUrl);
+        }
+      }
+      
       final success = await controller.deletePostGalleryPhoto(
         mediaId: mediaId,
         postId: widget.postId.toString(),
@@ -650,7 +761,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
               Expanded(
                 child: Obx(() {
                   if (controller.mediaError.value != null) {
-                    return Center(
+                    return Center(//l
                       child: Text(
                         'Error loading images: ${controller.mediaError.value}',
                         style: TextStyle(color: Colors.red),
@@ -660,7 +771,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   final apiImages = controller.postMedia.value?.data ?? [];
 
-                  final allImages = [
+                  final allImages = [//ks
                     ...apiImages.map(
                       (mediaItem) => _buildApiImageItem(mediaItem),
                     ),
@@ -785,33 +896,61 @@ class _GalleryManagementState extends State<GalleryManagement> {
           ),
           child: Stack(
             children: [
-              /// Network Imagehkنه
+              /// Network Image or Video Player
               Positioned.fill(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                  child: Image.network(
-                    mediaItem.mediaUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: Icon(Icons.broken_image, size: 50),
+                  child: _isVideoFile(mediaItem.mediaFileName)
+                      ? Container(
+                          color: Colors.black,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.videocam, color: Colors.white, size: 50),
+                                SizedBox(height: 10),
+                                Text(
+                                  'Video Preview',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _launchVideoPlayer(mediaItem.mediaUrl);
+                                  },
+                                  child: Text('Play Video'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Image.network(
+                          mediaItem.mediaUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: Icon(Icons.broken_image, size: 50),
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ),
 
@@ -850,7 +989,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           if (index != -1) {
                             // Show confirmation dialog
                             final shouldDelete =
-                                await _showDeleteConfirmationDialog();
+                                await _showDeleteConfirmationDialog(mediaItem);
                             if (shouldDelete) {
                               final success = await _deleteApiImage(
                                 mediaItem.mediaId.toString(),
