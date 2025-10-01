@@ -365,11 +365,11 @@ Widget MyAdCard(
                               postKind: ad.postKind,
                               userName: ad.userName,
                             ),
-                          )?.then((_) {
+                          )?.then((_) {//j
                             // Auto-refresh MyAdsMainScreen when returning from GalleryManagement
-                            log('✅ [DEBUG] Returned from GalleryManagement, refreshing MyAdsMainScreen');
+                            log('✅ [DEBUG] Returned from GalleryManagement, silent refreshing MyAdsMainScreen');
                             final controller = Get.find<MyAdCleanController>();
-                            controller.fetchMyAds(); // Refresh the ads list
+                            controller.silentRefreshMyAds(); // Silent refresh without loader
                           });
                         },
                         w: double.infinity,

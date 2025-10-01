@@ -675,10 +675,17 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     InkWell(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        // Turn off any active loaders and silent refresh my ads before going back
+                        controller.isLoadingMedia.value = false;
+                        final myAdsController = Get.find<MyAdCleanController>();
+                        myAdsController.silentRefreshMyAds();
+                        myAdsController.disableLoaderForReturn();
+                        Navigator.pop(context);
+                      },
                       child: Icon(
                         Icons.arrow_back_outlined,
-                        color: Colors.black,//تالت
+                        color: Colors.black,//تالتgf
                         size: 30.w,
                       ),
                     ),

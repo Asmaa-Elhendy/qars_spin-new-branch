@@ -81,6 +81,36 @@ class MyAdCleanController extends GetxController {
     }
   }
 
+  /// Silent refresh my ads without showing loader or triggering any UI updates
+  Future<void> silentRefreshMyAds() async {
+    print('🔄 [CONTROLLER] silentRefreshMyAds() called');
+    
+    try {
+      final response = await repository.getListOfPostsByUserName(
+        userName: 'Asmaa2',
+        ourSecret: '1244',
+      );
+
+      if (response['Code'] == 'OK') {
+        final myAdResponse = MyAdResponse.fromJson(response);
+        // Update data silently without triggering reactive updates
+        myAds.clear();
+        myAds.addAll(myAdResponse.data);
+        print('✅ Silent refresh completed successfully');
+      } else {
+        print('❌ API Error: ${response['Desc']}');
+      }
+    } catch (e) {
+      print('❌ Error in silent refresh: $e');
+    }
+  }
+
+  /// Disable loader when returning from gallery management
+  void disableLoaderForReturn() {
+    print('🔒 [CONTROLLER] Disabling loader for return to my ads');
+    isLoadingMyAds.value = false;
+  }
+
   /// Fetch media for a specific post
   Future<void> fetchPostMedia(String postId) async {
     isLoadingMedia.value = true;
