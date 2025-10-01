@@ -851,7 +851,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                               images.length +
                               (controller.postMedia.value?.data.length ?? 0);
                           return Text(
-                            "$totalImages of 15 images",
+                            "${totalImages+1} of 15 images",//including 1  for cover
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: fontFamily,
