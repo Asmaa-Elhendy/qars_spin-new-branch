@@ -973,7 +973,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           //khk
                           String displayText = "${totalImages+1} of 15 images";//1 for add cover photo to count images
                             displayText += " and $videoCount of 1 video";
-
+                           
 
                           
                           return Text(
