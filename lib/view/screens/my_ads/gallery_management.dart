@@ -964,11 +964,23 @@ class _GalleryManagementState extends State<GalleryManagement> {
                         ),
                         SizedBox(height: 3),
                         Obx(() {
+                          final apiImages = controller.postMedia.value?.data ?? [];
+                          final videoCount = apiImages.where((item) => _isVideoFile(item.mediaFileName)).length;
+                          final imageCount = apiImages.where((item) => !_isVideoFile(item.mediaFileName)).length;
                           final totalImages =
                               images.length +
-                              (controller.postMedia.value?.data.length ?? 0);
+                              imageCount;
+                          //kh
+                          String displayText = "${totalImages+1} of 15 images";//1 for add cover photo to count images
+                          if (videoCount > 0) {
+                            displayText += " and $videoCount of 1 video";
+                            if (videoCount > 1) {
+                              displayText += "s";
+                            }
+                          }
+                          
                           return Text(
-                            "${totalImages+1} of 15 images",//including 1  for cover
+                            displayText,
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: fontFamily,
