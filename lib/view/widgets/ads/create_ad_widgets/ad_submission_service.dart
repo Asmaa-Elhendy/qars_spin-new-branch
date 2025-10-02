@@ -569,7 +569,7 @@ class AdSubmissionService {
     if (coverImage.isNotEmpty && !images.contains(coverImage)) {
       showErrorDialog("Cover image must be one of the uploaded images");
       return false;
-    }
+    }//j
 
     // Check maximum images limit
     if (images.length > 15) {

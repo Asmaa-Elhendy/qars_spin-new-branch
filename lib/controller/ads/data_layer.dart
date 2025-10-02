@@ -338,66 +338,6 @@ class AdRepository {
 
 
 
-//multipart video:
-//   /// Upload video for a post
-//   Future<Map<String, dynamic>> uploadVideoForPost({
-//     required String postId,
-//     required String ourSecret,
-//     required String videoPath,
-//   }) async
-//   {
-//     log('stating uploading video... $videoPath');
-//     final url = Uri.parse(
-//       '$base_url/BrowsingRelatedApi.asmx/UploadVideoForPost',
-//     );
-//
-//     try {
-//       // Read the video file
-//       final file = File(videoPath);
-//       if (!await file.exists()) {
-//         return {
-//           'Code': 'Error',
-//           'Desc': 'Video file not found',
-//         };
-//       }
-//
-//       // Create multipart request
-//       final request = http.MultipartRequest('POST', url);
-//
-//       // Add form fields
-//       request.fields['Post_ID'] = postId;
-//       request.fields['Our_Secret'] = ourSecret;
-//
-//       // Add video file (field name غالباً هيكون VideoBytes)
-//       final videoFile = await http.MultipartFile.fromPath(
-//         'video', // 🔑
-//         videoPath,
-//         filename: 'video.mp4',
-//
-//       );
-//       request.files.add(videoFile);
-//
-//       // Send the request
-//       final response = await request.send();
-//       log('response for video   ${response.statusCode}  ${response}');
-//       final responseBody = await response.stream.bytesToString();
-//       log('response for video   ${response.statusCode}  ${responseBody}');
-//       if (response.statusCode == 200) {
-//         // Parse XML/response
-//         return _parseUploadResponse(responseBody);
-//       } else {
-//         return {
-//           'Code': 'Error',
-//           'Desc': 'Failed to upload video. Status code: ${response.statusCode}',
-//         };
-//       }
-//     } catch (e) {
-//       return {
-//         'Code': 'Error',
-//         'Desc': 'Network error: ${e.toString()}',
-//       };
-//     }
-//   }
 
   /// Parse JSON response from API
   Map<String, dynamic> _parseJsonResponse(String jsonString) {

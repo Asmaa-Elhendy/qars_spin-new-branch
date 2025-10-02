@@ -13,7 +13,6 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
 import 'package:qarsspin/model/post_media.dart';
 
-import '../../../controller/ads/data_layer.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
 import 'dart:async';
@@ -44,8 +43,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
   String? currentCoverImage;
   Map<String, dynamic>? postDetails;
   
+  // API secret constant
+  static const String ourSecret = '1244';
+  
   // Map to store video controllers for proper disposal
   final Map<String, ChewieController> _videoControllers = {};
+  
+  // Track currently playing video URL
+  String? _currentlyPlayingVideoUrl;
 
   /// Check if video file exists locally and return local path if available
   Future<String> _getLocalVideoPath(String networkUrl) async {
@@ -87,6 +92,130 @@ class _GalleryManagementState extends State<GalleryManagement> {
     } catch (e) {
       log('❌ [VIDEO] Error checking local video path: $e');
       return networkUrl;
+    }
+  }
+
+  /// Show media selection dialog (Photo/Video)
+  Future<void> _showMediaSelectionDialog() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Add Media',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Divider(height: 1),
+              ListTile(
+                leading: Icon(Icons.photo_library, color: Colors.black),
+                title: Text('Add Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImages();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.video_library, color: Colors.black),
+                title: Text('Add Video'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickVideo();
+                },
+              ),
+              SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Pick video from gallery
+  Future<void> _pickVideo() async {
+    try {
+      // Check if there's already a video
+      final apiImages = controller.postMedia.value?.data ?? [];
+      final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
+      
+      if (hasVideo) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("You can only add one video")),
+        );
+        return;
+      }
+
+      final XFile? videoFile = await _picker.pickVideo(
+        source: ImageSource.gallery,
+      );
+
+      if (videoFile != null) {
+        log('🎬 [VIDEO] Selected video: ${videoFile.path}');
+        await _uploadVideoToApi(File(videoFile.path));
+      }
+    } catch (e) {
+      log('❌ Error picking video: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to pick video'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Upload video to API
+  Future<void> _uploadVideoToApi(File videoFile) async {
+    try {
+      // Show loading indicator
+      controller.isLoadingMedia.value = true;
+      
+      log('🎬 [VIDEO] Uploading video for post ID: ${widget.postId}');
+      
+      final success = await controller.uploadPostVideo(
+        postId: widget.postId.toString(),
+        videoPath: videoFile.path,
+        ourSecret: ourSecret,
+        skipRefresh: true, // Skip refresh to do it manually like images
+      );
+      
+      if (success) {
+        log('✅ [VIDEO] Video uploaded successfully');
+        // Refresh media list to show the new video (same as images)
+        await _fetchPostImages();
+      } else {
+        log('❌ [VIDEO] Video upload failed');
+        log('❌ [VIDEO] Upload error details: ${controller.uploadError.value}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload video: ${controller.uploadError.value ?? 'Unknown error'}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      log('❌ Error uploading video: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error uploading video: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      // Hide loading indicator
+      controller.isLoadingMedia.value = false;
     }
   }
 
@@ -482,13 +611,24 @@ class _GalleryManagementState extends State<GalleryManagement> {
     return fileName.toLowerCase().endsWith('.mp4');
   }
 
-  /// Play video in-app within the dialog
-  Future<void> _playVideoInApp(String videoUrl) async {
-    log('🎬 [VIDEO] Playing video in-app for URL: $videoUrl');
+  /// Toggle video playback inline in the card
+  Future<void> _toggleVideoPlayback(String videoUrl) async {
+    log('🎬 [VIDEO] Toggling video playback for: $videoUrl');
     
     try {
+      // If this video is already playing, stop it
+      if (_currentlyPlayingVideoUrl == videoUrl) {
+        log('🎬 [VIDEO] Stopping video: $videoUrl');
+        _stopCurrentVideo();
+        return;
+      }
+      
+      // Stop any currently playing video
+      _stopCurrentVideo();
+      
       // Check if we already have a controller for this video
       if (!_videoControllers.containsKey(videoUrl)) {
+        log('🎬 [VIDEO] Creating new controller for: $videoUrl');
         // Create video controller with error handling
         final videoController = VideoPlayerController.network(videoUrl);
         
@@ -499,8 +639,15 @@ class _GalleryManagementState extends State<GalleryManagement> {
           log('❌ [VIDEO] Failed to initialize video: $initError');
           videoController.dispose();
           
-          // Show error dialog with fallback option
-          await _showVideoErrorDialog(videoUrl, initError.toString());
+          // Check if error is due to high resolution or device capabilities
+          if (initError.toString().contains('NO_EXCEEDS_CAPABILITIES') ||
+              initError.toString().contains('resolution') ||
+              initError.toString().contains('format') ||
+              initError.toString().contains('capabilities')) {
+            log('🎬 [VIDEO] High resolution video detected, launching external player');
+            await _launchVideoPlayerExternally(videoUrl);
+            return;
+          }
           return;
         }
         
@@ -510,11 +657,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
           autoPlay: true,
           looping: false,
           aspectRatio: videoController.value.aspectRatio,
-          allowFullScreen: true,
+          allowFullScreen: false, // Disable fullscreen for inline playback
           allowMuting: true,
           showControls: true,
           materialProgressColors: ChewieProgressColors(
-            playedColor: Colors.red,
+            playedColor: AppColors.danger,
             handleColor: Colors.blue,
             backgroundColor: Colors.grey,
             bufferedColor: Colors.lightBlue,
@@ -541,14 +688,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'This video format may not be supported on your device',
+                      'This video may be too high resolution for your device',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        _stopCurrentVideo();
                         _launchVideoPlayerExternally(videoUrl);
                       },
                       child: Text('Open in External Player'),
@@ -566,67 +713,37 @@ class _GalleryManagementState extends State<GalleryManagement> {
         
         // Store the controller
         _videoControllers[videoUrl] = chewieController;
+      } else {
+        log('🎬 [VIDEO] Using existing controller for: $videoUrl');
       }
       
-      // Show video in dialog
-      await showDialog(
-        context: context,
-        builder: (context) => Dialog(
-          backgroundColor: Colors.black,
-          insetPadding: EdgeInsets.zero,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: Chewie(
-              controller: _videoControllers[videoUrl]!,
-            ),
-          ),
-        ),
-      );
+      // Set this video as currently playing
+      setState(() {
+        _currentlyPlayingVideoUrl = videoUrl;
+      });
+      
+      log('🎬 [VIDEO] Video set as currently playing: $videoUrl');
       
     } catch (e) {
-      log('❌ [VIDEO] Error playing video in-app: $e');
-      await _showVideoErrorDialog(videoUrl, e.toString());
+      log('❌ [VIDEO] Error toggling video playback: $e');
     }
   }
   
-  /// Show video error dialog with fallback options
-  Future<void> _showVideoErrorDialog(String videoUrl, String errorMessage) async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Video Playback Error'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('This video cannot be played on your device.'),
-            SizedBox(height: 8),
-            Text(
-              'Error: ${errorMessage.contains('NO_EXCEEDS_CAPABILITIES') ? 'Video resolution too high for your device' : 'Format not supported'}',
-              style: TextStyle(color: Colors.red, fontSize: 12),
-            ),
-            SizedBox(height: 16),
-            Text('Would you like to try opening it in an external player?'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel',style: TextStyle(color: AppColors.textPrimary),),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _launchVideoPlayerExternally(videoUrl);
-            },
-            child: Text('Open Externally'),
-            style: TextButton.styleFrom(foregroundColor: AppColors.textPrimary),
-          ),
-        ],
-      ),
-    );
+  /// Stop the currently playing video
+  void _stopCurrentVideo() {
+    if (_currentlyPlayingVideoUrl != null) {
+      final controller = _videoControllers[_currentlyPlayingVideoUrl];
+      if (controller != null) {
+        controller.pause();
+        controller.videoPlayerController.seekTo(Duration.zero);
+      }
+      setState(() {
+        _currentlyPlayingVideoUrl = null;
+      });
+      log('🎬 [VIDEO] Stopped current video');
+    }
   }
+  
   
   /// Launch video player using external app as fallback
   Future<void> _launchVideoPlayerExternally(String videoUrl) async {
@@ -863,7 +980,19 @@ class _GalleryManagementState extends State<GalleryManagement> {
                       ],
                     ),
                     InkWell(
-                      onTap: _pickImages,
+                      onTap: () {
+                        // Check if there's already a video in media
+                        final apiImages = controller.postMedia.value?.data ?? [];
+                        final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
+                        
+                        if (hasVideo) {
+                          // If video exists, directly pick images (old behavior)
+                          _pickImages();
+                        } else {
+                          // If no video, show selection dialog
+                          _showMediaSelectionDialog();
+                        }
+                      },
                       child: Image.asset("assets/images/add.png", scale: 25.w),
                     ),
                   ],
@@ -961,7 +1090,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   color: Colors.black.withOpacity(0.5),
                   child: Center(
                     child: AppLoadingWidget(
-                      //kj
+                      //kjjkj
                       title: 'Loading...\nPlease Wait...',
                     ),
                   ),
@@ -1020,30 +1149,33 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   child: _isVideoFile(mediaItem.mediaFileName)
                       ? Container(
                           color: Colors.black,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.videocam, color: Colors.white, size: 50),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Video Preview',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _playVideoInApp(mediaItem.mediaUrl);
-                                  },
-                                  child: Text('Play Video'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
+                          child: _currentlyPlayingVideoUrl == mediaItem.mediaUrl
+                              ? Container(
+                                  // Show inline video player
+                                  child: Chewie(
+                                    controller: _videoControllers[mediaItem.mediaUrl]!,
+                                  ),
+                                )
+                              : GestureDetector(
+                                  // Show video preview with play button
+                                  onTap: () => _toggleVideoPlayback(mediaItem.mediaUrl),
+                                  child: Container(
+                                    color: Colors.black,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.play_circle_filled, color: Colors.white, size: 60),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Tap to Play Video',
+                                            style: TextStyle(color: Colors.white, fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
                         )
                       : Image.network(
                           mediaItem.mediaUrl,

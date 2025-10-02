@@ -2,13 +2,15 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_data_layer.dart';
+import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 import 'package:qarsspin/model/post_media.dart';
 
 class MyAdCleanController extends GetxController {
   final MyAdDataLayer repository;
+  final AdRepository adRepository;
 
-  MyAdCleanController(this.repository);
+  MyAdCleanController(this.repository) : adRepository = AdRepository();
 
   // My Ads state
   var myAds = <MyAdModel>[].obs;
@@ -54,8 +56,8 @@ class MyAdCleanController extends GetxController {
 
     try {
       final response = await repository.getListOfPostsByUserName(
-        userName: 'Asmaa2',
-        ourSecret: '1244',
+        userName: userName,
+        ourSecret: ourSecret,
       );
 
       if (response['Code'] == 'OK') {
@@ -189,6 +191,59 @@ class MyAdCleanController extends GetxController {
     isUploading.value = false;
     uploadError.value = null;
     uploadSuccess.value = false;
+  }
+
+  /// Upload video for post
+  Future<bool> uploadPostVideo({
+    required String postId,
+    required String videoPath,
+    required String ourSecret,
+    bool skipRefresh = false,
+  }) async {
+    isUploading.value = true;
+    uploadError.value = null;
+    uploadSuccess.value = false;
+
+    try {
+      print('🎬 [CONTROLLER] Uploading video for post ID: $postId');
+      final response = await adRepository.uploadVideoForPost(
+        postId: postId,
+        videoPath: videoPath,
+        ourSecret: ourSecret,
+      );
+      
+      print('🎬 [CONTROLLER] Raw response from repository: $response');
+      print('🎬 [CONTROLLER] Response Code: ${response['Code']}');
+      print('🎬 [CONTROLLER] Response Desc: ${response['Desc']}');
+      print('🎬 [CONTROLLER] Response Type: ${response.runtimeType}');
+      if (response.containsKey('Data')) {
+        print('🎬 [CONTROLLER] Response Data: ${response['Data']}');
+      }
+      
+      if (response['Code'] == 'OK') {
+        uploadSuccess.value = true;
+        print('✅ Video uploaded successfully');
+        print('🎬 Upload response: $response');
+        
+        // Refresh media list after successful upload (unless skipRefresh is true)
+        if (!skipRefresh) {
+          await fetchPostMedia(postId);
+        }
+        
+        return true;
+      } else {
+        uploadError.value = response['Desc'] ?? 'Unknown upload error';
+        print('❌ Video upload failed: ${uploadError.value}');
+        print('❌ [CONTROLLER] Response Code: ${response['Code']}, Desc: ${response['Desc']}');
+        return false;
+      }
+    } catch (e) {
+      uploadError.value = 'Network error: ${e.toString()}';
+      print('❌ Error uploading video: $e');
+      return false;
+    } finally {
+      isUploading.value = false;
+    }
   }
 
   /// Upload cover image for post
