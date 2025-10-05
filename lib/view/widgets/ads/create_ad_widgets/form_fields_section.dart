@@ -23,8 +23,8 @@ class FormFieldsSection extends StatefulWidget {
   final TextEditingController typeController;
   final TextEditingController yearController;
   final TextEditingController warrantyController;
-  final TextEditingController request360Controller;
-  final TextEditingController requestFeatureController;
+  // final TextEditingController request360Controller;
+  // final TextEditingController requestFeatureController;
   final TextEditingController askingPriceController;
   final TextEditingController minimumPriceController;
   final TextEditingController mileageController;
@@ -37,8 +37,12 @@ class FormFieldsSection extends StatefulWidget {
   final Function(Color) onInteriorColorSelected;
   final bool termsAccepted;
   final bool infoConfirmed;
+  final bool  isRequest360;
+  final bool  isFeaturedPost ;
   final ValueChanged<bool?>? onTermsChanged;
   final ValueChanged<bool?>? onInfoChanged;
+  final ValueChanged<bool?>? onReq360Changed;
+  final ValueChanged<bool?>? onReqFeaturedChanged;
   final Function({bool shouldPublish}) onValidateAndSubmit;
   final VoidCallback? onUnfocusDescription;
 
@@ -51,8 +55,9 @@ class FormFieldsSection extends StatefulWidget {
     required this.typeController,
     required this.yearController,
     required this.warrantyController,
-    required this.request360Controller,
-    required this.requestFeatureController,
+    // required this.request360Controller,
+    // required this.requestFeatureController,
+
     required this.askingPriceController,
     required this.minimumPriceController,
     required this.mileageController,
@@ -67,6 +72,10 @@ class FormFieldsSection extends StatefulWidget {
     required this.infoConfirmed,
     required this.onTermsChanged,
     required this.onInfoChanged,
+    required this.isRequest360,
+    required this.isFeaturedPost,
+    required this.onReq360Changed,
+    required this.onReqFeaturedChanged,
     required this.onValidateAndSubmit,
     this.onUnfocusDescription,
   }) : super(key: key);
@@ -421,35 +430,10 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
 
         // request 360 and feature
-        widget.postData==null?   Column(crossAxisAlignment: CrossAxisAlignment.start,
+        widget.postData==null?
+        Column(crossAxisAlignment: CrossAxisAlignment.start,
          children: [
-           CustomDropDownTyping(
-              label: "Request 360 Service",
-              controller: widget.request360Controller,
-              options: ["No", "Yes"],
-              enableSearch: false,
-              hintText: "",
-              onChanged: (value) {
-                setState(() {
 
-                  // Handle warranty selection if needed
-                });
-              },
-            ),
-            SizedBox(height: height * .01),
-
-              CustomDropDownTyping(
-              label: "Feature Your Ad",
-              controller: widget.requestFeatureController,
-              options: ["No", "Yes"],
-              enableSearch: false,
-              hintText: "",
-              onChanged: (value) {
-                setState(() {
-                  // Handle warranty selection if needed
-                });
-              },
-            ),
             SizedBox(height: height * .02),
            Text('Car Specifications',style: TextStyle(fontSize: 15.w,
               fontWeight: FontWeight.w500,
@@ -467,7 +451,83 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
          ],
        ):SizedBox(),
 
+        // CustomDropDownTyping(
+        //   label: "Request 360 Service",
+        //   controller: widget.request360Controller,
+        //   options: ["No", "Yes"],
+        //   enableSearch: false,
+        //   hintText: "",
+        //   onChanged: (value) {
+        //     setState(() {
+        //
+        //       // Handle warranty selection if needed
+        //     });
+        //   },
+        // ),
+        // SizedBox(height: height * .01),
+
+        // CustomDropDownTyping(
+        //   label: "Feature Your Ad",
+        //   controller: widget.requestFeatureController,
+        //   options: ["No", "Yes"],
+        //   enableSearch: false,
+        //   hintText: "",
+        //   onChanged: (value) {
+        //     setState(() {
+        //       // Handle warranty selection if needed
+        //     });
+        //   },
+        // ),
+        // CustomDropDownTyping(
+        //   label: "Feature Your Ad",
+        //   controller: widget.requestFeatureController,
+        //   options: ["No", "Yes"],
+        //   enableSearch: false,
+        //   hintText: "",
+        //   onChanged: (value) {
+        //     setState(() {
+        //       // Handle warranty selection if needed
+        //     });
+        //   },
+        // ),
         // Terms and Conditions Checkbox
+        widget.postData==null?
+        Column(
+          children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  value: widget.isRequest360,
+                  onChanged: widget.onReq360Changed,
+                  activeColor: Colors.black,
+                ),
+                Expanded(
+                  child: Text(
+                    'Make Your Advertisement special by 360 session (100 riyal only for full shooting session)',
+                    style: TextStyle(fontSize: 14.4.w,fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),SizedBox(height: height*.01,),
+            Row(crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  value: widget.isFeaturedPost,
+                  onChanged: widget.onReqFeaturedChanged,
+                  activeColor: Colors.black,
+                ),
+                Expanded(
+                  child: Text(
+                    'Pin your advertisement at the top for (150) QR only',
+                    style: TextStyle(fontSize: 14.4.w,fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ):SizedBox(),
         Row(
           children: [
             Checkbox(
@@ -479,7 +539,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             Expanded(
               child: Text(
                 'I agree to the Terms and Conditions',
-                style: TextStyle(fontSize: 15.w),
+                style: TextStyle(fontSize:14.4.w,fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -502,7 +562,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   SizedBox(height: 15.h),
                   Text(
                     'I confirm the accuracy of the information provided',
-                    style: TextStyle(fontSize: 15.w),
+                    style: TextStyle(fontSize:14.4.w,fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -513,60 +573,65 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
 
         //save and request publish
-        widget.postData==null?
-        Padding(
-          padding: EdgeInsets.only(right: width * .03,left:  width * .03,bottom: height*.01),
-          child: SizedBox(
-            width: double.infinity,
-            height: height * .05,
-            child: ElevatedButton(
-              onPressed: () => widget.onValidateAndSubmit(shouldPublish: true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xfff6c42d),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              child: Text(
-                "Publish",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.w,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        )
-            :SizedBox(),
+
 
         // Save as draft Button
-        Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: width * .03),
-            child: SizedBox(
-              width: widget.postData==null? width*.6:double.infinity,
-              height: height * .05,
-              child: ElevatedButton(
-                onPressed: () => widget.onValidateAndSubmit(shouldPublish: false),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xfff6c42d),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Text(
-                  widget.postData==null?  "Save As Draft":widget.postData['PostStatus'].toString()=="Approved"?"RePublish":"Save",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.w,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+         Row(mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+             SizedBox(
+               width: widget.postData == null ? width * .3 : double.infinity,
+               height: height * .05,
+               child: GestureDetector(
+                 onTap: () => widget.onValidateAndSubmit(shouldPublish: false),
+                 child: Container(
+                   decoration: BoxDecoration(
+                     color: AppColors.primary,
+                     borderRadius: BorderRadius.circular(2),
+                   ),
+                   alignment: Alignment.center,
+                   child: Text(
+                     widget.postData == null
+                         ? "Save As Draft"
+                         : widget.postData['PostStatus'].toString() == "Approved"
+                         ? "RePublish"
+                         : "Save",
+                     style: TextStyle(
+                       color: Colors.black,
+                       fontSize: 16.w,
+                       fontWeight: FontWeight.bold,
+                     ),
+                   ),
+                 ),
+               ),
+             ),
+            SizedBox(width: width*.02,),
+             widget.postData==null?
+             SizedBox(
+               width: width * .54,
+               height: height * .05,
+               child: GestureDetector(
+                 onTap: () => widget.onValidateAndSubmit(shouldPublish: true),
+                 child: Container(
+                   decoration: BoxDecoration(
+                     color: AppColors.success,
+                     borderRadius: BorderRadius.circular(2),
+                   ),
+                   alignment: Alignment.center,
+                   child: Text(
+                     "Publish",
+                     style: TextStyle(
+                       color: Colors.black,
+                       fontSize: 16.w,
+                       fontWeight: FontWeight.bold,
+                     ),
+                   ),
+                 ),
+               ),
+             )
+                 :SizedBox()
+           ],
+         ),
+
 
         SizedBox(height: 10.h),
         Center(

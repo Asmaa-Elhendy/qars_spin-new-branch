@@ -13,12 +13,13 @@ import '../../../../model/create_ad_model.dart';
 
 class AdSubmissionService {
   // User credentials - these should be moved to a proper configuration/session management
-  static const String userName = 'Asmaa2';
-  static const String ourSecret = '1244';
+
   static Future<void> submitAd({
     required bool shouldPublish,
-    required TextEditingController request360controller,
-    required TextEditingController featureyouradcontroller,
+    // required TextEditingController request360controller,
+    // required TextEditingController featureyouradcontroller,
+    required bool  isRequest360,
+    required bool  isFeaturedPost,
     required BuildContext context,
     required List<String> images,
     required String coverImage,
@@ -61,8 +62,10 @@ class AdSubmissionService {
 
       await _submitOrUpdateAd(
         shouldPublish: shouldPublish,
-        request360controller:  request360controller,
-        featureyouradcontroller:  featureyouradcontroller,
+        isRequest360:  isRequest360,
+        isFeaturedPost:  isFeaturedPost,
+        // request360controller:  request360controller,
+        // featureyouradcontroller:  featureyouradcontroller,
         context: context,
         images: images,
         coverImage: coverImage,
@@ -261,8 +264,10 @@ class AdSubmissionService {
 
   static Future<void> _submitOrUpdateAd({
     required shouldPublish,
-    required request360controller,
-    required featureyouradcontroller,
+    // required request360controller,
+    // required featureyouradcontroller,
+    required bool  isRequest360,
+    required bool  isFeaturedPost,
     required BuildContext context,
     required List<String> images,
     required String coverImage,
@@ -386,13 +391,17 @@ class AdSubmissionService {
         log('Modified specs upload completed');
 
         // Request 360 photo session - ONLY IN CREATE MODE
-        if (postId == null && request360controller.text == "Yes" && responsePostId.isNotEmpty) {
+        if (postId == null &&
+            isRequest360//request360controller.text == "Yes"
+            && responsePostId.isNotEmpty) {
           log('Requesting 360 photo session for post ID: $responsePostId');
           await _request360Session(postId: responsePostId);
         }
 
         // Request to feature ad - ONLY IN CREATE MODE
-        if (postId == null && featureyouradcontroller.text == "Yes" && responsePostId.isNotEmpty) {
+        if (postId == null &&
+          isFeaturedPost//  featureyouradcontroller.text == "Yes"
+            && responsePostId.isNotEmpty) {
           log('Requesting to feature ad for post ID: $responsePostId');
           await _requestFeatureAd(postId: responsePostId);
           log('Feature ad request completed');

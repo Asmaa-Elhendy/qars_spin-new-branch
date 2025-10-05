@@ -16,6 +16,8 @@ class ValidationMethods {
     required bool termsAccepted,
     required bool infoConfirmed,
     required BuildContext context,
+    required bool  isRequest360,
+    required bool  isFeaturedPost,
     required Function(String) showMissingFieldsDialog,
     required Function() showMissingCoverImageDialog, required postData,
   }) {

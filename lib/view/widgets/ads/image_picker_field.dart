@@ -246,8 +246,8 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     // Combine images and video into a single list for display
     List<Map<String, dynamic>> mediaItems = [];
     
-    // Add video first if exists
-    if (_videoPath != null) {
+    // Add video first if exists and NOT in modify mode
+    if (_videoPath != null && !widget.isModifyMode) {
       mediaItems.add({
         'path': _videoPath!,
         'isVideo': true,

@@ -95,10 +95,21 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
                     }
                   } : null,
                   child: _isVideo(widget.coverImage!)
-                      ? VideoPlayerWidget(
-                    videoPath: widget.coverImage!,
-                    autoPlay: true,
-                    looping: true,
+                      ? Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.videocam, size: 50, color: Colors.grey[600]),
+                          SizedBox(height: 10),
+                          Text(
+                            'Video Cover',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
                   )
                       : _isNetworkUrl(widget.coverImage!)
                       ? Image.network(

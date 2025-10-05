@@ -55,6 +55,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   Color? _interiorColor;
   bool _termsAccepted = false;
   bool _infoConfirmed = false;
+  bool _isRequest360=false;
+  bool _isFeauredPost=false;
 
   String? _originalExteriorColorHex;
   String? _originalInteriorColorHex;
@@ -75,8 +77,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   final TextEditingController _type_controller = TextEditingController();
   final TextEditingController _year_controller = TextEditingController();
   final TextEditingController _warranty_controller = TextEditingController();
-  final TextEditingController request360Controller = TextEditingController();
-  final TextEditingController requestFeatureController = TextEditingController();
+  // final TextEditingController request360Controller = TextEditingController();
+  // final TextEditingController requestFeatureController = TextEditingController();
 
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -265,16 +267,18 @@ class _SellCarScreenState extends State<SellCarScreen> {
   @override
   void initState() {
     super.initState();
-    request360Controller.text='No';
-    requestFeatureController.text='No';
+    // request360Controller.text='No';
+    // requestFeatureController.text='No';
     // Check if we're in modify mode with post ID
     if (widget.postData != null && widget.postData['isModifyMode'] == true) {
       // Load post data in the background
       _loadPostDataForModify();
-    } else if (widget.postData != null) {
+    }
+    else if (widget.postData != null) {
       // If we have complete post data, populate the fields (existing behavior)
       _populateFieldsFromPostData(widget.postData!);
-    } else {
+    }
+    else {
       // Initialize for new ad
       _initializeForNewAd();
     }
@@ -492,6 +496,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
       coverImage: _coverImage ?? '',
       termsAccepted: _termsAccepted,
       infoConfirmed: _infoConfirmed,
+      isRequest360:_isRequest360,
+      isFeaturedPost:_isFeauredPost,
       context: context,
       showMissingFieldsDialog: _showMissingFieldsAlert,
       showMissingCoverImageDialog: _showMissingCoverImageAlert,
@@ -638,8 +644,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
     } else {
       // Create mode
       await AdSubmissionService.submitAd(
-        request360controller: request360Controller,
-        featureyouradcontroller: requestFeatureController,
+        // request360controller: request360Controller,
+        // featureyouradcontroller: requestFeatureController,
+        isRequest360:_isRequest360,
+        isFeaturedPost:_isFeauredPost,
         shouldPublish: shouldPublish,
         context: context,
         images: _images,
@@ -758,8 +766,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         // ),
 
                         FormFieldsSection(postData: widget.postData,
-                          request360Controller: request360Controller,
-                          requestFeatureController:requestFeatureController ,
+                          // request360Controller: request360Controller,
+                          // requestFeatureController:requestFeatureController ,
+                          isRequest360:_isRequest360,
+                          isFeaturedPost:_isFeauredPost,
                           makeController: _make_controller,
                           classController: _class_controller,
                           modelController: _model_controller,
@@ -799,6 +809,20 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             if (value != null) {
                               setState(() {
                                 _infoConfirmed = value;
+                              });
+                            }
+                          },
+                          onReq360Changed: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _isRequest360 = value;
+                              });
+                            }
+                          },
+                          onReqFeaturedChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _isFeauredPost = value;
                               });
                             }
                           },
