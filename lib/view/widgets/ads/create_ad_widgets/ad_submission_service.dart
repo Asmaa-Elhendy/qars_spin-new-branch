@@ -40,7 +40,7 @@ class AdSubmissionService {
     required Color interiorColor,
     required bool videoChanged,
     required Function() showLoadingDialog,
-    required Function(String, String) showSuccessDialog,
+    required Function(String, String, {bool isPublished}) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
     required Function() navigateToMyAds,
@@ -124,7 +124,7 @@ class AdSubmissionService {
     required bool videoChanged,
     required bool shouldPublish,
     required Function() showLoadingDialog,
-    required Function(String, String) showSuccessDialog,
+    required Function(String, String, {bool isPublished}) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
   }) async
@@ -232,22 +232,22 @@ class AdSubmissionService {
                 log('✅ [PUBLISH] Publish request sent successfully for ad: $postId');
                 // Update success message to include publish info
                 String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
-                showSuccessDialog(publishSuccessMessage, postId);
+                showSuccessDialog(publishSuccessMessage, postId, isPublished: true);
               } else {
                 log('❌ [PUBLISH] Failed to send publish request for ad: $postId');
                 String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
-                showSuccessDialog(publishErrorMessage, postId);
+                showSuccessDialog(publishErrorMessage, postId, isPublished: true);
               }
             } catch (e) {
               log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
               String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
-              showSuccessDialog(publishErrorMessage, postId);
+              showSuccessDialog(publishErrorMessage, postId, isPublished: true);
             }
           });
         }
         else {
-          // Show success dialog
-          showSuccessDialog(successMessage, postId);
+          // Show success dialog for draft save
+          showSuccessDialog(successMessage, postId, isPublished: false);
         }
       } else {
         String errorMessage = response['Desc'] ?? 'Failed to update ad';
@@ -288,7 +288,7 @@ class AdSubmissionService {
     required Color interiorColor,
     required bool videoChanged,
     required Function() showLoadingDialog,
-    required Function(String, String) showSuccessDialog,
+    required Function(String, String, {bool isPublished}) showSuccessDialog,
     required Function(String) showErrorDialog,
     required Function() hideLoadingDialog,
     required Function() navigateToMyAds,
@@ -455,16 +455,16 @@ class AdSubmissionService {
                 log('✅ [PUBLISH] Publish request sent successfully for ad: $responsePostId');
                 // Update success message to include publish info
                 String publishSuccessMessage = "$successMessage\n\n📤 Publish request sent successfully!";
-                showSuccessDialog(publishSuccessMessage, responsePostId);
+                showSuccessDialog(publishSuccessMessage, responsePostId, isPublished: true);
               } else {
                 log('❌ [PUBLISH] Failed to send publish request for ad: $responsePostId');
                 String publishErrorMessage = "$successMessage\n\n⚠️ Failed to send publish request.";
-                showSuccessDialog(publishErrorMessage, responsePostId);
+                showSuccessDialog(publishErrorMessage, responsePostId, isPublished: true);
               }
             } catch (e) {
               log('❌ [PUBLISH] Error sending publish request: ${e.toString()}');
               String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
-              showSuccessDialog(publishErrorMessage, responsePostId);
+              showSuccessDialog(publishErrorMessage, responsePostId, isPublished: true);
             }
             
             // Navigate after showing publish result
@@ -475,7 +475,7 @@ class AdSubmissionService {
           });
         } else {
           // Show success dialog first
-          showSuccessDialog(successMessage, responsePostId);
+          showSuccessDialog(successMessage, responsePostId, isPublished: shouldPublish);
           
           // Add a small delay to ensure dialog is shown, then navigate
           Future.delayed(Duration(milliseconds: 500), () {
@@ -532,7 +532,7 @@ class AdSubmissionService {
           } else {
             log('❌ Failed to upload gallery photo ${i + 1}: ${myAdController.uploadError.value}');
           }
-        } else {
+        } else {//l
           log('❌ Gallery photo file not found: $imagePath');
         }
       }

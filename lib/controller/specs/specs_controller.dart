@@ -164,7 +164,7 @@ class SpecsController extends GetxController {
           specs[specIndex] = updatedSpec;
           log('✅ Updated spec in local list: ${updatedSpec.specHeaderPl} = ${updatedSpec.specValuePl}');
         }
-
+//jk
         return true;
       } else {
         log('❌ API Error updating spec: ${response['Desc']}');

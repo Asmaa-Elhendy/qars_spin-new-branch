@@ -561,12 +561,13 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   /// Show success dialog
-  void _showSuccessDialog(String message, String postId) {
+  void _showSuccessDialog(String message, String postId, {bool isPublished = false}) {
     SuccessDialog.show(
       context,
       postId,
       _navigateToMyAds,
       isModifyMode: widget.postData != null,
+      isPublished: isPublished,
     );
   }
 
