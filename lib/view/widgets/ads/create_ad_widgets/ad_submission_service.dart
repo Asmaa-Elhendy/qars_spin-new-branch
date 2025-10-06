@@ -387,7 +387,12 @@ class AdSubmissionService {
         }//k
         // Upload modified specs after gallery photos - ONLY IN CREATE MODE
         log('Uploading modified specs for post ID: $responsePostId');
-        await _uploadModifiedSpecs(postId: responsePostId);//k
+        // Get the SpecsController instance that was used for the form
+        final specsController = Get.find<SpecsController>(tag: 'specs_0');
+        await _uploadModifiedSpecs(
+          postId: responsePostId,
+          specsController: specsController,
+        );
         log('Modified specs upload completed');
 
         // Request 360 photo session - ONLY IN CREATE MODE
@@ -598,13 +603,14 @@ class AdSubmissionService {
   /// Upload modified specs to the server after gallery photos upload
   static Future<void> _uploadModifiedSpecs({
     required String postId,
-  }) async
-  {
+    required SpecsController specsController,
+  }) async {
     try {
       log('🔧 [SPECS] Starting upload of modified specs for post ID: $postId');
       
-      // Get the SpecsController instance
-      final specsController = Get.find<SpecsController>();
+      // Log the current state of the controller
+      log('🔧 [SPECS] Controller instance: ${specsController.hashCode}');
+      log('🔧 [SPECS] Current modified specs count: ${specsController.getModifiedSpecs().length}');
       
       // Get only the specs that have been modified (non-empty values)
       final modifiedSpecs = specsController.getModifiedSpecs();
@@ -616,16 +622,22 @@ class AdSubmissionService {
       
       log('🔧 [SPECS] Uploading ${modifiedSpecs.length} modified specs');
       
+      // Log all modified specs before uploading
+      log('🔧 [SPECS] Modified specs to upload:');
+      for (final spec in modifiedSpecs) {
+        log('   - ${spec.specId}: ${spec.specHeaderPl} = "${spec.specValuePl}"');
+      }
+      
       // Upload each modified spec
       for (final spec in modifiedSpecs) {
         try {
-          log('🔧 [SPECS] Uploading spec: ${spec.specHeaderPl} = ${spec.specValuePl}');
+          log('🔧 [SPECS] Uploading spec: ${spec.specHeaderPl} = "${spec.specValuePl}"');
           
           // Use the existing API method to update spec value
           final success = await specsController.updateSpecValue(
-            postId: postId, // Use the post ID from the ad creation
+            postId: postId,
             specId: spec.specId,
-            specValue: spec.specValuePl.isNotEmpty ? spec.specValuePl : spec.specValueSl,
+            specValue: spec.specValuePl.isNotEmpty ? spec.specValuePl : spec.specValueSl ?? '',
           );
           
           if (success) {

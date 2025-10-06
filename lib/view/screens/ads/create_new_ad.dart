@@ -82,6 +82,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   final TextEditingController _descriptionController = TextEditingController();
 
+  final TextEditingController fuelTypeController= TextEditingController();
+  final TextEditingController cylindersController= TextEditingController();
+  final TextEditingController transmissionController= TextEditingController();
+
   bool _coverPhotoChanged = false;
   bool _videoChanged = false;
 
@@ -397,6 +401,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
     _descriptionController.clear();
     _exteriorColorController.clear();
     _interiorColorController.clear();
+    fuelTypeController.clear();
+    transmissionController.clear();
+    cylindersController.clear();
 
     // Set year to most recent year
     _year_controller.text = (DateTime.now().year + 1).toString();
@@ -784,6 +791,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
                           descriptionController: _descriptionController,
                           exteriorColor: _exteriorColor ?? Colors.white,
                           interiorColor: _interiorColor ?? Colors.white,
+                          fuelTypeController:fuelTypeController,
+                          transmissionController: transmissionController,
+                          cylindersController: cylindersController,
                           onExteriorColorSelected: (color) {
                             setState(() {//kتن
                               _exteriorColor = color;

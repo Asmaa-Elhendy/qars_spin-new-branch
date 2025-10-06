@@ -14,6 +14,31 @@ class SpecsController extends GetxController {
   var isLoadingSpecs = false.obs;
   var specsError = Rxn<String>();
   var specsResponse = Rxn<Map<String, dynamic>>();
+  
+  // Track modified specs directly
+  final List<Specs> _modifiedSpecsList = [];
+  
+  // Track when _modifiedSpecIds is cleared
+  void _clearModifiedSpecs() {
+    log('\n⚠️ [CLEAR] Clearing _modifiedSpecsList. Current count: ${_modifiedSpecsList.length}');
+    if (_modifiedSpecsList.isNotEmpty) {
+      log('   - Clearing these specs: ${_modifiedSpecsList.map((s) => '${s.specId}:${s.specHeaderPl}').join(', ')}');
+      // Log the stack trace to see where this is being called from
+      log('   - Cleared from: ${StackTrace.current.toString().split('\n').take(3).join('\n        ')}');
+    }
+    _modifiedSpecsList.clear();
+  }
+  
+ 
+  
+  // Track all modifications to _modifiedSpecsList
+  void _trackModifiedSpecsChange(String action, Specs? spec) {
+    log('🔄 [_modifiedSpecsList] $action - Current count: ${_modifiedSpecsList.length}');
+    if (spec != null) {
+      log('   - Spec: ${spec.specId}:${spec.specHeaderPl} = "${spec.specValuePl}"');
+    }
+    log('   - Current modified specs: ${_modifiedSpecsList.isNotEmpty ? _modifiedSpecsList.map((s) => s.specId).join(', ') : 'none'}');
+  }
 
   // Current post ID
   var currentPostId = Rxn<String>();
@@ -21,6 +46,12 @@ class SpecsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    log('🔄 [SPECS] SpecsController initialized, _modifiedSpecsList count: ${_modifiedSpecsList.length}');
+  }
+  
+  /// Clear the list of modified specs (call this after successful upload)
+  void clearModifiedSpecs() {
+    _clearModifiedSpecs();
   }
 
   /// Fetch specs for a specific post
@@ -177,9 +208,9 @@ class SpecsController extends GetxController {
     // Specs(postId: "0", specId: "10", specType: "Text", specHeaderPl: "Engine Power", specValuePl: "", specHeaderSl: "قوة المحرك", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "11", specType: "Text", specHeaderPl: "Torque", specValuePl: "", specHeaderSl: "عزم الدوران", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "9", specType: "Color", specHeaderPl: "Interior color", specValuePl: "", specHeaderSl: "اللون الداخلي", specValueSl: "", isHidden: false),
-    Specs(postId: "0", specId: "12", specType: "Text", specHeaderPl: "Fuel Type", specValuePl: "", specHeaderSl: "نوع الوقود", specValueSl: "", isHidden: false),
-    Specs(postId: "0", specId: "1", specType: "Number", specHeaderPl: "Cylinders", specValuePl: "", specHeaderSl: "الاسطوانات", specValueSl: "", isHidden: false),
-    Specs(postId: "0", specId: "13", specType: "Text", specHeaderPl: "Transmission", specValuePl: "", specHeaderSl: "ناقل الحركة", specValueSl: "", isHidden: false),
+    Specs(postId: "0", specId: "12", specType: "Text", specHeaderPl: "Fuel Type", specValuePl: "", specHeaderSl: "نوع الوقود", specValueSl: "", isHidden: false,options: ['Diesel','Petrol','Electric','Hybrid','LPG']),
+    Specs(postId: "0", specId: "1", specType: "Number", specHeaderPl: "Cylinders", specValuePl: "", specHeaderSl: "الاسطوانات", specValueSl: "", isHidden: false,options: ['No','Yes']),
+    Specs(postId: "0", specId: "13", specType: "Text", specHeaderPl: "Transmission", specValuePl: "", specHeaderSl: "ناقل الحركة", specValueSl: "", isHidden: false,options: ['Manual','Automatic']),
     // Specs(postId: "0", specId: "14", specType: "Text", specHeaderPl: "Drivetrain", specValuePl: "", specHeaderSl: "نظام القيادة", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "15", specType: "Text", specHeaderPl: "Upholstery Material", specValuePl: "", specHeaderSl: "مواد التنجيد", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "16", specType: "Number", specHeaderPl: "Infotainment Screen Size", specValuePl: "", specHeaderSl: "حجم شاشة الترفيه", specValueSl: "", isHidden: false),
@@ -215,47 +246,89 @@ class SpecsController extends GetxController {
     // Specs(postId: "0", specId: "46", specType: "Yes - No", specHeaderPl: "Roof Rails", specValuePl: "", specHeaderSl: "قضبان السقف", specValueSl: "", isHidden: false),
   ];
   
-  // No need for reactive counter with GetBuilder
-
   /// Update spec value locally in specsStatic list
+  void _logSpecsState(String message) {
+    log('📊 [STATE] $message');
+    for (final spec in specsStatic) {
+      final isModified = _modifiedSpecsList.any((s) => s.specId == spec.specId);
+      log('   - ${spec.specId.padLeft(2)}: ${spec.specHeaderPl.padRight(15)} = "${spec.specValuePl}" ${isModified ? '(MODIFIED)' : ''}');
+    }
+  }
+
   void updateLocal({
     required String specId,
     required String specValuePl,
     String? specValueSl,
-  })
-  {
+  }) {
     try {
-      log('🔧 [LOCAL] Updating spec value - Spec ID: $specId, Value: $specValuePl');
-
+      // Log current state before any changes
+      log('\n📌 [UPDATE STARTED] Spec ID: $specId, New Value: "$specValuePl"');
+      _logSpecsState('BEFORE UPDATE');
+      
       // Find the spec in specsStatic list
       final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
-
-      if (specIndex != -1) {
-        // Create updated spec with new value
-        final updatedSpec = Specs(
-          postId: specsStatic[specIndex].postId,
-          specId: specsStatic[specIndex].specId,
-          specType: specsStatic[specIndex].specType,
-          specHeaderPl: specsStatic[specIndex].specHeaderPl,
-          specValuePl: specValuePl, // Update the Polish value
-          specHeaderSl: specsStatic[specIndex].specHeaderSl,
-          specValueSl: specValueSl ?? specsStatic[specIndex].specValueSl, // Update Slovenian if provided
-          isHidden: specsStatic[specIndex].isHidden,
-        );
-
-        // Update the specsStatic list
-        specsStatic[specIndex] = updatedSpec;
-        
-        // Trigger UI update for GetBuilder
-        update();
-
-        log('✅ [LOCAL] Successfully updated spec in specsStatic:');
-        log('  Header: ${updatedSpec.specHeaderPl}');
-        log('  New Value: ${updatedSpec.specValuePl}');
-        log('  Spec ID: ${updatedSpec.specId}');
-      } else {
-        log('❌ [LOCAL] Spec not found in specsStatic with ID: $specId');
+      
+      if (specIndex == -1) {
+        log('❌ [ERROR] Spec ID $specId not found in specsStatic');
+        return;
       }
+      
+      final oldSpec = specsStatic[specIndex];
+      final oldValue = oldSpec.specValuePl;
+      
+      // Only proceed if the value has actually changed
+      if (oldValue == specValuePl && (specValueSl == null || oldSpec.specValueSl == specValueSl)) {
+        log('ℹ️ [LOCAL] No change in value for spec ID: $specId, skipping update');
+        return;
+      }
+      
+      log('🔄 [DROPDOWN] Changing spec ID: $specId from "$oldValue" to "$specValuePl"');
+      
+      // Create updated spec with new value
+      final updatedSpec = Specs(
+        postId: oldSpec.postId,
+        specId: oldSpec.specId,
+        specType: oldSpec.specType,
+        specHeaderPl: oldSpec.specHeaderPl,
+        specValuePl: specValuePl,
+        specHeaderSl: oldSpec.specHeaderSl,
+        specValueSl: specValueSl ?? oldSpec.specValueSl,
+        isHidden: oldSpec.isHidden,
+        options: oldSpec.options,
+      );
+      
+      // Update the specsStatic list
+      specsStatic[specIndex] = updatedSpec;
+      
+      // Check if we already have this spec in the modified list
+      final existingIndex = _modifiedSpecsList.indexWhere((s) => s.specId == specId);
+      
+      if (existingIndex != -1) {
+        // Update existing modified spec
+        _modifiedSpecsList[existingIndex] = updatedSpec;
+        log('🔄 [MODIFIED] Updated existing modified spec: ${updatedSpec.specHeaderPl} = "$specValuePl"');
+      } else {
+        // Add new modified spec
+        _modifiedSpecsList.add(updatedSpec);
+        log('➕ [MODIFIED] Added new modified spec: ${updatedSpec.specHeaderPl} = "$specValuePl"');
+      }
+      
+      // Log all modified specs with their values
+      log('📋 [MODIFIED SPECS] Current state (${_modifiedSpecsList.length} specs):');
+      for (final spec in _modifiedSpecsList) {
+        log('   - ${spec.specId}: ${spec.specHeaderPl} = "${spec.specValuePl}"');
+      }
+      
+      // Log the current state of all specs
+      _logAllSpecs();
+      
+      // Trigger UI update for GetBuilder
+      update();
+      
+      log('✅ [LOCAL] Successfully updated spec in specsStatic and _modifiedSpecsList:');
+      log('  Header: ${updatedSpec.specHeaderPl}');
+      log('  New Value: ${updatedSpec.specValuePl}');
+      log('  Spec ID: ${updatedSpec.specId}');
     } catch (e) {
       log('❌ [LOCAL] Error updating spec value locally: $e');
     }
@@ -267,7 +340,7 @@ class SpecsController extends GetxController {
   }) {
     try {
       log('🔧 [LOCAL] Clearing spec value - Spec ID: $specId');
-
+      
       // Find the spec in specsStatic list
       final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
 
@@ -282,17 +355,36 @@ class SpecsController extends GetxController {
           specHeaderSl: specsStatic[specIndex].specHeaderSl,
           specValueSl: "", // Clear the Slovenian value
           isHidden: specsStatic[specIndex].isHidden,
+          options: specsStatic[specIndex].options,
         );
 
         // Update the specsStatic list
         specsStatic[specIndex] = updatedSpec;
         
+        // Track before updating in modified list
+        _trackModifiedSpecsChange('CLEARING', updatedSpec);
+        
+        // Remove if exists (to avoid duplicates)
+        _modifiedSpecsList.removeWhere((s) => s.specId == specId);
+        
+        // Add the updated spec to modified list
+        _modifiedSpecsList.add(updatedSpec);
+        
+        // Track after updating
+        _trackModifiedSpecsChange('CLEARED', updatedSpec);
+        
         // Trigger UI update for GetBuilder
         update();
 
-        log('✅ [LOCAL] Successfully cleared spec value in specsStatic:');
+        log('✅ [LOCAL] Successfully cleared spec value in specsStatic and _modifiedSpecsList:');
         log('  Header: ${updatedSpec.specHeaderPl}');
         log('  Spec ID: ${updatedSpec.specId}');
+        
+        // Log all modified specs with their values
+        log('📋 [MODIFIED SPECS] Current state after clear:');
+        for (final spec in _modifiedSpecsList) {
+          log('   - ${spec.specId}: ${spec.specHeaderPl} = "${spec.specValuePl}"');
+        }
       } else {
         log('❌ [LOCAL] Spec not found in specsStatic with ID: $specId');
       }
@@ -302,21 +394,42 @@ class SpecsController extends GetxController {
   }
 
   /// Get only the specs that have been modified (non-empty values)
+  /// Log the current state of all specs for debugging
+  void _logAllSpecs() {
+    log('📋 [DEBUG] === Current State of All Specs ===');
+    log('📋 [DEBUG] Total specs: ${specsStatic.length}');
+    log('📋 [DEBUG] Modified specs count: ${_modifiedSpecsList.length}');
+    
+    for (final spec in specsStatic) {
+      final isModified = _modifiedSpecsList.any((s) => s.specId == spec.specId);
+      log('  - ${spec.specId.padLeft(2)} | ${spec.specHeaderPl.padRight(20)} | Value: "${spec.specValuePl}" | Modified: ${isModified ? '✅' : '❌'}');
+    }
+    log('📋 [DEBUG] =================================');
+  }
+
   List<Specs> getModifiedSpecs() {
     try {
-      log('🔍 [FILTER] Getting modified specs from specsStatic');
+      log('🔍 [FILTER] === Starting getModifiedSpecs() ===');
+      _logAllSpecs();
       
-      // Filter specs that have non-empty values
-      final modifiedSpecs = specsStatic.where((spec) => 
-        spec.specValuePl.isNotEmpty 
-      ).toList();
+      log('🔍 [FILTER] Found ${_modifiedSpecsList.length} modified specs');
       
-      log('✅ [FILTER] Found ${modifiedSpecs.length} modified specs:');
-      for (final spec in modifiedSpecs) {
-        log('  - ${spec.specHeaderPl}: ${spec.specValuePl} (ID: ${spec.specId})');
+      // Filter out any specs with empty values
+      final modifiedWithValues = _modifiedSpecsList.where((s) => s.specValuePl.trim().isNotEmpty).toList();
+      
+      log('🔍 [FILTER] Found ${modifiedWithValues.length} modified specs with non-empty values:');
+      for (final spec in modifiedWithValues) {
+        log('  - ${spec.specId.padLeft(2)} | ${spec.specHeaderPl.padRight(20)} | Value: "${spec.specValuePl}"');
       }
       
-      return modifiedSpecs;
+      if (modifiedWithValues.isEmpty) {
+        log('⚠️ [FILTER] No modified specs found with values. Possible issues:');
+        log('  - Specs might be modified but not marked in _modifiedSpecsList');
+        log('  - Specs might be marked as modified but have empty values');
+        log('  - _modifiedSpecsList might have been cleared unexpectedly');
+      }
+      
+      return modifiedWithValues;
     } catch (e) {
       log('❌ [FILTER] Error getting modified specs: $e');
       return [];

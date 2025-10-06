@@ -7,6 +7,7 @@ class Specs {
   final String specHeaderSl;
   final String specValueSl;
   final bool isHidden;
+  final List<String>? options;
 
   Specs({
     required this.postId,
@@ -17,6 +18,7 @@ class Specs {
     required this.specHeaderSl,
     required this.specValueSl,
     required this.isHidden,
+    this.options=null,
   });
 
   factory Specs.fromJson(Map<String, dynamic> json) {

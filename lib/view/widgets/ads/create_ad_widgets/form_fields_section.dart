@@ -23,6 +23,7 @@ class FormFieldsSection extends StatefulWidget {
   final TextEditingController typeController;
   final TextEditingController yearController;
   final TextEditingController warrantyController;
+
   // final TextEditingController request360Controller;
   // final TextEditingController requestFeatureController;
   final TextEditingController askingPriceController;
@@ -31,14 +32,18 @@ class FormFieldsSection extends StatefulWidget {
   final TextEditingController plateNumberController;
   final TextEditingController chassisNumberController;
   final TextEditingController descriptionController;
+  final TextEditingController fuelTypeController;
+  final TextEditingController cylindersController;
+  final TextEditingController transmissionController;
   final Color exteriorColor;
   final Color interiorColor;
   final Function(Color) onExteriorColorSelected;
   final Function(Color) onInteriorColorSelected;
   final bool termsAccepted;
   final bool infoConfirmed;
-  final bool  isRequest360;
-  final bool  isFeaturedPost ;
+  final bool isRequest360;
+  final bool isFeaturedPost;
+
   final ValueChanged<bool?>? onTermsChanged;
   final ValueChanged<bool?>? onInfoChanged;
   final ValueChanged<bool?>? onReq360Changed;
@@ -55,9 +60,9 @@ class FormFieldsSection extends StatefulWidget {
     required this.typeController,
     required this.yearController,
     required this.warrantyController,
+
     // required this.request360Controller,
     // required this.requestFeatureController,
-
     required this.askingPriceController,
     required this.minimumPriceController,
     required this.mileageController,
@@ -68,6 +73,9 @@ class FormFieldsSection extends StatefulWidget {
     required this.interiorColor,
     required this.onExteriorColorSelected,
     required this.onInteriorColorSelected,
+    required this.fuelTypeController,
+    required this.cylindersController,
+    required this.transmissionController,
     required this.termsAccepted,
     required this.infoConfirmed,
     required this.onTermsChanged,
@@ -85,7 +93,6 @@ class FormFieldsSection extends StatefulWidget {
 }
 
 class _FormFieldsSectionState extends State<FormFieldsSection> {
-
   late SpecsController specsController;
   late FocusNode _descriptionFocusNode;
 
@@ -105,7 +112,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
   late AdCleanController brandController;
   String? selectedType;
-  
+
   // Variables to store results of request 360 service and feature your ad
   bool? request360ServiceResult;
   bool? featureYourAdResult;
@@ -115,7 +122,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
     super.initState();
 
     _descriptionFocusNode = FocusNode();
-    
+
     specsController = Get.put(
       SpecsController(SpecsDataLayer()),
       tag: 'specs_${0}',
@@ -157,57 +164,57 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
       children: [
         SizedBox(height: height * .02),
 
-        Text(
-          "(*) Mandatory Choice",
-          style: TextStyle(fontSize: width * .04),
-        ),
+        Text("(*) Mandatory Choice", style: TextStyle(fontSize: width * .04)),
         SizedBox(height: height * .01),
 
         // Make Dropdown
-        Obx(() => CustomDropDownTyping(
-          label: "Choose Make(*)",
-          controller: widget.makeController,
-          options: brandController.carBrands
-              .map((b) => b.name)
-              .toList()
-            ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
-          hintText: "Choose Make",
-          onChanged: (value) {
-            final selected = brandController.carBrands
-                .firstWhereOrNull((b) => b.name == value);
+        Obx(
+          () => CustomDropDownTyping(
+            label: "Choose Make(*)",
+            controller: widget.makeController,
+            options: brandController.carBrands.map((b) => b.name).toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+            hintText: "Choose Make",
+            onChanged: (value) {
+              final selected = brandController.carBrands.firstWhereOrNull(
+                (b) => b.name == value,
+              );
 
-            if (selected != null) {
-              brandController.selectedMake.value = selected;
-              widget.makeController.text = selected.name;
-              log("heee   ${widget.makeController.text}");
-              brandController.fetchCarClasses(selected.id.toString());
-              widget.classController.clear();
-              brandController.selectedClass.value = null;
-              setState(() {});
-            } else if (value.isEmpty) {
-              widget.classController.clear();
-              brandController.selectedClass.value = null;
-              brandController.carClasses.clear();
-              widget.modelController.clear();
-              brandController.selectedModel.value = null;
-              brandController.carModels.clear();
-              setState(() {});
-            }
-          },
-        )),
+              if (selected != null) {
+                brandController.selectedMake.value = selected;
+                widget.makeController.text = selected.name;
+                log("heee   ${widget.makeController.text}");
+                brandController.fetchCarClasses(selected.id.toString());
+                widget.classController.clear();
+                brandController.selectedClass.value = null;
+                setState(() {});
+              } else if (value.isEmpty) {
+                widget.classController.clear();
+                brandController.selectedClass.value = null;
+                brandController.carClasses.clear();
+                widget.modelController.clear();
+                brandController.selectedModel.value = null;
+                brandController.carModels.clear();
+                setState(() {});
+              }
+            },
+          ),
+        ),
 
         SizedBox(height: height * .01),
-        
+
         // Class Dropdown
         Obx(() {
           return CustomDropDownTyping(
             label: "Choose Class(*)",
             controller: widget.classController,
-            options: brandController.carClasses.map((c) => c.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+            options: brandController.carClasses.map((c) => c.name).toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
             hintText: "",
             onChanged: (value) {
-              final selected = brandController.carClasses
-                  .firstWhereOrNull((c) => c.name == value);
+              final selected = brandController.carClasses.firstWhereOrNull(
+                (c) => c.name == value,
+              );
               if (selected != null) {
                 brandController.selectedClass.value = selected;
                 brandController.fetchCarModels(selected.id.toString());
@@ -225,17 +232,19 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         }),
 
         SizedBox(height: height * .01),
-        
+
         // Model Dropdown
         Obx(() {
           return CustomDropDownTyping(
             label: "Choose Model(*)",
             controller: widget.modelController,
-            options: brandController.carModels.map((m) => m.name).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
+            options: brandController.carModels.map((m) => m.name).toList()
+              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
             hintText: "",
             onChanged: (value) {
-              final selected = brandController.carModels
-                  .firstWhereOrNull((m) => m.name == value);
+              final selected = brandController.carModels.firstWhereOrNull(
+                (m) => m.name == value,
+              );
               if (selected != null) {
                 brandController.selectedModel.value = selected;
               }
@@ -244,19 +253,20 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         }),
 
         SizedBox(height: height * .01),
-        
+
         // Car Type Dropdown - Using dynamic categories from API
         GetBuilder<AdCleanController>(
           id: 'car_categories',
           builder: (controller) {
-            print('GetBuilder rebuilding for car categories. Count: ${controller.carCategories.length}');
+            print(
+              'GetBuilder rebuilding for car categories. Count: ${controller.carCategories.length}',
+            );
             print('Loading state: ${controller.isLoadingCategories.value}');
-            final categoryOptions = controller.carCategories
-                .map((c) => c.name)
-                .toList()
-              ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+            final categoryOptions =
+                controller.carCategories.map((c) => c.name).toList()
+                  ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
             print('Category options: $categoryOptions');
-            
+
             return CustomDropDownTyping(
               label: "Choose Type(*)",
               controller: widget.typeController,
@@ -265,8 +275,9 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
               hintText: "",
               onChanged: (value) {
                 print('Type selected: $value');
-                final selected = controller.carCategories
-                    .firstWhereOrNull((c) => c.name == value);
+                final selected = controller.carCategories.firstWhereOrNull(
+                  (c) => c.name == value,
+                );
                 if (selected != null) {
                   controller.selectedCategory.value = selected;
                   widget.typeController.text = selected.name;
@@ -286,14 +297,14 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         ),
 
         SizedBox(height: height * .01),
-        
+
         // Year Dropdown
         CustomDropDownTyping(
           label: "Manufacture Year(*)",
           controller: widget.yearController,
           options: List.generate(
             51,
-                (index) => (DateTime.now().year + 1 - index).toString(),
+            (index) => (DateTime.now().year + 1 - index).toString(),
           ).toList(),
           enableSearch: false,
           hintText: "",
@@ -385,7 +396,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           hintText: "Enter chassis number",
         ),
         SizedBox(height: height * .01),
-        
+
         CustomDropDownTyping(
           label: "Under Warranty",
           controller: widget.warrantyController,
@@ -399,7 +410,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           },
         ),
         SizedBox(height: height * .01),
-        
+
         Text(
           'Car Description',
           style: TextStyle(
@@ -409,7 +420,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           ),
         ),
         SizedBox(height: height * .01),
-        
+
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black, width: 0.3),
@@ -430,26 +441,109 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
 
         // request 360 and feature
-        widget.postData==null?
-        Column(crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
+        widget.postData == null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //  SizedBox(height: height * .02),
+                  // Text('Car Specifications',style: TextStyle(fontSize: 15.w,
+                  //    fontWeight: FontWeight.w500,
+                  //    color: Colors.black87,)),
+                  //  SizedBox(height: height * .01),
+                  // GetBuilder<SpecsController>(
+                  //   builder: (controller) {
+                  //     return Column(
+                  //       children: controller.specsStatic.map((spec) {
+                  //         return specsContainer( spec, context,controller,_showGlobalLoader,_hideGlobalLoader,true);
+                  //       }).toList(),
+                  //     );
+                  //   },
+                  // ),
+                  GetBuilder<SpecsController>(
+                    builder: (controller) {//kjhتن
+                      return Column(
+                        children: [
+                          CustomDropDownTyping(
+                            label:
+                                controller.specsStatic[0].specHeaderPl ??
+                                "Option",
+                            // 👈 اسم الخيار
+                            controller:widget.fuelTypeController,
+                            // 👈 كل spec له كنترولر خاص
+                            options: List<String>.from(
+                              controller.specsStatic[0].options ?? [],
+                            ),
+                            // 👈 ال options بتاعته
+                            enableSearch: false,
+                            hintText: "Select",
+                            onChanged: (value) {
+                              specsController.updateLocal(specId: specsController.specsStatic[0].specId, specValuePl: widget.fuelTypeController.text);
+                              // هنا تعملي أي action على اختيار الـ option
+                              //  controller.updateSpec(spec['id'], value);
+                            },
+                          ),
+                          SizedBox(height: height * .01),
+                          CustomDropDownTyping(
+                            label:
+                                controller.specsStatic[1].specHeaderPl ??
+                                "Option",
+                            // 👈 اسم الخيار
+                            controller: widget.cylindersController,
+                            // 👈 كل spec له كنترولر خاص
+                            options: List<String>.from(
+                              controller.specsStatic[1].options ?? [],
+                            ),
+                            // 👈 ال options بتاعته
+                            enableSearch: false,
+                            hintText: "Select",
+                            onChanged: (value) {
+                              specsController.updateLocal(specId: specsController.specsStatic[1].specId, specValuePl: widget.cylindersController.text);
 
-            SizedBox(height: height * .02),
-           Text('Car Specifications',style: TextStyle(fontSize: 15.w,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,)),
-            SizedBox(height: height * .01),
-               GetBuilder<SpecsController>(
-                 builder: (controller) {
-                   return Column(
-                     children: controller.specsStatic.map((spec) {
-                       return specsContainer( spec, context,controller,_showGlobalLoader,_hideGlobalLoader,true);
-                     }).toList(),
-                   );
-                 },
-               ),
-         ],
-       ):SizedBox(),
+                              // هنا تعملي أي action على اختيار الـ option
+                              //  controller.updateSpec(spec['id'], value);
+                            },
+                          ),
+                          SizedBox(height: height * .01),
+                          CustomDropDownTyping(
+                            label:
+                                controller.specsStatic[2].specHeaderPl ??
+                                "Option",
+                            // 👈 اسم الخيار
+                            controller: widget.transmissionController,
+                            // 👈 كل spec له كنترولر خاص
+                            options: List<String>.from(
+                              controller.specsStatic[2].options ?? [],
+                            ),
+                            // 👈 ال options بتاعته
+
+                            enableSearch: false,
+                            hintText: "Select",
+                            onChanged: (value) {
+                              specsController.updateLocal(specId: specsController.specsStatic[2].specId, specValuePl: widget.transmissionController.text);
+
+                              // هنا تعملي أي action على اختيار الـ option
+                              //  controller.updateSpec(spec['id'], value);
+                            },
+                          ),
+                          SizedBox(height: height * .01),
+                          // CustomDropDownTyping(
+                          //   label: controller.specsStatic[0].specHeaderPl ?? "Option",   // 👈 اسم الخيار
+                          //   controller: TextEditingController(), // 👈 كل spec له كنترولر خاص
+                          //   options: List<String>.from(controller.specsStatic[0].options ?? []), // 👈 ال options بتاعته
+                          //   enableSearch: false,
+                          //   hintText: "Select",
+                          //   onChanged: (value) {
+                          //     // هنا تعملي أي action على اختيار الـ option
+                          //     //  controller.updateSpec(spec['id'], value);
+                          //   },
+                          // ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              )
+            : SizedBox(),
 
         // CustomDropDownTyping(
         //   label: "Request 360 Service",
@@ -491,43 +585,53 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         //   },
         // ),
         // Terms and Conditions Checkbox
-        widget.postData==null?
-        Column(
-          children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  value: widget.isRequest360,
-                  onChanged: widget.onReq360Changed,
-                  activeColor: Colors.black,
-                ),
-                Expanded(
-                  child: Text(
-                    'Make Your Advertisement special by 360 session (100 riyal only for full shooting session)',
-                    style: TextStyle(fontSize: 14.4.w,fontWeight: FontWeight.bold),
+        widget.postData == null
+            ? Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: widget.isRequest360,
+                        onChanged: widget.onReq360Changed,
+                        activeColor: Colors.black,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Make Your Advertisement special by 360 session (100 riyal only for full shooting session)',
+                          style: TextStyle(
+                            fontSize: 14.4.w,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),SizedBox(height: height*.01,),
-            Row(crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  value: widget.isFeaturedPost,
-                  onChanged: widget.onReqFeaturedChanged,
-                  activeColor: Colors.black,
-                ),
-                Expanded(
-                  child: Text(
-                    'Pin your advertisement at the top for (150) QR only',
-                    style: TextStyle(fontSize: 14.4.w,fontWeight: FontWeight.bold),
+                  SizedBox(height: height * .01),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: widget.isFeaturedPost,
+                        onChanged: widget.onReqFeaturedChanged,
+                        activeColor: Colors.black,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Pin your advertisement at the top for (150) QR only',
+                          style: TextStyle(
+                            fontSize: 14.4.w,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ],
-        ):SizedBox(),
+                ],
+              )
+            : SizedBox(),
         Row(
           children: [
             Checkbox(
@@ -539,12 +643,12 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             Expanded(
               child: Text(
                 'I agree to the Terms and Conditions',
-                style: TextStyle(fontSize:14.4.w,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14.4.w, fontWeight: FontWeight.bold),
               ),
             ),
           ],
         ),
-        
+
         // Info Confirmation Checkbox
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,7 +666,10 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   SizedBox(height: 15.h),
                   Text(
                     'I confirm the accuracy of the information provided',
-                    style: TextStyle(fontSize:14.4.w,fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 14.4.w,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -572,66 +679,64 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         SizedBox(height: height * .01),
 
-        //save and request publish
-
-
         // Save as draft Button
-         Row(mainAxisAlignment: MainAxisAlignment.center,
-           children: [
-             SizedBox(
-               width: widget.postData == null ? width * .3 : double.infinity,
-               height: height * .05,
-               child: GestureDetector(
-                 onTap: () => widget.onValidateAndSubmit(shouldPublish: false),
-                 child: Container(
-                   decoration: BoxDecoration(
-                     color: AppColors.primary,
-                     borderRadius: BorderRadius.circular(2),
-                   ),
-                   alignment: Alignment.center,
-                   child: Text(
-                     widget.postData == null
-                         ? "Save As Draft"
-                         : widget.postData['PostStatus'].toString() == "Approved"
-                         ? "RePublish"
-                         : "Save",
-                     style: TextStyle(
-                       color: Colors.black,
-                       fontSize: 16.w,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                 ),
-               ),
-             ),
-            SizedBox(width: width*.02,),
-             widget.postData==null?
-             SizedBox(
-               width: width * .54,
-               height: height * .05,
-               child: GestureDetector(
-                 onTap: () => widget.onValidateAndSubmit(shouldPublish: true),
-                 child: Container(
-                   decoration: BoxDecoration(
-                     color: AppColors.success,
-                     borderRadius: BorderRadius.circular(2),
-                   ),
-                   alignment: Alignment.center,
-                   child: Text(
-                     "Publish",
-                     style: TextStyle(
-                       color: Colors.black,
-                       fontSize: 16.w,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                 ),
-               ),
-             )
-                 :SizedBox()
-           ],
-         ),
-
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: widget.postData == null ? width * .3 : double.infinity,
+              height: height * .05,
+              child: GestureDetector(
+                onTap: () => widget.onValidateAndSubmit(shouldPublish: false),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.postData == null
+                        ? "Save As Draft"
+                        : widget.postData['PostStatus'].toString() == "Approved"
+                        ? "RePublish"
+                        : "Save",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.w,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: width * .02),
+            widget.postData == null
+                ? SizedBox(
+                    width: width * .54,
+                    height: height * .05,
+                    child: GestureDetector(
+                      onTap: () =>
+                          widget.onValidateAndSubmit(shouldPublish: true),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.success,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Publish",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.w,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+          ],
+        ),
 
         SizedBox(height: 10.h),
         Center(

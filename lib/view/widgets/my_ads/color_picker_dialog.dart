@@ -191,7 +191,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                 //     ),
                 //   ),
                 // ),
-                yellowButtons(title:"SUBMIT",onTap:() => Navigator.pop(context, selectedColor)
+                yellowButtons(title:"Select",onTap:() => Navigator.pop(context, selectedColor)
 
                     ,w: 130.w),
                 // ElevatedButton(
