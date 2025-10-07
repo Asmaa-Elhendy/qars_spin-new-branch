@@ -396,6 +396,109 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           hintText: "Enter chassis number",
         ),
         SizedBox(height: height * .01),
+        widget.postData == null
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //  SizedBox(height: height * .02),
+            // Text('Car Specifications',style: TextStyle(fontSize: 15.w,
+            //    fontWeight: FontWeight.w500,
+            //    color: Colors.black87,)),
+            //  SizedBox(height: height * .01),
+            // GetBuilder<SpecsController>(
+            //   builder: (controller) {
+            //     return Column(
+            //       children: controller.specsStatic.map((spec) {
+            //         return specsContainer( spec, context,controller,_showGlobalLoader,_hideGlobalLoader,true);
+            //       }).toList(),
+            //     );
+            //   },
+            // ),
+            GetBuilder<SpecsController>(
+              builder: (controller) {//kjhتن
+                return Column(
+                  children: [
+                    CustomDropDownTyping(
+                      label:
+                      controller.specsStatic[0].specHeaderPl ??
+                          "Option",
+                      // 👈 اسم الخيار
+                      controller:widget.fuelTypeController,
+                      // 👈 كل spec له كنترولر خاص
+                      options: List<String>.from(
+                        controller.specsStatic[0].options ?? [],
+                      ),
+                      // 👈 ال options بتاعته
+                      enableSearch: false,
+                      hintText: "Select",
+                      onChanged: (value) {
+                        specsController.updateLocal(specId: specsController.specsStatic[0].specId, specValuePl: widget.fuelTypeController.text);
+                        // هنا تعملي أي action على اختيار الـ option
+                        //  controller.updateSpec(spec['id'], value);
+                      },
+                    ),
+                    SizedBox(height: height * .01),
+                    CustomDropDownTyping(
+                      label:
+                      controller.specsStatic[1].specHeaderPl ??
+                          "Option",
+                      // 👈 اسم الخيار
+                      controller: widget.cylindersController,
+                      // 👈 كل spec له كنترولر خاص
+                      options: List<String>.from(
+                        controller.specsStatic[1].options ?? [],
+                      ),
+                      // 👈 ال options بتاعته
+                      enableSearch: false,
+                      hintText: "Select",
+                      onChanged: (value) {
+                        specsController.updateLocal(specId: specsController.specsStatic[1].specId, specValuePl: widget.cylindersController.text);
+
+                        // هنا تعملي أي action على اختيار الـ option
+                        //  controller.updateSpec(spec['id'], value);
+                      },
+                    ),
+                    SizedBox(height: height * .01),
+                    CustomDropDownTyping(
+                      label:
+                      controller.specsStatic[2].specHeaderPl ??
+                          "Option",
+                      // 👈 اسم الخيار
+                      controller: widget.transmissionController,
+                      // 👈 كل spec له كنترولر خاص
+                      options: List<String>.from(
+                        controller.specsStatic[2].options ?? [],
+                      ),
+                      // 👈 ال options بتاعته
+
+                      enableSearch: false,
+                      hintText: "Select",
+                      onChanged: (value) {
+                        specsController.updateLocal(specId: specsController.specsStatic[2].specId, specValuePl: widget.transmissionController.text);
+
+                        // هنا تعملي أي action على اختيار الـ option
+                        //  controller.updateSpec(spec['id'], value);
+                      },
+                    ),
+                    SizedBox(height: height * .01),
+                    // CustomDropDownTyping(
+                    //   label: controller.specsStatic[0].specHeaderPl ?? "Option",   // 👈 اسم الخيار
+                    //   controller: TextEditingController(), // 👈 كل spec له كنترولر خاص
+                    //   options: List<String>.from(controller.specsStatic[0].options ?? []), // 👈 ال options بتاعته
+                    //   enableSearch: false,
+                    //   hintText: "Select",
+                    //   onChanged: (value) {
+                    //     // هنا تعملي أي action على اختيار الـ option
+                    //     //  controller.updateSpec(spec['id'], value);
+                    //   },
+                    // ),
+                  ],
+                );
+              },
+            ),
+          ],
+        )
+            : SizedBox(),
 
         CustomDropDownTyping(
           label: "Under Warranty",
@@ -441,109 +544,6 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
 
         // request 360 and feature
-        widget.postData == null
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //  SizedBox(height: height * .02),
-                  // Text('Car Specifications',style: TextStyle(fontSize: 15.w,
-                  //    fontWeight: FontWeight.w500,
-                  //    color: Colors.black87,)),
-                  //  SizedBox(height: height * .01),
-                  // GetBuilder<SpecsController>(
-                  //   builder: (controller) {
-                  //     return Column(
-                  //       children: controller.specsStatic.map((spec) {
-                  //         return specsContainer( spec, context,controller,_showGlobalLoader,_hideGlobalLoader,true);
-                  //       }).toList(),
-                  //     );
-                  //   },
-                  // ),
-                  GetBuilder<SpecsController>(
-                    builder: (controller) {//kjhتن
-                      return Column(
-                        children: [
-                          CustomDropDownTyping(
-                            label:
-                                controller.specsStatic[0].specHeaderPl ??
-                                "Option",
-                            // 👈 اسم الخيار
-                            controller:widget.fuelTypeController,
-                            // 👈 كل spec له كنترولر خاص
-                            options: List<String>.from(
-                              controller.specsStatic[0].options ?? [],
-                            ),
-                            // 👈 ال options بتاعته
-                            enableSearch: false,
-                            hintText: "Select",
-                            onChanged: (value) {
-                              specsController.updateLocal(specId: specsController.specsStatic[0].specId, specValuePl: widget.fuelTypeController.text);
-                              // هنا تعملي أي action على اختيار الـ option
-                              //  controller.updateSpec(spec['id'], value);
-                            },
-                          ),
-                          SizedBox(height: height * .01),
-                          CustomDropDownTyping(
-                            label:
-                                controller.specsStatic[1].specHeaderPl ??
-                                "Option",
-                            // 👈 اسم الخيار
-                            controller: widget.cylindersController,
-                            // 👈 كل spec له كنترولر خاص
-                            options: List<String>.from(
-                              controller.specsStatic[1].options ?? [],
-                            ),
-                            // 👈 ال options بتاعته
-                            enableSearch: false,
-                            hintText: "Select",
-                            onChanged: (value) {
-                              specsController.updateLocal(specId: specsController.specsStatic[1].specId, specValuePl: widget.cylindersController.text);
-
-                              // هنا تعملي أي action على اختيار الـ option
-                              //  controller.updateSpec(spec['id'], value);
-                            },
-                          ),
-                          SizedBox(height: height * .01),
-                          CustomDropDownTyping(
-                            label:
-                                controller.specsStatic[2].specHeaderPl ??
-                                "Option",
-                            // 👈 اسم الخيار
-                            controller: widget.transmissionController,
-                            // 👈 كل spec له كنترولر خاص
-                            options: List<String>.from(
-                              controller.specsStatic[2].options ?? [],
-                            ),
-                            // 👈 ال options بتاعته
-
-                            enableSearch: false,
-                            hintText: "Select",
-                            onChanged: (value) {
-                              specsController.updateLocal(specId: specsController.specsStatic[2].specId, specValuePl: widget.transmissionController.text);
-
-                              // هنا تعملي أي action على اختيار الـ option
-                              //  controller.updateSpec(spec['id'], value);
-                            },
-                          ),
-                          SizedBox(height: height * .01),
-                          // CustomDropDownTyping(
-                          //   label: controller.specsStatic[0].specHeaderPl ?? "Option",   // 👈 اسم الخيار
-                          //   controller: TextEditingController(), // 👈 كل spec له كنترولر خاص
-                          //   options: List<String>.from(controller.specsStatic[0].options ?? []), // 👈 ال options بتاعته
-                          //   enableSearch: false,
-                          //   hintText: "Select",
-                          //   onChanged: (value) {
-                          //     // هنا تعملي أي action على اختيار الـ option
-                          //     //  controller.updateSpec(spec['id'], value);
-                          //   },
-                          // ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              )
-            : SizedBox(),
 
         // CustomDropDownTyping(
         //   label: "Request 360 Service",
