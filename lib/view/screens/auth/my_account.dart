@@ -7,6 +7,7 @@ import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
 import '../../../controller/auth.dart';
 import '../../../controller/const/colors.dart';
+import '../notifications/notification.dart';
 
 class MyAccount extends StatelessWidget {
   const MyAccount({super.key});
@@ -67,14 +68,14 @@ class MyAccount extends StatelessWidget {
             25.verticalSpace,
             SizedBox(
               height: 750.h,
-              child: registered?bodyWithRegistered():bodyWithoutRegister(),
+              child: registered?bodyWithRegistered():bodyWithoutRegister(context),
             )
           ],
         ),
       ),
     );
   }
-  Widget bodyWithoutRegister(){
+  Widget bodyWithoutRegister(BuildContext context){
   return  Padding(
     padding:  EdgeInsets.symmetric(horizontal: 80.w),
     child: Column(
@@ -99,18 +100,25 @@ class MyAccount extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
+        const SizedBox(height: 20),
         // Notifications
-        ListTile(
-          leading: const Icon(Icons.notifications, color: Colors.red),
-          title: const Text(
-            "Notifications",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(8),//l
           ),
-          trailing: const Icon(Icons.arrow_forward_ios,
-              size: 16, color: Colors.black54),
-          onTap: () {
-
-          },
+          child: ListTile(
+            leading: const Icon(Icons.notifications, color: Colors.red),
+            title: const Text(
+              "Notifications",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios,
+                size: 16, color: Colors.black54),
+            onTap: () {
+              Get.to(NotificationsPage());
+            },
+          ),
         ),
       ],
     ),
@@ -168,10 +176,14 @@ class MyAccount extends StatelessWidget {
           icon: Icons.notifications,
           title: "Notifications",
           iconColor: Colors.red,
+          onTap: (){
+            Get.to(NotificationsPage());
+          }
         ),
         buildMenuItem(
           icon: Icons.local_offer,
           title: "My Offers",
+
         ),
         buildMenuItem(
           icon: Icons.campaign,
