@@ -6,13 +6,14 @@ import 'package:qarsspin/view/screens/home_screen.dart';
 
 import 'controller/auth/secret.dart';
 import 'controller/binding.dart';
+import 'controller/payments/payment_service.dart';
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Initialize MyFatoorah SDK
-  // PaymentService.initialize();
+   PaymentService.initialize();
   settings();
 
 
