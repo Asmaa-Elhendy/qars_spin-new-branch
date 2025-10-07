@@ -583,16 +583,69 @@ class _SellCarScreenState extends State<SellCarScreen> {
     );
   }
 
+  /// Reset all form fields and state
+  void _resetForm() {
+    // Clear all text controllers
+    _make_controller.clear();
+    _model_controller.clear();
+    _class_controller.clear();
+    _type_controller.clear();
+    _year_controller.clear();
+    _warranty_controller.clear();
+    _mileageController.clear();
+    _plateNumberController.clear();
+    _chassisNumberController.clear();
+    _askingPriceController.clear();
+    _minimumPriceController.clear();
+    _descriptionController.clear();
+    fuelTypeController.clear();
+    transmissionController.clear();
+    cylindersController.clear();
+    
+    // Reset other state variables
+    setState(() {
+      // Clear all images and reset cover image
+      _images = []; // Create a new empty list to ensure UI updates
+      _coverImage = null;
+      _videoPath = null;
+      _exteriorColor = const Color(0xff800000); // Reset to default maroon
+      _interiorColor = const Color(0xff4682B4); // Reset to default steel blue
+      _termsAccepted = false;
+      _infoConfirmed = false;
+      _isRequest360 = false;
+      _isFeauredPost = false;
+      _coverPhotoChanged = false;
+      _videoChanged = false;
+      
+      // Force a rebuild of the image upload section
+      _images = [];
+    });
+
+    // Reset selected values
+    selectedMake = null;
+    selectedModel = null;
+    selectedType = null;
+    selectedYear = null;
+    selectedClass = null;
+    selectedunderWarranty = null;
+
+    // Reset the brand controller state
+    brandController.resetCreateAdState();
+    
+    // Reset the form for new ad
+    _initializeForNewAd();
+  }
+
   /// Navigate to MyAds screen
   void _navigateToMyAds() {
-    // Use Get.offAll to ensure we always navigate to MyAds screen
-    // This works for both create and modify flows
-    //navigate direct to MyAdsMainScreen
-  // widget.postData==null?
-   Get.off(() => const MyAdsMainScreen());
-       //: Get.to(() => const MyAdsMainScreen());
-    Get.find<MyAdCleanController>().fetchMyAds(); // Refresh My Ads screen
-    brandController.resetCreateAdState(); // Reset controller state
+    // Reset all form fields and state
+    _resetForm();
+    
+    // Navigate to MyAds screen
+    Get.off(() => const MyAdsMainScreen());
+    
+    // Refresh My Ads screen
+    Get.find<MyAdCleanController>().fetchMyAds();
   }
 
   /// Unfocus description field to prevent auto-focus

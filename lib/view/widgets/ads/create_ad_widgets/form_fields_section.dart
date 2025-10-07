@@ -394,7 +394,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
           hintText: "Enter chassis number",
-        ),
+        ),//l
         SizedBox(height: height * .01),
         widget.postData == null
             ? Column(
