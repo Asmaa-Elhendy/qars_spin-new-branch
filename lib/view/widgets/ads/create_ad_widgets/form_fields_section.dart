@@ -696,7 +696,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   alignment: Alignment.center,
                   child: Text(
                     widget.postData == null
-                        ? "Save As Draft"
+                        ? "Save as draft"
                         : widget.postData['PostStatus'].toString() == "Approved"
                         ? "RePublish"
                         : "Save",

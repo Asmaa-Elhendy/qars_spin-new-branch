@@ -14,6 +14,7 @@ import '../../widgets/ads/dialogs/error_dialog.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
 import '../../widgets/ads/dialogs/missing_cover_image_dialog.dart';
+import '../../widgets/my_ads/dialog.dart' as dialog;
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 import '../../screens/my_ads/my_ads_main_screen.dart';
@@ -877,18 +878,61 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             }
                           },
                           onReq360Changed: (value) {
+                         if(_isRequest360){
+                           if (value != null) {
+                           setState(() {
+                             _isRequest360 = value;
+                           });
+                          }
+                         }
+                            else{dialog. SuccessDialog.show(
+                            request: false,
+                            context: context,
+                            title: "Ready to showCase your vehicle like a pro?",
+                            message:
+                            "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                            onClose: () {},
+                            onTappp: () async {
+                            Navigator.pop(context);
                             if (value != null) {
-                              setState(() {
-                                _isRequest360 = value;
-                              });
+                            setState(() {
+                            _isRequest360 = value;
+                            });
+                            }
+
+                            },
+                            );
                             }
                           },
                           onReqFeaturedChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                _isFeauredPost = value;
-                              });
+                            if(_isFeauredPost){
+                              if (value != null) {
+                                setState(() {
+                                  _isFeauredPost = value;
+                                });
+                              }
                             }
+                            else{
+                              dialog. SuccessDialog.show(
+                              request: false,
+                              context: context,
+                              title: "Let's make your post the center \n of orientation",
+                              message:
+                              "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
+                              onClose: () {},
+                              onTappp: () async {
+                                Navigator.pop(context);
+                                if (value != null) {
+                                  setState(() {
+                                    _isFeauredPost = value;
+                                  });
+                                }
+
+                              },
+                            );
+                            }
+
+
                           },
                           onValidateAndSubmit: _validateAndSubmitForm,
                           onUnfocusDescription: _unfocusDescription,
