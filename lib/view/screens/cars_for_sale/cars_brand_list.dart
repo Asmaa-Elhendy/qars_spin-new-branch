@@ -92,8 +92,8 @@ class _CarsBrandListState extends State<CarsBrandList> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
-              crossAxisSpacing: 14.w, //update asmaa
-              childAspectRatio: .81, //.877 adjust for card height .6  update grid cars asmaa
+              crossAxisSpacing: 10.w, //update asmaa
+              childAspectRatio: .785, //.877 adjust for card height .6  update grid cars asmaa
             ),
             itemBuilder: (context, index) {
               return carCard(
