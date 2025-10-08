@@ -1,4 +1,4 @@
-package com.example.qarsspin
+package com.qarsspin.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

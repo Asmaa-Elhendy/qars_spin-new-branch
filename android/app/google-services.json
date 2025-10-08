@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805570665785",
+    "project_id": "qars-spin",
+    "storage_bucket": "qars-spin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805570665785:android:50128bcf8d52d4d346dce8",
+        "android_client_info": {
+          "package_name": "com.qarsspin.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1bAAJYWcGe9uEpZzp4CAFAaO0sEpbLc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

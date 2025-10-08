@@ -1,7 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
+import 'package:qarsspin/controller/notifications_controller.dart';
+import 'package:qarsspin/services/fcm_service.dart';
 import 'package:qarsspin/view/screens/home_screen.dart';
 
 import 'controller/auth/secret.dart';
@@ -9,15 +14,24 @@ import 'controller/binding.dart';
 import 'controller/payments/payment_service.dart';
 
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // ✅ Initialize MyFatoorah SDK
-   PaymentService.initialize();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
+  // Initialize MyFatoorah SDK
+  PaymentService.initialize();
   settings();
-
-
-
+  
+  // Initialize FCM Service and register with GetX
+  final fcmService = FCMService();
+  await fcmService.initialize();
+  Get.put(fcmService);  // Register the instance with GetX
+  
+  // Initialize Notifications Controller
+  Get.put(NotificationsController());
+  
   runApp(const MyApp());
 }
 
