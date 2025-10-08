@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 import '../../../controller/const/colors.dart';
 import '../../screens/general/inspection_report.dart';
 
@@ -12,10 +13,12 @@ Widget requestReportButton(context,id){
       );
     },
     child: Container(
-      width: 350.w,
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      width: 400.w,
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       decoration:BoxDecoration(
-        color: AppColors.buttonsGray,
+          color: AppColors.buttonsGray,
+          borderRadius: BorderRadius.circular(4).r
+
 
       ),
       child:Center(
@@ -23,13 +26,14 @@ Widget requestReportButton(context,id){
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.filter_frames_outlined,color: Colors.black,),
-            4.horizontalSpace,
+            Image.asset("assets/images/inspection.png",width: 38.w,height: 38.h,),
+            //  2.horizontalSpace,
             Text("Request Inspection Report",
               style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18.sp
+                  color: AppColors.black,
+                  fontFamily: fontFamily,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13.sp
               ),
             )
           ],

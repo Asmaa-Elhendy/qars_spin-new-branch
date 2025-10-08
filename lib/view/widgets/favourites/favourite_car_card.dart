@@ -9,9 +9,12 @@ class FavouriteCarCard extends StatelessWidget {
   final String price;
   final String location;
   final String imageUrl;
+  final VoidCallback onHeartTap;
+
 
   const FavouriteCarCard({
     super.key,
+    required this.onHeartTap,
     required this.title,
     required this.price,
     required this.location,
@@ -44,8 +47,8 @@ class FavouriteCarCard extends StatelessWidget {
                 height: 100.h,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    "assets/images/car1.png",
+                  return Image.network(
+                    imageUrl,
                     width: 130.w,
                     height: 100.h,
                     fit: BoxFit.cover,
@@ -89,50 +92,43 @@ class FavouriteCarCard extends StatelessWidget {
                           ),
                           SizedBox(height: 6.h),
 
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                          SvgPicture.asset(
-                            'assets/images/new_svg/ic_calendar.svg',
-                            width: 26.w,
-                            height: 26.h,
-                            color:  AppColors.black,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/new_svg/ic_calendar.svg',
+                                width: 26.w,
+                                height: 26.h,
+                                color:  AppColors.black,
 
-                          ),
-                          Padding(
-                            padding:  EdgeInsets.only(right: 6.w,left: 2.w),
-                            child: Text('2021',style: TextStyle(color: AppColors.textSecondary),),
-                          ),
-                          SvgPicture.asset(
-                            'assets/images/new_svg/ic_mileage.svg',
-                            width: 28.w,
-                            height: 28.h,
-                            color:  AppColors.black,
+                              ),
+                              Padding(
+                                padding:  EdgeInsets.only(right: 6.w,left: 2.w),
+                                child: Text('2021',style: TextStyle(color: AppColors.textSecondary),),
+                              ),
+                              SvgPicture.asset(
+                                'assets/images/new_svg/ic_mileage.svg',
+                                width: 28.w,
+                                height: 28.h,
+                                color:  AppColors.black,
 
+                              ),
+                              Padding(
+                                padding:  EdgeInsets.symmetric(horizontal: 2.w),
+                                child: Text('36,566',style: TextStyle(color: AppColors.textSecondary),),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 2.w),
-                            child: Text('36,566',style: TextStyle(color: AppColors.textSecondary),),
-                          ),
-                                          ],
-                                        ),
                         ],
                       ),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Icon(
-                            Icons.favorite, // Black border layer
-                            size: 30.sp,
-                            color: Colors.black,
-                          ),
-                          Icon(
-                            Icons.favorite, // Filled heart
-                            size: 24.sp,
-                            color: AppColors.primary,
-                          ),
-                        ],
+                      InkWell(
+                        onTap: onHeartTap,
+                        child: Icon(
+                          Icons.favorite, // Black border layer
+                          size: 30.sp,
+                          color: AppColors.star,
+                        ),
                       ),
                     ],
                   ),

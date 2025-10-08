@@ -46,6 +46,7 @@ class _AllCarsState extends State<AllCars> {
                   itemBuilder: (context, index) {
                     return HomeServiceCard(
                       onTap: () {
+                        controller.switchLoading();
                         controller.getCars(  // in case care for sale list
                           make_id: controller.carBrands[index].id,
                           makeName: controller.carBrands[index].name,

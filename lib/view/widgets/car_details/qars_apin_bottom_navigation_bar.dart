@@ -41,7 +41,13 @@ class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBa
       child: Container(
 
         padding: EdgeInsets.symmetric(horizontal: 22.w,vertical: 8.h),
-        color: AppColors.star,
+
+        decoration: BoxDecoration(
+            color: AppColors.star,
+            borderRadius: BorderRadius.circular(6).r
+
+
+        ),
         child: Row(
           children: [
             SvgPicture.asset(image),

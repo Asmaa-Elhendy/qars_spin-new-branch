@@ -1,20 +1,25 @@
-
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/model/global_model.dart';
-
 import 'const/base_url.dart';
 
-class MySearchController extends GetxController{
+class MySearchController extends GetxController {
   List<GlobalModel> makes = [];
   List<GlobalModel> classes = [];
   List<GlobalModel> types = [];
-  List<GlobalModel> model = [];
+  List<GlobalModel> models = [];
+
+  @override
+  void onInit() {
+    print("initit");
+    super.onInit();
+    fetchCarMakes(); // أول لست تتحمّل مع فتح الفورم
+  }
 
   fetchCarMakes({String sort = "MakeName"}) async {
+    print("callllmakes");
+
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetListOfCarMakes?Order_By=$sort',
     );
@@ -27,24 +32,23 @@ class MySearchController extends GetxController{
     );
 
     if (response.statusCode == 200) {
-      final body = response.body;
-      final parsedJson = jsonDecode(body);
+      final parsedJson = jsonDecode(response.body);
       final List<dynamic> data = parsedJson['Data'];
-      for(int i =0; i<data.length;i++){
-        makes.add(GlobalModel(
-            id:data[i]["Make_ID"] ,
-            name: data[i]["Make_Name_PL"]));
-      }
 
-      update();
+      makes = data
+          .map((e) => GlobalModel(
+        id: e["Make_ID"],
+        name: e["Make_Name_PL"],
+      ))
+          .toList();
 
+      update(); // هنا يحدّث الـ GetBuilder
     }
-
-
-
-
   }
-  fetchClasses(makeId)async{
+
+  fetchClasses(makeId) async {
+    classes.clear();
+
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetListOfCarClasses?Make_ID=$makeId',
     );
@@ -57,24 +61,22 @@ class MySearchController extends GetxController{
     );
 
     if (response.statusCode == 200) {
-      final body = response.body;
-      final parsedJson = jsonDecode(body);
-      final  data = parsedJson['Data'];
+      final parsedJson = jsonDecode(response.body);
+      final data = parsedJson['Data'];
 
-      for(int i =0; i<data.length;i++){
-        classes.add(GlobalModel(
-            id:data[i]["Class_ID"] ,
-            name: data[i]["Class_Name_PL"]));
-        print(data);
-      }
+      classes = data
+          .map<GlobalModel>((e) => GlobalModel(
+        id: e["Class_ID"],
+        name: e["Class_Name_PL"],
+      )).toList();
 
       update();
     }
-
-
-
   }
-  fetchModels(classId)async{
+
+  fetchModels(classId) async {
+    models = [];
+
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetListOfCarModels?Class_ID=$classId',
     );
@@ -87,24 +89,24 @@ class MySearchController extends GetxController{
     );
 
     if (response.statusCode == 200) {
-      final body = response.body;
-      final parsedJson = jsonDecode(body);
-      final  data = parsedJson['Data'];
-      fetchCategories();
+      final parsedJson = jsonDecode(response.body);
+      final data = parsedJson['Data'];
 
-      for(int i =0; i<data.length;i++){
-        model.add(GlobalModel(
-            id:data[i]["Model_ID"] ,
-            name: data[i]["Model_Name_PL"]));
-        print(data);
-      }
+      models = data
+          .map<GlobalModel>((e) => GlobalModel(
+        id: e["Model_ID"],
+        name: e["Model_Name_PL"],
+      ))
+          .toList();
+      fetchCategories();
 
       update();
     }
-
-
   }
-  fetchCategories()async{
+
+  fetchCategories() async {
+    types.clear();
+
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetListOfCarCategories',
     );
@@ -116,27 +118,18 @@ class MySearchController extends GetxController{
       },
     );
 
-
     if (response.statusCode == 200) {
-      final body = response.body;
-      final parsedJson = jsonDecode(body);
-      final  data = parsedJson['Data'];
-      for(int i =0; i<data.length;i++){
-        types.add(GlobalModel(
-            id:data[i]["Category_ID"] ,
-            name: data[i]["Category_Name_PL"]));
-      }
+      final parsedJson = jsonDecode(response.body);
+      final data = parsedJson['Data'];
+
+      types = data
+          .map<GlobalModel>((e) => GlobalModel(
+        id: e["Category_ID"],
+        name: e["Category_Name_PL"],
+      ))
+          .toList();
+
+      update();
     }
-    update();
-
   }
-// search({ String myCase = "sale"})async{
-//   switch(myCase){
-//     case "sale":
-//       Get.find<BrandController>().
-//   }
-
-// }
-
-
 }

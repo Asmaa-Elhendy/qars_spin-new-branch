@@ -39,12 +39,12 @@ Widget carListGreyBar(
               fontSize: 18.sp),
         ),
         Spacer(),
-        squareIcon
+        squareIcon||makes
             ? InkWell(
           onTap: () async {
 
 
-            final result = await showCustomBottomSheet(context);
+            final result = await showCustomBottomSheet(context,makes?"makes":"listCars");
             if (onSearchResult != null) {
               //
               onSearchResult(result); // 👈 ابعت النتيجة للشاشة المستدعية
@@ -307,7 +307,7 @@ Widget carListGreyBar(
   );
 }
 
-Future<dynamic> showCustomBottomSheet(BuildContext context) {
+showCustomBottomSheet(BuildContext context,String myCase) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -315,6 +315,10 @@ Future<dynamic> showCustomBottomSheet(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (context) =>  CustomFormSheet(myCase: "sale",),
+    builder: (context) {
+      Get.find<MySearchController>().fetchCarMakes();
+
+      return CustomFormSheet(myCase: myCase,);
+    },
   );
 }

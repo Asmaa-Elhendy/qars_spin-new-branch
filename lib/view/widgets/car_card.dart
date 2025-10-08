@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -67,7 +66,7 @@ Widget carCard({
             Stack(
               children: [
                 SizedBox(
-                  //height: 70.h,
+                  height: 130.h,
                   child: ClipRRect(
 
                     borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
@@ -84,9 +83,9 @@ Widget carCard({
                       //i update default height for all cars card car asmaa
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(color: AppColors.star),
-                      ),
+                      // placeholder: (context, url) => Center(
+                      //   child: CircularProgressIndicator(color: AppColors.star),
+                      // ),
                       errorWidget: (context, url, error) =>
                           Icon(Icons.broken_image, size: 50, color: Colors.grey),
                     ),
@@ -211,7 +210,7 @@ Widget carCard({
 Widget carStatus(CarStatus status) {
   return Container(
     width: 90.w,   //update asmaa
-    height: 20.h,
+    height: 23.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 
     decoration: BoxDecoration(
@@ -226,8 +225,8 @@ Widget carStatus(CarStatus status) {
 
     child: status == CarStatus.QarsSpin
         ? SizedBox(
-      // width: 30.w,
-      // height: 35.h,
+      width: 30.w,
+      height: 23.h,
       child: Image.asset(
         "assets/images/ic_top_logo_colored.png",
         fit: BoxFit.cover,

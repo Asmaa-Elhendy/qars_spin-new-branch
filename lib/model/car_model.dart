@@ -28,6 +28,7 @@ class CarModel{
   final int postId;
   final int pinToTop;
   final String postCode;
+  final String postKind;
   final String carNamePl;
   final String carNameSl;
   final String carNameWithYearPl;
@@ -58,6 +59,7 @@ class CarModel{
     this.offersCount,
     this.visitsCount,
     this.isFavorite,
+    required this.postKind,
     this.warrantyAvailable,
     required this.carNameSl,
     required this.carNameWithYearPl,

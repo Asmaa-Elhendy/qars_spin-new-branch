@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
+import 'package:qarsspin/model/specification.dart';
 import 'package:qarsspin/view/screens/get_loan.dart';
 import 'package:qarsspin/view/widgets/car_details/qars_apin_bottom_navigation_bar.dart';
 import '../../../controller/const/colors.dart';
@@ -17,6 +19,7 @@ import '../../widgets/texts/texts.dart';
 class CarDetails extends StatefulWidget {
   String postKind;
   int id;
+
   CarDetails({required this.id,required this.postKind,super.key});
 
   @override
@@ -24,7 +27,6 @@ class CarDetails extends StatefulWidget {
 }
 
 class _CarDetailsState extends State<CarDetails> {
-  bool isFav = false;
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -125,11 +127,9 @@ class _CarDetailsState extends State<CarDetails> {
                     12.horizontalSpace,
                     InkWell(
                       onTap: () {
-                        setState(() {
-                          isFav = !isFav;
-                        });
+                        controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id);
                       },
-                      child: isFav
+                      child: controller.carDetails.isFavorite!
                           ? Icon(
                         Icons.favorite,
                         color: AppColors.star,
@@ -285,6 +285,25 @@ class _CarDetailsState extends State<CarDetails> {
                           controller.carDetails.sourceKind == 'Qars Spin'
                               ? Center(child: requestReportButton(context,widget.id))
                               : SizedBox(),
+                          controller.carDetails.sourceKind == 'Qars Spin'
+                              ?Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              12.verticalSpace,
+                              Text(
+                                "Specifications",
+                                style: TextStyle(
+                                    color: AppColors.black,
+                                    fontFamily: fontFamily,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w800
+                                ),
+                              ),
+                              10.verticalSpace,
+                              specifications(controller.spec)
+
+                            ],
+                          ):SizedBox(),
                           16.verticalSpace,
                           //optional Details
                           controller.carDetails.sourceKind == 'Individual' ||
@@ -355,6 +374,98 @@ class _CarDetailsState extends State<CarDetails> {
                       tooSmall: true),
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget specifications(List<Specifications> spec){
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          for(int i =0; i < spec.length;i++)
+
+            specificationsRow(spec[i].key,spec[i].value),
+          // specificationsRow("Seats Type","5"),
+          // specificationsRow("Slide Roof","Yes"),
+          // specificationsRow("Park sensors","yes"),
+          // specificationsRow("Camera","yes"),
+          // specificationsRow("Bluetooth","Yes"),
+          // specificationsRow("Gps","yes"),
+          // specificationsRow("Engine Power","2.0"),
+          // specificationsRow("Interior Color","Red"),
+          // specificationsRow("Fuel Type","Hybrid"),
+          // specificationsRow("Transmission","automatic"),
+          // specificationsRow("Upholstery Material","Leather And Chamois"),
+          // specificationsRow("Steering Wheel features","All Options"),
+          // specificationsRow("Wheels","19"),
+          // specificationsRow("Headlights","Yes"),
+          // specificationsRow("Tail Lights","yes"),
+          // specificationsRow("Fog Lamps","Yes"),
+          // specificationsRow("Body Type","sedan"),
+          //
+          // specificationsRow("ABS","Yes"),
+          // specificationsRow("Lane Assist","Yes"),
+          // specificationsRow("Adaptive Cruise Control","Yes"),
+          // specificationsRow("Automatic Emergency","Yes"),
+          // specificationsRow("Wireless Charging","Yes"),
+          // specificationsRow("Apple Carplay/Android","CarPlay"),
+          //
+          // specificationsRow("USB Parts","Yes"),
+          // specificationsRow("Voice Commands","Yes"),
+          // specificationsRow("Exterior Colors","Gray"),
+          // specificationsRow("Warranty Period","6 Years"),
+          // specificationsRow("Roof Rails","Chamois"),
+
+
+        ],
+      ),
+    ) ;
+  }
+  Widget specificationsRow(String title ,String value){
+    return Padding(
+      padding:  EdgeInsets.symmetric(vertical: .8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        children: [
+          Container(
+            height: 55.h,
+            width: 175.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: AppColors.extraLightGray,
+                width: 1,
+              ),
+              // borderRadius: BorderRadius.circular(5),
+            ),
+            child: Center(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+              ),
+            ),
+          ),
+          2.5.horizontalSpace,
+          Container(
+            height: 55.h,
+            width: 175.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: AppColors.extraLightGray,
+                width: 1,
+              ),
+              // borderRadius: BorderRadius.circular(5),
+            ),
+            child: Center(
+              child: Text(
+                value,
+                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+              ),
             ),
           ),
         ],

@@ -22,10 +22,21 @@ class ShowroomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: EdgeInsets.only(bottom: 24.h),
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+
+        border: Border.all(
+          width: 1.w,
+          color:
+          showroom.pinToTop
+              ? AppColors.danger
+              : Colors.grey,
+        ),
+      ),
+
       clipBehavior: Clip.hardEdge,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

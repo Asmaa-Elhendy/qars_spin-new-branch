@@ -13,9 +13,15 @@ import '../model/car_brand.dart';
 import '../model/car_model.dart';
 
 class BrandController extends GetxController{
+  bool loadingMode = true;
   List<CarModel> carsList = [];
+  List<CarModel> similarCars = [];
+  List<CarModel> ownersAds = [];
+  List<CarModel> favoriteList = [];
+
   CarModel carDetails =
   CarModel(postId: 0, pinToTop: 0, postCode: "postCode", carNamePl: "carNamePl",
+      postKind: "",
       carNameSl: "carNameSl", carNameWithYearPl: "carNameWithYearPl",
       carNameWithYearSl: "carNameWithYearSl", manufactureYear: 0, tag: "tag",
       sourceKind: "sourceKind", mileage: 0, askingPrice: "askingPrice",
@@ -23,6 +29,7 @@ class BrandController extends GetxController{
       exteriorColor: Colors.white,
       interiorColor: Colors.white,
       isFavorite: false,
+
       offersCount: 0,
       visitsCount: 0,
       warrantyAvailable: "No",
@@ -93,14 +100,16 @@ class BrandController extends GetxController{
 
 
   }
+  switchLoading(){
+    loadingMode = true;
+    update();
+  }
 
   getCars({required int make_id, required String makeName,String sourceKind="All",sort = "lb_Sort_By_Post_Date_Desc",}) async {
-    carsList = [];
+    carsList=[];
     currentSourceKind = sourceKind;
     currentMakeId = make_id;
     currentMakeName = makeName;
-    print("Callllll");
-
     final filterDetails = {
       "Source_Kind":sourceKind,
       "Offset": "0",
@@ -123,13 +132,14 @@ class BrandController extends GetxController{
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      print("200....");
 
       final body = jsonDecode(response.body);
       for(int i = 0; i<body["Data"].length;i++){
         carsList.add(
             CarModel(postId: body["Data"][i]["Post_ID"],
                 pinToTop: body["Data"][i]["Pin_To_Top"],
+                postKind: "",
+
                 postCode:body["Data"][i]["Post_Code"],
                 carNamePl:body["Data"][i]["Car_Name_PL"],
                 carNameSl: body["Data"][i]["Car_Name_SL"],
@@ -144,11 +154,10 @@ class BrandController extends GetxController{
                 rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
 
       }
-      print(body);
-
+      loadingMode = false;
+      currentModelPointer = makeName;
 
       update();
-      currentModelPointer = makeName;
       final data = jsonDecode(response.body);
       return data is List ? data : [];
 
@@ -161,6 +170,7 @@ class BrandController extends GetxController{
   }
 
   getCarDetails(String postKind,String id) async{
+    print("postttt$postKind");
     final uri = Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetPostByID?Post_Kind=$postKind&Post_ID=$id&Logged_In_User=sv4it",
     );
@@ -169,14 +179,15 @@ class BrandController extends GetxController{
     getOffers(id);
     if(response.statusCode == 200){
       final body = jsonDecode(response.body);
-      Color interior = hexToColor(body["Data"][0]["Color_Interior"]);
       Color exterior = hexToColor(body["Data"][0]["Color_Exterior"]);
+      Color interior = hexToColor(body["Data"][0]["Color_Interior"]);
 
       carDetails =
           CarModel(
               postId: body["Data"][0]["Post_ID"],
               pinToTop: body["Data"][0]["Pin_To_Top"],
               postCode: body["Data"][0]["Post_Code"],
+              postKind: body["Data"][0]["Post_Kind"],
               carNamePl: body["Data"][0]["Car_Name_PL"],
               carNameSl: body["Data"][0]["Car_Name_SL"],
               carNameWithYearPl: body["Data"][0]["Car_Name_With_Year_PL"],
@@ -331,27 +342,24 @@ class BrandController extends GetxController{
 
     }
   }
-  searchCar({required int make_id, required String makeName,String sourceKind="All",sort = "lb_Sort_By_Post_Date_Desc",
-    required String classId, required String makeId,required String modelId,required String catId,required String yearMin, yearMax,required String priceMin,required String priceMax
-  }) async {
-    carsList = [];
+  searchCar({required int make_id,  String makeName="All Cars",String sourceKind="All",sort = "lb_Sort_By_Post_Date_Desc", required String classId, required String makeId,required String modelId,required String catId,required String yearMin, yearMax,required String priceMin,required String priceMax}) async {
+    carsList=[];
     currentSourceKind = sourceKind;
     currentMakeId = make_id;
     currentMakeName = makeName;
-    print("Callllll");
 
     final filterDetails = {
       "Source_Kind":sourceKind,
       "Offset": "0",
       "Limit": "1000",
       "Make_ID": make_id,
-      "Class_ID": "0",
-      "Model_ID": "0",
-      "Category_ID": "0",
-      "Year_Min": "0",
-      "Year_Max": "0",
-      "Price_Min": "0",
-      "Price_Max": "0",
+      "Class_ID": classId,
+      "Model_ID": modelId,
+      "Category_ID": catId,
+      "Year_Min": yearMin,
+      "Year_Max": yearMax,
+      "Price_Min": priceMin,
+      "Price_Max": priceMax,
       "Sort_By": sort,
     };
 
@@ -361,14 +369,113 @@ class BrandController extends GetxController{
 
     final response = await http.get(uri);
 
+
     if (response.statusCode == 200) {
-      print("200....");
 
       final body = jsonDecode(response.body);
+      if(body["Data"]==null){
+        carsList = [];
+
+      }else{
+        for(int i = 0; i<body["Data"].length;i++){
+          carsList.add(
+              CarModel(postId: body["Data"][i]["Post_ID"],
+                  pinToTop: body["Data"][i]["Pin_To_Top"],
+                  postCode:body["Data"][i]["Post_Code"],
+                  carNamePl:body["Data"][i]["Car_Name_PL"],
+                  postKind: "",
+
+                  carNameSl: body["Data"][i]["Car_Name_SL"],
+                  carNameWithYearPl: body["Data"][i]["Car_Name_With_Year_PL"],
+                  carNameWithYearSl: body["Data"][i]["Car_Name_With_Year_SL"],
+                  manufactureYear: body["Data"][i]["Manufacture_Year"],
+                  tag: body["Data"][i]["Tag"],
+                  sourceKind: body["Data"][i]["Source_Kind"],
+                  mileage: body["Data"][i]["Mileage"],
+
+                  askingPrice:  body["Data"][i]["Asking_Price"],
+                  rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"],
+                  rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
+
+        }
+      }
+      loadingMode = false;
+      currentModelPointer = makeName;
+      print("muybidyyy$body");
+
+      update();
+      final data = jsonDecode(response.body);
+      return data is List ? data : [];
+
+    } else {
+      throw Exception("Failed to load cars: ${response.statusCode}");
+    }
+
+
+
+  }
+
+  getSimilarCars()async{
+
+
+  }
+
+  getOwnersAds()async{}
+
+  alterPostFavorite({required bool add,required int postId})async{
+    try {
+      final response = await http.post(
+        Uri.parse('$base_url/GlobalApi.asmx/AlterPostFavorite'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'UserName': "sv4it",
+          'Post_ID': postId.toString(),
+          'Operation': add?"Add":"Remove",
+          'Our_Secret': ourSecret,
+        },
+      );
+      if(response.statusCode==200){
+        final body = jsonDecode(response.body);
+        if(body["Code"] == "OK"){
+          carDetails.isFavorite = add?true:false;
+          update();
+        }
+
+
+
+      }
+
+
+
+    }catch (e){
+      return "error";
+    }
+  }
+  removeFavItem(CarModel car){
+    favoriteList.remove(car);
+    update();
+  }
+  getFavList()async{
+    print("call");
+    favoriteList=[];
+
+    final uri = Uri.parse(
+      "$base_url/BrowsingRelatedApi.asmx/GetFavoritesByUser?UserName=sv4it&Our_Secret=$ourSecret",
+    );
+
+    final response = await http.get(uri);
+    print("resss${response.statusCode}");
+
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
       for(int i = 0; i<body["Data"].length;i++){
-        carsList.add(
+        favoriteList.add(
             CarModel(postId: body["Data"][i]["Post_ID"],
                 pinToTop: body["Data"][i]["Pin_To_Top"],
+                postKind: body["Data"][i]["Post_Kind"],
                 postCode:body["Data"][i]["Post_Code"],
                 carNamePl:body["Data"][i]["Car_Name_PL"],
                 carNameSl: body["Data"][i]["Car_Name_SL"],
@@ -379,22 +486,16 @@ class BrandController extends GetxController{
                 sourceKind: body["Data"][i]["Source_Kind"],
                 mileage: body["Data"][i]["Mileage"],
                 askingPrice:  body["Data"][i]["Asking_Price"],
+
+
                 rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"],
                 rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
 
       }
-      print(body);
-
-
       update();
-      currentModelPointer = makeName;
-      final data = jsonDecode(response.body);
-      return data is List ? data : [];
 
-    } else {
-      throw Exception("Failed to load cars: ${response.statusCode}");
+
     }
-
 
 
   }

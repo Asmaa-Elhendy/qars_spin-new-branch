@@ -9,6 +9,7 @@ import 'package:qarsspin/controller/search_controller.dart';
 
 import '../../../controller/brand_controller.dart';
 import '../../widgets/ad_container.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/car_card.dart';
 import '../../widgets/car_list_grey_bar.dart';
 import '../../widgets/cars_list_app_bar.dart';
@@ -17,7 +18,7 @@ import '../general/find_my_car.dart';
 class CarsBrandList extends StatefulWidget {
   String brandName;
   String postKind;
-  CarsBrandList({required this.postKind,required this.brandName,super.key});
+  CarsBrandList({required this.postKind, required this.brandName, super.key});
 
   @override
   State<CarsBrandList> createState() => _CarsBrandListState();
@@ -30,55 +31,77 @@ class _CarsBrandListState extends State<CarsBrandList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: carListAppBar(notificationCount: 3),
-      body:  GetBuilder<BrandController>(
-
-          builder: (controller) {
-            return Column(
+      body: GetBuilder<BrandController>(builder: (controller) {
+        return Stack(
+          children: [
+            Column(
               children: [
                 adContainer(),
                 8.verticalSpace,
                 carListGreyBar(
                     listCars: true,
-                    onSearchResult:(result){
-                      Get.find<MySearchController>().fetchCarMakes();
+                    onSearchResult: (result) {
+                      //  Get.find<MySearchController>().fetchCarMakes();
                       setState(() {
-                        searchResult = result??"";
-
+                        searchResult = result ?? "";
                       });
-                    },context: context,title: widget.brandName,
-
-                    squareIcon: true,onSwap: (){
-                  setState(() {
-                    isGrid = !isGrid; // toggle view
-                  });
-                }),
+                    },
+                    context: context,
+                    title: controller.currentMakeName==""?"All Cars":controller.currentMakeName,
+                    squareIcon: true,
+                    onSwap: () {
+                      setState(() {
+                        isGrid = !isGrid; // toggle view
+                      });
+                    }),
                 8.verticalSpace,
-                searchResult==""?Expanded(child:isGrid?listAsAGread(controller.carsList):listAsAList(controller.carsList)):
-                noResultFoud()
-
+                controller.loadingMode?SizedBox():
+                controller.carsList.isNotEmpty
+                    ? Expanded(
+                    child: isGrid
+                        ? listAsAGread(controller.carsList)
+                        : listAsAList(controller.carsList))
+                    : noResultFoud()
               ],
-            );
-          }
-      ),
+            ),
+            if(controller.loadingMode)
+              Positioned.fill(
 
+                child: Container(
+                  color: AppColors.black.withOpacity(0.5),
+                  child: Center(
+                    child: AppLoadingWidget(
+                      title: 'Loading...\nPlease Wait...',
+                    ),
+                  ),
+                ),
+              )
+
+          ],
+        );
+      }),
     );
   }
-  Widget listAsAGread(cars){
 
+  Widget listAsAGread(cars) {
     return Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 13.w,vertical: 8), //update asmaa
+        padding:
+        EdgeInsets.symmetric(horizontal: 13.w, vertical: 8), //update asmaa
         child: GridView.builder(
             itemCount: cars.length,
-            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
-              crossAxisSpacing: 10.w,  //update asmaa
+              crossAxisSpacing: 14.w, //update asmaa
               childAspectRatio: .81, //.877 adjust for card height .6  update grid cars asmaa
             ),
             itemBuilder: (context, index) {
-              return carCard(w: 192.w,h: 235.h,car: cars[index],large: false,postKind: widget.postKind);
-
-
+              return carCard(
+                  w: 192.w,
+                  h: 235.h,
+                  car: cars[index],
+                  large: false,
+                  postKind: widget.postKind);
             }));
   }
 
@@ -87,7 +110,6 @@ class _CarsBrandListState extends State<CarsBrandList> {
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
         itemCount: cars.length,
-
         itemBuilder: (context, index) {
           return Column(
             children: [
@@ -96,7 +118,8 @@ class _CarsBrandListState extends State<CarsBrandList> {
                 h: 300.h,
                 car: cars[index],
                 postKind: widget.postKind,
-                large: true, // you can use this flag if your card has different styles for list
+                large:
+                true, // you can use this flag if your card has different styles for list
               ),
               8.verticalSpace
             ],
@@ -105,8 +128,8 @@ class _CarsBrandListState extends State<CarsBrandList> {
       ),
     );
   }
-  Widget noResultFoud(){
 
+  Widget noResultFoud() {
     return Column(
       children: [
         55.verticalSpace,
@@ -117,51 +140,49 @@ class _CarsBrandListState extends State<CarsBrandList> {
                 color: AppColors.black,
                 fontFamily: fontFamily,
                 fontWeight: FontWeight.w800,
-                fontSize: 18.sp
-            ),
+                fontSize: 18.sp),
           ),
         ),
         24.verticalSpace,
         Column(
           children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 25.w),
-
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
               child: Text(
                 "Unfortunately what you are looking for is\ncurrently not available. Please activate a",
                 style: TextStyle(
                     color: AppColors.black,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
-                    fontSize: 15.sp
-                ),
+                    fontSize: 15.sp),
               ),
             ),
             Text(
-              "notification using\"Find me a car\"yp be updates" ,
+              "notification using\"Find me a car\"yp be updates",
               style: TextStyle(
                   color: AppColors.black,
                   fontFamily: fontFamily,
                   fontWeight: FontWeight.w300,
-                  fontSize: 15.sp
-              ),
+                  fontSize: 15.sp),
             ),
             33.verticalSpace,
             Center(
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   Get.to(FindMeACar());
                 },
                 child: Container(
                   width: 150.w,
-                  padding: EdgeInsets.symmetric(horizontal: 18.w,vertical: 14.h),
+                  padding:
+                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
                   decoration: BoxDecoration(
                     color: AppColors.darkTextSecondary,
-                    borderRadius: BorderRadius.circular(4), // optional rounded corners
-
+                    borderRadius:
+                    BorderRadius.circular(4), // optional rounded corners
                   ),
                   child: Center(
-                    child: Text("Find Me A Car",
-
+                    child: Text(
+                      "Find Me A Car",
                       style: TextStyle(
                         color: AppColors.black,
                         fontFamily: fontFamily,
@@ -171,14 +192,27 @@ class _CarsBrandListState extends State<CarsBrandList> {
                     ),
                   ),
                 ),
-
               ),
             )
           ],
         )
-
-
       ],
     );
   }
 }
+// Obx(() {
+// if (controller.isLoadingMedia.value) {
+// return
+// Positioned.fill(
+// child: Container(
+// color: Colors.black.withOpacity(0.5),
+// child: Center(
+// child: AppLoadingWidget(
+// title: 'Loading...\nPlease Wait...',
+// ),
+// ),
+// ),
+// );
+// }
+// return SizedBox.shrink();
+// }),

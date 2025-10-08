@@ -57,8 +57,9 @@ class _CustomTabExampleState extends State<CustomTabExample>
               unselectedLabelColor: Colors.black,
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: "Offers"),
                 Tab(text: "Specifications"),
+                Tab(text: "Offers"),
+
               ],
             ),
           ),
@@ -68,8 +69,9 @@ class _CustomTabExampleState extends State<CustomTabExample>
             child: TabBarView(
               controller: _tabController,
               children: [
+                specifications(),
                 offers(),
-                specifications()
+
               ],
             ),
           ),

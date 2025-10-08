@@ -353,6 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
 
             case 3:
+              Get.find<BrandController>().getFavList();
               Get.offAll(FavouriteScreen());
               break;
             case 4:

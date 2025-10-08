@@ -16,13 +16,13 @@ class HomeServiceCard extends StatelessWidget {
   bool fromHomeSmall;
   final VoidCallback? onTap;
 
-   HomeServiceCard({
+  HomeServiceCard({
     Key? key,
-     this.brand = false,
-      this.make_count =0,
+    this.brand = false,
+    this.make_count =0,
     required this.title,
-     this.fromHome='',
-     this.fromHomeSmall=false,
+    this.fromHome='',
+    this.fromHomeSmall=false,
     required this.imageAsset,
     required this.large,
     this.onTap,
@@ -40,7 +40,7 @@ class HomeServiceCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.all(4),
-    //    height: large?126.h :120.h, //update asmaa
+        //    height: large?126.h :120.h, //update asmaa
         width: large? 53.w: 55.w,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -70,60 +70,60 @@ class HomeServiceCard extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                 // fontFamily: AppFonts.gilroy,
+                  // fontFamily: AppFonts.gilroy,
                   fontWeight: FontWeight.w600,
                   fontSize:brand?12.w: 16.w, //update asmaa
                   color: Colors.white,
                 ),
               ),
             ),
-           brand?
-           title=='All Cars'
-                   ? Expanded(
-             child: Padding(
-               padding: EdgeInsets.all(8.w),
-               child: Image.asset(
-                 imageAsset,
-                 fit: BoxFit.contain,
-               )))
-                   :
-           Expanded(
-             child: CachedNetworkImage(
-               imageUrl: imageAsset,
-               fit: BoxFit.cover,//j
-             //  width: 56.88.w,height: 44.h, //update asmaa   brand logo all makes
-               placeholder: (context, url) => Center(
-                 child: CircularProgressIndicator(
-                   color: AppColors.primary,
-                   strokeWidth: 2,
-                 ),
-               ),
-               errorWidget: (context, url, error) => Image.asset(
-                 'assets/images/ic_all_cars.png',
-                 fit: BoxFit.contain,
-               ),
-             ),
-           )
+            brand?
+            title=='All Cars'
+                ? Expanded(
+                child: Padding(
+                    padding: EdgeInsets.all(8.w),
+                    child: Image.asset(
+                      imageAsset,
+                      fit: BoxFit.contain,
+                    )))
+                :
+            Expanded(
+              child: CachedNetworkImage(
+                imageUrl: imageAsset,
+                fit: BoxFit.cover,//j
+                //  width: 56.88.w,height: 44.h, //update asmaa   brand logo all makes
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                    strokeWidth: 2,
+                  ),
+                ),
+                errorWidget: (context, url, error) => Image.asset(
+                  'assets/images/ic_all_cars.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            )
 
 
 
 
 
-               :Expanded(
+                :Expanded(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.all(10.r),
-                  child:  fromHome=='true'?
-                  SvgPicture.asset(
-                    imageAsset,
-                    width:title.contains('Ads')?65.w:fromHomeSmall?48.58.w: 95.37.w,
-                    height:title=='Create Car Ads'?85.h :title.contains('Ads')?72.h:fromHomeSmall?30:73.33.h,
-                  ):  Image.asset(
-                    imageAsset,
-                    width: 58.w,
-                    height: 40.h,
-                    fit: BoxFit.contain,
-                  )
+                    padding: EdgeInsets.all(10.r),
+                    child:  fromHome=='true'?
+                    SvgPicture.asset(
+                      imageAsset,
+                      width:title.contains('Ads')?65.w:fromHomeSmall?48.58.w: 95.37.w,
+                      height:title=='Create Car Ads'?85.h :title.contains('Ads')?72.h:fromHomeSmall?30:73.33.h,
+                    ):  Image.asset(
+                      imageAsset,
+                      width: 58.w,
+                      height: 40.h,
+                      fit: BoxFit.contain,
+                    )
                 ),
               ),
             ),
