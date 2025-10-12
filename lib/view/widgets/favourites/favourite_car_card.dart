@@ -103,8 +103,8 @@ class FavouriteCarCard extends StatelessWidget {
                                           children: [
                           SvgPicture.asset(
                             'assets/images/new_svg/ic_calendar.svg',
-                            width: 26.w,
-                            height: 26.h,
+                            width: 23.w,
+                            height: 23.h,
                             color:  AppColors.black,
 
                           ),
@@ -114,8 +114,8 @@ class FavouriteCarCard extends StatelessWidget {
                           ),
                           SvgPicture.asset(
                             'assets/images/new_svg/ic_mileage.svg',
-                            width: 28.w,
-                            height: 28.h,
+                            width: 24.w,
+                            height: 24.h,
                             color:  AppColors.black,
 
                           ),
