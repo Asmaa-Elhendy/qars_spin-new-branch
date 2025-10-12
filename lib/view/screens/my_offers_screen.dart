@@ -88,7 +88,7 @@ class _OffersScreenState extends State<OffersScreen> {
           return RefreshIndicator(
             onRefresh: _loadOffers,
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+              padding: EdgeInsets.symmetric(vertical: 20.h, ),
               itemCount: controller.myOffersList.length,
               itemBuilder: (context, index) {
                 final offer = controller.myOffersList[index];
