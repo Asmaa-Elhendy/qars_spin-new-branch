@@ -84,7 +84,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
 
                       keyboardType: TextInputType.number,
 
-                      decoration: InputDecoration(
+                      decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 5.w,vertical:05.h),
                         hintText: "",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),

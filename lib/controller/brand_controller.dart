@@ -1,4 +1,5 @@
 
+
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -341,7 +342,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName': "sv4it",
+          'UserName': userName,
           'Post_ID': carDetails.postId.toString(),
           'Offer_Origin': "MobileApp",
           'Our_Secret': ourSecret,
@@ -351,8 +352,6 @@ class BrandController extends GetxController{
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         getOffers(carDetails.postId);
-
-
 
       }
     }catch(e){

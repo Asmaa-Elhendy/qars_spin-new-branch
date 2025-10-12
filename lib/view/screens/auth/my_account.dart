@@ -8,6 +8,7 @@ import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
 import '../../../controller/auth.dart';
 import '../../../controller/const/colors.dart';
+import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
 
 class MyAccount extends StatelessWidget {
@@ -189,7 +190,10 @@ class MyAccount extends StatelessWidget {
         buildMenuItem(
           icon: Icons.local_offer,
           title: "My Offers",
-            context: context
+            context: context,
+          onTap: (){
+            Get.to(OffersScreen());
+          }
 
         ),
         buildMenuItem(
