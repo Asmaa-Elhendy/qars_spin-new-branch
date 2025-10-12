@@ -9,6 +9,8 @@ class FavouriteCarCard extends StatelessWidget {
   final String price;
   final String location;
   final String imageUrl;
+  final String manefactureYear;
+  final String meilage;
   final VoidCallback onHeartTap;
 
 
@@ -19,6 +21,8 @@ class FavouriteCarCard extends StatelessWidget {
     required this.price,
     required this.location,
     required this.imageUrl,
+    required this.manefactureYear,
+    required this.meilage
   });
 
   @override
@@ -28,7 +32,7 @@ class FavouriteCarCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.carCardBackground(context),
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(6.r),
           border: Border.all(
             color: AppColors.inputBorder,
             width: 1,
@@ -40,7 +44,7 @@ class FavouriteCarCard extends StatelessWidget {
           children: [
             // Car Image
             ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(6.r),
               child: Image.network(
                 imageUrl,
                 width: 130.w,
@@ -65,10 +69,10 @@ class FavouriteCarCard extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    title,
+                    title.trim(),
                     style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 15.sp,
+                    //  fontWeight: FontWeight.bold,
                       color: AppColors.blackColor(context)
                     ),
                     maxLines: 1,
@@ -84,9 +88,9 @@ class FavouriteCarCard extends StatelessWidget {
 
                           // Price
                           Text(
-                            price,
+                            price+' '+'QAR',
                             style: TextStyle(
-                              fontSize: 17.sp,
+                              fontSize: 15.sp,
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -106,7 +110,7 @@ class FavouriteCarCard extends StatelessWidget {
                           ),
                           Padding(
                             padding:  EdgeInsets.only(right: 6.w,left: 2.w),
-                            child: Text('2021',style: TextStyle(color: AppColors.textSecondary(context)),),
+                            child: Text(manefactureYear,style: TextStyle(color: AppColors.textSecondary(context)),),
                           ),
                           SvgPicture.asset(
                             'assets/images/new_svg/ic_mileage.svg',
@@ -117,7 +121,7 @@ class FavouriteCarCard extends StatelessWidget {
                           ),
                           Padding(
                             padding:  EdgeInsets.symmetric(horizontal: 2.w),
-                            child: Text('36,566',style: TextStyle(color: AppColors.textSecondary(context)),),
+                            child: Text(meilage,style: TextStyle(color: AppColors.textSecondary(context)),),
                           ),
                                           ],
                                         ),
@@ -127,7 +131,7 @@ class FavouriteCarCard extends StatelessWidget {
                          onTap: onHeartTap,
                         child: Icon(
                           Icons.favorite, // Black border layer
-                          size: 30.sp,
+                          size: 25.sp,
                           color: AppColors.primary,
                         ),
                       ),

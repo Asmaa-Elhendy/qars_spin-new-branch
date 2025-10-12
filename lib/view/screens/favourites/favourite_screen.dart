@@ -71,6 +71,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   title: controller.favoriteList[i].carNamePl,
                   price: controller.favoriteList[i].askingPrice,
                   location: "controller.favoriteList[i].",
+                  meilage: controller.favoriteList[i].mileage.toString(),
+                  manefactureYear:controller.favoriteList[i].manufactureYear.toString(),
                   imageUrl:controller.favoriteList[i].rectangleImageUrl,
                   onHeartTap: (){
                     controller.removeFavItem(controller.favoriteList[i]);
