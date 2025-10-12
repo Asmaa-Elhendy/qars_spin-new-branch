@@ -67,81 +67,62 @@ class _OffersScreenState extends State<OffersScreen> {
       ),
 
 
-      body: Stack(
-        children: [
-          // Main Content
-          GetBuilder<BrandController>(
-            builder: (controller) {
-              if (controller.isLoadingOffers && controller.myOffersList.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              
-              if (controller.myOffersList.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No offers found',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: Colors.grey,
-                    ),
-                  ),
-                );
-              }
+      body: GetBuilder<BrandController>(
+        builder: (controller) {
+          if (controller.isLoadingOffers) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              return RefreshIndicator(
-                onRefresh: _loadOffers,
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-                  itemCount: controller.myOffersList.length,
-                  itemBuilder: (context, index) {
-                    final offer = controller.myOffersList[index];
-                    return GestureDetector(
-                      onTap: () {
-                        controller.getCarDetails(
-                          offer.postKind,
-                          offer.postId.toString(),
-                        );
-                        Get.to(
-                          () => CarDetails(
-                            sourcekind: offer.sourceKind,
-                            postKind: offer.postKind,
-                            id: offer.postId,
-                          ),
-                        );
-                      },
-                      child: FavouriteCarCard(
-                        myOffer: 'Offer',
-                        title: offer.carNamePl,
-                        price: offer.askingPrice,
-                        location: '',
-                        meilage: '${offer.mileage} KM',
-                        manefactureYear: offer.manufactureYear.toString(),
-                        imageUrl: offer.rectangleImageUrl,
-                        onHeartTap: () {
-                          // Handle remove offer if needed
-                        },
+          if (controller.myOffersList.isEmpty) {
+            return Center(
+              child: Text(
+                'No offers found',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.grey,
+                ),
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: _loadOffers,
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+              itemCount: controller.myOffersList.length,
+              itemBuilder: (context, index) {
+                final offer = controller.myOffersList[index];
+                return GestureDetector(
+                  onTap: () {
+                    controller.getCarDetails(
+                      offer.postKind,
+                      offer.postId.toString(),
+                    );
+                    Get.to(
+                      () => CarDetails(
+                        sourcekind: offer.sourceKind,
+                        postKind: offer.postKind,
+                        id: offer.postId,
                       ),
                     );
                   },
-                ),
-              );
-            },
-          ),
-          
-          // Loading Overlay for pull-to-refresh
-          GetBuilder<BrandController>(
-            builder: (controller) => controller.isLoadingOffers && controller.myOffersList.isNotEmpty
-                ? Container(
-                    color: Colors.black.withOpacity(0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
+                  child: FavouriteCarCard(
+                    myOffer: 'Offer',
+                    title: offer.carNamePl,
+                    price: offer.askingPrice,
+                    location: '',
+                    meilage: '${offer.mileage} KM',
+                    manefactureYear: offer.manufactureYear.toString(),
+                    imageUrl: offer.rectangleImageUrl,
+                    onHeartTap: () {
+                      // Handle remove offer if needed
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
       )
       ,
 

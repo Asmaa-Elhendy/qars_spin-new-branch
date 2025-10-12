@@ -80,37 +80,44 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName':userName, // Replace with actual username
-          'Our_Secret':ourSecret, // Replace with actual secret
+          'UserName': userName,
+          'Our_Secret': ourSecret,
         },
       );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        print('Offers API Response: $responseData'); // Debug log
 
         if (responseData['Code'] == 'OK') {
-          final List<dynamic> offersData = responseData['arrayOfOffers'] ?? [];
-          myOffersList = offersData.map((offer) => CarModel(
-            postId: offer['Post_ID'] ?? 0,
-            pinToTop: 0,
-            postCode: offer['Post_Code'] ?? '',
-            postKind: offer['Post_Kind'] ?? '',
-            carNamePl: offer['Car_Name_PL'] ?? '',
-            carNameSl: offer['Car_Name_SL'] ?? '',
-            carNameWithYearPl: '${offer['Manufacture_Year']} ${offer['Car_Name_PL'] ?? ''}',
-            carNameWithYearSl: '${offer['Manufacture_Year']} ${offer['Car_Name_SL'] ?? ''}',
-            manufactureYear: offer['Manufacture_Year'] ?? 0,
-            tag: '',
-            sourceKind: offer['Source_Kind'] ?? '',
-            mileage: int.tryParse(offer['Mileage']?.toString() ?? '0') ?? 0,
-            askingPrice: offer['Offer_Price']?.toString() ?? '0',
-            rectangleImageFileName: offer['Rectangle_Image_FileName'] ?? '',
-            rectangleImageUrl: offer['Rectangle_Image_URL'] ?? '',
-            offersCount: 0,
-            warrantyAvailable: 'No',
-            visitsCount: 0,
-            isFavorite: false,
-          )).toList();
+          final List<dynamic> offersData = responseData['Data'] ?? [];
+          myOffersList = offersData.map((offer) {
+            print('Processing offer: $offer'); // Debug log
+            return CarModel(
+              postId: offer['Post_ID'] ?? 0,
+              pinToTop: offer['Pin_To_Top'] ?? 0,
+              postCode: offer['Post_Code'] ?? '',
+              postKind: offer['Post_Kind'] ?? '',
+              carNamePl: (offer['Car_Name_PL'] ?? '').trim(),
+              carNameSl: (offer['Car_Name_SL'] ?? '').trim(),
+              carNameWithYearPl: offer['Car_Name_With_Year_PL']?.toString().trim() ?? '',
+              carNameWithYearSl: offer['Car_Name_With_Year_SL']?.toString().trim() ?? '',
+              manufactureYear: offer['Manufacture_Year'] ?? 0,
+              tag: offer['Tag'] ?? '',
+              sourceKind: offer['Source_Kind'] ?? '',
+              mileage: offer['Mileage'] is int ? offer['Mileage'] : int.tryParse(offer['Mileage']?.toString() ?? '0') ?? 0,
+              askingPrice: offer['Offer_Price']?.toString() ?? '0',
+              rectangleImageFileName: offer['Rectangle_Image_FileName'] ?? '',
+              rectangleImageUrl: offer['Rectangle_Image_URL'] ?? '',
+              offersCount: 0,
+              warrantyAvailable: 'No',
+              visitsCount: 0,
+              isFavorite: false,
+            );
+          }).toList();
+          print('Processed ${myOffersList.length} offers'); // Debug log
+        } else {
+          print('API Error: ${responseData['Desc']}'); // Debug log
         }
       }
     } catch (e) {
