@@ -6,6 +6,7 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/widgets/favourites/favourite_car_card.dart';
 import 'package:qarsspin/view/widgets/navigation_bar.dart';
 import 'package:qarsspin/view/screens/cars_for_sale/car_details.dart';
+import 'package:qarsspin/view/widgets/ads/dialogs/loading_dialog.dart';
 
 import 'ads/create_ad_options_screen.dart';
 import 'favourites/favourite_screen.dart';
@@ -24,11 +25,28 @@ class OffersScreen extends StatefulWidget {
 class _OffersScreenState extends State<OffersScreen> {
   int _selectedIndex = 1;
   final BrandController _controller = Get.find<BrandController>();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _setupLoadingListener();
     _loadOffers();
+  }
+
+  void _setupLoadingListener() {
+    ever(_controller.isLoadingOffers, (isLoading) {
+      if (mounted) {
+        setState(() {
+          _isLoading = isLoading as bool;
+        });
+      }
+    });
+
+    // Initial check
+    if (_controller.isLoadingOffers.isTrue) {
+      _isLoading = true;
+    }
   }
 
   Future<void> _loadOffers() async {
@@ -65,64 +83,77 @@ class _OffersScreenState extends State<OffersScreen> {
           ),
         ),
       ),
+//k
 
-
-      body: GetBuilder<BrandController>(
-        builder: (controller) {
-          if (controller.isLoadingOffers) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (controller.myOffersList.isEmpty) {
-            return Center(
-              child: Text(
-                'No offers found',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: Colors.grey,
-                ),
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: _loadOffers,
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 20.h, ),
-              itemCount: controller.myOffersList.length,
-              itemBuilder: (context, index) {
-                final offer = controller.myOffersList[index];
-                return GestureDetector(
-                  onTap: () {
-                    controller.getCarDetails(
-                      offer.postKind,
-                      offer.postId.toString(),
-                    );
-                    Get.to(
-                      () => CarDetails(
-                        sourcekind: offer.sourceKind,
-                        postKind: offer.postKind,
-                        id: offer.postId,
+      body: Stack(
+        children: [
+          // Main Content
+          GetBuilder<BrandController>(
+            builder: (controller) {
+              if (controller.myOffersList.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No offers found',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                );
+              }
+              
+              return RefreshIndicator(
+                onRefresh: _loadOffers,
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  itemCount: controller.myOffersList.length,
+                  itemBuilder: (context, index) {
+                    final offer = controller.myOffersList[index];
+                    return GestureDetector(
+                      onTap: () {
+                        controller.getCarDetails(
+                          offer.postKind,
+                          offer.postId.toString(),
+                        );
+                        Get.to(
+                          () => CarDetails(
+                            sourcekind: offer.sourceKind,
+                            postKind: offer.postKind,
+                            id: offer.postId,
+                          ),
+                        );
+                      },
+                      child: FavouriteCarCard(
+                        myOffer: 'Offer',
+                        title: offer.carNamePl,
+                        price: offer.askingPrice,
+                        location: '',
+                        meilage: '${offer.mileage} KM',
+                        manefactureYear: offer.manufactureYear.toString(),
+                        imageUrl: offer.rectangleImageUrl,
+                        onHeartTap: () {
+                          // Handle remove offer if needed
+                        },
                       ),
                     );
                   },
-                  child: FavouriteCarCard(
-                    myOffer: 'Offer',
-                    title: offer.carNamePl,
-                    price: offer.askingPrice,
-                    location: '',
-                    meilage: '${offer.mileage} KM',
-                    manefactureYear: offer.manufactureYear.toString(),
-                    imageUrl: offer.rectangleImageUrl,
-                    onHeartTap: () {
-                      // Handle remove offer if needed
-                    },
-                  ),
-                );
-              },
+                ),
+              );
+            },
+          ),
+          
+          // Loading Overlay
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: AppLoadingWidget(
+                  title: 'Loading...\nPlease Wait...',
+                ),
+              ),
             ),
-          );
-        },
+
+        ],
       )
       ,
 

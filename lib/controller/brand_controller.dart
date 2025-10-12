@@ -19,7 +19,7 @@ class BrandController extends GetxController{
   List<CarModel> ownersAds = [];
   List<CarModel> favoriteList = [];
   List<CarModel> myOffersList = [];
-  bool isLoadingOffers = false;
+  final RxBool isLoadingOffers = false.obs;
 
   CarModel carDetails =
   CarModel(postId: 0, pinToTop: 0, postCode: "postCode", carNamePl: "carNamePl",
@@ -70,7 +70,7 @@ class BrandController extends GetxController{
 
   Future<void> getMyOffers() async {
     try {
-      isLoadingOffers = true;
+      isLoadingOffers.value = true;
       update();
 
       final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/GetOffersByUser');
@@ -123,7 +123,7 @@ class BrandController extends GetxController{
     } catch (e) {
       print('Error fetching offers: $e');
     } finally {
-      isLoadingOffers = false;
+      isLoadingOffers.value = false;
       update();
     }
   }
