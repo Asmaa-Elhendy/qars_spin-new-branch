@@ -35,7 +35,7 @@ class SuccessDialog extends StatelessWidget {
       //insetPadding:  EdgeInsets.symmetric(horizontal: 20.w,vertical: 16.h),
       child: Container(
         padding:  EdgeInsets.symmetric(horizontal: 25.w,vertical: 16.h),
-        height: request?250.h:385.h, //update height of alert when req 360
+        height: request?250.h:310.h, //update height of alert when req 360
         decoration: BoxDecoration(
           //color: Colors.white,
           borderRadius: BorderRadius.zero,

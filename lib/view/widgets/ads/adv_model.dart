@@ -134,7 +134,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                 style:  TextStyle(
                   fontSize: width*.035 ,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.blackColor(context),
+                  color: AppColors.white//AppColors.blackColor(context),  //update color asmaa
                 ),
               ),
             ),

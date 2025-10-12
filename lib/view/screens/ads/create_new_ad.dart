@@ -18,6 +18,7 @@ import '../../widgets/my_ads/dialog.dart' as dialog;
 import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 import '../../screens/my_ads/my_ads_main_screen.dart';
+import '../../widgets/payments/payment_methods_dialog.dart';
 
 
 class SellCarScreen extends StatefulWidget {
@@ -489,7 +490,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   }
 
   /// Validate form and submit ad
-  void _validateAndSubmitForm({bool shouldPublish = false}) {
+  Future<void> _validateAndSubmitForm({bool shouldPublish = false}) async {
     // Validate form using validation methods
     bool isValid = ValidationMethods.validateForm(
       postData:widget.postData,
@@ -536,7 +537,29 @@ class _SellCarScreenState extends State<SellCarScreen> {
     if (!yearValid) return;
 
     // Submit the ad using the service
-    _submitAd(shouldPublish: shouldPublish);
+    // _submitAd(shouldPublish: shouldPublish);//handle add post without payment
+    //handle add post with payment
+    double amount=0;
+    _isRequest360?amount+=100:null;
+    _isFeauredPost?amount+=150:null;
+    final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
+
+    if (paid == true) {
+      _submitAd(shouldPublish: shouldPublish);
+    }
+    else {
+    dialog.  SuccessDialog.show(
+        request: true,
+        context: context,
+        title: 'Payment Failed',
+        message: 'Payment failed or cancelled.',
+        onClose: () {},
+        onTappp: () {},
+      );
+    }
+
+
+
   }
 
   /// Show alert for missing fields
@@ -890,7 +913,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                               context: context,
                               title: "Ready to showCase your vehicle like a pro?",
                               message:
-                              "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                              "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges 100 riyal can apply.",
                               onClose: () {},
                               onTappp: () async {
                                 Navigator.pop(context);
@@ -918,7 +941,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                                 context: context,
                                 title: "Let's make your post the center \n of orientation",
                                 message:
-                                "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
+                                "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!",
                                 onClose: () {},
                                 onTappp: () async {
                                   Navigator.pop(context);

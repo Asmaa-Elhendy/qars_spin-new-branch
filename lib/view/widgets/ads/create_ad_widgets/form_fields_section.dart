@@ -526,7 +526,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.white, width: 0.3),
+            border: Border.all(color: AppColors.black, width: 0.3), //update color asmaa
             borderRadius: BorderRadius.circular(5),
             color: AppColors.white
           ),

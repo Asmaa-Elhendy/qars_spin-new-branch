@@ -209,7 +209,7 @@ class SpecsController extends GetxController {
     // Specs(postId: "0", specId: "11", specType: "Text", specHeaderPl: "Torque", specValuePl: "", specHeaderSl: "عزم الدوران", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "9", specType: "Color", specHeaderPl: "Interior color", specValuePl: "", specHeaderSl: "اللون الداخلي", specValueSl: "", isHidden: false),
     Specs(postId: "0", specId: "12", specType: "Text", specHeaderPl: "Fuel Type", specValuePl: "", specHeaderSl: "نوع الوقود", specValueSl: "", isHidden: false,options: ['Diesel','Petrol','Electric','Hybrid','LPG']),
-    Specs(postId: "0", specId: "1", specType: "Number", specHeaderPl: "Cylinders", specValuePl: "", specHeaderSl: "الاسطوانات", specValueSl: "", isHidden: false,options: ['No','Yes']),
+    Specs(postId: "0", specId: "1", specType: "Number", specHeaderPl: "Cylinders", specValuePl: "", specHeaderSl: "الاسطوانات", specValueSl: "", isHidden: false,options: ['2','3','4','6','8','10','12','16']),
     Specs(postId: "0", specId: "13", specType: "Text", specHeaderPl: "Transmission", specValuePl: "", specHeaderSl: "ناقل الحركة", specValueSl: "", isHidden: false,options: ['Manual','Automatic']),
     // Specs(postId: "0", specId: "14", specType: "Text", specHeaderPl: "Drivetrain", specValuePl: "", specHeaderSl: "نظام القيادة", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "15", specType: "Text", specHeaderPl: "Upholstery Material", specValuePl: "", specHeaderSl: "مواد التنجيد", specValueSl: "", isHidden: false),

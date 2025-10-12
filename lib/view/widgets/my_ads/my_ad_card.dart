@@ -188,7 +188,7 @@ Widget MyAdCard(
                       //   );
                       // }
                       Navigator.pop(context);//j
-                      final paid = await PaymentMethodDialog.show(context: context,amount:  10.0);
+                      final paid = await PaymentMethodDialog.show(context: context,amount:  100.0);
 
                       if (paid == true) {
                         // 🟢 نجاح الدفع
