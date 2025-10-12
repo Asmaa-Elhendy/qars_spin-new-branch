@@ -508,6 +508,9 @@ class _SellCarScreenState extends State<SellCarScreen> {
       isRequest360:_isRequest360,
       isFeaturedPost:_isFeauredPost,
       context: context,
+      fuelType:fuelTypeController.text,
+      cylinders:cylindersController.text,
+      transmission:transmissionController.text,
       showMissingFieldsDialog: _showMissingFieldsAlert,
       showMissingCoverImageDialog: _showMissingCoverImageAlert,
     );
@@ -539,24 +542,30 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Submit the ad using the service
     // _submitAd(shouldPublish: shouldPublish);//handle add post without payment
     //handle add post with payment
-    double amount=0;
-    _isRequest360?amount+=100:null;
-    _isFeauredPost?amount+=150:null;
-    final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
+    if(_isRequest360||_isFeauredPost){
+      double amount=0;
+      _isRequest360?amount+=100:null;
+      _isFeauredPost?amount+=150:null;
+      final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
 
-    if (paid == true) {
-      _submitAd(shouldPublish: shouldPublish);
+      if (paid == true) {
+        _submitAd(shouldPublish: shouldPublish);
+      }
+      else {
+        dialog.  SuccessDialog.show(
+          request: true,
+          context: context,
+          title: 'Payment Failed',
+          message: 'Payment failed or cancelled.',
+          onClose: () {},
+          onTappp: () {},
+        );
+      }
+    }else{
+       _submitAd(shouldPublish: shouldPublish);//handle add post without payment
+
     }
-    else {
-    dialog.  SuccessDialog.show(
-        request: true,
-        context: context,
-        title: 'Payment Failed',
-        message: 'Payment failed or cancelled.',
-        onClose: () {},
-        onTappp: () {},
-      );
-    }
+
 
 
 
@@ -905,6 +914,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                               if (value != null) {
                                 setState(() {
                                   _isRequest360 = value;
+                                  log("36000000 $_isRequest360");
                                 });
                               }
                             }

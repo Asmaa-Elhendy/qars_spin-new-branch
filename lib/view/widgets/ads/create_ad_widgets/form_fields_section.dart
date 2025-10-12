@@ -420,8 +420,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   children: [
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[0].specHeaderPl ??
-                          "Option",
+                      controller.specsStatic[0].specHeaderPl+'(*)' ,
                       // 👈 اسم الخيار
                       controller:widget.fuelTypeController,
                       // 👈 كل spec له كنترولر خاص
@@ -440,8 +439,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                     SizedBox(height: height * .01),
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[1].specHeaderPl ??
-                          "Option",
+                      controller.specsStatic[1].specHeaderPl+'(*)' ,
                       // 👈 اسم الخيار
                       controller: widget.cylindersController,
                       // 👈 كل spec له كنترولر خاص
@@ -461,8 +459,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                     SizedBox(height: height * .01),
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[2].specHeaderPl ??
-                          "Option",
+                      controller.specsStatic[2].specHeaderPl +'(*)',
                       // 👈 اسم الخيار
                       controller: widget.transmissionController,
                       // 👈 كل spec له كنترولر خاص
