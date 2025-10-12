@@ -12,6 +12,7 @@ import '../ads/create_new_ad.dart';
 import '../cars_for_sale/car_details.dart';
 import '../general/contact_us.dart';
 import '../home_screen.dart';
+import '../my_offers_screen.dart';
 
 
 class FavouriteScreen extends StatefulWidget {
@@ -103,7 +104,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            //Get.offAll(OffersScreen());
+            Get.offAll(OffersScreen());
 
               break;
             case 2:

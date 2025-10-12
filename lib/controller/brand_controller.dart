@@ -18,6 +18,8 @@ class BrandController extends GetxController{
   List<CarModel> similarCars = [];
   List<CarModel> ownersAds = [];
   List<CarModel> favoriteList = [];
+  List<CarModel> myOffersList = [];
+  bool isLoadingOffers = false;
 
   CarModel carDetails =
   CarModel(postId: 0, pinToTop: 0, postCode: "postCode", carNamePl: "carNamePl",
@@ -64,6 +66,59 @@ class BrandController extends GetxController{
 
     // Format with timeago
     return timeago.format(dateTime);
+  }
+
+  Future<void> getMyOffers() async {
+    try {
+      isLoadingOffers = true;
+      update();
+
+      final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/GetOffersByUser');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'UserName':userName, // Replace with actual username
+          'Our_Secret':ourSecret, // Replace with actual secret
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData['Code'] == 'OK') {
+          final List<dynamic> offersData = responseData['arrayOfOffers'] ?? [];
+          myOffersList = offersData.map((offer) => CarModel(
+            postId: offer['Post_ID'] ?? 0,
+            pinToTop: 0,
+            postCode: offer['Post_Code'] ?? '',
+            postKind: offer['Post_Kind'] ?? '',
+            carNamePl: offer['Car_Name_PL'] ?? '',
+            carNameSl: offer['Car_Name_SL'] ?? '',
+            carNameWithYearPl: '${offer['Manufacture_Year']} ${offer['Car_Name_PL'] ?? ''}',
+            carNameWithYearSl: '${offer['Manufacture_Year']} ${offer['Car_Name_SL'] ?? ''}',
+            manufactureYear: offer['Manufacture_Year'] ?? 0,
+            tag: '',
+            sourceKind: offer['Source_Kind'] ?? '',
+            mileage: int.tryParse(offer['Mileage']?.toString() ?? '0') ?? 0,
+            askingPrice: offer['Offer_Price']?.toString() ?? '0',
+            rectangleImageFileName: offer['Rectangle_Image_FileName'] ?? '',
+            rectangleImageUrl: offer['Rectangle_Image_URL'] ?? '',
+            offersCount: 0,
+            warrantyAvailable: 'No',
+            visitsCount: 0,
+            isFavorite: false,
+          )).toList();
+        }
+      }
+    } catch (e) {
+      print('Error fetching offers: $e');
+    } finally {
+      isLoadingOffers = false;
+      update();
+    }
   }
 
   fetchCarMakes({String sort = "MakeName"}) async {

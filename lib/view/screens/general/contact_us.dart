@@ -10,6 +10,8 @@ import '../ads/create_ad_options_screen.dart';
 import '../home_screen.dart';
 import 'package:qarsspin/view/screens/favourites/favourite_screen.dart';
 
+import '../my_offers_screen.dart';
+
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -200,7 +202,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            //Get.offAll(OffersScreen());
+            Get.offAll(OffersScreen());
 
               break;
             case 2:

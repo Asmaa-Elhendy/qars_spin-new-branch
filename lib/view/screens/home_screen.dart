@@ -19,6 +19,7 @@ import 'cars_for_sale/showrooms.dart';
 import 'favourites/favourite_screen.dart';
 import 'general/contact_us.dart';
 import 'general/main_menu.dart';
+import 'my_offers_screen.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -347,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            //Get.offAll(OffersScreen());
+            Get.offAll(OffersScreen());
 
               break;
             case 2:

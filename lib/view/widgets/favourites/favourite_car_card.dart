@@ -12,7 +12,7 @@ class FavouriteCarCard extends StatelessWidget {
   final String manefactureYear;
   final String meilage;
   final VoidCallback onHeartTap;
-
+  final String? myOffer;
 
   const FavouriteCarCard({
     super.key,
@@ -22,21 +22,20 @@ class FavouriteCarCard extends StatelessWidget {
     required this.location,
     required this.imageUrl,
     required this.manefactureYear,
-    required this.meilage
+    required this.meilage,
+    this.myOffer = null,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h), // Margin خارجي
+      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+      // Margin خارجي
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.carCardBackground(context),
           borderRadius: BorderRadius.circular(6.r),
-          border: Border.all(
-            color: AppColors.inputBorder,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.inputBorder, width: 1),
         ),
         padding: EdgeInsets.all(10.w), // Padding داخلي
         child: Row(
@@ -52,7 +51,7 @@ class FavouriteCarCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Image.network(
-                   imageUrl,
+                    imageUrl,
                     width: 130.w,
                     height: 100.h,
                     fit: BoxFit.cover,
@@ -71,14 +70,15 @@ class FavouriteCarCard extends StatelessWidget {
                   Text(
                     title.trim(),
                     style: TextStyle(
-                      fontSize: 15.sp,
-                    //  fontWeight: FontWeight.bold,
-                      color: AppColors.blackColor(context)
+                      fontSize: 14.sp,
+                      //  fontWeight: FontWeight.bold,
+                      color: AppColors.blackColor(context),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,61 +87,89 @@ class FavouriteCarCard extends StatelessWidget {
                           SizedBox(height: 6.h),
 
                           // Price
-                          Text(
-                            price+' '+'QAR',
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          myOffer != null
+                              ? Text(
+                                  'Asking Price:' + ' ' + price + ' ' + 'QAR',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: AppColors.blackColor(context),
+                                  ),
+                                )
+                              : Text(
+                                  price + ' ' + 'QAR',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                           SizedBox(height: 6.h),
 
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                          SvgPicture.asset(
-                            'assets/images/new_svg/ic_calendar.svg',
-                            width: 23.w,
-                            height: 23.h,
-                            color:  AppColors.black,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/new_svg/ic_calendar.svg',
+                                width: 23.w,
+                                height: 23.h,
+                                color: AppColors.black,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: 6.w, left: 2.w),
+                                child: Text(
+                                  manefactureYear,
+                                  style: TextStyle(
+                                    fontSize: 15.w,
+                                    color: AppColors.textSecondary(context),
+                                  ),
+                                ),
+                              ),
+                              myOffer != null
+                                  ? SizedBox()
+                                  : SvgPicture.asset(
+                                      'assets/images/new_svg/ic_mileage.svg',
+                                      width: 24.w,
+                                      height: 24.h,
+                                      color: AppColors.black,
+                                    ),
+                              myOffer != null
+                                  ? SizedBox()
+                                  : Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 2.w,
+                                      ),
+                                      child: Text(
+                                        meilage,
+                                        style: TextStyle(
+                                          fontSize: 15.w,
 
-                          ),
-                          Padding(
-                            padding:  EdgeInsets.only(right: 6.w,left: 2.w),
-                            child: Text(manefactureYear,style: TextStyle(color: AppColors.textSecondary(context)),),
-                          ),
-                          SvgPicture.asset(
-                            'assets/images/new_svg/ic_mileage.svg',
-                            width: 24.w,
-                            height: 24.h,
-                            color:  AppColors.black,
+                                          color: AppColors.textSecondary(
+                                            context,
 
-                          ),
-                          Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 2.w),
-                            child: Text(meilage,style: TextStyle(color: AppColors.textSecondary(context)),),
-                          ),
-                                          ],
+                                          ),
                                         ),
+                                      ),
+                                    ),
+                            ],
+                          ),
                         ],
                       ),
-                      InkWell(
-                         onTap: onHeartTap,
-                        child: Icon(
-                          Icons.favorite, // Black border layer
-                          size: 25.sp,
-                          color: AppColors.primary,
-                        ),
-                      ),
+                      myOffer != null
+                          ? SizedBox()
+                          : InkWell(
+                              onTap: onHeartTap,
+                              child: Icon(
+                                Icons.favorite, // Black border layer
+                                size: 25.sp,
+                                color: AppColors.primary,
+                              ),
+                            ),
                     ],
                   ),
                 ],
               ),
             ),
-
-
           ],
         ),
       ),
