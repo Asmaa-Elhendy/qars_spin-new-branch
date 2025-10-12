@@ -13,7 +13,7 @@ import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/car_card.dart';
 import '../../widgets/car_list_grey_bar.dart';
 import '../../widgets/cars_list_app_bar.dart';
-import '../general/find_my_car.dart';
+import '../general/find_me_car.dart';
 
 class CarsBrandList extends StatefulWidget {
   String brandName;
@@ -30,7 +30,8 @@ class _CarsBrandListState extends State<CarsBrandList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: carListAppBar(notificationCount: 3),
+      backgroundColor: AppColors.background(context),
+      appBar: carListAppBar(notificationCount: 3,context: context),
       body: GetBuilder<BrandController>(builder: (controller) {
         return Stack(
           children: [
@@ -39,7 +40,10 @@ class _CarsBrandListState extends State<CarsBrandList> {
                 adContainer(),
                 8.verticalSpace,
                 carListGreyBar(
-                    listCars: true,
+                    listCars:widget.brandName!="Qars Spin \n Showroom"&& widget.brandName!="Personal Cars",//true,
+                    listCarsInQarsSpinShowRoom: widget.brandName=="Qars Spin \n Showroom",
+                    personalsCars: widget.brandName=="Personal Cars",
+
                     onSearchResult: (result) {
                       //  Get.find<MySearchController>().fetchCarMakes();
                       setState(() {
@@ -55,27 +59,27 @@ class _CarsBrandListState extends State<CarsBrandList> {
                       });
                     }),
                 8.verticalSpace,
-                controller.loadingMode?SizedBox():
-                controller.carsList.isNotEmpty
-                    ? Expanded(
-                    child: isGrid
-                        ? listAsAGread(controller.carsList)
-                        : listAsAList(controller.carsList))
-                    : noResultFoud()
+                 controller.loadingMode?SizedBox():
+                 controller.carsList.isNotEmpty
+                        ? Expanded(
+                            child: isGrid
+                                ? listAsAGread(controller.carsList)
+                                : listAsAList(controller.carsList))
+                        : noResultFoud()
               ],
             ),
-            if(controller.loadingMode)
-              Positioned.fill(
+           if(controller.loadingMode)
+                 Positioned.fill(
 
-                child: Container(
-                  color: AppColors.black.withOpacity(0.5),
-                  child: Center(
-                    child: AppLoadingWidget(
-                      title: 'Loading...\nPlease Wait...',
-                    ),
+              child: Container(
+                color: AppColors.black.withOpacity(0.5),
+                child: Center(
+                  child: AppLoadingWidget(
+                    title: 'Loading...\nPlease Wait...',
                   ),
                 ),
-              )
+              ),
+            )
 
           ],
         );
@@ -86,9 +90,10 @@ class _CarsBrandListState extends State<CarsBrandList> {
   Widget listAsAGread(cars) {
     return Padding(
         padding:
-        EdgeInsets.symmetric(horizontal: 13.w, vertical: 8), //update asmaa
+            EdgeInsets.symmetric(horizontal: 13.w, vertical: 8), //update asmaa
         child: GridView.builder(
             itemCount: cars.length,
+
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
@@ -96,7 +101,9 @@ class _CarsBrandListState extends State<CarsBrandList> {
               childAspectRatio: .785, //.877 adjust for card height .6  update grid cars asmaa
             ),
             itemBuilder: (context, index) {
+
               return carCard(
+                context: context,
                   w: 192.w,
                   h: 235.h,
                   car: cars[index],
@@ -115,11 +122,12 @@ class _CarsBrandListState extends State<CarsBrandList> {
             children: [
               carCard(
                 w: double.infinity, // full width
+                context: context,
                 h: 300.h,
                 car: cars[index],
                 postKind: widget.postKind,
                 large:
-                true, // you can use this flag if your card has different styles for list
+                    true, // you can use this flag if your card has different styles for list
               ),
               8.verticalSpace
             ],
@@ -137,7 +145,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
           child: Text(
             "No Result Found",
             style: TextStyle(
-                color: AppColors.black,
+                color: AppColors.blackColor(context),
                 fontFamily: fontFamily,
                 fontWeight: FontWeight.w800,
                 fontSize: 18.sp),
@@ -151,7 +159,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
               child: Text(
                 "Unfortunately what you are looking for is\ncurrently not available. Please activate a",
                 style: TextStyle(
-                    color: AppColors.black,
+                    color: AppColors.blackColor(context),
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
                     fontSize: 15.sp),
@@ -160,7 +168,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
             Text(
               "notification using\"Find me a car\"yp be updates",
               style: TextStyle(
-                  color: AppColors.black,
+                  color: AppColors.blackColor(context),
                   fontFamily: fontFamily,
                   fontWeight: FontWeight.w300,
                   fontSize: 15.sp),
@@ -172,13 +180,14 @@ class _CarsBrandListState extends State<CarsBrandList> {
                   Get.to(FindMeACar());
                 },
                 child: Container(
-                  width: 150.w,
+                  width: 160.w,
+                  height: 55.h,
                   padding:
-                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                      EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
                   decoration: BoxDecoration(
-                    color: AppColors.darkTextSecondary,
+                    color: AppColors.textSecondary(context),
                     borderRadius:
-                    BorderRadius.circular(4), // optional rounded corners
+                        BorderRadius.circular(4), // optional rounded corners
                   ),
                   child: Center(
                     child: Text(
@@ -200,19 +209,4 @@ class _CarsBrandListState extends State<CarsBrandList> {
     );
   }
 }
-// Obx(() {
-// if (controller.isLoadingMedia.value) {
-// return
-// Positioned.fill(
-// child: Container(
-// color: Colors.black.withOpacity(0.5),
-// child: Center(
-// child: AppLoadingWidget(
-// title: 'Loading...\nPlease Wait...',
-// ),
-// ),
-// ),
-// );
-// }
-// return SizedBox.shrink();
-// }),
+

@@ -29,7 +29,7 @@ class ValidationMethods {
         year.isEmpty ||
         askingPrice.isEmpty ||
         mileage.isEmpty
-      //  ||  description.isEmpty
+    //  ||  description.isEmpty
     ) {
       showMissingFieldsDialog("Please fill all (*)  mandatory fields");
       return false;
@@ -140,7 +140,7 @@ class ValidationMethods {
     try {
       int yearValue = int.parse(year);
       int currentYear = DateTime.now().year;
-      
+
       if (yearValue < 1900 || yearValue > currentYear + 1) {
         showErrorDialog("Please enter a valid manufacture year");
         return false;

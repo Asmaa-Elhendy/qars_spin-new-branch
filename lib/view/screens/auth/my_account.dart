@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/view/screens/auth/registration_screen.dart';
 import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
 import '../../../controller/auth.dart';
 import '../../../controller/const/colors.dart';
-import '../notifications/notification.dart';
+import '../notifications/notifications.dart';
 
 class MyAccount extends StatelessWidget {
   const MyAccount({super.key});
@@ -15,8 +16,7 @@ class MyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-
+      backgroundColor: AppColors.background(context),
 
       body:
 
@@ -27,12 +27,13 @@ class MyAccount extends StatelessWidget {
               height: 88.h, // same as your AppBar height
               padding: EdgeInsets.only(top: 13.h,left: 14.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.background(context),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25), // shadow color
-                    blurRadius: 6, // softens the shadow
-                    offset: Offset(0, 2), // moves shadow downward
+                  BoxShadow( //update asmaa
+                    color: AppColors.blackColor(context).withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 5.h,
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
@@ -45,7 +46,7 @@ class MyAccount extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.arrow_back_outlined,
-                      color: Colors.black,
+                      color: AppColors.blackColor(context),
                       size: 30.w,
                     ),
                   ),
@@ -55,7 +56,7 @@ class MyAccount extends StatelessWidget {
                       textAlign: TextAlign.center,
                       "My Account",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: AppColors.blackColor(context),
                         fontFamily: 'Gilroy',
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w800,
@@ -68,31 +69,34 @@ class MyAccount extends StatelessWidget {
             25.verticalSpace,
             SizedBox(
               height: 750.h,
-              child: registered?bodyWithRegistered():bodyWithoutRegister(context),
+              child: registered?bodyWithRegistered(context):bodyWithoutRegister(context),
             )
           ],
         ),
       ),
     );
   }
-  Widget bodyWithoutRegister(BuildContext context){
+  Widget bodyWithoutRegister(context){
   return  Padding(
-    padding:  EdgeInsets.symmetric(horizontal: 80.w),
+    padding:  EdgeInsets.symmetric(horizontal: 40.w),
     child: Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: AppColors.profile(context),
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
+            
             leading: const Icon(Icons.person, color: Colors.black),
-            title: const Text(
+            title:  Text(
               "Register Now",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
+              color: AppColors.blackColor(context)
+              ),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.black54),
+            trailing:  Icon(Icons.arrow_forward_ios,
+                size: 16, color: AppColors.iconColor(context)),
             onTap: () {
               Get.to(RegistrationScreen());
             },
@@ -100,39 +104,33 @@ class MyAccount extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        const SizedBox(height: 20),
         // Notifications
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(8),//l
+        ListTile(
+          leading: const Icon(Icons.notifications, color: Colors.red),
+          title: const Text(
+            "Notifications",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          child: ListTile(
-            leading: const Icon(Icons.notifications, color: Colors.red),
-            title: const Text(
-              "Notifications",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            trailing: const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.black54),
-            onTap: () {
-              Get.to(NotificationsPage());
-            },
-          ),
+          trailing:  Icon(Icons.arrow_forward_ios,
+              size: 16, color: AppColors.iconColor(context)),
+          onTap: () {
+            Get.to(NotificationsPage());
+
+          },
         ),
       ],
     ),
   );
 
   }
-  Widget bodyWithRegistered(){
+  Widget bodyWithRegistered(context){
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: AppColors.profile(context),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -141,14 +139,14 @@ class MyAccount extends StatelessWidget {
                  children: [
                    CircleAvatar(
                     radius: 50.r,
-                    backgroundColor: AppColors.lightGray,
+                    backgroundColor: AppColors.lightGrayColor(context),
                     child: Icon(Icons.person, size: 80.w, color: Colors.black),
                                  ),
                    8.verticalSpace,
                    Text("Active Ads: 0",
                        style: TextStyle(
                            fontSize: 14.sp,
-                           color: Colors.grey)),
+                           color: AppColors.shadowColor(context))),
                  ],
                ),
               16.horizontalSpace,
@@ -156,13 +154,20 @@ class MyAccount extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
+                  children:  [
                     Text("sv4it",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                          fontFamily: fontFamily,
+                            fontWeight: FontWeight.bold, fontSize: 16.sp)),
                     Text("97433998885",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("01/01/1900"),
+
+                        style: TextStyle(
+                            fontFamily: fontFamily,
+                            fontWeight: FontWeight.bold)),
+                    Text("01/01/1900",
+
+
+                    ),
 
                   ],
                 ),
@@ -176,38 +181,51 @@ class MyAccount extends StatelessWidget {
           icon: Icons.notifications,
           title: "Notifications",
           iconColor: Colors.red,
-          onTap: (){
-            Get.to(NotificationsPage());
-          }
+          context: context,
+    onTap: (){
+    Get.to(NotificationsPage());
+    }
         ),
         buildMenuItem(
           icon: Icons.local_offer,
           title: "My Offers",
+            context: context
 
         ),
         buildMenuItem(
           icon: Icons.campaign,
           title: "My Advertisements",
+
           onTap: (){
             Get.to(MyAdsMainScreen());
-          }
+          },
+            context: context
+
         ),
         buildMenuItem(
           icon: Icons.favorite,
           title: "My Favorites",
+            context: context
+
         ),
         buildMenuItem(
           icon: Icons.notifications_active,
           title: "Personalized Notifications",
+            context: context
+
         ),
         const SizedBox(height: 20),
         buildMenuItem(
           icon: Icons.logout,
           title: "Sign Out",
+            context: context
+
         ),
         buildMenuItem(
           icon: Icons.delete_outline,
           title: "Delete My Account",
+            context: context
+
         ),
       ],
     );
@@ -217,16 +235,17 @@ class MyAccount extends StatelessWidget {
     required String title,
     Color? iconColor,
     VoidCallback? onTap,
+    context
   }) {
     return Column(
       children: [
         ListTile(
-          leading: Icon(icon, color: iconColor ?? Colors.black),
+          leading: Icon(icon, color: iconColor ?? AppColors.blackColor(context)),
           title: Text(title, style: const TextStyle(fontSize: 16)),
           trailing: Image.asset("assets/images/arrow.png",scale: 1.8,),
           onTap: onTap,
         ),
-         title=="Sign Out" || title=="Delete My Account"?SizedBox(): Divider(height: 1, color: Colors.black26),
+         title=="Sign Out" || title=="Delete My Account"?SizedBox(): Divider(height: 1, color: AppColors.divider(context)),
       ],
     );
   }

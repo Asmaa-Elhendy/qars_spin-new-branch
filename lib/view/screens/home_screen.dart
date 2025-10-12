@@ -21,7 +21,8 @@ import 'general/contact_us.dart';
 import 'general/main_menu.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+
+   HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -55,20 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor:AppColors.background(context),
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: AppColors.background,
+        backgroundColor:AppColors.background(context),
         toolbarHeight: 60.h,
         shadowColor: Colors.grey.shade300,
         // elevation: 3,
         elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.background(context),
             boxShadow: [
               BoxShadow( //update asmaa
-                color: Colors.black.withOpacity(0.2),
+                color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
                 offset: Offset(0, 2),
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: // Menu Button
         GestureDetector(onTap: () {
           Get.to(MainMenu());
-        }, child: Icon(Icons.menu)),
+        }, child: Icon(Icons.menu,color: AppColors.iconColor(context),)),
         actions: [
           // Account Button with Notification Counter (smaller)
 
@@ -96,19 +97,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     'assets/images/ic_personal_account.png',
                     width: 20.w, //update asmaa
                     height: 20.h,
+                    color: AppColors.blackColor(context),
                   ),
                 ),
                 if (notificationCount > 0)
                   Positioned(
                     right: 25.w,//update asmaa
                     top: 15.h,
-                    child: Container(height: 18.h,
+                    child: Container(
+                      height: 17.h,
+                      width: 18.w,
                       constraints:
                       const BoxConstraints(minWidth: 14, minHeight: 8),
                       decoration: BoxDecoration(
-                        color: Color(0xffEC6D64),
+                        color: AppColors.danger,
                         shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(6.r),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.18),
@@ -137,8 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
 
         title: SizedBox(
-          height: 140,
-          width: 140,
+          height: 195.h,
+          width: 195.w,
           child: Image.asset(
             'assets/images/ic_top_logo_colored.png',
             fit: BoxFit.cover,
@@ -154,117 +158,116 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
             child: SingleChildScrollView(
-              child: SafeArea(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(height:10.h),
-                        adContainer(bigAdHome: true,),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final screenWidth = constraints.maxWidth;
-                            final crossAxisCount = screenWidth >= 600 ? 3 : 2;
-                            final horizontalPadding =
-                                screenWidth * 0.02 + 6; // responsive
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: horizontalPadding),
-                              child:
-                              GridView.count(
-                                physics: const NeverScrollableScrollPhysics(),
-                                crossAxisCount: crossAxisCount,
-                                shrinkWrap: true,
-                                mainAxisSpacing: 3,
-                                crossAxisSpacing: 5,
-                                childAspectRatio: 1.42, //instead 1.2 update asmaa
-                                children: [
-                                  HomeServiceCard(
-                                    onTap: () {
-                                      _toggleMenu(true);
-                                      setState(() {
-                                        cardView = "forSale";
-                                      });
-                                    },
-                                    title: 'Cars For Sale',
-                                    imageAsset:
-                                    'assets/images/new_svg/home1.svg',
-                                    large: true,fromHome: 'true',
-                                  ),
-                                  HomeServiceCard(
-                                    onTap: () {
-                                      _toggleMenu(true);
-                                      setState(() {
-                                        cardView = "forRent";
-                                      });
-                                    },
-                                    title: 'Cars For Rent',
-                                    imageAsset:
-                                    'assets/images/new_svg/home2.svg',
-                                    large: true,fromHome: 'true',
-                                  ),
-                                  HomeServiceCard(
-                                    onTap: () {
-                                      Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop");
-                                      Get.to(CarsShowRoom(carCare: true,title: "Car Care",rentRoom: false,));
-                                    },
-                                    title: 'Car Care',
-                                    imageAsset: 'assets/images/new_svg/home3.svg',
-                                    large: true,fromHome: 'true',
-                                  ),
-                                  HomeServiceCard(
-                                    onTap: () => _toggleMenu(true),
-                                    title: 'Garages',
-                                    imageAsset: 'assets/images/new_svg/home4.svg',
-                                    large: true,
-                                    fromHome: 'true',
-                                  ),
-                                ],
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height:10.h),
+                    adContainer(bigAdHome: true,),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final screenWidth = constraints.maxWidth;
+                        final crossAxisCount = screenWidth >= 600 ? 3 : 2;
+                        final horizontalPadding =
+                            screenWidth * 0.02 + 6; // responsive
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding),
+                          child:
+                          GridView.count(
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: crossAxisCount,
+                            shrinkWrap: true,
+                            mainAxisSpacing: 3,
+                            crossAxisSpacing: 5,
+                            childAspectRatio: 1.42, //instead 1.2 update asmaa
+                            children: [
+                              HomeServiceCard(
+                                onTap: () {
+                                  _toggleMenu(true);
+                                  setState(() {
+                                    cardView = "forSale";
+                                  });
+                                },
+                                title: 'Cars For Sale',
+                                imageAsset:
+                                'assets/images/new_svg/home1.svg',
+                                large: true,fromHome: 'true',
                               ),
-                            );
-                          },
-                        ),
-                        adContainer(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 1.0),
-                          child: SizedBox(height: 140.h,   //update asmaa
-                            child: SingleChildScrollView(padding: EdgeInsets.zero,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 125.w, //update asmaa
-                                    child: HomeServiceCard(
-                                      title: 'Bikes',
-                                      imageAsset: 'assets/images/new_svg/bikes.svg',
-                                      large: false,fromHome: 'true',fromHomeSmall: true,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  SizedBox(
-                                    width: 125.w, //update asmaa
-                                    child: HomeServiceCard(
-                                      title: 'Caravans',
-                                      imageAsset: 'assets/images/new_svg/caravans.svg',
-                                      large: false,fromHome: 'true',fromHomeSmall: true,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  SizedBox(
-                                    width: 125.w, //update asmaa
-                                    child: HomeServiceCard(
-                                      title: 'Plates',
-                                      imageAsset: 'assets/images/new_svg/plates.svg',
-                                      large: false,fromHome: 'true',fromHomeSmall: true,
-                                    ),
-                                  ),
-                                ],
+                              HomeServiceCard(
+                                onTap: () {
+                                  _toggleMenu(true);
+                                  setState(() {
+                                    cardView = "forRent";
+                                  });
+                                },
+                                title: 'Cars For Rent',
+                                imageAsset:
+                                'assets/images/new_svg/home2.svg',
+                                large: true,fromHome: 'true',
                               ),
-                            ),
+                              HomeServiceCard(
+                                onTap: () {
+                                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop",forSale: false);
+                                  Get.to(CarsShowRoom(carCare: true,title: "Car Care",rentRoom: false,));
+                                },
+                                title: 'Car Care',
+                                imageAsset: 'assets/images/new_svg/home3.svg',
+                                large: true,fromHome: 'true',
+                              ),
+                              HomeServiceCard(
+                                onTap: () => _toggleMenu(true),
+                                title: 'Garages',
+                                imageAsset: 'assets/images/new_svg/home4.svg',
+                                large: true,
+                                fromHome: 'true',
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    adContainer(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 1.0),
+                      child: SizedBox(height: 140.h,   //update asmaa
+                        child: SingleChildScrollView(padding: EdgeInsets.zero,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 125.w, //update asmaa
+                                child: HomeServiceCard(
+                                  title: 'Bikes',
+                                  imageAsset: 'assets/images/new_svg/bikes.svg',
+                                  large: false,fromHome: 'true',fromHomeSmall: true,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              SizedBox(
+                                width: 125.w, //update asmaa
+                                child: HomeServiceCard(
+                                  title: 'Caravans',
+                                  imageAsset: 'assets/images/new_svg/caravans.svg',
+                                  large: false,fromHome: 'true',fromHomeSmall: true,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              SizedBox(
+                                width: 125.w, //update asmaa
+                                child: HomeServiceCard(
+                                  title: 'Plates',
+                                  imageAsset: 'assets/images/new_svg/plates.svg',
+                                  large: false,fromHome: 'true',fromHomeSmall: true,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                      ])),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ]),
             ),
           ),
           // Slide-up menu
@@ -308,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.star,
+                          color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
                         child: InkWell( //update asmaa
@@ -394,6 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(
                 onTap: () {
                   // qar spin show room
+                  Get.find<BrandController>().switchLoading();
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
                   Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",postKind: "",));
                 },
@@ -403,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               HomeServiceCard(
                 onTap: () {
-                  Get.find<ShowRoomsController>().fetchShowrooms();
+                  Get.find<ShowRoomsController>().fetchShowrooms(forSale: true);
                   Get.to(CarsShowRoom(title: "Cars Showrooms",rentRoom: false,));
                 },
                 title: 'Cars Showrooms',fromHome: 'true',
@@ -413,7 +417,8 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(fromHome: 'true',
                 title: 'Personal Cars',
                 onTap: () {
-                  // personal cars
+                // personal cars
+                  Get.find<BrandController>().switchLoading();
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
 
                   Get.to(CarsBrandList(brandName: "Personal Cars",postKind: "",));
@@ -452,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               HomeServiceCard(
                 onTap: () {
-                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Rent a Car");
+                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Rent a Car",forSale: false);
                   Get.to(CarsShowRoom(title: "Rental Showrooms",rentRoom: true,));
                 },
                 title: 'Rental Showrooms',fromHome: 'true',

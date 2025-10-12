@@ -38,9 +38,9 @@ class ImageUploadSection extends StatefulWidget {
 
 class _ImageUploadSectionState extends State<ImageUploadSection> {
   bool _isVideo(String path) {
-    return path.toLowerCase().endsWith('.mp4') || 
-           path.toLowerCase().endsWith('.mov') || 
-           path.toLowerCase().endsWith('.avi');
+    return path.toLowerCase().endsWith('.mp4') ||
+        path.toLowerCase().endsWith('.mov') ||
+        path.toLowerCase().endsWith('.avi');
   }
 
   bool _isNetworkUrl(String path) {

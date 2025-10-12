@@ -30,9 +30,9 @@ class _LoanInstallmentsSliderState extends State<LoanInstallmentsSlider> {
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: AppColors.star,
+                  activeTrackColor: AppColors.primary,
                   inactiveTrackColor: AppColors.extraLightGray,
-                  thumbColor: AppColors.star,
+                  thumbColor: AppColors.primary,
 
                   thumbShape:  RoundSliderThumbShape(enabledThumbRadius: 16.r),
                   overlayShape:  RoundSliderOverlayShape(overlayRadius: 8.r),
@@ -43,11 +43,11 @@ class _LoanInstallmentsSliderState extends State<LoanInstallmentsSlider> {
                   max: 48,
                   onChanged: (value) {
                     setState(() {
-                      // _months = value;
+                     // _months = value;
 
                       widget.monthsNotifier.value = value.toInt();
                     });
-                    //  print(widget.monthsNotifier.value .toInt());
+                  //  print(widget.monthsNotifier.value .toInt());
                   },
                 ),
               ),
@@ -71,6 +71,7 @@ class _LoanInstallmentsSliderState extends State<LoanInstallmentsSlider> {
                   widget.monthsNotifier.value.toInt().toString(),
                   style:  TextStyle(
                     fontSize: 16.sp,
+                    color: AppColors.black,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w700,
                   ),

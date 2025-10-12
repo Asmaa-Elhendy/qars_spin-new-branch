@@ -22,9 +22,7 @@ class CustomBottomNavBar extends StatelessWidget {
     final double labelFontSize = 10.0;
 
     return Container(
-     // height: barHeight + MediaQuery.of(context).padding.bottom,
-     // height: 100.h, //update asmaa
-     // padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+
       child: Stack(
         clipBehavior: Clip.none, // Allow the add button to overflow
         alignment: Alignment.bottomCenter,
@@ -32,7 +30,7 @@ class CustomBottomNavBar extends StatelessWidget {
           Container(
             height: barHeight,
             decoration: BoxDecoration(
-              color: AppColors.star,
+              color: AppColors.primary,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -50,6 +48,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   isSelected: selectedIndex == 0,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
+                  context: context
                 ),
 
                 _buildNavItem(
@@ -58,6 +57,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   isSelected: selectedIndex == 1,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
+                  context: context
                 ),
 
                 // Invisible placeholder for the add button
@@ -69,6 +69,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     isSelected: false,
                     iconSize: iconSize,
                     labelFontSize: labelFontSize,
+                    context: context
 
                   ),
                 ),
@@ -79,14 +80,16 @@ class CustomBottomNavBar extends StatelessWidget {
                   isSelected: selectedIndex == 3,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
+                  context: context
                 ),
 
                 _buildNavItem(
                   index: 4,
                   label: 'Contact',
-                  isSelected: selectedIndex == 4,//j
+                  isSelected: selectedIndex == 4,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
+                  context: context
                 ),
               ],
             ),
@@ -94,20 +97,20 @@ class CustomBottomNavBar extends StatelessWidget {
 
 
           Positioned(
-            bottom: 25.h,
+            bottom: 22.h,
             child: GestureDetector(
               onTap: onAddPressed,
               child: Container(
                 width: addButtonSize,
                 height: addButtonSize,
                 decoration: BoxDecoration(
-                  color: AppColors.starInactive, // Using navBarGray color
+                  color: AppColors.divider(context), // Using navBarGray color
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.white, width: 4), // Using navBarWhite constant
+                  border: Border.all(color: AppColors.background(context), width: 4), // Using navBarWhite constant
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
+                      blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -119,7 +122,7 @@ class CustomBottomNavBar extends StatelessWidget {
                       Icon(
                         Icons.add,
                         color: Colors.white, // White icon
-                        size: 28, // Slightly smaller icon
+                        size: 26.w, // Slightly smaller icon
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -149,24 +152,25 @@ class CustomBottomNavBar extends StatelessWidget {
     required bool isSelected,
     required double iconSize,
     required double labelFontSize,
+    required BuildContext context
   }) {
-    final iconColor = isSelected ? AppColors.starInactive : AppColors.white;
+    final iconColor = isSelected ? AppColors.divider(context) : AppColors.white;
 
     Widget iconWidget;
 
     if (index == 0) {
       // Home - Flutter Icon
       iconWidget = Icon(
-        isSelected ? Icons.home : Icons.home_outlined,
-        color: iconColor,
+         Icons.home ,
+        color:  isSelected ?AppColors.divider(context):AppColors.white,
         size: iconSize,
       );
      // Get.offAll(HomeScreen());
     } else if (index == 3) {
       // Favorite - Flutter Icon
       iconWidget = Icon(
-        isSelected ? Icons.favorite : Icons.favorite_border,
-        color: iconColor,
+         Icons.favorite,
+        color:  isSelected ?AppColors.divider(context):AppColors.white,
         size: iconSize,
       );
     } else {
@@ -206,7 +210,7 @@ class CustomBottomNavBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? AppColors.starInactive : AppColors.white,
+                color: isSelected ? AppColors.divider(context) : AppColors.white,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 fontSize: labelFontSize,
                 fontFamily: 'Gilroy',

@@ -118,5 +118,4 @@ class AppStrings {
   // Placeholders
   static const String comingSoon = 'Coming Soon';
   static const String underDevelopment = 'This feature is under development';
-
 }

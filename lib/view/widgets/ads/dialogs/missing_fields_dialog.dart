@@ -8,7 +8,7 @@ class MissingFieldsDialog {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: const Text('Missing Information'),
-        content: Text('$fieldsText'),
+        content: Text('Please fill in the following required fields:\n$fieldsText'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,

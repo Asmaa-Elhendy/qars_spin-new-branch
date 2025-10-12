@@ -61,7 +61,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       body: Stack(
         children: [
           Column(
@@ -71,12 +71,12 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                 height: 106.h,
                 padding: EdgeInsets.only(top: 13.h, left: 14.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.background(context),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 5.h,
+                    BoxShadow( //update asmaa
+                      color: AppColors.blackColor(context).withOpacity(0.2),
                       spreadRadius: 1,
+                      blurRadius: 5.h,
                       offset: Offset(0, 2),
                     ),
                   ],
@@ -87,7 +87,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Icon(
                         Icons.arrow_back_outlined,
-                        color: Colors.black,
+                        color:AppColors.blackColor(context),
                         size: 30.w,
                       ),
                     ),
@@ -100,7 +100,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                           Text(
                             "My Advertisements",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: AppColors.blackColor(context),
                               fontFamily: 'Gilroy',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w800,

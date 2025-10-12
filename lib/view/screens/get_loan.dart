@@ -18,7 +18,7 @@ import '../widgets/car_details/snack_bar.dart';
 
 class GetLoan extends StatefulWidget {
   CarModel car;
-  GetLoan({required this.car,super.key});
+   GetLoan({required this.car,super.key});
 
   @override
   State<GetLoan> createState() => _GetLoanState();
@@ -56,8 +56,10 @@ class _GetLoanState extends State<GetLoan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
+        backgroundColor: AppColors.background(context),
+
         centerTitle: true, // يخلي العنوان في نص العرض
         elevation: 0, // نشيل الشادو الافتراضي
         leading:  GestureDetector(
@@ -66,26 +68,25 @@ class _GetLoanState extends State<GetLoan> {
           },
           child: Icon(
             Icons.arrow_back_outlined,
-            color: Colors.black,
+            color: AppColors.blackColor(context),
             size: 30.w,
           ),
         ),
         title: Text(
           "Get a Loan",
           style: TextStyle(
-            color: AppColors.black,
+            color: AppColors.blackColor(context),
             fontWeight: FontWeight.w700,
             fontFamily: fontFamily,
             fontSize: 16.sp,
           ),
         ),
-        backgroundColor: Colors.white,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.background(context),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+              BoxShadow( //update asmaa
+                color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
                 offset: Offset(0, 2),
@@ -102,9 +103,9 @@ class _GetLoanState extends State<GetLoan> {
           children: [
             blueText("Ad Code: ${widget.car.postCode}"),
             8.verticalSpace,
-            headerText(widget.car.carNamePl),
+            headerText(widget.car.carNamePl,context),
             8.verticalSpace,
-            description(widget.car.description,small: true),
+            description(widget.car.description,small: true,context: context),
             8.verticalSpace,
             price("Price: ${widget.car.askingPrice} QAR",small:true),
             14.verticalSpace,
@@ -119,16 +120,16 @@ class _GetLoanState extends State<GetLoan> {
                   Text(
                     "How would you describe yourself?",
                     style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black
+                      fontFamily: fontFamily,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.blackColor(context)
                     ),
                   ),
                   8.verticalSpace,
                   Padding(padding: EdgeInsets.symmetric(horizontal: 14.w),
 
-                    child: twoCheckBox(),
+                  child: twoCheckBox(),
                   ),
                   24.verticalSpace,
                   Text(
@@ -137,7 +138,7 @@ class _GetLoanState extends State<GetLoan> {
                         fontFamily: fontFamily,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.black
+                        color: AppColors.blackColor(context)
                     ),
                   ),
                   8.verticalSpace,
@@ -157,8 +158,9 @@ class _GetLoanState extends State<GetLoan> {
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center, // 👈 center text inside TextField
                             style: TextStyle(
-                                fontFamily: fontFamily,fontWeight: FontWeight.w700,
-                                fontSize: 16.sp
+                              fontFamily: fontFamily,fontWeight: FontWeight.w700,
+                              fontSize: 16.sp,
+                              color: AppColors.black
                             ),
 
                             decoration: InputDecoration(
@@ -186,6 +188,7 @@ class _GetLoanState extends State<GetLoan> {
                           child:  Text(
                             "QAR",
                             style: TextStyle(fontSize: 16.sp,
+                              color: AppColors.black,
                               fontFamily: fontFamily,
                               fontWeight: FontWeight.w700,),
                           ),
@@ -200,7 +203,7 @@ class _GetLoanState extends State<GetLoan> {
                         fontFamily: fontFamily,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.black
+                        color: AppColors.blackColor(context)
                     ),
                   ),
                   12.verticalSpace,
@@ -218,18 +221,18 @@ class _GetLoanState extends State<GetLoan> {
                       width: double.infinity,
                       height: 45.h,
                       decoration: BoxDecoration(
-                        color: AppColors.star,
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(6.r),
 
                       ),
                       child: Center(
                         child:Text("Calculate",
-                          style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: fontFamily
-                          ),
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: fontFamily
+                        ),
                         ),
                       ),
                     ),
@@ -293,11 +296,14 @@ class _GetLoanState extends State<GetLoan> {
             "assets/images/select.png",
             width: 24.w,
             height: 24.h,
+            color: AppColors.blackColor(context),
+
           )
               : Image.asset(
             "assets/images/unselect.png",
             width: 24.w,
             height: 24.h,
+            color: AppColors.blackColor(context),
           ),
           4.horizontalSpace,
           Text(
@@ -332,7 +338,7 @@ class _GetLoanState extends State<GetLoan> {
         containerWithValue("Total Loan Value", " ${_totalPayment} QAR"),
         22.verticalSpace,
         Padding(padding: EdgeInsets.symmetric(horizontal: 40.w),
-          child:         hintText("These figures are estimates, the accurate and\n    final figures will be sent to you by email."),
+          child:         hintText("These figures are estimates, the accurate and\n    final figures will be sent to you by email.",context),
 
         ),
 
@@ -351,7 +357,7 @@ class _GetLoanState extends State<GetLoan> {
                 width: 180.w,
                 height: 55.h,
                 decoration: BoxDecoration(
-                  color:AppColors.darkTextSecondary,
+                  color:AppColors.textSecondary(context),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
@@ -395,7 +401,7 @@ class _GetLoanState extends State<GetLoan> {
                 width: 180.w,
                 height: 55.h,
                 decoration: BoxDecoration(
-                  color:AppColors.star,
+                  color:AppColors.primary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
@@ -431,31 +437,31 @@ class _GetLoanState extends State<GetLoan> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-            style: TextStyle(
-                color: AppColors.black,
-                fontFamily: fontFamily,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700
-            ),),
-          8.verticalSpace,
-          Container(
-            height: 40.h,
-            decoration: BoxDecoration(
+          style: TextStyle(
+            color: AppColors.blackColor(context),
+            fontFamily: fontFamily,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w700
+          ),),
+      8.verticalSpace,
+      Container(
+      height: 40.h,
+      decoration: BoxDecoration(
 
-              border: Border.all(color: AppColors.inputBorder),
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(6.r),
-            ),
-            child: Center(
-              child: Text(value,
-                style: TextStyle(
-                    color: AppColors.black,
-                    fontFamily: fontFamily,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700
-                ),),
-            ),
-          )
+      border: Border.all(color: AppColors.inputBorder),
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(6.r),
+      ),
+      child: Center(
+        child: Text(value,
+          style: TextStyle(
+              color: AppColors.black,
+              fontFamily: fontFamily,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w700
+          ),),
+      ),
+      )
 
         ],
       ),

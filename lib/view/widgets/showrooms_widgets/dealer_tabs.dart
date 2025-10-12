@@ -31,12 +31,12 @@ class DealerTabs extends StatelessWidget {
 
 
                 child: TabBar(
-                  labelStyle: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 16.sp,
-                      fontFamily: fontFamily,
-                      fontWeight: FontWeight.w700
-                  ),
+                   labelStyle: TextStyle(
+                     color: AppColors.black,
+                     fontSize: 16.sp,
+                     fontFamily: fontFamily,
+                     fontWeight: FontWeight.w700
+                   ),
                   unselectedLabelStyle: TextStyle(
                       color: AppColors.black,
                       fontSize: 16.sp,
@@ -45,7 +45,7 @@ class DealerTabs extends StatelessWidget {
                   ),
 
                   indicator:  BoxDecoration(
-                    color: AppColors.star,
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
@@ -54,7 +54,7 @@ class DealerTabs extends StatelessWidget {
                   // النص جوه الأبيض
                   tabs: const [
                     Tab(text: "Gallery"),
-                    // Tab(text: "Details"),
+                   // Tab(text: "Details"),
                     Tab(text: "Rating"),
                   ],
                 ),
@@ -79,8 +79,8 @@ class DealerTabs extends StatelessWidget {
                         return Container(
                           padding: EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6).r,
-                              color: AppColors.extraLightGray
+                            borderRadius: BorderRadius.circular(6).r,
+                            color: AppColors.extraLightGray
                           ),
                           child: Container(
                             decoration: BoxDecoration(
@@ -96,11 +96,11 @@ class DealerTabs extends StatelessWidget {
                     ),
 
                     // Details tab
-                    //  ShowroomDetailsTabWidget(),
+                  //  ShowroomDetailsTabWidget(),
 
 
                     // Rating tab
-                    //    RatingTabShowRoomDetail(avgRating: "ma",myRate: null,)
+                //    RatingTabShowRoomDetail(avgRating: "ma",myRate: null,)
                   ],
                 ),
               ),

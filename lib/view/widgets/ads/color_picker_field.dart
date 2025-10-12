@@ -100,10 +100,10 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   void _showColorPickerDialog() async {
     // Unfocus any currently focused widget to prevent dialog conflicts
     FocusManager.instance.primaryFocus?.unfocus();
-    
+
     // Add a small delay to ensure the unfocus completes before showing dialog
     await Future.delayed(const Duration(milliseconds: 50));
-    
+
     final selectedColorData = await showColorPickerDialog(
       context: context,
       colors: _filteredColors,

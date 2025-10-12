@@ -10,7 +10,7 @@ class MakeOfferDialog extends StatefulWidget {
   bool offer;
   bool requestToBuy;
   String price;
-  MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
+   MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
 
   @override
   State<MakeOfferDialog> createState() => _MakeOfferDialogState();
@@ -43,7 +43,9 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
             Center(
               child: Text(
                 widget.offer?"Make Offer":"Request To Buy",
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
+                style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
               ),
             ),
             14.verticalSpace,
@@ -53,8 +55,8 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
               padding:  EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 textAlign: TextAlign.center,
-                widget.offer? "What is your offer?":"You are making an offer matching the request price",
-                style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily),
+               widget.offer? "What is your offer?":"You are making an offer matching the request price",
+                style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily,color: AppColors.black),
               ),
             ),
             14.verticalSpace,
@@ -74,9 +76,10 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                     child: TextField(
                       controller: _offerController,
                       style: TextStyle(
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16.sp
+                        fontFamily: fontFamily,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                        color: AppColors.black
                       ),
 
                       keyboardType: TextInputType.number,
@@ -103,9 +106,9 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Center(
-                    child: const Text(
+                    child:  Text(
                       "QAR",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.black),
                     ),
                   ),
                 ),
@@ -125,7 +128,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text("Cancel"),
+                    child:  Text("Cancel",style: TextStyle(color: AppColors.black),),
                   ),
                 ),
                 const SizedBox(width: 12),

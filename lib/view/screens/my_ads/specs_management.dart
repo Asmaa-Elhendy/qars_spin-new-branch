@@ -71,7 +71,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background(context),
       body: Stack(
         children: [
           Column(
@@ -82,11 +82,12 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                 height: 88.h,
                 padding: EdgeInsets.only(top: 13.h, left: 14.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.background(context),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      blurRadius: 6,
+                    BoxShadow( //update asmaa
+                      color: AppColors.blackColor(context).withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5.h,
                       offset: Offset(0, 2),
                     ),
                   ],
@@ -97,7 +98,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                       onTap: () => Navigator.pop(context),
                       child: Icon(
                         Icons.arrow_back_outlined,
-                        color: Colors.black,
+                        color: AppColors.blackColor(context),
                         size: 30.w,
                       ),
                     ),
@@ -106,7 +107,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                       child: Text(
                         "Specs Management",
                         style: TextStyle(
-                          color: Colors.black,
+                          color: AppColors.blackColor(context),
                           fontFamily: 'Gilroy',
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w800,
@@ -161,145 +162,144 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
     );
   }
 }
-  Widget _buildErrorState(specsController) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, color: AppColors.danger, size: 48.w),
-          16.verticalSpace,
-          Text('Error loading specs',
-              style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: 'Gilroy',
-                  fontWeight: FontWeight.w600)),
-          8.verticalSpace,
-          Text(
-            specsController.specsError.value!,
+Widget _buildErrorState(specsController) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.error_outline, color: AppColors.danger, size: 48.w),
+        16.verticalSpace,
+        Text('Error loading specs',
             style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Gilroy',
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
+                fontSize: 16.sp,
+                fontFamily: 'Gilroy',
+                fontWeight: FontWeight.w600)),
+        8.verticalSpace,
+        Text(
+          specsController.specsError.value!,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: 'Gilroy',
+            color: Colors.grey[600],
           ),
-          16.verticalSpace,
-          ElevatedButton(
-            onPressed: () => specsController.refreshSpecs(),
-            child: Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
+          textAlign: TextAlign.center,
+        ),
+        16.verticalSpace,
+        ElevatedButton(
+          onPressed: () => specsController.refreshSpecs(),
+          child: Text('Retry'),
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.info_outline, color: Colors.grey, size: 48.w),
-          16.verticalSpace,
-          Text('No specs found',
-              style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: 'Gilroy',
-                  fontWeight: FontWeight.w600)),
-          8.verticalSpace,
-          Text(
-            'This post has no specifications',
+Widget _buildEmptyState() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.info_outline, color: Colors.grey, size: 48.w),
+        16.verticalSpace,
+        Text('No specs found',
             style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Gilroy',
-              color: Colors.grey[600],
-            ),
+                fontSize: 16.sp,
+                fontFamily: 'Gilroy',
+                fontWeight: FontWeight.w600)),
+        8.verticalSpace,
+        Text(
+          'This post has no specifications',
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: 'Gilroy',
+            color: Colors.grey[600],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget specsContainer(Specs spec,BuildContext context,specsController,_showGlobalLoader,_hideGlobalLoader,bool fromCreateAd) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      margin: EdgeInsets.only(bottom: 18.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppColors.lightGray, width: 1.h),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(spec.specHeaderPl,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Gilroy',
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w800)),
-          5.verticalSpace,
-          Text(
-            spec.specValuePl.isEmpty || spec.specValuePl == " "
-                ? '(Hidden)'
-                : spec.specValuePl,
+Widget specsContainer(Specs spec,BuildContext context,specsController,_showGlobalLoader,_hideGlobalLoader,bool fromCreateAd) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+    margin: EdgeInsets.only(bottom: 18.h),
+    decoration: BoxDecoration(
+      color: AppColors.cardBackground(context),
+      border: Border.all(color: AppColors.lightGray, width: 2.h),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(spec.specHeaderPl,
             style: TextStyle(
-              color: Colors.black,
-              fontFamily: 'Gilroy',
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w800,
-            ),
+                color: AppColors.blackColor(context),
+                fontFamily: 'Gilroy',
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w800)),
+        5.verticalSpace,
+        Text(
+          spec.specValuePl.isEmpty || spec.specValuePl == " "
+              ? '(Hidden)'
+              : spec.specValuePl,
+          style: TextStyle(
+            color: AppColors.blackColor(context),
+            fontFamily: 'Gilroy',
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w800,
           ),
-          5.verticalSpace,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (_) => EditSpecsName(spec: spec,fromCreateAd:fromCreateAd),
-                      );
-                    },
-                    child: SizedBox(
-                      width: 23.w,
-                      height: 28.h,
-                      child: Image.asset(
-                        "assets/images/edit3.png",
-                        color: Colors.black,
-                        fit: BoxFit.fill,
-                      ),
+        ),
+        5.verticalSpace,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                InkWell(
+                  onTap: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (_) => EditSpecsName(spec: spec,fromCreateAd:fromCreateAd),
+                    );
+                  },
+                  child: SizedBox(
+                    width: 23.w,
+                    height: 28.h,
+                    child: Image.asset(
+                      "assets/images/edit3.png",
+                      color: AppColors.blackColor(context),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  8.horizontalSpace,
+                ),
+                8.horizontalSpace,
 
-                ],
-              ),
-              InkWell(
-                onTap: () async {
-                  _showGlobalLoader();
-                  if (fromCreateAd) {
-                    specsController.clearLocal(
-                      specId: spec.specId,
-                    );
-                  } else {
-                    // Use API update for specs management flow
-                    await specsController.updateSpecValue(
-                      postId: spec.postId,
-                      specId: spec.specId,
-                      specValue: " ",
-                    );
-                  }
-                  _hideGlobalLoader();
-                },
-                child: Icon(Icons.delete_outlined,
-                    color: Color(0xffEC6D64), size: 24.w),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
+              ],
+            ),
+            InkWell(
+              onTap: () async {
+                _showGlobalLoader();
+                if (fromCreateAd) {
+                  specsController.clearLocal(
+                    specId: spec.specId,
+                  );
+                } else {
+                  // Use API update for specs management flow
+                  await specsController.updateSpecValue(
+                    postId: spec.postId,
+                    specId: spec.specId,
+                    specValue: " ",
+                  );
+                }
+                _hideGlobalLoader();
+              },
+              child: Icon(Icons.delete_outlined,
+                  color: Color(0xffEC6D64), size: 24.w),
+            ),
+          ],
+        )
+      ],
+    ),
+  );
+}

@@ -29,11 +29,14 @@ class Showroom {
   final String avgRating;
   int? carsCount;
   List<RentalCar>? rentalCars;
+  List<CarModel>? carsForSale;
+
 
 
   Showroom({
     this.carsCount,
     this.rentalCars,
+    this.carsForSale,
     required this.partnerId,
     required this.countryCode,
     required this.partnerKind,

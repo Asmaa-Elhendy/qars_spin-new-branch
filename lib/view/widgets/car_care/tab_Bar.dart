@@ -12,9 +12,10 @@ import '../showrooms_widgets/showroom_details_tab_widget.dart';
 class CarCareTapBar extends StatefulWidget {
   List<RentalCar> cars;
   String avgRating;
-  PartnerRating rate;
-  Showroom showroom;
-  CarCareTapBar({required this.showroom,required this.rate,required this.avgRating,required this.cars,super.key});
+ PartnerRating rate;
+ Showroom showroom;
+ List<String> gallery;
+   CarCareTapBar({required this.gallery,required this.showroom,required this.rate,required this.avgRating,required this.cars,super.key});
 
   @override
   State<CarCareTapBar> createState() => _CarCareTapBarState();
@@ -45,18 +46,18 @@ class _CarCareTapBarState extends State<CarCareTapBar>
         margin: EdgeInsets.all(16),
         height: 45.h,
         decoration: BoxDecoration(
-          color: AppColors.extraLightGray,
-          //borderRadius: BorderRadius.circular(8),
+          color: AppColors.tabBarColor(context),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
-            color: AppColors.star,
-            borderRadius: BorderRadius.circular(8),
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(4),
           ),
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.black,
+          labelColor: AppColors.blackColor(context),
+          unselectedLabelColor: AppColors.blackColor(context),
           dividerColor: Colors.transparent,
           labelStyle: TextStyle(
               fontFamily: fontFamily,
@@ -84,23 +85,23 @@ class _CarCareTapBarState extends State<CarCareTapBar>
       //physics: NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 18.w,vertical:4.h ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, // 👈 3 عربيات في الصف
-          crossAxisSpacing: 10.w,
-          mainAxisSpacing: 10.h,
-          childAspectRatio: 1.5.h
+        crossAxisCount: 3, // 👈 3 عربيات في الصف
+        crossAxisSpacing: 10.w,
+        mainAxisSpacing: 10.h,
+        childAspectRatio: 1.5.h
       ),
-      itemCount: widget.cars.length, // عدد العربيات
+      itemCount: widget.gallery.length, // عدد العربيات
       itemBuilder: (_, i) {
         return Container(
           padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColors.extraLightGray
+            borderRadius: BorderRadius.circular(8),
+            color: AppColors.extraLightGray
           ),
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(widget.cars[i].rectangleImageUrl!),
+                image: NetworkImage(widget.gallery[i]),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(8),

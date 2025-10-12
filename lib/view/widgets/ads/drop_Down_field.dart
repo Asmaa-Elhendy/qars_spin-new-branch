@@ -88,165 +88,166 @@ class CustomDropDownTyping extends StatefulWidget {
   State<CustomDropDownTyping> createState() => _CustomDropDownTypingState();
 }
 
-  class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
-    @override
-    Widget build(BuildContext context) {
-      double height = MediaQuery.of(context).size.height;
+class _CustomDropDownTypingState extends State<CustomDropDownTyping> {
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w500,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label,
+          style: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
           ),
-          const SizedBox(height: 8),
-          Container(
-            height: height * .045,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 0.3),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: TypeAheadField<String>(
-              key: ValueKey('typeahead_${widget.options.length}_${widget.controller.text}'),
-              suggestionsCallback: (pattern) async {
-                if (!widget.enableSearch) {
-                  return widget.options;
-                }
-                if (pattern.isEmpty) {
-                  return widget.options;
-                }
-                return widget.options
-                    .where((car) =>
-                    car.toLowerCase().contains(pattern.toLowerCase()))
-                    .toList();
-              },
-              hideOnSelect: true,
-              hideOnEmpty: true,
-              hideOnError: true,
-              builder: (context, controller, focusNode) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        readOnly: !widget.enableSearch,
-                        cursorColor: AppColors.brandBlue,
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 15.sp,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                          hintText: widget.hintText,
-                        ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: height * .045,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            border: Border.all(color: Colors.black, width: 0.3),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: TypeAheadField<String>(
+            key: ValueKey('typeahead_${widget.options.length}_${widget.controller.text}'),
+            suggestionsCallback: (pattern) async {
+              if (!widget.enableSearch) {
+                return widget.options;
+              }
+              if (pattern.isEmpty) {
+                return widget.options;
+              }
+              return widget.options
+                  .where((car) =>
+                  car.toLowerCase().contains(pattern.toLowerCase()))
+                  .toList();
+            },
+            hideOnSelect: true,
+            hideOnEmpty: true,
+            hideOnError: true,
+            builder: (context, controller, focusNode) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      readOnly: !widget.enableSearch,
+                      cursorColor: AppColors.brandBlue,
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15.sp,
                       ),
-                    ),
-                    const Icon(Icons.arrow_drop_down, color: Colors.black),
-                  ],
-                );
-              },
-              itemBuilder: (context, suggestion) {
-                bool isSelected = widget.controller.text == suggestion;
-                return Container(
-                  color: isSelected ? Color(0xFFF5F5F5) : Colors.transparent,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            suggestion,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        if (isSelected)
-                          Icon(
-                            Icons.check,
-                            color: Colors.blue,
-                            size: 18.sp,
-                          ),
-                      ],
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                        hintText: widget.hintText,
+                      ),
                     ),
                   ),
-                );
-              },
-              onSelected: (suggestion) {
-                // Ensure the controller text is updated immediately
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  widget.controller.text = suggestion;
-                  // Call the onChanged callback
-                  if (widget.onChanged != null) {
-                    widget.onChanged!(suggestion);
-                  }
-                  // Force immediate UI refresh
-                  if (mounted) {
-                    setState(() {});
-                  }
-                });
-              },  direction: VerticalDirection.up, // 👈 This makes the list appear above
-
-              errorBuilder: (context, error) => const SizedBox(),
-              loadingBuilder: (context) => const SizedBox(),
-              emptyBuilder: (context) => const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('No results found', style: TextStyle(color: Colors.grey)),
-              ),
-              controller: widget.controller,
-              decorationBuilder: (context, child) {
-                // Calculate adaptive height based on number of options
-                double itemHeight = 40.h; // Height of each item
-                double maxHeight = 230.h; // Maximum height
-                double minHeight = 80.h;  // Minimum height
-
-                // Calculate required height based on number of options
-                double calculatedHeight = widget.options.length * itemHeight;
-
-                // Ensure height is within min and max bounds
-                double adaptiveHeight = calculatedHeight.clamp(minHeight, maxHeight);
-
-                return Container(
-                  height: adaptiveHeight,
-                  decoration: BoxDecoration(
-                    color: Colors.white, // Back to white background
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: const Offset(4, 4),
+                  const Icon(Icons.arrow_drop_down, color: Colors.black),
+                ],
+              );
+            },
+            itemBuilder: (context, suggestion) {
+              bool isSelected = widget.controller.text == suggestion;
+              return Container(
+                color: isSelected ? Color(0xFFF5F5F5) : Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          suggestion,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
                       ),
+                      if (isSelected)
+                        Icon(
+                          Icons.check,
+                          color: Colors.blue,
+                          size: 18.sp,
+                        ),
                     ],
                   ),
-                  child: child,
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    }
+                ),
+              );
+            },
+            onSelected: (suggestion) {
+              // Ensure the controller text is updated immediately
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                widget.controller.text = suggestion;
+                // Call the onChanged callback
+                if (widget.onChanged != null) {
+                  widget.onChanged!(suggestion);
+                }
+                // Force immediate UI refresh
+                if (mounted) {
+                  setState(() {});
+                }
+              });
+            },  direction: VerticalDirection.up, // 👈 This makes the list appear above
 
-    @override
-    void didUpdateWidget(CustomDropDownTyping oldWidget) {
-      super.didUpdateWidget(oldWidget);
-      // If the options changed, we need to rebuild
-      if (oldWidget.options != widget.options) {
-        setState(() {});
-      }
+            errorBuilder: (context, error) => const SizedBox(),
+            loadingBuilder: (context) => const SizedBox(),
+            emptyBuilder: (context) => const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('No results found', style: TextStyle(color: Colors.grey)),
+            ),
+            controller: widget.controller,
+            decorationBuilder: (context, child) {
+              // Calculate adaptive height based on number of options
+              double itemHeight = 40.h; // Height of each item
+              double maxHeight = 230.h; // Maximum height
+              double minHeight = 80.h;  // Minimum height
+
+              // Calculate required height based on number of options
+              double calculatedHeight = widget.options.length * itemHeight;
+
+              // Ensure height is within min and max bounds
+              double adaptiveHeight = calculatedHeight.clamp(minHeight, maxHeight);
+
+              return Container(
+                height: adaptiveHeight,
+                decoration: BoxDecoration(
+                  color: Colors.white, // Back to white background
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: const Offset(4, 4),
+                    ),
+                  ],
+                ),
+                child: child,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void didUpdateWidget(CustomDropDownTyping oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the options changed, we need to rebuild
+    if (oldWidget.options != widget.options) {
+      setState(() {});
     }
   }
+}

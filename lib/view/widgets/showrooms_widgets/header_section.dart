@@ -11,7 +11,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 class HeaderSection extends StatefulWidget {
   String realImage;
-  HeaderSection({this.realImage="",super.key});
+   HeaderSection({this.realImage="",super.key});
 
   @override
   State<HeaderSection> createState() => _HeaderSectionState();
@@ -23,7 +23,6 @@ class _HeaderSectionState extends State<HeaderSection> {
   void initState() {
     super.initState();
     // Enable hybrid composition for Android
-    print("ralallalala${widget.realImage}");
 
     if (Platform.isAndroid) {
       WebViewPlatform.instance = AndroidWebViewPlatform();
@@ -43,18 +42,24 @@ class _HeaderSectionState extends State<HeaderSection> {
     double height = MediaQuery.of(context).size.height;
 
     return widget.realImage!=""?
-
-    SizedBox(
+    
+    Container(
         width: double.infinity,
-        height: 280.h,
-        child: WebViewWidget(controller: _controller))
+        height: 250.h,
+
+        
+        child: WebViewWidget(controller: _controller,
+
+
+        )
+    )
         :Stack(
       children: [
         // 👇 هنا الصورة تتحول لعرض 360 بدل ما تبقى خلفية ثابتة
         ClipRRect(
           borderRadius: BorderRadius.circular(12), // لو عايز كورنر راوند
           child: SizedBox(
-            height: 200,
+            height: 200.h,
             width: double.infinity,
             child: PanoramaViewer(
               zoom: 1,
@@ -80,90 +85,90 @@ class _HeaderSectionState extends State<HeaderSection> {
             ),
           ),
         ),
-        Positioned(
-            bottom: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
-              height: 35.h,
-              // width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(.4),
-              ),
-              child: Row(
-                children: [
-                  icon(Row(
-                    spacing: 1.w,
-                    children: [
-                      Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 16.w,),
-                      2.horizontalSpace,
-                      Text(
-                        "Interior view",
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(1),
-                            fontSize: 12.sp
-                        ),
-                      ),
-
-
-                    ],
-                  ), (){}),
-                  30.horizontalSpace,
-                  icon(
-                      Icon(Icons.text_rotation_angleup_rounded,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
-                  16.horizontalSpace,
-                  icon( Icon(Icons.image_outlined,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
-                  88.horizontalSpace,
-                  icon( Icon(Icons.filter_center_focus,color: AppColors.primaryDark.withOpacity(1),size: 16.w,),(){}),
-                  14.horizontalSpace,
-                  icon( Icon(Icons.add,color: Colors.white.withOpacity(.7),size: 16.w,),(){}),
-                  14.horizontalSpace,
-                  icon( Icon(Icons.remove,color: Colors.white.withOpacity(.4),size: 16.w,),(){}),
-                  14.horizontalSpace,
-                  icon( Icon(Icons.zoom_in_map_sharp,color: Colors.white.withOpacity(.4),size: 16.w,),(){}),
-                  14.horizontalSpace,
-                  icon( Icon(Icons.zoom_out_map,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
-                  SizedBox(width: 20.w,)
-
-
-
-
-
-
-
-
-
-
-
-
-                  // icon(Row(
-                  //   children: [
-                  //     //  Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 10.w,),
-                  //     Text(
-                  //       "Interiror view",
-                  //       style: TextStyle(
-                  //           color: Colors.red.withOpacity(1),
-                  //           fontSize: 16.sp
-                  //       ),
-                  //     )
-                  //
-                  //   ],
-                  // ), (){}),
-                  // icon(Row(
-                  //   children: [
-                  //     //  Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 10.w,),
-                  //     Text(
-                  //       "Interiror view",
-                  //       style: TextStyle(
-                  //           color: Colors.red.withOpacity(1),
-                  //           fontSize: 16.sp
-                  //       ),
-                  //     )
-                  //
-                  //   ],
-                  // ), (){})
-                ],
-              ),
-            ))
+        // Positioned(
+        //   bottom: 0,
+        //     child: Container(
+        //       padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
+        //       height: 35.h,
+        //      // width: double.infinity,
+        //       decoration: BoxDecoration(
+        //         color: Colors.black.withOpacity(.4),
+        //       ),
+        //       child: Row(
+        //          children: [
+        //            icon(Row(
+        //              spacing: 1.w,
+        //              children: [
+        //                Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 16.w,),
+        //                2.horizontalSpace,
+        //                Text(
+        //                  "Interior view",
+        //                  style: TextStyle(
+        //                  color: Colors.white.withOpacity(1),
+        //                      fontSize: 12.sp
+        //                  ),
+        //                ),
+        //
+        //
+        //              ],
+        //            ), (){}),
+        //           // 30.horizontalSpace,
+        // //            icon(
+        // //                Icon(Icons.text_rotation_angleup_rounded,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
+        // //    16.horizontalSpace,
+        // //    icon( Icon(Icons.image_outlined,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
+        // // 88.horizontalSpace,
+        // //           // icon( Icon(Icons.filter_center_focus,color: AppColors.primaryDark.withOpacity(1),size: 16.w,),(){}),
+        // //            14.horizontalSpace,
+        // //            icon( Icon(Icons.add,color: Colors.white.withOpacity(.7),size: 16.w,),(){}),
+        // //            14.horizontalSpace,
+        // //            icon( Icon(Icons.remove,color: Colors.white.withOpacity(.4),size: 16.w,),(){}),
+        // //            14.horizontalSpace,
+        // //            icon( Icon(Icons.zoom_in_map_sharp,color: Colors.white.withOpacity(.4),size: 16.w,),(){}),
+        // //            14.horizontalSpace,
+        // //            icon( Icon(Icons.zoom_out_map,color: Colors.white.withOpacity(1),size: 16.w,),(){}),
+        // //            SizedBox(width: 20.w,)
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //            // icon(Row(
+        //            //   children: [
+        //            //     //  Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 10.w,),
+        //            //     Text(
+        //            //       "Interiror view",
+        //            //       style: TextStyle(
+        //            //           color: Colors.red.withOpacity(1),
+        //            //           fontSize: 16.sp
+        //            //       ),
+        //            //     )
+        //            //
+        //            //   ],
+        //            // ), (){}),
+        //            // icon(Row(
+        //            //   children: [
+        //            //     //  Icon(Icons.remove_red_eye_outlined,color: Colors.white.withOpacity(1),size: 10.w,),
+        //            //     Text(
+        //            //       "Interiror view",
+        //            //       style: TextStyle(
+        //            //           color: Colors.red.withOpacity(1),
+        //            //           fontSize: 16.sp
+        //            //       ),
+        //            //     )
+        //            //
+        //            //   ],
+        //            // ), (){})
+        //          ],
+        //       ),
+        //     ))
       ],
     );
   }

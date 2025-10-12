@@ -48,7 +48,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
   String? selectedYear;
   String? selectedClass;
   String? selectedunderWarranty;
-  
+
   // Loading state for modify mode
   bool _isLoadingModifyData = false;
 
@@ -102,7 +102,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         _coverImage = imagePath;
       }
     });
-    
+
 
   }
 
@@ -172,7 +172,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _minimumPriceController.text = postData['Minimum_Price'] ?? '';
 
 
-      
+
       if (postData['Color_Exterior'] != null) {
         _exteriorColor = Color(int.parse(postData['Color_Exterior'].replaceFirst('#', '0xFF')));
         _originalExteriorColorHex = postData['Color_Exterior'];
@@ -210,7 +210,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       // Find the matching category in the list and set it
       if (_type_controller.text.isNotEmpty) {
         final matchingCategory = brandController.carCategories.firstWhereOrNull(
-          (c) => c.name == _type_controller.text,
+              (c) => c.name == _type_controller.text,
         );
         if (matchingCategory != null) {
           brandController.selectedCategory.value = matchingCategory;
@@ -230,7 +230,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       if (postData['Rectangle_Image_URL'] != null) {
         setState(() {
           _coverImage = postData['Rectangle_Image_URL'];
-          
+
           // Also add it as the first item in the images list for modify mode
           if (_images.isEmpty) {
             _images.add(postData['Rectangle_Image_URL']);
@@ -577,7 +577,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     ErrorDialog.show(
       context,
       message,
-      () {
+          () {
         Navigator.pop(context);
       },
       isModifyMode: widget.postData != null,
@@ -602,7 +602,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     fuelTypeController.clear();
     transmissionController.clear();
     cylindersController.clear();
-    
+
     // Reset other state variables
     setState(() {
       // Clear all images and reset cover image
@@ -617,7 +617,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _isFeauredPost = false;
       _coverPhotoChanged = false;
       _videoChanged = false;
-      
+
       // Force a rebuild of the image upload section
       _images = [];
     });
@@ -632,7 +632,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
     // Reset the brand controller state
     brandController.resetCreateAdState();
-    
+
     // Reset the form for new ad
     _initializeForNewAd();
   }
@@ -641,10 +641,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
   void _navigateToMyAds() {
     // Reset all form fields and state
     _resetForm();
-    
+
     // Navigate to MyAds screen
     Get.off(() => const MyAdsMainScreen());
-    
+
     // Refresh My Ads screen
     Get.find<MyAdCleanController>().fetchMyAds();
   }
@@ -749,19 +749,19 @@ class _SellCarScreenState extends State<SellCarScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.background(context),
 
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.background(context),
           toolbarHeight: 60.h,
           shadowColor: Colors.grey.shade300,
           flexibleSpace: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.background(context),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                BoxShadow( //update asmaa
+                  color: AppColors.blackColor(context).withOpacity(0.2),
                   spreadRadius: 1,
                   blurRadius: 5.h,
                   offset: Offset(0, 2),
@@ -774,7 +774,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
           title: Text(
             widget.postData != null ? "Modify Car" : "Sell Your Car",
             style: TextStyle(
-              color: Colors.black,
+              color: AppColors.blackColor(context),
               fontWeight: FontWeight.bold,
               fontSize: 18.sp,
             ),
@@ -878,29 +878,29 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             }
                           },
                           onReq360Changed: (value) {
-                         if(_isRequest360){
-                           if (value != null) {
-                           setState(() {
-                             _isRequest360 = value;
-                           });
-                          }
-                         }
-                            else{dialog. SuccessDialog.show(
-                            request: false,
-                            context: context,
-                            title: "Ready to showCase your vehicle like a pro?",
-                            message:
-                            "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
-                            onClose: () {},
-                            onTappp: () async {
-                            Navigator.pop(context);
-                            if (value != null) {
-                            setState(() {
-                            _isRequest360 = value;
-                            });
+                            if(_isRequest360){
+                              if (value != null) {
+                                setState(() {
+                                  _isRequest360 = value;
+                                });
+                              }
                             }
+                            else{dialog. SuccessDialog.show(
+                              request: false,
+                              context: context,
+                              title: "Ready to showCase your vehicle like a pro?",
+                              message:
+                              "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges may apply.",
+                              onClose: () {},
+                              onTappp: () async {
+                                Navigator.pop(context);
+                                if (value != null) {
+                                  setState(() {
+                                    _isRequest360 = value;
+                                  });
+                                }
 
-                            },
+                              },
                             );
                             }
                           },
@@ -914,22 +914,22 @@ class _SellCarScreenState extends State<SellCarScreen> {
                             }
                             else{
                               dialog. SuccessDialog.show(
-                              request: false,
-                              context: context,
-                              title: "Let's make your post the center \n of orientation",
-                              message:
-                              "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
-                              onClose: () {},
-                              onTappp: () async {
-                                Navigator.pop(context);
-                                if (value != null) {
-                                  setState(() {
-                                    _isFeauredPost = value;
-                                  });
-                                }
+                                request: false,
+                                context: context,
+                                title: "Let's make your post the center \n of orientation",
+                                message:
+                                "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges may apply.\n Click confirm to proceed!",
+                                onClose: () {},
+                                onTappp: () async {
+                                  Navigator.pop(context);
+                                  if (value != null) {
+                                    setState(() {
+                                      _isFeauredPost = value;
+                                    });
+                                  }
 
-                              },
-                            );
+                                },
+                              );
                             }
 
 
@@ -943,7 +943,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                 ],
               ),
             ),
-            
+
             // Loading overlay for modify mode
             if (_isLoadingModifyData)
               Container(

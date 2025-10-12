@@ -43,7 +43,7 @@ class HomeServiceCard extends StatelessWidget {
         //    height: large?126.h :120.h, //update asmaa
         width: large? 53.w: 55.w,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:AppColors.cardBackground(context),
           borderRadius: BorderRadius.circular(6),
           boxShadow: [
             BoxShadow(
@@ -59,8 +59,8 @@ class HomeServiceCard extends StatelessWidget {
           children: [
             Container(
               height: 35.h,
-              decoration: const BoxDecoration(
-                color: AppColors.topBoxBackground,
+              decoration:  BoxDecoration(
+                color: AppColors.topBox(context),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(6),
                   topRight: Radius.circular(6),
@@ -129,7 +129,7 @@ class HomeServiceCard extends StatelessWidget {
             ),
             brand? Center(child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text("${make_count} Cars",style: TextStyle(color: AppColors.textSecondary,fontWeight: FontWeight.bold,fontSize: 14.sp),),
+              child: Text("${make_count} Cars",style: TextStyle(color: AppColors.textSecondary(context),fontWeight: FontWeight.bold,fontSize: 14.sp),),
             )):SizedBox()
           ],
         ),

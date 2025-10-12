@@ -5,7 +5,7 @@ import 'package:qarsspin/model/rental_car_model.dart';
 
 class PriceTable extends StatelessWidget {
   RentalCar car;
-  PriceTable({required this.car,super.key});
+   PriceTable({required this.car,super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,59 +16,66 @@ class PriceTable extends StatelessWidget {
         child: Column(
 
           children: [
-            dataRow("Daily", double.parse(car.rentPerDay)==0?"-":car.rentPerDay, true),
+            dataRow("Daily", double.parse(car.rentPerDay)==0?"-":car.rentPerDay, true,context),
             4.verticalSpace,
-            dataRow("Weekly", double.parse(car.rentPerWeek)==0?"-":car.rentPerWeek, false),
+            dataRow("Weekly", double.parse(car.rentPerWeek)==0?"-":car.rentPerWeek, false,context),
             4.verticalSpace,
-            dataRow("Monthly", double.parse(car.rentPerMonth)==0?"-":car.rentPerMonth, true),
-
-
+            dataRow("Monthly", double.parse(car.rentPerMonth)==0?"-":car.rentPerMonth, true,context),
+      
+      
           ],
         ),
       ),
     );
   }
 
-  dataRow(String key, value,bool grey){
+  dataRow(String key, value,bool grey,context){
     return Row(
       children: [
         Container(
-          width: 170.w,
+         width: 170.w,
           height: 50.h,
           decoration: BoxDecoration(
-            color: grey?AppColors.extraLightGray:AppColors.white,
+            border: Border.all( color: AppColors.white, width: 0.2),
+
+            color:  Theme.of(context).brightness == Brightness.dark?AppColors.background(context):
+            grey?AppColors.extraLightGray:AppColors.white,
 
           ),
 
           child: Center(
             child: Text(key,
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400
-              ),
+            style: TextStyle(
+              color: AppColors.blackColor(context),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400
+            ),
             ),
           ),
         ),
         Container(
-          width: .3.w,
+          width: 3.w,
           height: 50.h,
           decoration: BoxDecoration(
-              color: AppColors.black
+            color: Colors.transparent
+            //color: AppColors.background(context)
           ),
         ),
         Container(
-          width: 170.w,
+         width: 170.w,
           height: 50.h,
           decoration: BoxDecoration(
-            color: grey?AppColors.extraLightGray:AppColors.white,
+            border: Border.all( color: AppColors.white, width: 0.2),
+            color:  Theme.of(context).brightness == Brightness.dark?AppColors.background(context):
+            grey?AppColors.extraLightGray:AppColors.white,
+
 
           ),
 
           child: Center(
             child: Text(value=="-"?value:"$value QAR",
               style: TextStyle(
-                  color: AppColors.black,
+                  color: AppColors.blackColor(context),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400
               ),

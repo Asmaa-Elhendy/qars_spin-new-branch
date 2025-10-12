@@ -24,28 +24,30 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         centerTitle: true, // يخلي العنوان في نص العرض
         elevation: 0, // نشيل الشادو الافتراضي
         title: Text(
           "Create New Ad",
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
             fontSize: 20.sp,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background(context),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.background(context),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+              BoxShadow( //update asmaa
+                color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
                 offset: Offset(0, 2),
               ),
             ],
+
           ),
         ),
       ),
@@ -104,8 +106,8 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                       });
                     },
                     title: 'Create Plate Ads',
-                      imageAsset: 'assets/images/new_svg/plates.svg',
-                      fromHome: 'true',
+                    imageAsset: 'assets/images/new_svg/plates.svg',
+                    fromHome: 'true',
                     large: false,
                   ),
                 ],

@@ -7,11 +7,12 @@ import 'package:qarsspin/view/widgets/texts/texts.dart';
 
 class RentalCarInfo extends StatelessWidget {
   RentalCar car;
-  RentalCarInfo({required this.car,super.key});
+   RentalCarInfo({required this.car,super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: AppColors.background(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,19 +29,19 @@ class RentalCarInfo extends StatelessWidget {
               Container(
                 width: 55.w,
                 height: 23.h,
-                // padding: EdgeInsets.symmetric(horizontal: 4.w,vertical: 4.h),
+               // padding: EdgeInsets.symmetric(horizontal: 4.w,vertical: 4.h),
                 decoration: BoxDecoration(
-                    color: AppColors.success,
-                    borderRadius: BorderRadius.circular(4).r
+                  color: AppColors.success,
+                  borderRadius: BorderRadius.circular(4).r
                 ),
                 child: Center(
                   child: Text("New",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                        fontFamily: fontFamily,
-                        fontWeight: FontWeight.w700
-                    ),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.w700
+                  ),
                   ),
                 ),
               )
@@ -48,9 +49,9 @@ class RentalCarInfo extends StatelessWidget {
             ],
           ),
           20.verticalSpace,
-          headerText(car.carNamePL),
+          headerText(car.carNamePL,context),
           16.verticalSpace,
-          description(car.technicalDescriptionPL),
+          description(car.technicalDescriptionPL,context: context),
           25.verticalSpace,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,18 +61,18 @@ class RentalCarInfo extends StatelessWidget {
                 backgroundImage: NetworkImage(car.rectangleImageUrl!),
               ),
               16.horizontalSpace,
-              headerText(car.ownerName),
+              headerText(car.ownerName,context),
               Spacer(),
               Column(
                 children: [
                   35.verticalSpace,
                   Text(car.createdDateTime,
-                    style: TextStyle(
-                      color: AppColors.gray,
-                      fontFamily: fontFamily,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  style: TextStyle(
+                    color: AppColors.gray,
+                    fontFamily: fontFamily,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w800,
+                  ),
 
                   )
 

@@ -8,15 +8,15 @@ Widget requestReportButton(context,id){
   return GestureDetector(
     onTap: ()async{
       await showDialog(
-        context: context,
-        builder: (_) =>  InspectioDialog(id: id.toString()),
+      context: context,
+      builder: (_) =>  InspectioDialog(id: id.toString()),
       );
     },
     child: Container(
       width: 400.w,
       padding: EdgeInsets.symmetric(vertical: 4.h),
       decoration:BoxDecoration(
-          color: AppColors.buttonsGray,
+        color: AppColors.buttonsGray,
           borderRadius: BorderRadius.circular(4).r
 
 
@@ -26,15 +26,15 @@ Widget requestReportButton(context,id){
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/inspection.png",width: 38.w,height: 38.h,),
-            //  2.horizontalSpace,
+            Image.asset("assets/images/inspection.png",width: 45.w,height: 40.h,),
+          //  2.horizontalSpace,
             Text("Request Inspection Report",
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: fontFamily,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13.sp
-              ),
+            style: TextStyle(
+              color: AppColors.blackColor(context),
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.w800,
+              fontSize: 13.sp
+            ),
             )
           ],
         ),

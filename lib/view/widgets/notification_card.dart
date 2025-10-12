@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,7 @@ class NotificationCard extends StatelessWidget {
     Key? key,
     required this.notification,
   }) : controller = Get.find<NotificationsController>(),
-       super(key: key);
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +33,10 @@ class NotificationCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: height * 0.01),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.background(context),
           border: Border.all(
-            color: Colors.grey.shade500,
-            width: 1,
+            color: AppColors.divider(context),
+            width: 1.5.w,
           ),
           borderRadius: BorderRadius.circular(5),
         ),
@@ -53,9 +54,10 @@ class NotificationCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     notification.title,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
+                      color: AppColors.blackColor(context)
                     ),
                   ),
                 ),
@@ -70,9 +72,9 @@ class NotificationCard extends StatelessWidget {
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 4),
-            
+
             // Show channel and language if available
             if (channelId != null || language != null)
               Padding(
@@ -100,7 +102,7 @@ class NotificationCard extends StatelessWidget {
                   ],
                 ),
               ),
-            
+
             // Show message ID if available
             if (messageId != null)
               Padding(
@@ -114,7 +116,7 @@ class NotificationCard extends StatelessWidget {
                   ),
                 ),
               ),
-            
+
             // Post details
             if (notification.postKind != null || notification.postCode != null) ...[
               if (notification.postKind != null)
@@ -123,14 +125,14 @@ class NotificationCard extends StatelessWidget {
                 Text('Post Code: ${notification.postCode}'),
               const SizedBox(height: 4),
             ],
-            
+
             // Status and reason
             if (notification.status != null)
               Text(
                 'Status: ${notification.status}',
                 style: const TextStyle(fontWeight: FontWeight.w500),
               ),
-              
+
             if (notification.reason?.isNotEmpty == true) ...[
               const SizedBox(height: 4),
               Text(
@@ -138,7 +140,7 @@ class NotificationCard extends StatelessWidget {
                 style: const TextStyle(height: 1.4),
               ),
             ],
-            
+
             // Date row
             const SizedBox(height: 10),
             Row(

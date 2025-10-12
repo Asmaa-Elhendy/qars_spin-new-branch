@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
+import '../../../controller/Theme_controller.dart';
 import '../../../controller/const/colors.dart';
 
 class MainMenu extends StatefulWidget {
@@ -11,14 +14,14 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  final ThemeController themeController = Get.find();
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = false;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
           centerTitle: true,
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.background(context),
           toolbarHeight: 60.h,
           shadowColor: Colors.grey.shade300,
 
@@ -27,7 +30,7 @@ class _MainMenuState extends State<MainMenu> {
           title: Text(
             "Main Menu",
             style: TextStyle(
-                color: Colors.black,
+                color: AppColors.blackColor(context),
                 fontWeight: FontWeight.bold,
                 fontSize: 18.sp
             ),
@@ -38,17 +41,15 @@ class _MainMenuState extends State<MainMenu> {
         padding: EdgeInsets.symmetric(vertical: 25.h,horizontal: 20.w),
         children: [
           // Dark Mode Switch
-          SwitchListTile(
-            title: const Text("Dark Mode",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-            secondary: const Icon(Icons.dark_mode, color: Colors.black),
-            value: isDarkMode,
-            onChanged: (val) {
-              setState(() {
-                isDarkMode = val;
-              });
-            },
-          ),
+          Obx(() =>  SwitchListTile(
+            title:  Text("Dark Mode",
+                style: TextStyle(
+                    color: AppColors.blackColor(context),
+                    fontSize: 16, fontWeight: FontWeight.w500)),
+            secondary:  Icon(Icons.dark_mode, color: AppColors.blackColor(context)),
+            value: themeController.themeMode.value == ThemeMode.dark,
+            onChanged: (_) => themeController.toggleTheme(),
+          )),
           20.verticalSpace,
 
           buildMenuItem(
@@ -87,13 +88,13 @@ class _MainMenuState extends State<MainMenu> {
           padding:  EdgeInsets.only(bottom: 10.h),
           child: ListTile(
 
-            leading: Icon(icon, color: Colors.black),
-            title: Text(title, style:  TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w400)),
-            trailing: Image.asset("assets/images/arrow.png",scale: 1.8,),
+            leading: Icon(icon, color: AppColors.blackColor(context)),
+            title: Text(title, style:  TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w400,color: AppColors.blackColor(context))),
+            trailing: Image.asset("assets/images/arrow.png",scale: 1.8,color: AppColors.iconColor(context),),
             onTap: onTap,
           ),
         ),
-        Container(height: .8.h, color: AppColors.darkGray),
+         Container(height: .8.h, color: AppColors.darkGray),
       ],
     );
   }

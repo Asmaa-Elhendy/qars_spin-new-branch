@@ -193,11 +193,11 @@ class AdSubmissionService {
         } else if (!coverPhotoChanged) {
           log('Cover photo not changed, skipping upload');
         }
-        
+
         // Upload video if we have a post ID and video path AND it was changed
         if (postId.isNotEmpty && videoPath != null && videoPath.isNotEmpty && videoChanged) {
           log('Uploading video for post ID: $postId');
-         var res= await adRepository.uploadVideoForPost(
+          var res= await adRepository.uploadVideoForPost(
             postId: postId,
             ourSecret: ourSecret, // Using the same secret as in ad creation
             videoPath: videoPath,
@@ -206,18 +206,18 @@ class AdSubmissionService {
         } else if (!videoChanged) {
           log('Video not changed, skipping upload');
         }
-        
+
         // Note: Gallery photos are NOT uploaded during update - only during create
-        
+
         // Hide loading dialog only after all operations are complete
         hideLoadingDialog();
-        
+
         String successMessage = "Ad updated successfully!\nPost ID: $postId";
         log("pooooooooooooooooooooooooo $PostStaus");
         // Publish again approved/ pending approval posts (for modify mode)
         if (PostStaus=="Approved"||PostStaus=="Pending Approval") { //here if approved
           log('📤 [PUBLISH] Requesting publish for ad: $postId (Mode: Modify)');
-          
+
           // Request publish after a short delay
           Future.delayed(Duration(milliseconds: 300), () async {
             try {
@@ -227,7 +227,7 @@ class AdSubmissionService {
                 postId: postId,
                 ourSecret: ourSecret, // This should come from app config
               );
-              
+
               if (publishSuccess) {
                 log('✅ [PUBLISH] Publish request sent successfully for ad: $postId');
                 // Update success message to include publish info
@@ -342,7 +342,7 @@ class AdSubmissionService {
       // Submit the ad to the backend
       final adRepository = AdRepository();
       final response;
-      
+
       if (postId == null) {
         // Create mode
         response = await adRepository.createCarAd(adModel: adData);
@@ -405,7 +405,7 @@ class AdSubmissionService {
 
         // Request to feature ad - ONLY IN CREATE MODE
         if (postId == null &&
-          isFeaturedPost//  featureyouradcontroller.text == "Yes"
+            isFeaturedPost//  featureyouradcontroller.text == "Yes"
             && responsePostId.isNotEmpty) {
           log('Requesting to feature ad for post ID: $responsePostId');
           await _requestFeatureAd(postId: responsePostId);
@@ -436,11 +436,11 @@ class AdSubmissionService {
         String successMessage = responsePostId.isNotEmpty
             ? "Ad ${postId == null ? 'created' : 'updated'} successfully!\nPost ID: $responsePostId"
             : "Ad ${postId == null ? 'created' : 'updated'} successfully!";
-        
+
         // Check if we should also request publish (for both create and modify modes)
         if (shouldPublish && responsePostId.isNotEmpty) {
           log('📤 [PUBLISH] Requesting publish for ad: $responsePostId (Mode: ${postId == null ? 'Create' : 'Modify'})');
-          
+
           // Request publish after a short delay
           Future.delayed(Duration(milliseconds: 300), () async {
             try {
@@ -450,7 +450,7 @@ class AdSubmissionService {
                 postId: responsePostId,
                 ourSecret: ourSecret, // This should come from app config
               );
-              
+
               if (publishSuccess) {
                 log('✅ [PUBLISH] Publish request sent successfully for ad: $responsePostId');
                 // Update success message to include publish info
@@ -466,7 +466,7 @@ class AdSubmissionService {
               String publishErrorMessage = "$successMessage\n\n⚠️ Error sending publish request.";
               showSuccessDialog(publishErrorMessage, responsePostId, isPublished: true);
             }
-            
+
             // Navigate after showing publish result
             Future.delayed(Duration(milliseconds: 500), () {
               log('🧭 [NAVIGATION] Executing navigation after publish request');
@@ -476,7 +476,7 @@ class AdSubmissionService {
         } else {
           // Show success dialog first
           showSuccessDialog(successMessage, responsePostId, isPublished: shouldPublish);
-          
+
           // Add a small delay to ensure dialog is shown, then navigate
           Future.delayed(Duration(milliseconds: 500), () {
             log('🧭 [NAVIGATION] Executing navigation after delay');
@@ -507,26 +507,26 @@ class AdSubmissionService {
       final MyAdCleanController  myAdController = Get.put(
         MyAdCleanController (MyAdDataLayer()),
       );
-      
+
       // Filter out cover photo from images list
       final galleryImages = images.where((image) => image != coverImage).toList();
-      
+
       log('Gallery images to upload: ${galleryImages.length} (excluding cover photo)');
-      
+
       // Upload each gallery photo sequentially
       for (int i = 0; i < galleryImages.length; i++) {
         final imagePath = galleryImages[i];
         final file = File(imagePath);
-        
+
         if (await file.exists()) {
           log('Uploading gallery photo ${i + 1}/${galleryImages.length}: $imagePath');
-          
+
           final success = await myAdController.uploadPostGalleryPhoto(
             postId: postId,
             photoFile: file,
             ourSecret: ourSecret, // Using the same secret as in ad creation
           );
-          
+
           if (success) {
             log('✅ Gallery photo ${i + 1} uploaded successfully');
           } else {
@@ -536,7 +536,7 @@ class AdSubmissionService {
           log('❌ Gallery photo file not found: $imagePath');
         }
       }
-      
+
       log('Gallery photos upload process completed');
     } catch (e) {
       log('❌ Error uploading gallery photos: $e');
@@ -607,39 +607,39 @@ class AdSubmissionService {
   }) async {
     try {
       log('🔧 [SPECS] Starting upload of modified specs for post ID: $postId');
-      
+
       // Log the current state of the controller
       log('🔧 [SPECS] Controller instance: ${specsController.hashCode}');
       log('🔧 [SPECS] Current modified specs count: ${specsController.getModifiedSpecs().length}');
-      
+
       // Get only the specs that have been modified (non-empty values)
       final modifiedSpecs = specsController.getModifiedSpecs();
-      
+
       if (modifiedSpecs.isEmpty) {
         log('🔧 [SPECS] No modified specs to upload');
         return;
       }
-      
+
       log('🔧 [SPECS] Uploading ${modifiedSpecs.length} modified specs');
-      
+
       // Log all modified specs before uploading
       log('🔧 [SPECS] Modified specs to upload:');
       for (final spec in modifiedSpecs) {
         log('   - ${spec.specId}: ${spec.specHeaderPl} = "${spec.specValuePl}"');
       }
-      
+
       // Upload each modified spec
       for (final spec in modifiedSpecs) {
         try {
           log('🔧 [SPECS] Uploading spec: ${spec.specHeaderPl} = "${spec.specValuePl}"');
-          
+
           // Use the existing API method to update spec value
           final success = await specsController.updateSpecValue(
             postId: postId,
             specId: spec.specId,
             specValue: spec.specValuePl.isNotEmpty ? spec.specValuePl : spec.specValueSl ?? '',
           );
-          
+
           if (success) {
             log('✅ [SPECS] Successfully uploaded spec: ${spec.specHeaderPl}');
           } else {
@@ -649,7 +649,7 @@ class AdSubmissionService {
           log('❌ [SPECS] Error uploading spec ${spec.specHeaderPl}: $e');
         }
       }
-      
+
       log('✅ [SPECS] Completed uploading modified specs');
     } catch (e) {
       log('❌ [SPECS] Error in _uploadModifiedSpecs: $e');
@@ -663,17 +663,17 @@ class AdSubmissionService {
   {
     try {
       log('🔄 [360] Starting 360 photo session request for post ID: $postId');
-      
+
       // Get the MyAdCleanController instance
       final myAdController = Get.find<MyAdCleanController>();
-      
+
       // Request 360 photo session
       final success = await myAdController.request360Session(
         userName: userName, // You might want to get this from user session
         postId: postId,
         ourSecret: ourSecret, // Using the same secret as in ad creation
       );
-      
+
       if (success) {
         log('✅ [360] Successfully requested 360 photo session');
       } else {
@@ -691,17 +691,17 @@ class AdSubmissionService {
   {
     try {
       log('⭐ [FEATURE] Starting feature ad request for post ID: $postId');
-      
+
       // Get the MyAdCleanController instance
       final myAdController = Get.find<MyAdCleanController>();
-      
+
       // Request to feature ad
       final success = await myAdController.requestFeatureAd(
         userName: userName, // You might want to get this from user session
         postId: postId,
         ourSecret: ourSecret, // Using the same secret as in ad creation
       );
-      
+
       if (success) {
         log('✅ [FEATURE] Successfully requested to feature ad');
       } else {

@@ -42,13 +42,13 @@ class _GalleryManagementState extends State<GalleryManagement> {
   List<MediaItem> apiImages = [];
   String? currentCoverImage;
   Map<String, dynamic>? postDetails;
-  
+
   // API secret constant
   static const String ourSecret = '1244';
-  
+
   // Map to store video controllers for proper disposal
   final Map<String, ChewieController> _videoControllers = {};
-  
+
   // Track currently playing video URL
   String? _currentlyPlayingVideoUrl;
 
@@ -58,7 +58,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       // Extract filename from network URL
       final Uri uri = Uri.parse(networkUrl);
       final filename = uri.pathSegments.last;
-      
+
       // Check common local storage paths
       final List<String> possiblePaths = [
         // Application documents directory
@@ -75,7 +75,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         // DCIM/Camera directory
         '/storage/emulated/0/DCIM/Camera/$filename',
       ];
-      
+
       // Check each possible path
       for (final path in possiblePaths) {
         if (path.isNotEmpty) {
@@ -86,7 +86,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           }
         }
       }
-      
+
       log('🎬 [VIDEO] No local file found, using network URL: $networkUrl');
       return networkUrl;
     } catch (e) {
@@ -149,7 +149,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       // Check if there's already a video
       final apiImages = controller.postMedia.value?.data ?? [];
       final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
-      
+
       if (hasVideo) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("You can only add one video")),
@@ -181,16 +181,16 @@ class _GalleryManagementState extends State<GalleryManagement> {
     try {
       // Show loading indicator
       controller.isLoadingMedia.value = true;
-      
+
       log('🎬 [VIDEO] Uploading video for post ID: ${widget.postId}');
-      
+
       final success = await controller.uploadPostVideo(
         postId: widget.postId.toString(),
         videoPath: videoFile.path,
         ourSecret: ourSecret,
         skipRefresh: true, // Skip refresh to do it manually like images
       );
-      
+
       if (success) {
         log('✅ [VIDEO] Video uploaded successfully');
         // Refresh media list to show the new video (same as images)
@@ -299,10 +299,10 @@ class _GalleryManagementState extends State<GalleryManagement> {
         // ImageEditor can return different types: List<int> or _Uint8ArrayView
         bool isValidImage =
             editedImage != null &&
-            ((editedImage is List<int> && editedImage.isNotEmpty) ||
-                (editedImage.toString().contains('Uint8Array') &&
-                    editedImage.length > 0)) &&
-            editedImage.length > 100; // At least 100 bytes
+                ((editedImage is List<int> && editedImage.isNotEmpty) ||
+                    (editedImage.toString().contains('Uint8Array') &&
+                        editedImage.length > 0)) &&
+                editedImage.length > 100; // At least 100 bytes
 
         log('🎨 [EDITING] Is valid image check: $isValidImage');
 
@@ -443,27 +443,27 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<bool> _showRetryDialog(BuildContext context, int imageNumber) async {
     return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Image Editing Cancelled'),
-            content: Text(
-              'Image $imageNumber was cancelled. Do you want to retry editing it?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text('Skip', style: TextStyle(color: AppColors.primary)),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  'Retry',
-                  style: TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Image Editing Cancelled'),
+        content: Text(
+          'Image $imageNumber was cancelled. Do you want to retry editing it?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Skip', style: TextStyle(color: AppColors.primary)),
           ),
-        ) ??
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              'Retry',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -528,7 +528,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   @override
   void initState() {
     super.initState();
-    
+
     _fetchPostImages();
     _fetchPostDetails();
   }
@@ -549,7 +549,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       setState(() {
         // Set currentCoverImage equal to Rectangle_Image_URL from postDetails
         currentCoverImage = postDetails!['Rectangle_Image_URL'];
-        
+
         // Also set widget.coverImage equal to Rectangle_Image_URL
         // Note: widget.coverImage is final, so we can't modify it directly
         // But currentCoverImage is now synchronized with the latest Rectangle_Image_URL
@@ -568,7 +568,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
     log('🚀 [DEBUG] Fetching post details for post ID: ${widget.postId}');
     log('🚀 [DEBUG] Post Kind: ${widget.postKind}');
     log('🚀 [DEBUG] User Name: ${widget.userName}');
-    
+
     try {
       // Fetch complete post details using getPostById
       await controller.getPostById(
@@ -576,23 +576,23 @@ class _GalleryManagementState extends State<GalleryManagement> {
         postId: widget.postId.toString(),
         loggedInUser: widget.userName,
       );
-      
+
       // Check if post details were fetched successfully
       if (controller.postDetails.value != null) {
         log('✅ [DEBUG] Post details fetched successfully');
         log('✅ [DEBUG] Post details: ${controller.postDetails.value}');
-        
+
         // Store post details in local variable
         setState(() {
           postDetails = controller.postDetails.value;
         });
-        
+
         // Load cover image from postDetails (similar to create_new_ad.dart)
         _loadCoverImageFromPostDetails();
-        
+
         // Now fetch the media/images for this post
         await controller.fetchPostMedia(widget.postId.toString());
-        
+
         log('✅ [DEBUG] Post media fetched successfully');
       } else {
         log('❌ [DEBUG] Failed to fetch post details');
@@ -614,7 +614,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   /// Toggle video playback inline in the card
   Future<void> _toggleVideoPlayback(String videoUrl) async {
     log('🎬 [VIDEO] Toggling video playback for: $videoUrl');
-    
+
     try {
       // If this video is already playing, stop it
       if (_currentlyPlayingVideoUrl == videoUrl) {
@@ -622,23 +622,23 @@ class _GalleryManagementState extends State<GalleryManagement> {
         _stopCurrentVideo();
         return;
       }
-      
+
       // Stop any currently playing video
       _stopCurrentVideo();
-      
+
       // Check if we already have a controller for this video
       if (!_videoControllers.containsKey(videoUrl)) {
         log('🎬 [VIDEO] Creating new controller for: $videoUrl');
         // Create video controller with error handling
         final videoController = VideoPlayerController.network(videoUrl);
-        
+
         try {
           await videoController.initialize();
           log('✅ [VIDEO] Video initialized successfully');
         } catch (initError) {
           log('❌ [VIDEO] Failed to initialize video: $initError');
           videoController.dispose();
-          
+
           // Check if error is due to high resolution or device capabilities
           if (initError.toString().contains('NO_EXCEEDS_CAPABILITIES') ||
               initError.toString().contains('resolution') ||
@@ -650,7 +650,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           }
           return;
         }
-        
+
         // Create chewie controller with better error handling
         final chewieController = ChewieController(
           videoPlayerController: videoController,
@@ -710,25 +710,25 @@ class _GalleryManagementState extends State<GalleryManagement> {
             );
           },
         );
-        
+
         // Store the controller
         _videoControllers[videoUrl] = chewieController;
       } else {
         log('🎬 [VIDEO] Using existing controller for: $videoUrl');
       }
-      
+
       // Set this video as currently playing
       setState(() {
         _currentlyPlayingVideoUrl = videoUrl;
       });
-      
+
       log('🎬 [VIDEO] Video set as currently playing: $videoUrl');
-      
+
     } catch (e) {
       log('❌ [VIDEO] Error toggling video playback: $e');
     }
   }
-  
+
   /// Stop the currently playing video
   void _stopCurrentVideo() {
     if (_currentlyPlayingVideoUrl != null) {
@@ -743,12 +743,12 @@ class _GalleryManagementState extends State<GalleryManagement> {
       log('🎬 [VIDEO] Stopped current video');
     }
   }
-  
-  
+
+
   /// Launch video player using external app as fallback
   Future<void> _launchVideoPlayerExternally(String videoUrl) async {
     log('🎬 [VIDEO] Launching external video player for URL: $videoUrl');
-    
+
     try {
       final Uri uri = Uri.parse(videoUrl);
       if (await canLaunchUrl(uri)) {
@@ -774,30 +774,30 @@ class _GalleryManagementState extends State<GalleryManagement> {
   Future<bool> _showDeleteConfirmationDialog(MediaItem mediaItem) async {
     final isVideo = _isVideoFile(mediaItem.mediaFileName);
     final mediaType = isVideo ? 'video' : 'image';
-    
+
     return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Delete $mediaType'),
-            content: Text('Are you sure you want to delete this $mediaType?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(color: AppColors.textPrimary),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  'Delete',
-                  style: TextStyle(color: AppColors.brandBlue),
-                ),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete $mediaType'),
+        content: Text('Are you sure you want to delete this $mediaType?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textPrimary(context)),
+            ),
           ),
-        ) ??
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: AppColors.brandBlue),
+            ),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -806,10 +806,10 @@ class _GalleryManagementState extends State<GalleryManagement> {
       // Find the media item to check if it's a video
       final apiImages = controller.postMedia.value?.data ?? [];
       final mediaItem = apiImages.firstWhere(
-        (item) => item.mediaId.toString() == mediaId,
+            (item) => item.mediaId.toString() == mediaId,
         orElse: () => apiImages.first,
       );
-      
+
       // If it's a video, dispose its controller
       if (_isVideoFile(mediaItem.mediaFileName)) {
         final controller = _videoControllers[mediaItem.mediaUrl];
@@ -818,7 +818,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           _videoControllers.remove(mediaItem.mediaUrl);
         }
       }
-      
+
       final success = await controller.deletePostGalleryPhoto(
         mediaId: mediaId,
         postId: widget.postId.toString(),
@@ -839,7 +839,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         source: ImageSource.gallery,
         imageQuality: 85,
       );
-      
+
       if (pickedFile != null) {
         final File imageFile = File(pickedFile.path);
         await _uploadAndSetCoverImage(imageFile);
@@ -860,23 +860,23 @@ class _GalleryManagementState extends State<GalleryManagement> {
     try {
       // Show ONE loading indicator for the entire process
       controller.isLoadingMedia.value = true;
-      
+
       // Step 1: Upload the cover image (this will also refresh media internally)
       final uploadSuccess = await controller.uploadCoverImage(
         postId: widget.postId.toString(),
         photoFile: imageFile,
         ourSecret: ourSecret,
       );
-      
+
       if (!uploadSuccess) {
         log('❌ [DEBUG] Upload failed');
         return;
       }
-      
+
       // Step 2: Get the uploaded image URL from the already refreshed media
       final updatedApiImages = controller.postMedia.value?.data ?? [];
       String newCoverUrl = '';
-      
+
       if (updatedApiImages.isNotEmpty) {
         newCoverUrl = updatedApiImages.last.mediaUrl;
         log('✅ [DEBUG] Found uploaded image URL: $newCoverUrl');
@@ -884,18 +884,18 @@ class _GalleryManagementState extends State<GalleryManagement> {
         log('❌ [DEBUG] No images found after upload');
         return;
       }
-      
+
       // Step 3: Update the cover image reference
       final updateSuccess = await controller.updateCoverImage(
         postId: widget.postId.toString(),
         newCoverImageUrl: newCoverUrl,
         ourSecret: ourSecret,
       );
-      
+
       if (updateSuccess) {
         // Step 4: Refresh details - this will update the state including currentCoverImage
         await _fetchPostDetails();
-        
+
         log('✅ [DEBUG] Cover image updated successfully: $currentCoverImage');
       } else {
         log('❌ [DEBUG] Failed to update cover image reference');
@@ -969,13 +969,13 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           final imageCount = apiImages.where((item) => !_isVideoFile(item.mediaFileName)).length;
                           final totalImages =
                               images.length +
-                              imageCount;
+                                  imageCount;
                           //khk
                           String displayText = "${totalImages+1} of 15 images";//1 for add cover photo to count images
-                            displayText += " and $videoCount of 1 video";
+                          displayText += " and $videoCount of 1 video";
 
 
-                          
+
                           return Text(
                             displayText,
                             style: TextStyle(
@@ -993,7 +993,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                         // Check if there's already a video in media
                         final apiImages = controller.postMedia.value?.data ?? [];
                         final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
-                        
+
                         if (hasVideo) {
                           // If video exists, directly pick images (old behavior)
                           _pickImages();
@@ -1010,7 +1010,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
               10.verticalSpace,
 
-            //  16.verticalSpace,
+              //  16.verticalSpace,
 
               /// Images List
               Expanded(
@@ -1028,7 +1028,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   final allImages = [//ks
                     ...apiImages.map(
-                      (mediaItem) => _buildApiImageItem(mediaItem),
+                          (mediaItem) => _buildApiImageItem(mediaItem),
                     ),
                     ...images.map((file) => _buildLocalImageItem(file)),
                   ];
@@ -1046,11 +1046,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           mediaUrl: currentCoverImage!,
                           displayOrder: 0,
                         ),
-                      );
+                        );
                       },
                     );
                   }
-                  
+
                   // Show "No images found" only if no cover image either
                   if (allImages.isEmpty && (currentCoverImage == null || currentCoverImage!.isEmpty)) {
                     return Center(child: Text('No images found'));
@@ -1065,11 +1065,11 @@ class _GalleryManagementState extends State<GalleryManagement> {
                       itemBuilder: (context, index) {
                         if (index==0){
                           return   _buildApiImageItem(MediaItem(
-                              mediaId: 0,//ljت
-                              mediaFileName: 'CoverPhotoForPostGalleryManagement',
-                              mediaUrl: currentCoverImage!,
-                              displayOrder: 0,
-                            ),
+                            mediaId: 0,//ljت
+                            mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                            mediaUrl: currentCoverImage!,
+                            displayOrder: 0,
+                          ),
                           );
                         }
                         return allImages[index - 1];
@@ -1143,8 +1143,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
             border: Border.all(
               width: 2,
               color:
-                  mediaItem.mediaFileName ==
-                      'CoverPhotoForPostGalleryManagement'
+              mediaItem.mediaFileName ==
+                  'CoverPhotoForPostGalleryManagement'
                   ? AppColors.danger
                   : Colors.grey,
             ),
@@ -1157,150 +1157,150 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   borderRadius: BorderRadius.circular(5),
                   child: _isVideoFile(mediaItem.mediaFileName)
                       ? Container(
-                          color: Colors.black,
-                          child: _currentlyPlayingVideoUrl == mediaItem.mediaUrl
-                              ? Container(
-                                  // Show inline video player
-                                  child: Chewie(
-                                    controller: _videoControllers[mediaItem.mediaUrl]!,
-                                  ),
-                                )
-                              : GestureDetector(
-                                  // Show video preview with play button
-                                  onTap: () => _toggleVideoPlayback(mediaItem.mediaUrl),
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.play_circle_filled, color: Colors.white, size: 60),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            'Tap to Play Video',
-                                            style: TextStyle(color: Colors.white, fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                        )
-                      : Image.network(
-                          mediaItem.mediaUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: Center(
-                                child: Icon(Icons.broken_image, size: 50),
+                    color: Colors.black,
+                    child: _currentlyPlayingVideoUrl == mediaItem.mediaUrl
+                        ? Container(
+                      // Show inline video player
+                      child: Chewie(
+                        controller: _videoControllers[mediaItem.mediaUrl]!,
+                      ),
+                    )
+                        : GestureDetector(
+                      // Show video preview with play button
+                      onTap: () => _toggleVideoPlayback(mediaItem.mediaUrl),
+                      child: Container(
+                        color: Colors.black,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.play_circle_filled, color: Colors.white, size: 60),
+                              SizedBox(height: 10),
+                              Text(
+                                'Tap to Play Video',
+                                style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
+                      ),
+                    ),
+                  )
+                      : Image.network(
+                    mediaItem.mediaUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Icon(Icons.broken_image, size: 50),
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
 
               /// Delete Icon
               (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')
                   ? Positioned(
-                      right: 8.w,
-                      top: 8.h,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await _pickCoverImageFromGallery();
-                        },
-                        child: Container(
-                          width: 40.w,
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            color: Color(0xffEC6D64),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 28.w,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Positioned(
-                      right: 8.w,
-                      top: 8.h,
-                      child: GestureDetector(
-                        onTap: () async {
-                          final apiImages =
-                              controller.postMedia.value?.data ?? [];
-                          final index = apiImages.indexOf(mediaItem);
-                          if (index != -1) {
-                            // Show confirmation dialog
-                            final shouldDelete =
-                                await _showDeleteConfirmationDialog(mediaItem);
-                            if (shouldDelete) {
-                              final success = await _deleteApiImage(
-                                mediaItem.mediaId.toString(),
-                              );
-                              if (success) {
-                                // Remove from local list immediately for better UX
-                                setState(() {
-                                  apiImages.removeAt(index);
-                                  // Update the controller's postMedia to reflect the change
-                                  if (controller.postMedia.value != null) {
-                                    final updatedPostMedia = PostMedia(
-                                      code: controller.postMedia.value!.code,
-                                      desc: controller.postMedia.value!.desc,
-                                      count:
-                                          controller.postMedia.value!.count - 1,
-                                      data: List<MediaItem>.from(apiImages),
-                                    );
-                                    controller.postMedia.value =
-                                        updatedPostMedia;
-                                  }
-                                });
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text('Image deleted successfully'),
-                                //     backgroundColor: Colors.green,
-                                //   ),
-                                // );
-                              } else {
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text('Failed to delete image'),
-                                //     backgroundColor: Colors.red,
-                                //   ),
-                                //   );
-                              }
-                            }
-                          }
-                        },
-                        child: Container(
-                          width: 40.w,
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            color: Color(0xffEC6D64),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(
-                            Icons.delete_outline,
-                            color: Colors.white,
-                            size: 28.w,
-                          ),
-                        ),
-                      ),
+                right: 8.w,
+                top: 8.h,
+                child: GestureDetector(
+                  onTap: () async {
+                    await _pickCoverImageFromGallery();
+                  },
+                  child: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Color(0xffEC6D64),
+                      borderRadius: BorderRadius.circular(4),
                     ),
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                      size: 28.w,
+                    ),
+                  ),
+                ),
+              )
+                  : Positioned(
+                right: 8.w,
+                top: 8.h,
+                child: GestureDetector(
+                  onTap: () async {
+                    final apiImages =
+                        controller.postMedia.value?.data ?? [];
+                    final index = apiImages.indexOf(mediaItem);
+                    if (index != -1) {
+                      // Show confirmation dialog
+                      final shouldDelete =
+                      await _showDeleteConfirmationDialog(mediaItem);
+                      if (shouldDelete) {
+                        final success = await _deleteApiImage(
+                          mediaItem.mediaId.toString(),
+                        );
+                        if (success) {
+                          // Remove from local list immediately for better UX
+                          setState(() {
+                            apiImages.removeAt(index);
+                            // Update the controller's postMedia to reflect the change
+                            if (controller.postMedia.value != null) {
+                              final updatedPostMedia = PostMedia(
+                                code: controller.postMedia.value!.code,
+                                desc: controller.postMedia.value!.desc,
+                                count:
+                                controller.postMedia.value!.count - 1,
+                                data: List<MediaItem>.from(apiImages),
+                              );
+                              controller.postMedia.value =
+                                  updatedPostMedia;
+                            }
+                          });
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: Text('Image deleted successfully'),
+                          //     backgroundColor: Colors.green,
+                          //   ),
+                          // );
+                        } else {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   SnackBar(
+                          //     content: Text('Failed to delete image'),
+                          //     backgroundColor: Colors.red,
+                          //   ),
+                          //   );
+                        }
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: Color(0xffEC6D64),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: Colors.white,
+                      size: 28.w,
+                    ),
+                  ),
+                ),
+              ),
 
               /// Up Arrow
               (mediaItem.mediaFileName == 'CoverPhotoForPostGalleryManagement')

@@ -11,7 +11,7 @@ class SortBySheet extends StatefulWidget {
   bool make;
   bool carList;
 
-  SortBySheet({this.carList = false,this.showroom=false,this.rentalCar=false,this.make=false,super.key, required this.onConfirm});
+   SortBySheet({this.carList = false,this.showroom=false,this.rentalCar=false,this.make=false,super.key, required this.onConfirm});
 
   @override
   State<SortBySheet> createState() => _SortBySheetState();
@@ -79,6 +79,7 @@ class _SortBySheetState extends State<SortBySheet> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
+              color: AppColors.black,
               fontFamily: fontFamily,
             ),
           ),
@@ -92,13 +93,21 @@ class _SortBySheetState extends State<SortBySheet> {
               magnification: 1,
               squeeze: 1.1,
               useMagnifier: true,
-              scrollController: FixedExtentScrollController(initialItem: selectedIndex),
+              scrollController: FixedExtentScrollController(initialItem: selectedIndex,),
               itemExtent: 40.h,
               onSelectedItemChanged: (index) {
+
                 setState(() {
                   selectedIndex = index;
                 });
               },
+              // selectionOverlay: Container(
+              //   decoration: BoxDecoration(
+              //     color: AppColors.extraLightGray,
+              //     borderRadius: BorderRadius.circular(4),
+              //
+              //   ),
+              // ),
               children: List.generate(sortResult.length, (index) {
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -109,6 +118,7 @@ class _SortBySheetState extends State<SortBySheet> {
                         sortResult[index],
                         style: TextStyle(
                           fontSize: 14.sp,
+                          color: AppColors.black,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.w700,
                         ),

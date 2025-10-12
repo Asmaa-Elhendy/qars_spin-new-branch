@@ -47,8 +47,11 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     double width=MediaQuery.of(context).size.width;
     double height=MediaQuery.of(context).size.height;
-    return Container(height:height*.06 ,
+    return Container(
+      height:height*.06 ,
+      color: AppColors.background(context),
       child: TextFormField(
+
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
@@ -60,24 +63,24 @@ class CustomTextField extends StatelessWidget {
         textInputAction: textInputAction,
         focusNode: focusNode,
         textCapitalization: textCapitalization,
-        style: const TextStyle(
+        style:  TextStyle(
           fontSize: 16,
-          color: AppColors.textPrimary,
+          color: AppColors.textPrimary(context),
         ),
         decoration: InputDecoration(
           hintText: hintText,
           labelText: labelText,
-          hintStyle: const TextStyle(color: AppColors.textSecondary),
-          labelStyle: const TextStyle(color: AppColors.textSecondary),
+          hintStyle:  TextStyle(color: AppColors.textSecondary(context)),
+          labelStyle:  TextStyle(color: AppColors.textSecondary(context)),
           prefixIcon: prefixIcon,
           prefixText: prefixText,
-          prefixStyle: const TextStyle(
-            color: AppColors.textPrimary,
+          prefixStyle:  TextStyle(
+            color: AppColors.textPrimary(context),
             fontWeight: FontWeight.bold,
           ),
           suffixIcon: suffixIcon,
           filled: true,
-          fillColor: AppColors.white,
+          fillColor: AppColors.background(context),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -92,7 +95,7 @@ class CustomTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(
+            borderSide:  BorderSide(
                 color: AppColors.inputFocusedBorder, width: 1.0),
           ),
           errorBorder: OutlineInputBorder(
@@ -105,6 +108,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         validator: validator,
+        
       ),
     );
   }

@@ -25,7 +25,7 @@ class _FindMeACarState extends State<FindMeACar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -33,12 +33,13 @@ class _FindMeACarState extends State<FindMeACar> {
               height: 88.h, // same as your AppBar height
               padding: EdgeInsets.only(top: 13.h,left: 14.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.background(context),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25), // shadow color
-                    blurRadius: 6, // softens the shadow
-                    offset: Offset(0, 2), // moves shadow downward
+                  BoxShadow( //update asmaa
+                    color: AppColors.blackColor(context).withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 5.h,
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
@@ -52,7 +53,7 @@ class _FindMeACarState extends State<FindMeACar> {
                     },
                     child: Icon(
                       Icons.arrow_back_outlined,
-                      color: Colors.black,
+                      color: AppColors.blackColor(context),
                       size: 30.w,
                     ),
                   ),
@@ -65,7 +66,7 @@ class _FindMeACarState extends State<FindMeACar> {
                         Text(
                           "Find Me A Car",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: AppColors.blackColor(context),
                             fontFamily: 'Gilroy',
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w800,
@@ -83,7 +84,7 @@ class _FindMeACarState extends State<FindMeACar> {
               child:  Text(
                 "Get notified when a car of your choice is\n                   added to our showroom.",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.blackColor(context),
                   fontFamily: 'Gilroy',
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
@@ -96,7 +97,7 @@ class _FindMeACarState extends State<FindMeACar> {
               child: Container(
                 height: .7.h,
                 decoration: BoxDecoration(
-                  color: AppColors.black,
+                  color: AppColors.divider(context),
 
                 ),
               ),
@@ -168,7 +169,7 @@ class _FindMeACarState extends State<FindMeACar> {
                   buildLargeTextField("Any Comments?", commentController,
                       keyboardType: TextInputType.number),
                   20.verticalSpace,
-                  yellowButtons(title: "Activate Notification", onTap: (){}, w: double.infinity),
+                  yellowButtons(title: "Activate Notification", onTap: (){}, w: double.infinity,context: context),
                   40.verticalSpace
 
 
@@ -197,7 +198,7 @@ class _FindMeACarState extends State<FindMeACar> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.black,
+              color: AppColors.blackColor(context),
               fontFamily: 'Gilroy',
               fontSize: 12.sp,
               fontWeight: FontWeight.w800,
@@ -206,9 +207,11 @@ class _FindMeACarState extends State<FindMeACar> {
           10.verticalSpace,
 
           /// TypeAhead Field
-          SizedBox(
+          Container(
             height: 45.h,
+            color: AppColors.white,
             child: TypeAheadField<String>(
+
 
               // suggestions
               suggestionsCallback: (pattern) async {
@@ -231,12 +234,16 @@ class _FindMeACarState extends State<FindMeACar> {
                     );
                   },
                   style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.black,
+                    // color: AppColors.blackColor(context),
                     fontWeight: FontWeight.w400,
                     fontSize: 15.sp,
                   ),
                   decoration: InputDecoration(
+                    fillColor: AppColors.white,
+                    focusColor: Colors.white,
                     enabledBorder: OutlineInputBorder(
+
                       borderRadius: BorderRadius.circular(3),
                       borderSide: BorderSide(
                         color: AppColors.mutedGray,
@@ -318,20 +325,22 @@ class _FindMeACarState extends State<FindMeACar> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.black,
+              color: AppColors.blackColor(context),
               fontFamily: 'Gilroy',
               fontSize: 12.sp,
               fontWeight: FontWeight.w800,
             ),
           ),
           10.verticalSpace,
-          SizedBox(
+          Container(
             height: 40.h,
+            color: AppColors.white,
             child: TextFormField(
               controller: controller,
               keyboardType: keyboardType,
               decoration: InputDecoration(
                 //labelText: label,
+                fillColor: AppColors.white,
                 enabledBorder: OutlineInputBorder(
                   borderSide:
                   BorderSide(color: AppColors.mutedGray, width: .8.w), // عادي
@@ -344,7 +353,7 @@ class _FindMeACarState extends State<FindMeACar> {
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              cursorColor: AppColors.lightGray,
+              cursorColor: AppColors.lightGrayColor(context),
               cursorWidth: 1,
             ),
           ),
@@ -375,6 +384,7 @@ class _FindMeACarState extends State<FindMeACar> {
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.multiline,
+
               maxLines: null,
               minLines: 10,
               style: TextStyle(
@@ -383,6 +393,7 @@ class _FindMeACarState extends State<FindMeACar> {
                 fontSize: 15.sp,
               ),
               decoration: InputDecoration(
+                fillColor: AppColors.white,
                 hintText: "eg.exterior or interior color of the car, options,\nengine...", // 👈 الهنت
                 hintStyle: TextStyle(
                   color: Colors.grey,

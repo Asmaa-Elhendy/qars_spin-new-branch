@@ -11,7 +11,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 class InspectioDialog extends StatefulWidget {
   String id;
-  InspectioDialog({required this.id,super.key});
+   InspectioDialog({required this.id,super.key});
 
   @override
   State<InspectioDialog> createState() => _InspectioDialogState();
@@ -33,8 +33,10 @@ class _InspectioDialogState extends State<InspectioDialog> {
             /// Title
             Center(
               child: Text(
-                "Request Inspection Report",
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
+               "Request Inspection Report",
+                style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
               ),
             ),
             14.verticalSpace,
@@ -45,7 +47,9 @@ class _InspectioDialogState extends State<InspectioDialog> {
               child: Text(
                 textAlign: TextAlign.center,
                 "Are you sure you want to request new car inspection for this car? (this is a prepaid service. Our tean will contact you soon to get more details.)",
-                style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily),
+                style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily),
               ),
             ),
             14.verticalSpace,
@@ -72,7 +76,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.find<BrandController>().inspectioReport(widget.id);
+                      Get.find<BrandController>().inspectReport(widget.id);
 
                       Navigator.pop(context);
                     },

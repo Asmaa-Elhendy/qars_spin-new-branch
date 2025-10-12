@@ -55,18 +55,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     double width=MediaQuery.of(context).size.width;
     double height=MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon:  Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           AppStrings.createAccount,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style:  TextStyle(
+            color: AppColors.textPrimary(context),
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -85,10 +85,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 // Country Selection
                 Text(
                   AppStrings.yourCountry,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -110,10 +110,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 // Mobile Number
                 Text(
                   AppStrings.yourMobileNumber,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
                 const SizedBox(height: 8),
