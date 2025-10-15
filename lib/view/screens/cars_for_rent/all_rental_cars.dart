@@ -27,7 +27,7 @@ class _AllRentalCarsState extends State<AllRentalCars> {
           //adContainer(),
           AdContainer(//update banner
             bigAdHome: true,
-            targetPage: 'Rent',
+            targetPage: 'Cars For Rent - List Page',////not found name in db
           ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: "All Rental Cars",context: context,squareIcon: true,rental: true),

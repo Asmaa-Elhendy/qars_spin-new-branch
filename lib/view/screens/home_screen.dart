@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // For big banner (like in home screen)
                     AdContainer(
                       bigAdHome: true,
-                      targetPage: 'Home',
+                      targetPage: 'Home Page',
                     ),
                     LayoutBuilder(
                       builder: (context, constraints) {
@@ -235,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // For big banner (like in home screen)
                     AdContainer(
                       bigAdHome: false,
-                      targetPage: 'Home',
+                      targetPage: 'Home Page',
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(

@@ -115,7 +115,7 @@ class BannerService {
       //     .toList();
       final matches = banners.where((b) =>
       b.bannerType == priority['type'] &&
-          b.targetType.toString().toLowerCase() .contains(priority['target']?.toLowerCase()  ?? '')
+          b.targetType.toString().contains(priority['target']  ?? '')
       ).toList();
 
       if (matches.isNotEmpty) {

@@ -30,7 +30,7 @@ class _AllCarsState extends State<AllCars> {
           //adContainer(),
           AdContainer(//update banner
             bigAdHome: true,
-            targetPage: 'Sale',
+            targetPage: 'Cars For Sale - List Page',
           ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: "All Makes",context: context,makes: true),

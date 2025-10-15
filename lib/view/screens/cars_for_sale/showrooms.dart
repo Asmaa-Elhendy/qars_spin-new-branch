@@ -31,7 +31,7 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
           // For big banner (like in home screen)
           AdContainer(//update banner
             bigAdHome: true,
-            targetPage: 'Partners',
+            targetPage: 'Partners - List Page',//not found name in db
           ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: widget.title,context: context,showroom: !widget.carCare,carCare: widget.carCare,partnerKind: widget.carCare?"Car Care Shop":widget.rentRoom?"Rent a Car":"Car Showroom"),
