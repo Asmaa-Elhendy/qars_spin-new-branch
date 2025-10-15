@@ -24,7 +24,11 @@ class _AllRentalCarsState extends State<AllRentalCars> {
       appBar: carListAppBar(notificationCount: 3,context: context),
       body: Column(
         children: [
-          adContainer(),
+          //adContainer(),
+          AdContainer(//update banner
+            bigAdHome: true,
+            targetPage: 'Rent',
+          ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: "All Rental Cars",context: context,squareIcon: true,rental: true),
           8.verticalSpace,

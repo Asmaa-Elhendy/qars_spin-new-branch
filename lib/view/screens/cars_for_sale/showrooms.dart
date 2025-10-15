@@ -27,7 +27,12 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
       appBar: carListAppBar(notificationCount: 3,context: context),
       body: Column(
         children: [
-          adContainer(),
+          // adContainer(),
+          // For big banner (like in home screen)
+          AdContainer(//update banner
+            bigAdHome: true,
+            targetPage: 'Partners',
+          ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: widget.title,context: context,showroom: !widget.carCare,carCare: widget.carCare,partnerKind: widget.carCare?"Car Care Shop":widget.rentRoom?"Rent a Car":"Car Showroom"),
           8.verticalSpace,

@@ -321,7 +321,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.askingPriceController,
-          label: "ce(*)",
+          label: "Price(*)",
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,

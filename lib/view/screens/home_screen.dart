@@ -163,7 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(height:10.h),
-                    adContainer(bigAdHome: true,),
+                    // adContainer(bigAdHome: true,),
+                    // For big banner (like in home screen)
+                    AdContainer(
+                      bigAdHome: true,
+                      targetPage: 'Home',
+                    ),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final screenWidth = constraints.maxWidth;
@@ -227,7 +232,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
-                    adContainer(),
+                    // For big banner (like in home screen)
+                    AdContainer(
+                      bigAdHome: false,
+                      targetPage: 'Home',
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 1.0),

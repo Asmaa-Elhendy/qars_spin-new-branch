@@ -27,7 +27,11 @@ class _AllCarsState extends State<AllCars> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          adContainer(),
+          //adContainer(),
+          AdContainer(//update banner
+            bigAdHome: true,
+            targetPage: 'Sale',
+          ),
           8.verticalSpace,
           carListGreyBar(onSearchResult:(_){},title: "All Makes",context: context,makes: true),
           8.verticalSpace,

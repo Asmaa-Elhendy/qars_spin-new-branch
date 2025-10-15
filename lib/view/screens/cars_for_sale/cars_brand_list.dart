@@ -37,7 +37,11 @@ class _CarsBrandListState extends State<CarsBrandList> {
           children: [
             Column(
               children: [
-                adContainer(),
+            //    adContainer(),
+                AdContainer(//update banner
+                  bigAdHome: true,
+                  targetPage: 'Makes',
+                ),
                 8.verticalSpace,
                 carListGreyBar(
                     listCars:widget.brandName!="Qars Spin \n Showroom"&& widget.brandName!="Personal Cars",//true,
