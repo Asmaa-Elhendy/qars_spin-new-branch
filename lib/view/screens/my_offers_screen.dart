@@ -145,7 +145,7 @@ class _OffersScreenState extends State<OffersScreen> {
           // Loading Overlay
           if (_isLoading)
             Container(
-              color: Colors.black54,
+              color:Colors.black.withOpacity(0.5),
               child: const Center(
                 child: AppLoadingWidget(
                   title: 'Loading...\nPlease Wait...',

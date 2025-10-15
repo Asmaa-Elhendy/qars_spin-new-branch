@@ -60,9 +60,8 @@ class BannerResponse {
       }
       
       throw FormatException('Invalid JSON format');
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ Error parsing BannerResponse: $e');
-      print('Stack trace: $stackTrace');
       print('JSON: $json');
       return BannerResponse(
         code: 'ERROR',
@@ -74,53 +73,25 @@ class BannerResponse {
   }
 
   static BannerResponse _parseBannerData(Map<String, dynamic> data) {
-    try {
-      // Handle case where Data might be null
-      List<dynamic> dataList = [];
-      
-      if (data['Data'] != null) {
-        if (data['Data'] is List) {
-          dataList = data['Data'] as List;
-        } else if (data['data'] is List) {
-          // Handle case-insensitive key
-          dataList = data['data'] as List;
-        }
-      }
-      
-      // Log the data we're working with
-      print('\n📊 Parsing banner data:');
-      print('Code: ${data['Code'] ?? data['code']}');
-      print('Desc: ${data['Desc'] ?? data['desc']}');
-      print('Count: ${data['Count'] ?? data['count']}');
-      print('Data is List: ${data['Data'] is List}');
-      print('Data is null: ${data['Data'] == null}');
-      print('Data type: ${data['Data']?.runtimeType}');
-      
-      return BannerResponse(
-        code: (data['Code'] ?? data['code'] ?? '').toString(),
-        desc: (data['Desc'] ?? data['desc'] ?? '').toString(),
-        count: data['Count'] is int 
-            ? data['Count'] as int 
-            : data['count'] is int
-                ? data['count'] as int
-                : int.tryParse((data['Count'] ?? data['count'] ?? '0').toString()) ?? 0,
-        data: dataList
-            .where((e) => e is Map<String, dynamic>)
-            .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
-    } catch (e, stackTrace) {
-      print('❌ Error in _parseBannerData:');
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      print('Data: $data');
-      
-      return BannerResponse(
-        code: 'ERROR',
-        desc: 'Failed to parse banner data: ${e.toString()}',
-        count: 0,
-        data: [],
-      );
+    List<dynamic> dataList = [];
+    if (data['Data'] is List) {
+      dataList = data['Data'];
+    } else if (data['data'] is List) {
+      dataList = data['data']; // Handle case-insensitive key
     }
+
+    return BannerResponse(
+      code: (data['Code'] ?? data['code'] ?? '').toString(),
+      desc: (data['Desc'] ?? data['desc'] ?? '').toString(),
+      count: data['Count'] is int 
+          ? data['Count'] as int 
+          : data['count'] is int
+              ? data['count'] as int
+              : int.tryParse((data['Count'] ?? data['count'] ?? '0').toString()) ?? 0,
+      data: dataList
+          .where((e) => e is Map<String, dynamic>)
+          .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
   }
 }
