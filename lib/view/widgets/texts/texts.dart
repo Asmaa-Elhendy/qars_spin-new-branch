@@ -8,22 +8,22 @@ import '../../../controller/const/colors.dart';
 blueText(text){
 
   return Text(text,
-    style: TextStyle(
-      fontFamily: fontFamily,
-      color: AppColors.accent,
-      fontSize: 12.sp,
+  style: TextStyle(
+    fontFamily: fontFamily,
+    color: AppColors.accent,
+    fontSize: 12.sp,
 
-    ),
+  ),
 
   );
 
 }
 
-headerText(text){
+headerText(text,context){
 
   return Text(text,
     style: TextStyle(
-      color: AppColors.black,
+      color: AppColors.blackColor(context),
       fontSize: 16.sp,
       fontFamily: fontFamily,
       fontWeight: FontWeight.w700,
@@ -33,13 +33,13 @@ headerText(text){
 
 
 }
-description(text, {bool small = false}) {
+description(text, {bool small = false,required BuildContext context}) {
   return Text(text,
     style: TextStyle(
-      color: AppColors.black,
-      fontSize: small?12.sp:14.sp,
+      color: AppColors.blackColor(context),
+      fontSize: small?12.sp:13.sp,
       fontFamily: fontFamily,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w300,
     ),
 
   );
@@ -57,7 +57,7 @@ greyText(text) {
 price(text,{bool small =false}) {
   return Text(text,
     style: TextStyle(
-      color: AppColors.star,
+      color: AppColors.primary,
       fontFamily: fontFamily,
       fontSize: small?16.sp:18.sp,
       fontWeight: FontWeight.w700,
@@ -76,10 +76,10 @@ boldGrey(text) {
 
   );
 }
-hintText(text){
+hintText(text,context){
   return Text(text,
     style: TextStyle(
-      color: AppColors.darkGray,
+      color: AppColors.darkGreyColor(context),
       fontFamily: fontFamily,
       fontSize: 12.sp,
       fontWeight: FontWeight.w400,

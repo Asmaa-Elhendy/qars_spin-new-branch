@@ -30,7 +30,7 @@ class CareInfo extends StatelessWidget {
                 children: [
                   Text(show.partnerNamePl,
                     style: TextStyle(
-                        color: AppColors.black,
+                        color: AppColors.blackColor(context),
                         fontFamily: fontFamily,
                         fontWeight: FontWeight.w700,
                         fontSize: 16.sp
@@ -39,7 +39,7 @@ class CareInfo extends StatelessWidget {
                   4.verticalSpace,
                   Row(
                     children: [
-                      Text(show.joiningDate,
+                      Text("Join Date: ${show.joiningDate}",
                         style: TextStyle(
                             color: AppColors.inputBorder,
                             fontFamily: fontFamily,
@@ -50,14 +50,14 @@ class CareInfo extends StatelessWidget {
                       45.horizontalSpace,
                       Row(
                         children: [
-                          Icon(Icons.remove_red_eye,color: AppColors.accent,),
+                          Icon(Icons.remove_red_eye,color: AppColors.accent,size: 18.w,),
                           4.horizontalSpace,
                           Text(show.visitsCount.toString(),
                             style: TextStyle(
                                 color: AppColors.mutedGray,
                                 fontFamily: fontFamily,
                                 fontWeight: FontWeight.w800,
-                                fontSize: 16.sp
+                                fontSize: 14.sp
                             ),
                           ),
 
@@ -67,7 +67,8 @@ class CareInfo extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      yellowButtons(title: "Follow", onTap: (){}, w: 110.w),
+                      yellowButtons(title: "Follow", onTap: (){}, w: 110.w,context:context),
+
                       8.horizontalSpace,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,12 +113,12 @@ class CareInfo extends StatelessWidget {
             style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: fontFamily,
-                color: AppColors.darkGray,
+                color: AppColors.blackColor(context),
                 fontWeight: FontWeight.w300
             ),
           ),
           18.verticalSpace,
-          Divider(color: AppColors.black,thickness: .8.h,)
+          Divider(color: AppColors.divider(context),thickness: .8.h,)
         ],
       ),
 

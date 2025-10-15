@@ -9,7 +9,7 @@ class QarsApinBottomNavigationBar extends StatefulWidget {
   final VoidCallback onMakeOffer;
   final VoidCallback onLoan;
 
-  QarsApinBottomNavigationBar({required this.onLoan,required this.onMakeOffer,required this.onRequestToBuy,super.key});
+   QarsApinBottomNavigationBar({required this.onLoan,required this.onMakeOffer,required this.onRequestToBuy,super.key});
 
   @override
   State<QarsApinBottomNavigationBar> createState() => _QarsApinBottomNavigationBarState();
@@ -17,11 +17,17 @@ class QarsApinBottomNavigationBar extends StatefulWidget {
 
 class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBar> {
   @override
+  void initState() {
+    // TODO: implement initState
+    print("Qarsspsos");
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background(context),
 
       ),
       child: Row(spacing: 2.w,
@@ -43,7 +49,7 @@ class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBa
         padding: EdgeInsets.symmetric(horizontal: 22.w,vertical: 8.h),
 
         decoration: BoxDecoration(
-            color: AppColors.star,
+          color: AppColors.primary,
             borderRadius: BorderRadius.circular(6).r
 
 
@@ -53,10 +59,10 @@ class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBa
             SvgPicture.asset(image),
             6.horizontalSpace,
             Text(title,style: TextStyle(
-                color: AppColors.black,
-                fontSize: 14.sp,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.w600
+              color: AppColors.black,
+              fontSize: 14.sp,
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.w600
             ),)
 
           ],

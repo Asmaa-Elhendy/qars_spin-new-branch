@@ -53,7 +53,6 @@ class RentalCarsController extends GetxController{
       "$base_url/BrowsingRelatedApi.asmx/GetListOfCarsForRent?Filter_Details=${Uri.encodeComponent(jsonEncode(filterDetails))}",
     );
     final response = await http.get(uri);
-    print("now now now${response.statusCode}");
 
     if (response.statusCode == 200) {
 
@@ -127,7 +126,6 @@ class RentalCarsController extends GetxController{
       update();
 
     } else {
-      print(response.statusCode);
       throw Exception("Failed to load cars: ${response.statusCode}");
 
     }

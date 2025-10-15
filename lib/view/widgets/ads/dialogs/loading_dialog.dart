@@ -5,7 +5,7 @@ import '../../../../controller/const/colors.dart';
 
 class AppLoadingWidget extends StatelessWidget {
   final String title;
-  
+
   const AppLoadingWidget({
     Key? key,
     required this.title,
@@ -54,8 +54,8 @@ class LoadingDialog {
             SizedBox(width: 20),
             Expanded(
               child: Text(
-                isModifyMode 
-                    ? 'Please wait while your ad is being updated...' 
+                isModifyMode
+                    ? 'Please wait while your ad is being updated...'
                     : 'Please wait while your ad is being created...',
               ),
             ),

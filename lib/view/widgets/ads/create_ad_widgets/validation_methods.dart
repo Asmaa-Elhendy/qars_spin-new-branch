@@ -18,6 +18,9 @@ class ValidationMethods {
     required BuildContext context,
     required bool  isRequest360,
     required bool  isFeaturedPost,
+    required String fuelType,
+    required String cylinders,
+    required String transmission,
     required Function(String) showMissingFieldsDialog,
     required Function() showMissingCoverImageDialog, required postData,
   }) {
@@ -28,8 +31,11 @@ class ValidationMethods {
         type.isEmpty ||
         year.isEmpty ||
         askingPrice.isEmpty ||
-        mileage.isEmpty
-      //  ||  description.isEmpty
+        mileage.isEmpty||
+        fuelType.isEmpty||
+       cylinders.isEmpty||
+    transmission.isEmpty
+    //  ||  description.isEmpty
     ) {
       showMissingFieldsDialog("Please fill all (*)  mandatory fields");
       return false;
@@ -140,7 +146,7 @@ class ValidationMethods {
     try {
       int yearValue = int.parse(year);
       int currentYear = DateTime.now().year;
-      
+
       if (yearValue < 1900 || yearValue > currentYear + 1) {
         showErrorDialog("Please enter a valid manufacture year");
         return false;

@@ -28,35 +28,35 @@ class _ShowroomDetailsTabWidgetState extends State<ShowroomDetailsTabWidget> {
           ),
           Text("Location " ,style: TextStyle(fontSize: width*.04,fontWeight: FontWeight.bold),),
           Divider(thickness: 2),
-          Center(
-            child: Container(
-              width: width * .8,
-              height: height * .05,
-              decoration: BoxDecoration(
-                color: Color(0xfff2f2f2),
-                borderRadius: BorderRadius.circular(12), // 👈 يخليها مستطيل مدوّر
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SvgPicture.asset(
-                      "assets/images/map.svg",
-                      width: width * .036,
+      Center(
+        child: Container(
+          width: width * .8,
+          height: height * .05,
+          decoration: BoxDecoration(
+            color: Color(0xfff2f2f2),
+            borderRadius: BorderRadius.circular(12), // 👈 يخليها مستطيل مدوّر
+          ),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  "assets/images/map.svg",
+                  width: width * .036,
 
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Salwa Road Branch',
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Salwa Road Branch',
+                  style: TextStyle(color: Colors.black, fontSize: 15),
+                ),
+              ],
             ),
-          )
+          ),
+        ),
+      )
 
-        ],
+      ],
       ),
     );
   }

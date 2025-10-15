@@ -22,7 +22,7 @@ class BottomActionBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background(context),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -91,7 +91,7 @@ class BottomActionBar extends StatelessWidget {
           height: 48.w,
           // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
           decoration: BoxDecoration(
-            color:!green? AppColors.star:AppColors.success,
+            color:!green? AppColors.primary:AppColors.success,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Center(

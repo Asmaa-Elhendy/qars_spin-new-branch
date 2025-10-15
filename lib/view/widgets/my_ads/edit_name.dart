@@ -20,7 +20,7 @@ class EditSpecsName extends StatefulWidget {
 
 class _EditSpecsNameState extends State<EditSpecsName> {
   final TextEditingController _newNameController = TextEditingController();
-  
+
   // Loading state for update operation
   bool _isLoadingUpdate = false;
 
@@ -46,7 +46,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
     super.initState();
     _newNameController.text=widget.spec.specValuePl.isEmpty?'':widget.spec.specValuePl;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +75,9 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                     Center(
                       child: Text(
                         widget.spec.specHeaderPl,
-                        style: TextStyle(fontSize: 14.sp, fontFamily:fontFamily,fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14.sp, fontFamily:fontFamily,fontWeight: FontWeight.w800),
                       ),
                     ),
                     10.verticalSpace,
@@ -106,7 +108,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                          child: yellowButtons(title: "Cancel", onTap: (){
+                          child: yellowButtons(context:context,title: "Cancel", onTap: (){
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             Navigator.pop(context);
@@ -114,14 +116,14 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                         ),
                         SizedBox(width: 7.w),
                         Flexible(
-                          child: yellowButtons(title: "Confirm", onTap: () async {
+                          child: yellowButtons(context:context,title: "Confirm", onTap: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             Navigator.pop(context);
                             _showLoadingDialog();
                             final controller = Get.find<SpecsController>();
                             final success =widget.fromCreateAd?
-                                controller.updateLocal(specId: widget.spec.specId, specValuePl: _newNameController.text)
+                            controller.updateLocal(specId: widget.spec.specId, specValuePl: _newNameController.text)
                                 :
                             await controller.updateSpecValue(
                               postId: widget.spec.postId,

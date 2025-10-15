@@ -19,7 +19,8 @@ class CountryDropdown extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return GestureDetector(
+    return 
+      GestureDetector(
       onTapDown: (TapDownDetails details) async {
         final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
@@ -40,15 +41,15 @@ class CountryDropdown extends StatelessWidget {
                 width: width ,
                 child: Text(
                   '+${country['prefix']} ${country['name']}',
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 16,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
               ),
             );
           }).toList(),
-          color: Colors.white, // ⬅️ لون خلفية القائمة
+          color: AppColors.background(context), // ⬅️ لون خلفية القائمة
         );
 
         if (result != null) {
@@ -59,7 +60,7 @@ class CountryDropdown extends StatelessWidget {
         height: height * .06,
         width: width * .9, // ⬅️ عرض الزرار
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.background(context),
           border: Border.all(color: AppColors.inputBorder, width: 1.0),
           borderRadius: BorderRadius.circular(4.0),
         ),
@@ -69,12 +70,12 @@ class CountryDropdown extends StatelessWidget {
           children: [
             Text(
               '+${selectedCountry['prefix']} ${selectedCountry['name']}',
-              style: const TextStyle(
+              style:  TextStyle(
                 fontSize: 16,
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimary(context),
               ),
             ),
-            const Icon(Icons.arrow_drop_down, color: AppColors.textPrimary),
+             Icon(Icons.arrow_drop_down, color: AppColors.textPrimary(context)),
           ],
         ),
       ),

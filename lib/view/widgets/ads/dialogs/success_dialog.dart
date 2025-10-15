@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SuccessDialog {
-  static void show(BuildContext context, String postId, VoidCallback? onOkPressed, 
+  static void show(BuildContext context, String postId, VoidCallback? onOkPressed,
       {bool isModifyMode = false, bool isPublished = false}) {
-    
-    final String message = isPublished 
+
+    final String message = isPublished
         ? 'Your ad is under reviewing \n Thanks for Trusting Qars Spin'
-        : isModifyMode 
-            ? 'Ad updated successfully!'
-            : 'Ad created successfully!';
-    
+        : isModifyMode
+        ? 'Ad updated successfully!'
+        : 'Ad created successfully!';
+
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -27,7 +27,7 @@ class SuccessDialog {
               }
             },
             child: Text(
-                'OK',
+              'OK',
               style: const TextStyle(color: CupertinoColors.activeBlue),
             ),
           ),

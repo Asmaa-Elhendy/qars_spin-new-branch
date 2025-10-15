@@ -13,36 +13,36 @@ import '../../screens/cars_for_rent/all_rental_cars.dart';
 
 class ShowRoomBottomBar extends StatelessWidget {
   Showroom showRoom;
-  ShowRoomBottomBar({required this.showRoom,super.key});
+   ShowRoomBottomBar({required this.showRoom,super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      //width: double.infinity,
+     //width: double.infinity,
       height: 80.h,
       padding: EdgeInsets.symmetric(horizontal: 30.w,vertical: 14.h),
       decoration: BoxDecoration(
-          color: AppColors.white
+        color: AppColors.background(context)
       ),
       child: Row(
         spacing: 18.w,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           carButton((){
             Get.find<RentalCarsController>().setRentalCars(showRoom.rentalCars??[]);
             Get.to(AllRentalCars());
           },"Cars(${showRoom.rentalCars!.length})"),
           //20.horizontalSpace,
-          squareButton(Icon(Icons.location_on_rounded,color: AppColors.white,size: 30.w),(){
+          squareButton(Icon(Icons.location_on_rounded,color: AppColors.whiteColor(context),size: 30.w),(){
             openMap(showRoom.mapsUrl);
           }),
           //20.horizontalSpace,
-          squareButton(Image.asset("assets/images/whats.png",),(){ openWhatsApp(showRoom.contactWhatsApp, message: "Hello 👋");},green: true),
+          squareButton(Image.asset("assets/images/whats.png",color: AppColors.whiteColor(context),),(){ openWhatsApp(showRoom.contactWhatsApp, message: "Hello 👋");},green: true),
 
 
           //20.horizontalSpace,
 
-          squareButton(Icon(Icons.call,color: AppColors.white,size: 30.w,), (){
+          squareButton(Icon(Icons.call,color: AppColors.whiteColor(context),size: 30.w,), (){
             makePhoneCall(showRoom.contactPhone);
           }),
 
@@ -55,10 +55,10 @@ class ShowRoomBottomBar extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 160.w,
+         width: 160.w,
         height: 100.h,
 
-        // padding: EdgeInsets.symmetric(horizontal: 35.w,vertical: 10.h),
+       // padding: EdgeInsets.symmetric(horizontal: 35.w,vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.primary,
           borderRadius: BorderRadius.circular(4), // optional rounded corners
@@ -83,16 +83,16 @@ class ShowRoomBottomBar extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-          width: 50.w,
-          height: 105.h,
-          // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
-          decoration: BoxDecoration(
-            color:!green? AppColors.star:AppColors.success,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Center(
-            child: icon,
-          )
+        width: 50.w,
+        height: 105.h,
+       // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
+        decoration: BoxDecoration(
+          color:!green? AppColors.primary:AppColors.success,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: icon,
+        )
       ),
     );
   }

@@ -47,8 +47,11 @@ class CarModel{
   String? warrantyAvailable;
   int? visitsCount;
   bool? isFavorite;
+  int? classId;
+  int? makeId;
 
   CarModel({
+    this.classId,this.makeId,
     required this.postId,
     required this.pinToTop,
     required this.postCode,

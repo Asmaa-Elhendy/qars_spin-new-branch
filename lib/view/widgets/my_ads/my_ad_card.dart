@@ -28,8 +28,9 @@ Widget MyAdCard(
     padding: EdgeInsets.only(bottom: 12.h),
     width: double.infinity,
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.background(context),
       borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: AppColors.white),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.22),
@@ -47,19 +48,19 @@ Widget MyAdCard(
           height: 260.h,
           child: ad.rectangleImageUrl != null
               ? Image.network(
-                  ad.rectangleImageUrl!,
-                  fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/car2-removebg-preview.png",
-                      fit: BoxFit.fill,
-                    );
-                  },
-                )
+            ad.rectangleImageUrl!,
+            fit: BoxFit.fill,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.asset(
+                "assets/images/car2-removebg-preview.png",
+                fit: BoxFit.fill,
+              );
+            },
+          )
               : Image.asset(
-                  "assets/images/logo_the_q.png",
-                  fit: BoxFit.fill,
-                ),
+            "assets/images/logo_the_q.png",
+            fit: BoxFit.fill,
+          ),
         ),5.verticalSpace,
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -70,7 +71,7 @@ Widget MyAdCard(
                 child: Text(
                   ad.postKind,
                   style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.blackColor(context),
                     fontFamily: fontFamily,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w800,
@@ -90,7 +91,7 @@ Widget MyAdCard(
                     style: TextStyle(
                       fontFamily: fontFamily,
                       fontSize: 14.sp,
-                      color: Colors.black,
+                      color: AppColors.blackColor(context),
                       fontWeight: FontWeight.w700,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -100,20 +101,20 @@ Widget MyAdCard(
             ],
           ),
         ),
-      ad.postStatus == 'Rejected' ?  Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Text(ad.rejectedReason??'',
+        ad.postStatus == 'Rejected' ?  Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Text(ad.rejectedReason??'',
 
-            //  'upload the car photos and publish the post then request for 360',
+              //  'upload the car photos and publish the post then request for 360',
 
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-            ),
-            maxLines: 2,
-            softWrap: true,
-          )):SizedBox(),5.verticalSpace
+              style: TextStyle(
+                fontFamily: fontFamily,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 2,
+              softWrap: true,
+            )):SizedBox(),5.verticalSpace
         ,
         6.verticalSpace,
 
@@ -124,6 +125,7 @@ Widget MyAdCard(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               yellowButtons(
+                context: context,
                 title: "Request 360 Service",
                 onTap: () {
                   SuccessDialog.show(
@@ -131,7 +133,7 @@ Widget MyAdCard(
                     context: context,
                     title: "Ready to showCase your vehicle like a pro?",
                     message:
-                        "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges 100 riyal can apply.",
+                    "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges 100 riyal can apply.",
                     onClose: () {},
                     onTappp: () async {
                       // // 1) Close confirmation dialog
@@ -186,9 +188,9 @@ Widget MyAdCard(
                       //   );
                       // }
                       Navigator.pop(context);//j
-                     final paid = await PaymentMethodDialog.show(context: context,amount:  10.0);
+                      final paid = await PaymentMethodDialog.show(context: context,amount:  100.0);
 
-                    if (paid == true) {
+                      if (paid == true) {
                         // 🟢 نجاح الدفع
                         final myAdController = Get.find<MyAdCleanController>();
                         onShowLoader();
@@ -219,7 +221,7 @@ Widget MyAdCard(
                           );
                         }
                       }
-                     else {
+                      else {
                         SuccessDialog.show(
                           request: true,
                           context: context,
@@ -238,6 +240,7 @@ Widget MyAdCard(
                 w: 185.w,
               ),
               yellowButtons(
+                context: context,
                 title: "Feature Your Ad",
                 onTap: () {
                   SuccessDialog.show(
@@ -245,14 +248,14 @@ Widget MyAdCard(
                     context: context,//
                     title: "Let's make your post the center \n of orientation",
                     message:
-                        "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!",
+                    "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!",
                     onClose: () {},
                     onTappp: () async {
                       // 1) Close confirmation dialog
                       Navigator.pop(context);
 
                       // 2) Take payment first
-                       final paid = await PaymentMethodDialog.show(context: context,amount:  150.0);
+                      final paid = await PaymentMethodDialog.show(context: context,amount:  150.0);
 
                       if (paid == true)
                       {
@@ -319,6 +322,7 @@ Widget MyAdCard(
                   children: [
                     Expanded(
                       child: yellowButtons(
+                        context: context,
                         title: "Modify",
                         onTap: () {
                           Get.to(
@@ -340,6 +344,7 @@ Widget MyAdCard(
                     SizedBox(width: 8.w),
                     Expanded(
                       child: yellowButtons(
+                        context: context,
                         title: "Specs",
                         onTap: () {
                           Get.to(SpecsManagemnt(postId: ad.postId.toString()));
@@ -356,6 +361,7 @@ Widget MyAdCard(
                   children: [
                     Expanded(
                       child: yellowButtons(
+                        context: context,
                         title: "Gallery",
                         onTap: () {
                           // Navigate to GalleryManagement and auto-refresh when returning
@@ -378,6 +384,7 @@ Widget MyAdCard(
                     SizedBox(width: 8.w),
                     Expanded(
                       child: yellowButtons(
+                        context: context,
                         title: "Publish",
                         onTap: () async {
                           if(ad.postStatus!="Pending Approval"){

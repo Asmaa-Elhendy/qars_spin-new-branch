@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qarsspin/controller/const/colors.dart';
 
 import '../../../controller/showrooms_controller.dart';
 import '../../widgets/ad_container.dart';
@@ -12,7 +13,7 @@ class CarsShowRoom extends StatefulWidget {
   bool carCare;
   String title;
   bool rentRoom;
-  CarsShowRoom({required this.rentRoom,required this.title,this.carCare = false,super.key});
+   CarsShowRoom({required this.rentRoom,required this.title,this.carCare = false,super.key});
 
   @override
   State<CarsShowRoom> createState() => _CarsShowRoomState();
@@ -22,7 +23,8 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: carListAppBar(notificationCount: 3),
+      backgroundColor: AppColors.background(context),
+      appBar: carListAppBar(notificationCount: 3,context: context),
       body: Column(
         children: [
           adContainer(),
@@ -31,16 +33,18 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
           8.verticalSpace,
           Expanded(
             child: GetBuilder<ShowRoomsController>(
-                builder: (controller) {
-                  return ListView.builder(
+              builder: (controller) {
+                return ListView.builder(
 
-                    padding: const EdgeInsets.all(8),
-                    itemCount: controller.showRooms.length,
-                    itemBuilder: (context, index) {
-                      return ShowroomCard(showroom:  controller.showRooms[index],carCare: widget.carCare,);
-                    },
-                  );
-                }
+                  padding:  EdgeInsets.symmetric(horizontal: 18.w),
+                  itemCount: controller.showRooms.length,
+                  itemBuilder: (context, index) {
+                    return ShowroomCard(showroom:  controller.showRooms[index],carCare: widget.carCare,
+                    rental: widget.rentRoom,
+                    );
+                  },
+                );
+              }
             ),
           ),
 

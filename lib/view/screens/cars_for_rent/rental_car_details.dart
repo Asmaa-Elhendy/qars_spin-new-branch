@@ -29,7 +29,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background(context),
       bottomNavigationBar: RentalBottomNaviagtion(phone: widget.rentalCar.ownerMobile),
       body: SingleChildScrollView(
         //physics: NeverScrollableScrollPhysics(),
@@ -39,7 +39,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
               height: 88.h, // same as your AppBar height
               padding: EdgeInsets.only(top: 13.h, left: 14.w, right: 14.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.background(context),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.25), // shadow color
@@ -57,7 +57,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                     },
                     child: Icon(
                       Icons.arrow_back_outlined,
-                      color: Colors.black,
+                      color: AppColors.blackColor(context),
                       size: 30.w,
                     ),
                   ),
@@ -66,7 +66,9 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                     child: SizedBox(
                         width: 147.w,
                         child: Image.asset(
-                          "assets/images/black_logo.png",
+                          Theme.of(context).brightness == Brightness.dark
+                              ? 'assets/images/balckIconDarkMode.png'
+                              : 'assets/images/black_logo.png',
                           fit: BoxFit.cover,
                         )),
                   ),
@@ -77,6 +79,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                         child: Image.asset(
                           "assets/images/share.png",
                           fit: BoxFit.cover,
+                          color: AppColors.blackColor(context),
                         )),
                   )
                 ],
@@ -87,7 +90,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
             SingleChildScrollView(
               child: Padding(
                 padding:
-                EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: SizedBox(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,19 +100,19 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                       ),
                       Padding(
                         padding:
-                        EdgeInsets.symmetric(horizontal: width * .03),
+                            EdgeInsets.symmetric(horizontal: width * .03),
                         child: Divider(
                           thickness: .7.h,
-                          color: AppColors.black,
+                          color: AppColors.divider(context),
                         ),
                       ),
                       Padding(
                         padding:
-                        EdgeInsets.symmetric(horizontal: width * .03),
+                            EdgeInsets.symmetric(horizontal: width * .03),
                         child: Text(
                           "Rental Prices",
                           style: TextStyle(
-                            color: AppColors.black,
+                            color: AppColors.blackColor(context),
                             fontSize: 14.sp,
                             fontFamily: fontFamily,
                             fontWeight: FontWeight.w700,
@@ -118,10 +121,10 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                       ),
                       Padding(
                         padding:
-                        EdgeInsets.symmetric(horizontal: width * .03),
+                            EdgeInsets.symmetric(horizontal: width * .03),
                         child: Divider(
                           thickness: .7.h,
-                          color: AppColors.black,
+                          color: AppColors.divider(context),
                         ),
                       ),
                       SizedBox(height: height * .02),
@@ -129,7 +132,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                       //24.verticalSpace,
                       Padding(
                         padding:
-                        EdgeInsets.symmetric(horizontal: width * .03),
+                            EdgeInsets.symmetric(horizontal: width * .03),
                         child: Divider(
                           thickness: .7.h,
                           color: AppColors.black,
@@ -180,13 +183,13 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                         ),
                       ),
                       16.verticalSpace,
-                      headerText("Specifications"),
+                      headerText("Specifications",context),
                       8.verticalSpace,
 
                       GetBuilder<RentalCarsController>(
-                          builder: (controller) {
-                            return specifications(controller.spec);
-                          }
+                        builder: (controller) {
+                          return specifications(controller.spec);
+                        }
                       )
 
                     ],
@@ -216,16 +219,16 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
           child: Center(
             child: color
                 ? Container(
-              width: 34.w,
-              height: 34.h,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: key == "Exterior"
-                      ? widget.rentalCar.colorExterior
-                      : widget.rentalCar.colorInterior,
-                  border: Border.all(color: AppColors.darkGray)),
-            )
-                : headerText(value),
+                    width: 34.w,
+                    height: 34.h,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: key == "Exterior"
+                            ? widget.rentalCar.colorExterior
+                            : widget.rentalCar.colorInterior,
+                        border: Border.all(color: AppColors.darkGray)),
+                  )
+                : headerText(value,context),
           ),
         ),
       ],
@@ -256,7 +259,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
             height: 55.h,
             width: 175.w,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.background(context),
               border: Border.all(
                 color: AppColors.extraLightGray,
                 width: 1,
@@ -266,7 +269,9 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
             child: Center(
               child: Text(
                 title,
-                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                style: TextStyle(
+                    color: AppColors.blackColor(context),
+                    fontSize: 16.sp, ),
               ),
             ),
           ),
@@ -275,7 +280,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
             height: 55.h,
             width: 175.w,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.background(context),
               border: Border.all(
                 color: AppColors.extraLightGray,
                 width: 1,
@@ -285,7 +290,8 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
             child: Center(
               child: Text(
                 value,
-                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                style: TextStyle(fontSize: 16.sp, color: AppColors.blackColor(context),
+                ),
               ),
             ),
           ),

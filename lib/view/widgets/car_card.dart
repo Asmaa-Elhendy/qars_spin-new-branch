@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 import '../../controller/const/colors.dart';
 import '../../model/car_model.dart';
 import '../screens/cars_for_sale/car_details.dart';
@@ -18,6 +19,7 @@ Widget carCard({
   required double h,
   required String postKind,
   bool tooSmall = false,
+  required BuildContext context
 }) {
 // }) {
   double price = double.tryParse(car.askingPrice.toString()) ?? 0.0;
@@ -31,9 +33,10 @@ Widget carCard({
 
   return GestureDetector(
     onTap: () {
+
       if(postKind!=""){
         Get.find<BrandController>().getCarDetails(postKind, car.postId.toString());
-        Get.to(CarDetails(postKind: car.sourceKind,id: car.postId,));
+        Get.to(CarDetails(sourcekind:car.sourceKind,postKind: car.postKind,id: car.postId,));
 
 
       }else{
@@ -46,7 +49,7 @@ Widget carCard({
         width: w,
         height: h, // خلي height متاحة زي ما طلبت
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.carCardBackground(context),
           borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
@@ -76,16 +79,14 @@ Widget carCard({
                           ? car.rectangleImageUrl
                           : "https://via.placeholder.com/150",
                       height: tooSmall
-                          ? 120.h
+                          ? 90.h
                           : large
                           ? 150.h
                           : 124.9.h,
                       //i update default height for all cars card car asmaa
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      // placeholder: (context, url) => Center(
-                      //   child: CircularProgressIndicator(color: AppColors.star),
-                      // ),
+
                       errorWidget: (context, url, error) =>
                           Icon(Icons.broken_image, size: 50, color: Colors.grey),
                     ),
@@ -119,18 +120,19 @@ Widget carCard({
                       ),
                     ),
 
-                    SizedBox(height: tooSmall ? 8.h : 12.h),
+                    SizedBox(height: tooSmall ? .5.h : 12.h),
                     Container(padding: EdgeInsets.only(left: 6.w), //update asmaa
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           carStatus(
+
                             car.sourceKind == "Individual"
                                 ? CarStatus.Personal
                                 : car.sourceKind == "Qars Spin"
                                 ? CarStatus.QarsSpin
-                                : CarStatus.Showroom,
+                                : CarStatus.Showroom,context
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: tooSmall?2.h:8.h),
                           Row(
                             children: [
                               Text(
@@ -151,13 +153,13 @@ Widget carCard({
                               ),
                             ],
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: tooSmall?4.h:8.h),
                           Row(
                             children: [
                               SvgPicture.asset(
                                 'assets/images/new_svg/ic_calendar.svg',
                                 width: 25.w,
-                                height: 18.h,
+                                height:tooSmall?16.h: 18.h,
                                 color: AppColors.gray,
                               ),
                               SizedBox(width: 4.w),
@@ -165,15 +167,15 @@ Widget carCard({
                                 car.manufactureYear.toString(),
                                 style: TextStyle(
                                   color: AppColors.mutedGray,
-                                  fontSize: 14.sp,
+                                  fontSize: tooSmall?12.sp:14.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(horizontal: 5.w),
                                 width: 1.5.w,
-                                height: 15.h,
-                                color: AppColors.textSecondary,
+                                height: tooSmall?12.h:15.h,
+                                color: AppColors.textSecondary(context),
                               )
                               ,
                               SvgPicture.asset(
@@ -187,7 +189,7 @@ Widget carCard({
                                 car.mileage.toString(),
                                 style: TextStyle(
                                   color: AppColors.mutedGray,
-                                  fontSize: 14.sp,
+                                  fontSize: tooSmall?12.sp:14.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -207,9 +209,9 @@ Widget carCard({
   );
 }
 
-Widget carStatus(CarStatus status) {
+Widget carStatus(CarStatus status,context) {
   return Container(
-    width: 90.w,   //update asmaa
+    width: 82.w,   //update asmaa
     height: 23.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 
@@ -220,7 +222,7 @@ Widget carStatus(CarStatus status) {
           ? AppColors
 
           .accent
-          : AppColors.darkGray,
+          : AppColors.divider(context),
     ),
 
     child: status == CarStatus.QarsSpin
@@ -236,7 +238,7 @@ Widget carStatus(CarStatus status) {
       child: Text(
         status.name,
 
-        style: TextStyle(color: Colors.white, fontSize: 14.sp),
+        style: TextStyle(color: Colors.white, fontSize: 13.sp,fontFamily: fontFamily),
       ),
     ),
   );

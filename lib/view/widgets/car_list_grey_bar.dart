@@ -14,52 +14,58 @@ import '../../controller/const/colors.dart';
 
 Widget carListGreyBar(
     {required Function(dynamic)? onSearchResult,
-      required context,
-      required String title,
-      bool squareIcon = false,
-      VoidCallback? onSwap,
-      bool showroom = false,
-      bool listCars = false,
-      bool rental = false,
-      bool makes = false,
-      bool carCare = false,
-      String partnerKind = "Rent a Car"}) {
+    required context,
+    required String title,
+    bool squareIcon = false,
+    VoidCallback? onSwap,
+    bool showroom = false,
+    bool listCars = false,
+    bool listCarsInQarsSpinShowRoom = false,
+      bool personalsCars =false,
+    bool rental = false,
+    bool makes = false,
+    bool carCare = false,
+    String partnerKind = "Rent a Car"}) {
+  Get.find<MySearchController>();
+
   return Container(
     width: double.infinity,
-    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 13.h),
-    color: AppColors.divider,
+    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+    color: AppColors.greyColor(context) ,
     child: Row(
       children: [
         Text(
           title,
           style: TextStyle(
-              fontFamily: fontFamily,
-              color: AppColors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 18.sp),
+            fontFamily: fontFamily,
+            color: AppColors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 18.sp,
+          ),
         ),
-        Spacer(),
-        squareIcon||makes
+        const Spacer(),
+        squareIcon || makes
             ? InkWell(
           onTap: () async {
-
-
-            final result = await showCustomBottomSheet(context,makes?"makes":"listCars");
-            if (onSearchResult != null) {
-              //
-              onSearchResult(result); // 👈 ابعت النتيجة للشاشة المستدعية
-            }
+            final result = await showCustomBottomSheet(
+              context,
+              makes
+                  ? "makes"
+                  : listCarsInQarsSpinShowRoom
+                  ? "Qars spin"
+                  : personalsCars
+                  ? "Personal Cars"
+                  : "listCars",
+            );
+            if (onSearchResult != null) onSearchResult(result);
           },
           child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 8.h,
-              horizontal: 10.w,
-            ),
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
             height: 40.h,
             width: 115.w,
             margin: EdgeInsets.symmetric(horizontal: 8.w),
             decoration: BoxDecoration(
-              color: AppColors.primary, // Yellow color
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(6.r),
             ),
             child: Row(
@@ -67,13 +73,14 @@ Widget carListGreyBar(
                 SvgPicture.asset(
                   "assets/images/new_svg/search.svg",
                   height: 25.h,
+                  color: AppColors.black,
                 ),
-                6.horizontalSpace,
+                8.horizontalSpace,
                 Text(
                   "Search",
                   style: TextStyle(
-                    fontSize: 16.sp,
-                    color: AppColors.textPrimary,
+                    fontSize: 14.sp,
+                    color: AppColors.black,
                     fontWeight: FontWeight.w500,
                   ),
                 )
@@ -81,11 +88,45 @@ Widget carListGreyBar(
             ),
           ),
         )
-            : SizedBox(),
+            : const SizedBox(),
         GestureDetector(
-            onTap: () {
-              if (showroom) {
-                showModalBottomSheet(
+          onTap: () {
+            // نفس منطقك السابق
+            if (showroom) {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (_) => SortBySheet(
+                  showroom: true,
+                  onConfirm: (selectedSort) {
+                    print("User selected: $selectedSort");
+                    if (showroom) {
+                      // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
+                      // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
+                      // "lb_Sort_By_Visits_Count_Desc" - Sort by number of visits (most visited first)
+                      // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
+
+                      Get.find<ShowRoomsController>().fetchShowrooms(
+                          partnerKind: partnerKind,
+                          forSale: partnerKind != "Rent a Car"&&!carCare,
+                          sort: selectedSort == "Sort By Posts Count"
+                              ? "lb_Sort_By_Active_Posts_Desc"
+                              : selectedSort == "Sort By Rating"
+                              ? "lb_Sort_By_Avg_Rating_Desc"
+                              : selectedSort == "Sort By Visits"
+                              ? "lb_Sort_By_Visits_Count_Desc"
+                              : "lb_Sort_By_Joining_Date_Asc");
+                    }
+                    // update your screen logic here
+                  },
+                ),
+              );
+            } else if (rental) {
+              showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   shape: const RoundedRectangleBorder(
@@ -93,145 +134,11 @@ Widget carListGreyBar(
                     BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   builder: (_) => SortBySheet(
-                    showroom: true,
-                    onConfirm: (selectedSort) {
-                      print("User selected: $selectedSort");
-                      if (showroom) {
-                        // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
-                        // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
-                        // "lb_Sort_By_Visits_Count_Desc" - Sort by number of visits (most visited first)
-                        // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
-
-                        Get.find<ShowRoomsController>().fetchShowrooms(
-                            partnerKind: partnerKind,
-                            sort: selectedSort == "Sort By Posts Count"
-                                ? "lb_Sort_By_Active_Posts_Desc"
-                                : selectedSort == "Sort By Rating"
-                                ? "lb_Sort_By_Avg_Rating_Desc"
-                                : selectedSort == "Sort By Visits"
-                                ? "lb_Sort_By_Visits_Count_Desc"
-                                : "lb_Sort_By_Joining_Date_Asc");
-                      }
-                      // update your screen logic here
-                    },
-                  ),
-                );
-              } else if (rental) {
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    builder: (_) => SortBySheet(
-                        rentalCar: true,
-                        onConfirm: (selectedSort) {
-                          print("User selected: $selectedSort");
-
-                          // "lb_Sort_By_Post_Date_Desc" - Sort by post date (newest first)
-                          // "lb_Sort_By_Post_Date_Asc" - Sort by post date (oldest first)
-                          // "lb_Sort_By_Price_Desc" - Sort by price (highest first)
-                          // "lb_Sort_By_Price_Asc" - Sort by price (lowest first)
-                          // "lb_Sort_By_Year_Desc" - Sort by year (newest first)
-                          // "lb_Sort_By_Year_Asc" - Sort by year (oldest first)
-                          Get.find<RentalCarsController>().fetchRentalCars(
-
-                              sort: selectedSort ==
-                                  "Sort By Post Date(Newest First)"
-                                  ? "lb_Sort_By_Post_Date_Desc"
-                                  : selectedSort ==
-                                  "Sort By Post Date (Oldest First)"
-                                  ? "lb_Sort_By_Post_Date_Asc"
-                                  : selectedSort ==
-                                  "Sort By Price(From High To Low)"
-                                  ? "lb_Sort_By_Price_Desc"
-                                  : selectedSort ==
-                                  "Sort By Price (From Low To High)"
-                                  ? "lb_Sort_By_Price_Asc"
-                                  : selectedSort ==
-                                  "Sort By Manufacture Year (Newest First)"
-                                  ? "lb_Sort_By_Year_Desc"
-                                  : "lb_Sort_By_Year_Asc");
-                        }));
-              }else if(makes){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    builder: (_) => SortBySheet(
-                        make: true,
-                        onConfirm: (selectedSort) {
-                          print("User selected: $selectedSort");
-
-                          // "lb_Sort_By_Post_Date_Desc" - Sort by post date (newest first)
-                          // "lb_Sort_By_Post_Date_Asc" - Sort by post date (oldest first)
-                          // "lb_Sort_By_Price_Desc" - Sort by price (highest first)
-                          // "lb_Sort_By_Price_Asc" - Sort by price (lowest first)
-                          // "lb_Sort_By_Year_Desc" - Sort by year (newest first)
-                          // "lb_Sort_By_Year_Asc" - Sort by year (oldest first)
-                          Get.find<BrandController>().fetchCarMakes(
-                              sort: selectedSort =="MakeName"?"MakeName":"Make_Count"
-                          );
-                        }));
-              }
-              else if(carCare){
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  builder: (_) => SortBySheet(
-                    showroom: true,
-                    onConfirm: (selectedSort) {
-                      print("User selected: $selectedSort");
-                      if (carCare) {
-                        // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
-                        // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
-                        // "lb_Sort_By_Visits_Count_Desc" - Sort by number of visits (most visited first)
-                        // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
-
-                        Get.find<ShowRoomsController>().fetchShowrooms(
-                            partnerKind: partnerKind,// car Care
-                            sort: selectedSort == "Sort By Posts Count"
-                                ? "lb_Sort_By_Active_Posts_Desc"
-                                : selectedSort == "Sort By Rating"
-                                ? "lb_Sort_By_Avg_Rating_Desc"
-                                : selectedSort == "Sort By Visits"
-                                ? "lb_Sort_By_Visits_Count_Desc"
-                                : "lb_Sort_By_Joining_Date_Asc");
-                      }
-                      // update your screen logic here
-                    },
-                  ),
-                );
-
-              }else if(listCars){
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  builder: (_) => SortBySheet(
-                      carList: true,
+                      rentalCar: true,
                       onConfirm: (selectedSort) {
-                        print("User selected: $selectedSort");
 
-                        String currentSourceKind =  Get.find<BrandController>().currentSourceKind;
-                        int currentMakeId = Get.find<BrandController>().currentMakeId;
-                        String currentMakeName = Get.find<BrandController>().currentMakeName;
+                        Get.find<RentalCarsController>().fetchRentalCars(
 
-                        // switch(currentSourceKind){
-                        //   case "All":
-                        Get.find<BrandController>().getCars(
-                            make_id: currentMakeId, makeName: currentMakeName,
                             sort: selectedSort ==
                                 "Sort By Post Date(Newest First)"
                                 ? "lb_Sort_By_Post_Date_Desc"
@@ -247,78 +154,166 @@ Widget carListGreyBar(
                                 : selectedSort ==
                                 "Sort By Manufacture Year (Newest First)"
                                 ? "lb_Sort_By_Year_Desc"
-                                : "lb_Sort_By_Year_Asc",
-                            sourceKind: currentSourceKind
-
-                        );
-
-                      }
-
-                    // Get.find<ShowRoomsController>().fetchShowrooms(
-                    //     partnerKind: partnerKind,// car Care
-                    //     sort: selectedSort == "Sort By Posts Count"
-                    //         ? "lb_Sort_By_Active_Posts_Desc"
-                    //         : selectedSort == "Sort By Rating"
-                    //         ? "lb_Sort_By_Avg_Rating_Desc"
-                    //         : selectedSort == "Sort By Visits"
-                    //         ? "lb_Sort_By_Visits_Count_Desc"
-                    //         : "lb_Sort_By_Joining_Date_Asc");
-
-                    // update your screen logic here
-                    //  },
+                                : "lb_Sort_By_Year_Asc");
+                      }));
+            }else if(makes){
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(16)),
                   ),
-                );
+                  builder: (_) => SortBySheet(
+                      make: true,
+                      onConfirm: (selectedSort) {
+                        print("User selected: $selectedSort");
 
-                // qar spin show room
-                // Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
-                // personal cars
-                // Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
-                //  controller.getCars(  // in case care for sale list
-                //    make_id: controller.carBrands[index].id,
-                //    makeName: controller.carBrands[index].name,
-                //  );
+                        // "lb_Sort_By_Post_Date_Desc" - Sort by post date (newest first)
+                        // "lb_Sort_By_Post_Date_Asc" - Sort by post date (oldest first)
+                        // "lb_Sort_By_Price_Desc" - Sort by price (highest first)
+                        // "lb_Sort_By_Price_Asc" - Sort by price (lowest first)
+                        // "lb_Sort_By_Year_Desc" - Sort by year (newest first)
+                        // "lb_Sort_By_Year_Asc" - Sort by year (oldest first)
+                        Get.find<BrandController>().fetchCarMakes(
+                            sort: selectedSort =="MakeName"?"MakeName":"Make_Count"
+                        );
+                      }));
+            }
+            else if(carCare){
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (_) => SortBySheet(
+                  showroom: true,
+                  onConfirm: (selectedSort) {
+                    print("User selected: $selectedSort");
+                    if (carCare) {
+                      // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
+                      // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
+                      // "lb_Sort_By_Visits_Count_Desc" - Sort by number of visits (most visited first)
+                      // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
 
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.only(
-                  right: 13.w, left: 3.w), //update icon filter   asmaa
-              child: SvgPicture.asset(
-                "assets/images/new_svg/swap.svg",
-                height: 25.h,
-              ),
-            )),
-        squareIcon
-            ? GestureDetector(
-          //update square asmaa
-            onTap: onSwap,
+                      Get.find<ShowRoomsController>().fetchShowrooms(
+                          partnerKind: partnerKind,// car Care
+                          sort: selectedSort == "Sort By Posts Count"
+                              ? "lb_Sort_By_Active_Posts_Desc"
+                              : selectedSort == "Sort By Rating"
+                              ? "lb_Sort_By_Avg_Rating_Desc"
+                              : selectedSort == "Sort By Visits"
+                              ? "lb_Sort_By_Visits_Count_Desc"
+                              : "lb_Sort_By_Joining_Date_Asc", forSale: partnerKind != "Rent a Car"&&!carCare);
+                    }
+                    // update your screen logic here
+                  },
+                ),
+              );
+
+            }else if(listCars){
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (_) => SortBySheet(
+                    carList: true,
+                    onConfirm: (selectedSort) {
+                      print("User selected: $selectedSort");
+
+                      String currentSourceKind =  Get.find<BrandController>().currentSourceKind;
+                      int currentMakeId = Get.find<BrandController>().currentMakeId;
+                      String currentMakeName = Get.find<BrandController>().currentMakeName;
+
+                      // switch(currentSourceKind){
+                      //   case "All":
+                      Get.find<BrandController>().getCars(
+                          make_id: currentMakeId, makeName: currentMakeName,
+                          sort: selectedSort ==
+                              "Sort By Post Date(Newest First)"
+                              ? "lb_Sort_By_Post_Date_Desc"
+                              : selectedSort ==
+                              "Sort By Post Date (Oldest First)"
+                              ? "lb_Sort_By_Post_Date_Asc"
+                              : selectedSort ==
+                              "Sort By Price(From High To Low)"
+                              ? "lb_Sort_By_Price_Desc"
+                              : selectedSort ==
+                              "Sort By Price (From Low To High)"
+                              ? "lb_Sort_By_Price_Asc"
+                              : selectedSort ==
+                              "Sort By Manufacture Year (Newest First)"
+                              ? "lb_Sort_By_Year_Desc"
+                              : "lb_Sort_By_Year_Asc",
+                          sourceKind: currentSourceKind
+
+                      );
+
+                    }
+
+                  // Get.find<ShowRoomsController>().fetchShowrooms(
+                  //     partnerKind: partnerKind,// car Care
+                  //     sort: selectedSort == "Sort By Posts Count"
+                  //         ? "lb_Sort_By_Active_Posts_Desc"
+                  //         : selectedSort == "Sort By Rating"
+                  //         ? "lb_Sort_By_Avg_Rating_Desc"
+                  //         : selectedSort == "Sort By Visits"
+                  //         ? "lb_Sort_By_Visits_Count_Desc"
+                  //         : "lb_Sort_By_Joining_Date_Asc");
+
+                  // update your screen logic here
+                  //  },
+                ),
+              );
+
+              // qar spin show room
+              // Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
+              // personal cars
+              // Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
+              //  controller.getCars(  // in case care for sale list
+              //    make_id: controller.carBrands[index].id,
+              //    makeName: controller.carBrands[index].name,
+              //  );
+
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.only(right: 13.w, left: 3.w),
             child: SvgPicture.asset(
-              "assets/images/new_svg/square.svg",
+              "assets/images/new_svg/swap.svg",
               height: 25.h,
               color: AppColors.white,
-            )
-
-          //      Icon(Icons.grid_view,color: AppColors.white,size: 35.h,),
-
+            ),
+          ),
+        ),
+        squareIcon
+            ? GestureDetector(
+          onTap: onSwap,
+          child: SvgPicture.asset(
+            "assets/images/new_svg/square.svg",
+            height: 25.h,
+            color: AppColors.white,
+          ),
         )
-            : SizedBox()
+            : const SizedBox(),
       ],
     ),
   );
 }
 
-showCustomBottomSheet(BuildContext context,String myCase) {
-  return showModalBottomSheet(
+showCustomBottomSheet(BuildContext context, String myCase) {
+  return  showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (context) {
-      Get.find<MySearchController>().fetchCarMakes();
-
-      return CustomFormSheet(myCase: myCase,);
-    },
+    builder: (context) => CustomFormSheet(myCase: myCase),
   );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:qarsspin/controller/const/colors.dart';
 
 import '../../../model/add_options_model.dart';
 
@@ -51,7 +52,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
       //  height: height*.7,
       margin: EdgeInsets.symmetric(horizontal: width*.04),
       decoration: BoxDecoration(
-        color: Colors.white, // 👈 خلفية واضحة للكروت
+        color: AppColors.background(context), // 👈 خلفية واضحة للكروت
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -109,8 +110,10 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
     required String icon,
     required Function(int) onOptionToggled,
   }) {
-    return Card(
+    return 
+      Card(
       margin: EdgeInsets.only(top: height*.004), // ✅ يمنع أي فراغ خارجي
+        color: AppColors.cardBackground(context),
 
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 5,
@@ -131,7 +134,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                 style:  TextStyle(
                   fontSize: width*.035 ,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.white//AppColors.blackColor(context),  //update color asmaa
                 ),
               ),
             ),
@@ -174,7 +177,7 @@ class _AdvertisementOptionsModalState extends State<AdvertisementOptionsModal> {
                               style: TextStyle(
                                 fontSize: width * 0.034,
                               //  fontWeight: FontWeight.bold,
-                                color:  Colors.black,
+                                color:  AppColors.blackColor(context),
                                 decoration: option.isChecked ? null : TextDecoration.none,
                               ),
                             ),

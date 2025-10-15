@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/brand_controller.dart';
+import '../../../controller/const/colors.dart';
 import '../../widgets/ad_container.dart';
 import '../../widgets/car_list_grey_bar.dart';
 import '../../widgets/cars_list_app_bar.dart';
@@ -20,7 +21,9 @@ class _AllCarsState extends State<AllCars> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: carListAppBar(notificationCount: 3),
+      backgroundColor: AppColors.background(context),
+      appBar: carListAppBar(notificationCount: 3,context: context),
+
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -52,7 +55,7 @@ class _AllCarsState extends State<AllCars> {
                           makeName: controller.carBrands[index].name,
                         );
                         Get.to(CarsBrandList(
-                            postKind: "CarForSale", //makes only in car for sale
+                          postKind: "CarForSale", //makes only in car for sale
                             brandName: controller.carBrands[index].name));
                       },
                       brand: true,

@@ -8,7 +8,7 @@ import '../../../controller/const/colors.dart';
 
 class RentalBottomNaviagtion extends StatelessWidget {
   String phone;
-  RentalBottomNaviagtion({required this.phone,super.key});
+   RentalBottomNaviagtion({required this.phone,super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class RentalBottomNaviagtion extends StatelessWidget {
       height: 90.h,
       padding: EdgeInsets.symmetric(horizontal: 30.w,vertical: 20.h),
       decoration: BoxDecoration(
-          color: AppColors.white
+          color: AppColors.background(context)
       ),
       child: Row(
         spacing: 18.w,
@@ -30,10 +30,10 @@ class RentalBottomNaviagtion extends StatelessWidget {
             Text(
               "Call Now",
               style: TextStyle(
-                  fontFamily: fontFamily,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14.sp,
-                  color: AppColors.black
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.w700,
+                fontSize: 14.sp,
+                color: AppColors.black
               ),
             )
           ],) ,onTap: (){

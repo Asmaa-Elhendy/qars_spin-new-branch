@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qarsspin/controller/const/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -54,6 +55,7 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
+          color: AppColors.white,
           height: this.height ?? (fromCreateAd?height*.045:height*.05),
           child: TextFormField(
             controller: controller,
@@ -65,11 +67,18 @@ class CustomTextField extends StatelessWidget {
             validator: validator,
             cursorColor: cursorColor,
             cursorHeight: cursorHeight,
-            style: TextStyle(fontSize: 15.w),
+
+            style: TextStyle(fontSize: 15.w,
+            color: AppColors.black
+            ),
+
             decoration: InputDecoration(
+              fillColor: AppColors.black,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 1,
+
+
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(fromCreateAd?5:8),

@@ -62,13 +62,13 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   @override
   void didUpdateWidget(ImagePickerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Update images if they've changed (compare by content, not reference)
     if (!listEquals(widget.imagePaths, oldWidget.imagePaths)) {
       _images = List.from(widget.imagePaths);
       print('DEBUG: ImagePickerField updated images list: $_images');
     }
-    
+
     // Update video if it's been removed
     if (widget.videoPath != oldWidget.videoPath) {
       _videoPath = widget.videoPath;
@@ -82,7 +82,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
 
   Future<void> _loadVideoThumbnail() async {
     if (_videoPath == null || _videoPath!.isEmpty) return;
-    
+
     try {
       final thumbnail = await VideoThumbnail.thumbnailFile(
         video: _videoPath!,
@@ -90,7 +90,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
         maxWidth: 200,
         quality: 50,
       );
-      
+
       if (mounted && thumbnail != null) {
         setState(() {
           _videoThumbnail = thumbnail;
@@ -136,10 +136,10 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
           );
           return;
         }
-        
+
         // Calculate how many more images can be added
         int remainingSlots = widget.maxImages - _images.length;
-        
+
         final List<XFile>? selectedImages = await _picker.pickMultiImage(
           imageQuality: 85,
         );
@@ -147,20 +147,20 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
         if (selectedImages != null && selectedImages.isNotEmpty) {
           // Limit the number of images to remaining slots
           int imagesToAdd = selectedImages.length > remainingSlots ? remainingSlots : selectedImages.length;
-          
+
           setState(() {
             for (int i = 0; i < imagesToAdd; i++) {
               String imagePath = selectedImages[i].path;
               _images.add(imagePath);
               widget.onImageSelected(imagePath);
-              
+
               // If this is the first media item, set it as cover
               if (widget.coverImage == null && _images.length == 1 && _videoPath == null) {
                 widget.onCoverChanged?.call(imagePath);
               }
             }
           });
-          
+
           if (selectedImages.length > remainingSlots) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Only $remainingSlots more images can be added')),
@@ -242,10 +242,10 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    
+
     // Combine images and video into a single list for display
     List<Map<String, dynamic>> mediaItems = [];
-    
+
     // Add video first if exists and NOT in modify mode
     if (_videoPath != null && !widget.isModifyMode) {
       mediaItems.add({
@@ -254,7 +254,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
         'thumbnail': _videoThumbnail
       });
     }
-    
+
     // Add all images
     for (var imgPath in _images) {
       mediaItems.add({
@@ -271,8 +271,8 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
           final isVideo = media['isVideo'] as bool;
           final path = media['path'] as String;
           // Check if this media item is the cover (either image or video)
-          final bool isCover = path == widget.coverImage || 
-                             (isVideo && _videoPath == widget.coverImage);
+          final bool isCover = path == widget.coverImage ||
+              (isVideo && _videoPath == widget.coverImage);
           final thumbnail = media['thumbnail'] as String?;
 
           return Stack(
@@ -284,34 +284,34 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300),
                   image: isVideo
-                    ? (thumbnail != null 
-                        ? DecorationImage(
-                            image: FileImage(File(thumbnail)),
-                            fit: BoxFit.cover,
-                          )
-                        : null) // No image for video if no thumbnail
-                    : DecorationImage(
-                        image: _isNetworkUrl(path) ? NetworkImage(path) : FileImage(File(path)),
-                        fit: BoxFit.cover,
-                      ),
+                      ? (thumbnail != null
+                      ? DecorationImage(
+                    image: FileImage(File(thumbnail)),
+                    fit: BoxFit.cover,
+                  )
+                      : null) // No image for video if no thumbnail
+                      : DecorationImage(
+                    image: _isNetworkUrl(path) ? NetworkImage(path) : FileImage(File(path)),
+                    fit: BoxFit.cover,
+                  ),
                   color: isVideo && thumbnail == null ? Colors.grey[300] : null,
                 ),
-                child: isVideo 
-                  ? Center(
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    )
-                  : null,
+                child: isVideo
+                    ? Center(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                )
+                    : null,
               ),
               if (widget.onCoverChanged != null && isCover && !isVideo)
                 Positioned.fill(

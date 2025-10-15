@@ -38,15 +38,17 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
           Container(
             width: 40.w,
             height: 5.h,
-            margin:  EdgeInsets.only(bottom: 20.h),
+           margin:  EdgeInsets.only(bottom: 20.h),
             decoration: BoxDecoration(
               color: Colors.grey[400],
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          Text(
+           Text(
             "Rate Showroom",
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,fontFamily: fontFamily),
+            style: TextStyle(
+                color: AppColors.black,
+                fontSize: 16.sp, fontWeight: FontWeight.w700,fontFamily: fontFamily),
           ),
           const SizedBox(height: 20),
           Divider(color: AppColors.black,thickness: .5.h,),
@@ -74,7 +76,9 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
                     children: [
                       Text(
                         ratingWords[stars]!,
-                        style:  TextStyle(fontSize: 14.sp,fontFamily: fontFamily,fontWeight: FontWeight.w700),
+                        style:  TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14.sp,fontFamily: fontFamily,fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(width: 10),
                       Row(
@@ -96,7 +100,7 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              //  yellowButtons(title: "Cancel", onTap: (){}, w: 170.w,grey: true),
+            //  yellowButtons(title: "Cancel", onTap: (){}, w: 170.w,grey: true),
               InkWell(
                 onTap: (){
                   Navigator.pop(context);
