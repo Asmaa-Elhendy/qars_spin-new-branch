@@ -323,14 +323,18 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (response['success'] == true) {
                           // Save user data
                           final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('mobileNumber', _mobileController.text);
-
+                          await prefs.setString('username', _mobileController.text);
+String fullName='';
                           if (response['Data'] != null && response['Data'] is List && response['Data'].isNotEmpty) {
-                            final userData = response['Data'][0];//j
+                            final userData = response['Data'][0];
                             if (userData['Full_Name'] != null) {
+                              fullName=userData['Full_Name'];
                               await prefs.setString('fullName', userData['Full_Name']);
                             }
                           }
+                          // To get the current value
+// To update the value
+                          Get.find<AuthController>().updateRegisteredStatus(true,_mobileController.text,fullName);  // or false
                           
                           // Navigate to home and remove all previous routes
                           if (mounted) {

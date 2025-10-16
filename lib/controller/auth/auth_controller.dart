@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/auth/auth_data_layer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,28 +21,39 @@ class AuthController extends GetxController {
   // Success message
   final RxString successMessage = ''.obs;
 
-  // Get the current user's full name
-  String? get userFullName => _fullName.value;
+  // Get the current user's full name to use across app
+  String? get userFullName => _fullName.value; //use it
   final RxString _fullName = ''.obs;
+
+  String? get userName => _userName.value; //use it
+  final RxString _userName = ''.obs;
 
   @override
   void onInit() async {
     super.onInit();
     // Load user data from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    _registered.value = prefs.getString('mobileNumber')?.isNotEmpty ?? false;
+
+    _registered.value = prefs.getString('username')?.isNotEmpty ?? false;
     if (_registered.value) {
       _fullName.value = prefs.getString('fullName') ?? '';
+      _userName.value=prefs.getString('username')??'';
     }
     
     // Print current user data
     log('User is ${_registered.value ? 'registered' : 'not registered'}');
     if (_registered.value) {
-      log('Mobile Number: ${prefs.getString('mobileNumber')}');
+      log('Mobile Number: ${prefs.getString('username')}');
       log('Full Name: ${_fullName.value}');
     }
   }
-  
+
+  void updateRegisteredStatus(bool value,String userName,String fullName) {
+    _registered.value = value;
+    _userName.value=userName;
+    _fullName.value=fullName;
+  }
+
   // Update user data in SharedPreferences
   Future<void> _updateUserData(String username, String fullName) async {
     final prefs = await SharedPreferences.getInstance();
@@ -51,6 +61,7 @@ class AuthController extends GetxController {
     await prefs.setString('fullName', fullName);
     _registered.value = true;
     _fullName.value = fullName;
+    _userName.value=username;
   }
 
   // Clear user data (for logout)
@@ -58,11 +69,11 @@ class AuthController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     
     // Log the data before clearing (for debugging)
-    final mobileNumber = prefs.getString('mobileNumber');
+    final mobileNumber = prefs.getString('username');
     final fullName = prefs.getString('fullName');
     
     // Clear all user data
-    await prefs.remove('mobileNumber');
+    await prefs.remove('username');
     await prefs.remove('fullName');
     
     // Update the state
@@ -120,7 +131,7 @@ class AuthController extends GetxController {
 
         // Save user data
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('mobileNumber', userData['Mobile'] ?? mobileNumber);
+        await prefs.setString('username', userData['Mobile'] ?? mobileNumber);
         if (userData['Full_Name'] != null) {
           await prefs.setString('fullName', userData['Full_Name']);
         }

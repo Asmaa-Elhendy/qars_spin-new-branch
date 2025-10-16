@@ -6,11 +6,13 @@ import 'dart:math';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../controller/auth/auth_controller.dart';
 import '../../../../controller/const/base_url.dart';
 import '../../../../controller/const/colors.dart';
 import 'error_dialog.dart';
 
-class OTPDialog extends StatelessWidget {
+class OTPDialog extends StatefulWidget {
+
   final TextEditingController otpController;
   final String otpSecret;
   final int otpCount;
@@ -20,7 +22,8 @@ class OTPDialog extends StatelessWidget {
   final VoidCallback onInvalidOTP;
   final VoidCallback onRegister;
   final bool request; // لتحديد هل هو alert خاص بطلب أو لا
-
+  final  String mobile;
+  final String name;
   const OTPDialog({
     Key? key,
     required this.otpController,
@@ -32,7 +35,49 @@ class OTPDialog extends StatelessWidget {
     required this.onInvalidOTP,
     required this.onRegister,
     required this.request,
+    required this.mobile,
+    required this.name
   }) : super(key: key);
+  @override
+  State<OTPDialog> createState() => _OTPDialogState();
+
+  static void show({
+    required   String mobile,
+    required String name,
+    required BuildContext context,
+    required TextEditingController otpController,
+    required String otpSecret,
+    required int otpCount,
+    required bool isLoading,
+    required Function(bool) onLoadingChange,
+    required VoidCallback onValidOTP,
+    required VoidCallback onInvalidOTP,
+    required VoidCallback onRegister,
+    required bool request,
+
+  })
+  {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => OTPDialog(
+       mobile:mobile,
+        name:name,
+        otpController: otpController,
+        otpSecret: otpSecret,
+        otpCount: otpCount,
+        isLoading: isLoading,
+        onLoadingChange: onLoadingChange,
+        onValidOTP: onValidOTP,
+        onInvalidOTP: onInvalidOTP,
+        onRegister: onRegister,
+        request: request,
+      ),
+    );
+  }
+}
+
+class _OTPDialogState extends State<OTPDialog> {
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +88,7 @@ class OTPDialog extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 16.h),
-        height: request ? 270.h : 330.h,
+        height: widget.request ? 270.h : 330.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.zero,
         ),
@@ -74,7 +119,7 @@ class OTPDialog extends StatelessWidget {
             20.verticalSpace,
             Container(height: 40.h,
               child: TextField(
-                controller: otpController,
+                controller: widget.otpController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: 'Enter OTP',
@@ -105,40 +150,46 @@ class OTPDialog extends StatelessWidget {
               children: [
                 cancelButton(() {
                   Navigator.pop(context);
-                }, "Cancel", request),
+                }, "Cancel", widget.request),
                 10.horizontalSpace,
                 yellowButtons(
                   title: "Verify",
                   onTap: () async {
-                    if (otpController.text.isEmpty) {
+                    if (widget.otpController.text.isEmpty) {
                       showErrorAlert('Please enter the OTP',context);
                       return;
                     }
 
                     Navigator.pop(context);
-                    onLoadingChange(true);
+                    widget.onLoadingChange(true);
 
                     try {
-                      if (otpController.text == otpSecret) {
-                        l.log('oto count**********$otpCount');
-                        if (otpCount == 1) {
-                          onValidOTP(); // Navigate to home
-                        } else if (otpCount == 0) {
+                      if (widget.otpController.text == widget.otpSecret) {
+                        l.log('otp count**********${widget.otpCount}');
+                        if (widget.otpCount == 1) {
+                          l.log('here in login******* ${widget.mobile}');
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('username',widget.mobile);
+                          await prefs.setString('fullName',  widget.name);
+                          Get.find<AuthController>().updateRegisteredStatus(true,widget.mobile,widget.name);  // or false
+
+                          widget.onValidOTP(); // Navigate to home
+                        } else if (widget.otpCount == 0) {
                           // For new registration (count = 0), proceed with registration
-                          onRegister();
+                          widget.onRegister();
                         } else {
                           // For any other case, just navigate to home
-                          onValidOTP();
+                          widget.onValidOTP();
                         }
                       } else {
                         showErrorAlert('Invalid OTP. Please try again.', context);
-                        onInvalidOTP();
+                        widget.onInvalidOTP();
                       }
                     } catch (e) {
                       showErrorAlert('An error occurred. Please try again.', context);
                       l.log('OTP Verification Error: $e');
                     } finally {
-                      onLoadingChange(false);
+                      widget.onLoadingChange(false);
                     }
                   },
                   context: context,
@@ -148,35 +199,6 @@ class OTPDialog extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  static void show({
-    required BuildContext context,
-    required TextEditingController otpController,
-    required String otpSecret,
-    required int otpCount,
-    required bool isLoading,
-    required Function(bool) onLoadingChange,
-    required VoidCallback onValidOTP,
-    required VoidCallback onInvalidOTP,
-    required VoidCallback onRegister,
-    required bool request,
-  }) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => OTPDialog(
-        otpController: otpController,
-        otpSecret: otpSecret,
-        otpCount: otpCount,
-        isLoading: isLoading,
-        onLoadingChange: onLoadingChange,
-        onValidOTP: onValidOTP,
-        onInvalidOTP: onInvalidOTP,
-        onRegister: onRegister,
-        request: request,
       ),
     );
   }

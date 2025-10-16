@@ -69,12 +69,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       );//j
 
       if (response['success'] == true) {
+        l.log('rs************** $response');
         _otpCount = response['Count'] ?? 0;
         l.log('Setting OTP count to: $_otpCount');
-        
-        // Show OTP dialog instead of showing field in the same screen
 
-        _showOtpDialog();
+        // Show OTP dialog instead of showing field in the same screen
+l.log("res    ${response['data']['Data'][0]['UserName']}");
+        _showOtpDialog(response['data']['Data'][0]['UserName'],response['data']['Data'][0]['Full_Name']);
       } else {
         _showErrorAlert(response['message'] ?? 'Failed to send OTP');
       }
@@ -87,10 +88,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  void _showOtpDialog() {
+  void _showOtpDialog(String mobile,String name) {
     final otpController = TextEditingController();
     OTPDialog.show(
       context: context,
+      mobile:mobile,
+      name:name,//j
       otpController: otpController,
       otpSecret: _otpSecret!,
       otpCount: _otpCount!,
