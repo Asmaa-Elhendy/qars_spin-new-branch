@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -247,9 +249,66 @@ class _RegisterPageState extends State<RegisterPage> {
                         _isLoading = true;
                       });
                       final authController = Get.find<AuthController>();
+ //                      try {//k
+ //                        final response = await authController.registerUser(
+ //                          userName:_selectedCountryPrefix+_mobileController.text,
+ //                          fullName: _nameController.text,
+ //                          email: _emailController.text,
+ //                          mobileNumber: _mobileController.text,
+ //                          selectedCountry: _selectedCountry,
+ //                          firebaseToken: token,
+ //                          preferredLanguage: 'en',
+ //                          ourSecret: ourSecret,
+ //                        );
+ // log('$response     ${_selectedCountry +_selectedCountryPrefix+_mobileController.text}');
+ //                        if (response['Code'] == 'OK') {
+ //                          if (mounted) {
+ //                            final prefs = await SharedPreferences.getInstance();
+ //                            await prefs.setString('mobileNumber', _mobileController.text);
+ //
+ //                            // Save full name from the response if available
+ //                            if (response['Code'] == 'OK' && response['Data'] != null && response['Data'].isNotEmpty) {
+ //                              final userData = response['Data'][0];
+ //                              if (userData['Full_Name'] != null) {
+ //                                await prefs.setString('fullName', userData['Full_Name']);
+ //                              }
+ //                            }
+ //
+ //                            // Show success and navigate
+ //                            if (mounted) {
+ //                              showSuccessDialog(
+ //                                title: 'Success',
+ //                                message: 'Registration successful!',
+ //                                context: context,
+ //                                onConfirm: () {
+ //                                  Navigator.pushReplacement(
+ //                                    context,
+ //                                    MaterialPageRoute(builder: (context) => HomeScreen()),
+ //
+ //                                  );
+ //                                },
+ //                              );
+ //                            }
+ //                          }
+ //                        } else {
+ //                          // Handle error response
+ //                          final errorMessage = response['Desc'] ?? 'Registration failed';
+ //                          if (mounted) {
+ //                            showErrorAlert(errorMessage, context);
+ //                          }
+ //                        }
+ //                      } catch (e) {
+ //                        if (mounted) {
+ //                          showErrorAlert('An error occurred during registration: $e', context);
+ //                        }
+ //                      } finally {
+ //                        setState(() {
+ //                          _isLoading = false;
+ //                        });
+ //                      }
                       try {
                         final response = await authController.registerUser(
-                          userName: _mobileController.text,
+                          userName: _selectedCountryPrefix + _mobileController.text,
                           fullName: _nameController.text,
                           email: _emailController.text,
                           mobileNumber: _mobileController.text,
@@ -259,50 +318,47 @@ class _RegisterPageState extends State<RegisterPage> {
                           ourSecret: ourSecret,
                         );
 
-                        if (response['Code'] == 'OK') {
-                          if (mounted) {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.setString('mobileNumber', _mobileController.text);
+                        log('Registration response: $response');
 
-                            // Save full name from the response if available
-                            if (response['Data'] != null && response['Data'] is List && response['Data'].isNotEmpty) {
-                              final userData = response['Data'][0];
-                              if (userData['Full_Name'] != null) {
-                                await prefs.setString('fullName', userData['Full_Name']);
-                              }
-                            }
+                        if (response['success'] == true) {
+                          // Save user data
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('mobileNumber', _mobileController.text);
 
-                            // Show success and navigate
-                            if (mounted) {
-                              showSuccessDialog(
-                                title: 'Success',
-                                message: 'Registration successful!',
-                                context: context,
-                                onConfirm: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => HomeScreen()),
-
-                                  );
-                                },
-                              );
+                          if (response['Data'] != null && response['Data'] is List && response['Data'].isNotEmpty) {
+                            final userData = response['Data'][0];//j
+                            if (userData['Full_Name'] != null) {
+                              await prefs.setString('fullName', userData['Full_Name']);
                             }
                           }
+                          
+                          // Navigate to home and remove all previous routes
+                          if (mounted) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomeScreen()),
+                              (route) => false,
+                            );
+                          }
                         } else {
-                          // Handle error response
-                          final errorMessage = response['Desc'] ?? 'Registration failed';
+                          // Show error message
+                          final errorMessage = response['message'] ?? 'Registration failed';
+                          log('Registration error: $errorMessage');
                           if (mounted) {
                             showErrorAlert(errorMessage, context);
                           }
                         }
                       } catch (e) {
+                        log('Unexpected error: $e');
                         if (mounted) {
-                          showErrorAlert('An error occurred during registration: $e', context);
+                          showErrorAlert('An unexpected error occurred: $e', context);
                         }
                       } finally {
-                        setState(() {
-                          _isLoading = false;
-                        });
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
                       }
                     },
                     child: Container(

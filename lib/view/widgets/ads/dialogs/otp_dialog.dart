@@ -1,7 +1,10 @@
+import 'dart:developer' as l;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../controller/const/base_url.dart';
 import '../../../../controller/const/colors.dart';
@@ -117,17 +120,23 @@ class OTPDialog extends StatelessWidget {
 
                     try {
                       if (otpController.text == otpSecret) {
+                        l.log('oto count**********$otpCount');
                         if (otpCount == 1) {
                           onValidOTP(); // Navigate to home
+                        } else if (otpCount == 0) {
+                          // For new registration (count = 0), proceed with registration
+                          onRegister();
                         } else {
-                          onRegister(); // Go to register page
+                          // For any other case, just navigate to home
+                          onValidOTP();
                         }
                       } else {
-                        showErrorAlert('Invalid OTP. Please try again.',context);
+                        showErrorAlert('Invalid OTP. Please try again.', context);
                         onInvalidOTP();
                       }
                     } catch (e) {
-                      showErrorAlert('An error occurred. Please try again.',context);
+                      showErrorAlert('An error occurred. Please try again.', context);
+                      l.log('OTP Verification Error: $e');
                     } finally {
                       onLoadingChange(false);
                     }

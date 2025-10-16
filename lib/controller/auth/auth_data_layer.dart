@@ -19,6 +19,8 @@ class AuthDataLayer {
     required String preferredLanguage,
     required String ourSecret,
   }) async {
+    log("iam in register****************************");
+
     try {
       final url = Uri.parse('$base_url$_registerUserEndpoint');
       
@@ -27,12 +29,12 @@ class AuthDataLayer {
       final userDetails = {
         'Full_Name': fullName,
         'Email_Address': email,
-        'Mobile_Number': mobileNumber,
+        'Mobile_Number': userName,
         'Selected_Country': selectedCountry,
         'Firebase_Token': firebaseToken,
         'Prefered_Language': preferredLanguage,
       };
-      
+      log('  newwwwwwwwww $userName, ${ jsonEncode(userDetails)}, $ourSecret,');
       final response = await http.post(
         url,
         body: {
@@ -46,10 +48,10 @@ class AuthDataLayer {
       
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        return {
+        return {//
           'success': true,
           'data': responseData,
-          'message': 'User registered successfully',
+          'message':responseData['Desc'],
         };
       } else {
         log('❌ Register user failed: ${response.statusCode} - ${response.body}');
@@ -68,10 +70,12 @@ class AuthDataLayer {
   }
 
   Future<Map<String, dynamic>> requestOtp({
+
     required String userName,
     required String otpSecret,
     required String ourSecret,
   }) async {
+    log("iam in otp");
     try {
       final url = Uri.parse('$base_url$_requestOtpEndpoint');
       
@@ -90,7 +94,7 @@ class AuthDataLayer {
         },
       );
 
-      log('📩 OTP Response: ${response.statusCode} - ${response.body}');
+      log('📩 OTP Response: ${response.statusCode} -  ${response.body} ');
 
       if (response.statusCode == 200) {
         try {
@@ -98,6 +102,7 @@ class AuthDataLayer {
           return {
             'success': jsonResponse['Code'] == 'OK',
             'message': jsonResponse['Desc'] ?? 'OTP request processed',
+            'Count': jsonResponse['Count'],  // Add this line to pass the Count value
             'data': jsonResponse,
           };
         } catch (e) {

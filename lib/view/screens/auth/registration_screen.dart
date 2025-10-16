@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/auth/secret.dart';
 import 'package:qarsspin/view/screens/auth/register_detail.dart';
+import 'package:qarsspin/view/screens/home_screen.dart';
 
 import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/app_strings.dart';
@@ -68,8 +69,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       );//j
 
       if (response['success'] == true) {
-        _otpCount = response['data']?['Count'] ?? 0;
+        _otpCount = response['Count'] ?? 0;
+        l.log('Setting OTP count to: $_otpCount');
+        
         // Show OTP dialog instead of showing field in the same screen
+
         _showOtpDialog();
       } else {
         _showErrorAlert(response['message'] ?? 'Failed to send OTP');
@@ -92,10 +96,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       otpCount: _otpCount!,
       isLoading: _isLoading,
       onLoadingChange: (v) => setState(() => _isLoading = v),
-      onValidOTP: () => Get.offAllNamed('/home'),
+      onValidOTP: () => {Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()))},
       onInvalidOTP: () {},
-      onRegister: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterPage(mobile:_mobileController.text,
-          country: _selectedCountryPrefix,code: _selectedCountry))),
+      onRegister: () async {
+        // Close the OTP dialog
+        Navigator.pop(context);
+        // Navigate to registration page and wait for result
+        final result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => RegisterPage(
+              mobile: _mobileController.text,
+              country: _selectedCountryPrefix,
+              code: _selectedCountry,
+            ),
+          ),
+        );
+        
+        // If registration was successful (result is true), navigate to home
+        if (result == true) {
+          if (mounted) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));          }
+        }
+      },
       request: false,
     );
 

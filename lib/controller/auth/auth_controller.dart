@@ -84,6 +84,7 @@ class AuthController extends GetxController {
   }
 
   // Register new user
+  // In auth_controller.dart
   Future<Map<String, dynamic>> registerUser({
     required String userName,
     required String fullName,
@@ -110,24 +111,50 @@ class AuthController extends GetxController {
         ourSecret: ourSecret,
       );
 
-      if (response['success'] == true) {
-        // Save user data to SharedPreferences
-        await _updateUserData(userName, fullName);
-        
-        successMessage.value = response['message'] ?? 'Registration successful';
-        return {'success': true, 'message': successMessage.value, 'data': response['data']};
-      } else {
-        errorMessage.value = response['message'] ?? 'Failed to register user';
-        return {'success': false, 'message': errorMessage.value};
+      log('Register user response: ${response.toString()}');
+
+      // Handle response
+      if (response['Code'] == 'OK' && response['Data'] != null && (response['Data'] as List).isNotEmpty) {
+        final userData = response['Data'][0];
+        log('User data: $userData');
+
+        // Save user data
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('mobileNumber', userData['Mobile'] ?? mobileNumber);
+        if (userData['Full_Name'] != null) {
+          await prefs.setString('fullName', userData['Full_Name']);
+        }
+
+        // Update auth state
+        _registered.value = true;
+        _fullName.value = userData['Full_Name'] ?? fullName;
+
+        return {
+          'success': true,
+          'message': response['Desc'] ?? 'Registration successful',
+          'Code': 'OK',
+          'Data': response['Data'],
+        };
       }
+
+      // If we get here, it means the response has an OK code but no data
+      return {
+        'success': true,  // Still treat as success since the server returned OK
+        'message': response['Desc'] ?? 'Registration successful',
+        'Code': 'OK',
+        'Data': response['Data'] ?? [],
+      };
     } catch (e) {
-      errorMessage.value = 'An error occurred during registration';
-      return {'success': false, 'message': errorMessage.value};
+      log('Error in registerUser: $e');
+      return {
+        'success': false,
+        'message': 'An error occurred: $e',
+        'Code': 'Error',
+      };
     } finally {
       isLoading.value = false;
     }
   }
-
   // Request OTP
   Future<Map<String, dynamic>> requestOtp({
     required String userName,
@@ -147,7 +174,12 @@ class AuthController extends GetxController {
 
       if (response['success'] == true) {
         successMessage.value = response['message'] ?? 'OTP sent successfully';
-        return {'success': true, 'message': successMessage.value};
+        return {
+          'success': true,
+          'message': successMessage.value,
+          'Count': response['Count'],  // Pass through the Count
+          'data': response['data']     // Pass through the full response data
+        };
       } else {
         errorMessage.value = response['message'] ?? 'Failed to send OTP';
         return {'success': false, 'message': errorMessage.value};
