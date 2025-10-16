@@ -1,6 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:qarsspin/controller/ads/data_layer.dart';
+import 'package:qarsspin/view/screens/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/app_strings.dart';
@@ -47,17 +52,52 @@ class _RegisterPageState extends State<RegisterPage> {
     _mobileController.dispose();
     super.dispose();
   }
-@override
+  String? _firebaseToken;
+  bool _isLoadingToken = true;
+  bool _isLoadingToken2 = false;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _mobileController.text=widget.mobile;
-    _selectedCountry=widget.code;
-    _selectedCountryPrefix=widget.country;
+    _mobileController.text = widget.mobile;
+    _selectedCountry = widget.code;
+    _selectedCountryPrefix = widget.country;
+        _initializeFirebaseAndGetToken();
+
   }
+  Future<void> _initializeFirebaseAndGetToken() async {
+    try {
+      // No need to show loading, just try to get the token in the background
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      // Get the token in the background
+      FirebaseMessaging.instance.getToken().then((token) {
+        if (mounted) {
+          setState(() {
+            _firebaseToken = token;
+          });
+        }
+      });
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+      // Don't show any error to the user
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Scaffold(
       backgroundColor: AppColors.background(context),
@@ -192,10 +232,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: height * .05,
                   child: GestureDetector(
                     onTap: () async {
-                     if(_nameController.text.isEmpty||_mobileController.text.isEmpty||_emailController.text.isEmpty){
-                       showErrorAlert('PLease fill all fields', context);
-                       return;
-                     }
+                      final token = _firebaseToken ?? '';
+
+                      if (_nameController.text.isEmpty ||
+                          _mobileController.text.isEmpty ||
+                          _emailController.text.isEmpty) {
+                        showErrorAlert('PLease fill all fields', context);
+                        return;
+                      }
 
                       if (!mounted) return;
 
@@ -212,19 +256,27 @@ class _RegisterPageState extends State<RegisterPage> {
                           email: _emailController.text,
                           mobileNumber: _mobileController.text,
                           selectedCountry: _selectedCountry,
-                          firebaseToken: 'firebase_token_here',
+                          firebaseToken: token, // Use the token (might be empty)
                           preferredLanguage: 'en',
-                          ourSecret: 'your_server_side_secret',
+                          ourSecret: ourSecret,
                         );
 
                         if (response['success'] == true) {
                           if (mounted) {
+                            // Save username to shared preferences
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setString('username', _mobileController.text);
+                            
                             showSuccessDialog(
                               title: 'Success',
                               message: 'Registration successful!',
                               context: context,
                               onConfirm: () {
-                                Navigator.pop(context);
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                  (route) => false, // This removes all previous routes
+                                );
                               },
                             );
                           }
@@ -267,7 +319,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ],
                       ),
                       alignment: Alignment.center,
-                      child:  Text(
+                      child: Text(
                         'Register',
                         style: TextStyle(
                           color: Colors.black,
@@ -288,30 +340,32 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
 
-
   void showSuccessDialog({
     required String title,
     required String message,
     required BuildContext context,
     required VoidCallback onConfirm,
   }) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                onConfirm();
-              },
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext context) =>
+          CupertinoAlertDialog(//h
+            title: const Text('Confirmation'),
+            content: Text('Registered Successfully'),
+            actions: <CupertinoDialogAction>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  onConfirm();
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: CupertinoColors.activeBlue),
+                ),
+              ),
+            ],
+          ),
     );
   }
 }
