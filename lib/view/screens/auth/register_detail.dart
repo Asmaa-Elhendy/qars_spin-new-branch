@@ -263,9 +263,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         if (response['success'] == true) {
                           if (mounted) {
-                            // Save username to shared preferences
+                            // Save user data to shared preferences
                             final prefs = await SharedPreferences.getInstance();
-                            await prefs.setString('username', _mobileController.text);
+                            await prefs.setString('mobileNumber', _mobileController.text);
+                            
+                            // Save full name from the response if available
+                            if (response['data'] != null && 
+                                response['data'] is List && 
+                                response['data'].isNotEmpty) {
+                              final userData = response['data'][0];
+                              if (userData['Full_Name'] != null) {
+                                await prefs.setString('fullName', userData['Full_Name']);
+                              }
+                            }
                             
                             showSuccessDialog(
                               title: 'Success',

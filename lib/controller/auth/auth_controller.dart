@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/auth/auth_data_layer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 
-bool registered = false;
 class AuthController extends GetxController {
   final AuthDataLayer _authDataLayer = AuthDataLayer();
+  
+  // Registered state
+  final RxBool _registered = false.obs;
+  
+  // Getter for registered state
+  bool get registered => _registered.value;
   
   // Loading state
   final RxBool isLoading = false.obs;
@@ -14,6 +21,54 @@ class AuthController extends GetxController {
   
   // Success message
   final RxString successMessage = ''.obs;
+
+  // Get the current user's full name
+  String? get userFullName => _fullName.value;
+  final RxString _fullName = ''.obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    // Load user data from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    _registered.value = prefs.getString('mobileNumber')?.isNotEmpty ?? false;
+    if (_registered.value) {
+      _fullName.value = prefs.getString('fullName') ?? '';
+    }
+    
+    // Print current user data
+    log('User is ${_registered.value ? 'registered' : 'not registered'}');
+    if (_registered.value) {
+      log('Mobile Number: ${prefs.getString('mobileNumber')}');
+      log('Full Name: ${_fullName.value}');
+    }
+  }
+  
+  // Update user data in SharedPreferences
+  Future<void> _updateUserData(String username, String fullName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('fullName', fullName);
+    _registered.value = true;
+    _fullName.value = fullName;
+  }
+
+  // Clear user data (for logout)
+  Future<void> clearUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    await prefs.remove('fullName');
+    _registered.value = false;
+    _fullName.value = '';
+  }
+
+  // Get current user data
+  Map<String, String> getCurrentUser() {
+    return {
+      'username': _registered.value ? _fullName.value : '',
+      'fullName': _fullName.value,
+    };
+  }
 
   // Register new user
   Future<Map<String, dynamic>> registerUser({
@@ -43,6 +98,9 @@ class AuthController extends GetxController {
       );
 
       if (response['success'] == true) {
+        // Save user data to SharedPreferences
+        await _updateUserData(userName, fullName);
+        
         successMessage.value = response['message'] ?? 'Registration successful';
         return {'success': true, 'message': successMessage.value, 'data': response['data']};
       } else {
@@ -50,7 +108,7 @@ class AuthController extends GetxController {
         return {'success': false, 'message': errorMessage.value};
       }
     } catch (e) {
-      errorMessage.value = 'An error occurred during registration: $e';
+      errorMessage.value = 'An error occurred during registration';
       return {'success': false, 'message': errorMessage.value};
     } finally {
       isLoading.value = false;

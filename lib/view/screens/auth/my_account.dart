@@ -16,12 +16,11 @@ class MyAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authController = Get.find<AuthController>();
+    
     return Scaffold(
       backgroundColor: AppColors.background(context),
-
-      body:
-
-      SingleChildScrollView(
+      body: Obx(() => SingleChildScrollView(
         child: Column(
           children: [
             Container(
@@ -30,16 +29,15 @@ class MyAccount extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.background(context),
                 boxShadow: [
-                  BoxShadow( //update asmaa
+                  BoxShadow(
                     color: AppColors.blackColor(context).withOpacity(0.2),
                     spreadRadius: 1,
                     blurRadius: 5.h,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Row(
-        
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -54,8 +52,8 @@ class MyAccount extends StatelessWidget {
                   125.horizontalSpace,
                   Center(
                     child: Text(
-                      textAlign: TextAlign.center,
                       "My Account",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.blackColor(context),
                         fontFamily: 'Gilroy',
@@ -70,11 +68,13 @@ class MyAccount extends StatelessWidget {
             25.verticalSpace,
             SizedBox(
               height: 750.h,
-              child: registered?bodyWithRegistered(context):bodyWithoutRegister(context),
+              child: authController.registered 
+                ? bodyWithRegistered(context) 
+                : bodyWithoutRegister(context),
             )
           ],
         ),
-      ),
+      )),
     );
   }
   Widget bodyWithoutRegister(context){

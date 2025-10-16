@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qarsspin/controller/const/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../services/banner_service.dart';
@@ -157,7 +158,7 @@ class _AdContainerState extends State<AdContainer> {
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
-                      child: CircularProgressIndicator(
+                      child: CircularProgressIndicator(color: AppColors.primary,
                         value: loadingProgress.expectedTotalBytes != null
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
