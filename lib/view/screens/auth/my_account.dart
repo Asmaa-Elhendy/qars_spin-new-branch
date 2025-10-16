@@ -79,7 +79,7 @@ class MyAccount extends StatelessWidget {
   }
   Widget bodyWithoutRegister(context){
   return  Padding(
-    padding:  EdgeInsets.symmetric(horizontal: 40.w),
+    padding:  EdgeInsets.symmetric(horizontal: 20.w),
     child: Column(
       children: [
         Container(

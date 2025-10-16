@@ -7,6 +7,65 @@ import 'package:qarsspin/controller/const/base_url.dart';
 
 class AuthDataLayer {
   static const String _requestOtpEndpoint = '/UserRelatedApi.asmx/RequestOTP';
+  static const String _registerUserEndpoint = '/UserRelatedApi.asmx/RegisterNewUser';
+
+  Future<Map<String, dynamic>> registerUser({
+    required String userName,
+    required String fullName,
+    required String email,
+    required String mobileNumber,
+    required String selectedCountry,
+    required String firebaseToken,
+    required String preferredLanguage,
+    required String ourSecret,
+  }) async {
+    try {
+      final url = Uri.parse('$base_url$_registerUserEndpoint');
+      
+      log('👤 Registering new user: $userName');
+      
+      final userDetails = {
+        'Full_Name': fullName,
+        'Email_Address': email,
+        'Mobile_Number': mobileNumber,
+        'Selected_Country': selectedCountry,
+        'Firebase_Token': firebaseToken,
+        'Prefered_Language': preferredLanguage,
+      };
+      
+      final response = await http.post(
+        url,
+        body: {
+          'UserName': userName,
+          'UserDetails': jsonEncode(userDetails),
+          'Our_Secret': ourSecret,
+        },
+      );
+
+      log('📥 Register user response: ${response.statusCode} - ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': responseData,
+          'message': 'User registered successfully',
+        };
+      } else {
+        log('❌ Register user failed: ${response.statusCode} - ${response.body}');
+        return {
+          'success': false,
+          'message': 'Failed to register user. Status code: ${response.statusCode}',
+        };
+      }
+    } catch (e, stackTrace) {
+      log('❌ Error in registerUser: $e\n$stackTrace');
+      return {
+        'success': false,
+        'message': 'Network error: $e',
+      };
+    }
+  }
 
   Future<Map<String, dynamic>> requestOtp({
     required String userName,

@@ -94,7 +94,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       onLoadingChange: (v) => setState(() => _isLoading = v),
       onValidOTP: () => Get.offAllNamed('/home'),
       onInvalidOTP: () {},
-      onRegister: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterPage())),
+      onRegister: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterPage(mobile:_mobileController.text,
+          country: _selectedCountryPrefix,code: _selectedCountry))),
       request: false,
     );
 
