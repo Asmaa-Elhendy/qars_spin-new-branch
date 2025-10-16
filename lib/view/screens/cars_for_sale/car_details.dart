@@ -8,6 +8,7 @@ import 'package:qarsspin/view/screens/get_loan.dart';
 import 'package:qarsspin/view/widgets/car_details/qars_apin_bottom_navigation_bar.dart';
 import '../../../controller/const/colors.dart';
 import '../../../model/car_model.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/bottom_offer_bar.dart';
 import '../../widgets/buttons/requesr_report_button.dart';
 import '../../widgets/car_card.dart';
@@ -39,7 +40,7 @@ class _CarDetailsState extends State<CarDetails> {
 
     return GetBuilder<BrandController>(builder: (controller) {
       return Scaffold(
-      backgroundColor: AppColors.background(context),
+        backgroundColor: AppColors.background(context),
 
         bottomNavigationBar: widget.sourcekind == "Qars Spin"
             ? QarsApinBottomNavigationBar(
@@ -64,22 +65,33 @@ class _CarDetailsState extends State<CarDetails> {
           },
         )
             : BottomActionBar(
-                onMakeOffer: () async {
-                  // Handle make offer
+          onMakeOffer: () async {
+            // Handle make offer
 
-                  await showDialog(
-                    context: context,
-                    builder: (_) =>  MakeOfferDialog(),
-                  );
-                },
-                onWhatsApp: () {
-                  // Handle WhatsApp
-                },
-                onCall: () {
-                  // Handle call
-                },
+            await showDialog(
+              context: context,
+              builder: (_) =>  MakeOfferDialog(),
+            );
+          },
+          onWhatsApp: () {
+            // Handle WhatsApp
+          },
+          onCall: () {
+            // Handle call
+          },
+        ),
+        body: controller.oldData?
+        Center(
+          child: Container(
+            color: AppColors.black.withOpacity(0.5),
+            child: Center(
+              child: AppLoadingWidget(
+                title: 'Loading...\nPlease Wait...',
               ),
-        body: Column(children: [
+            ),
+          ),
+        )
+            :Column(children: [
           Container(
             height: 88.h, // same as your AppBar height
             padding: EdgeInsets.only(top: 13.h, left: 14.w, right: 14.w),
@@ -132,19 +144,19 @@ class _CarDetailsState extends State<CarDetails> {
                     ),
                     12.horizontalSpace,
                     InkWell(
-                      onTap: () {
-                        controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id);
-                      },
-                      child:  Theme.of(context).brightness == Brightness.dark?Icon(
-                              Icons.favorite,
-                              color:
-                              controller.carDetails.isFavorite!
-                                  ? AppColors.primary:AppColors.notFavorite(context),
-                            ): controller.carDetails.isFavorite!
-                          ?Icon(
-                         Icons.favorite,color: AppColors.primary,
+                        onTap: () {
+                          controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id);
+                        },
+                        child:  Theme.of(context).brightness == Brightness.dark?Icon(
+                          Icons.favorite,
+                          color:
+                          controller.carDetails.isFavorite!
+                              ? AppColors.primary:AppColors.notFavorite(context),
+                        ): controller.carDetails.isFavorite!
+                            ?Icon(
+                          Icons.favorite,color: AppColors.primary,
 
-                      ):Icon(Icons.favorite_border)
+                        ):Icon(Icons.favorite_border)
 
                     )
                   ],
@@ -152,7 +164,10 @@ class _CarDetailsState extends State<CarDetails> {
               ],
             ),
           ),
-          carImage(controller.carDetails.rectangleImageUrl),
+          carImage(
+              controller.postMedia
+            //  controller.carDetails.rectangleImageUrl
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -304,10 +319,10 @@ class _CarDetailsState extends State<CarDetails> {
                               Text(
                                 "Specifications",
                                 style: TextStyle(
-                                  color: AppColors.blackColor(context),
-                                  fontFamily: fontFamily,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w800
+                                    color: AppColors.blackColor(context),
+                                    fontFamily: fontFamily,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w800
                                 ),
                               ),
                               10.verticalSpace,
@@ -318,26 +333,26 @@ class _CarDetailsState extends State<CarDetails> {
                           16.verticalSpace,
                           //optional Details
                           controller.carDetails.sourceKind == 'Individual' ||
-                                  controller.carDetails.sourceKind == 'Partner'
+                              controller.carDetails.sourceKind == 'Partner'
                               ? SizedBox(
-                                  height: 300.h,
-                                  child: CustomTabExample(
-                                    spec: controller.spec,
-                                    offers: controller.offers,
-                                  ))
+                              height: 300.h,
+                              child: CustomTabExample(
+                                spec: controller.spec,
+                                offers: controller.offers,
+                              ))
                               : SizedBox(),
                           16.verticalSpace,
 
                           controller.carDetails.sourceKind == 'Qars Spin' ||
-                                  controller.carDetails.sourceKind == 'Partner'
+                              controller.carDetails.sourceKind == 'Partner'
                               ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    sectionWithCars("Similar Cars", controller.similarCars),
-                                    20.verticalSpace,
-                                    sectionWithCars("Owner's Ads", controller.ownersAds),
-                                  ],
-                                )
+                            children: [
+                              sectionWithCars("Similar Cars", controller.similarCars),
+                              20.verticalSpace,
+                              sectionWithCars("Owner's Ads", controller.ownersAds),
+                            ],
+                          )
                               : SizedBox(),
                           16.verticalSpace
                         ],
@@ -362,7 +377,7 @@ class _CarDetailsState extends State<CarDetails> {
           child: Text(
             title,
             style:  TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,fontFamily: fontFamily,
-              color: AppColors.blackColor(context)
+                color: AppColors.blackColor(context)
             ),
           ),
         ),
@@ -380,9 +395,9 @@ class _CarDetailsState extends State<CarDetails> {
 
             itemBuilder: (context, index) {
               return carCard(
-                  // w: 192.w,
-                  // h: 235.h,
-                context: context,
+                // w: 192.w,
+                // h: 235.h,
+                  context: context,
                   w: 150.w,
                   h: 50,
                   postKind: widget.postKind,
@@ -462,7 +477,7 @@ class _CarDetailsState extends State<CarDetails> {
               child: Text(
                 title,
                 style: TextStyle(
-                  fontFamily: fontFamily,
+                    fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
                     fontSize: 14.sp, color: AppColors.blackColor(context)),
 
@@ -485,7 +500,7 @@ class _CarDetailsState extends State<CarDetails> {
               child: Text(
                 value,
                 style: TextStyle(
-                  fontFamily: fontFamily,
+                    fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
                     fontSize: 14.sp, color: AppColors.blackColor(context)),
               ),

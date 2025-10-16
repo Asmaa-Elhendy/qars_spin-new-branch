@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'dart:ui';
 
@@ -13,7 +11,11 @@ import 'package:timeago/timeago.dart' as timeago;
 
 
 class RentalCarsController extends GetxController{
-
+  bool loadingMode = true;
+  switchLoading(){
+    loadingMode = true;
+    update();
+  }
   List<RentalCar> rentalCars =[];
   List<Specifications> spec = [];
   String convertToTimeAgo(String dateString) {
@@ -122,6 +124,7 @@ class RentalCarsController extends GetxController{
                 spin360Url: body["Data"][i]["Spin360_URL"],
                 ownerMobile:   body["Data"][i]["Owner_Mobile"]));
       }
+      loadingMode = false;
 
       update();
 
@@ -160,8 +163,3 @@ class RentalCarsController extends GetxController{
 
 
 }
-
-
-
-
-

@@ -15,13 +15,19 @@ import 'const/base_url.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ShowRoomsController extends GetxController {
+  bool loadingMode = true;
+
   List<Showroom> showRooms = [];
   List<RentalCar> rentalCarsOfShowRoom = [];
   List<CarModel> carsForSale = [];
-
   List<Specifications> spec = [];
   PartnerRating partnerRating = PartnerRating(total: 0, ratingData: []);
   List<String> gallery = [];
+
+  switchLoading(){
+    loadingMode = true;
+    update();
+  }
 
   //helpful functions
   String convertToTimeAgo(String dateString) {
@@ -31,7 +37,6 @@ class ShowRoomsController extends GetxController {
     // Format with timeago
     return timeago.format(dateTime);
   }
-
   Color hexToColor(String hex) {
     hex = hex.replaceAll("#", ""); // remove the "#"
     if (hex.length == 6) {
@@ -39,8 +44,8 @@ class ShowRoomsController extends GetxController {
     }
     return Color(int.parse(hex, radix: 16));
   }
-
   fetchShowrooms({required bool forSale,String partnerKind = "Car Showroom",String sort = "lb_Sort_By_Avg_Rating_Desc" }) async {
+
     showRooms = [];
     for (var showRoom in showRooms) {
       showRoom.rentalCars = [];
@@ -117,6 +122,7 @@ class ShowRoomsController extends GetxController {
         //     userName: "sv4it");
         // }
       }
+      loadingMode = false;
       update();
 
     } else {
@@ -237,6 +243,8 @@ class ShowRoomsController extends GetxController {
             Get.find<RentalCarsController>().setRentalCars(rentalCarsOfShowRoom);
 
           }
+          loadingMode = false;
+
           update();
 
         }

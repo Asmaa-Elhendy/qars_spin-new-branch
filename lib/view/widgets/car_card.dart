@@ -35,6 +35,7 @@ Widget carCard({
     onTap: () {
 
       if(postKind!=""){
+        Get.find<BrandController>().switchOldData();
         Get.find<BrandController>().getCarDetails(postKind, car.postId.toString());
         Get.to(CarDetails(sourcekind:car.sourceKind,postKind: car.postKind,id: car.postId,));
 
@@ -126,11 +127,11 @@ Widget carCard({
                         children: [
                           carStatus(
 
-                            car.sourceKind == "Individual"
-                                ? CarStatus.Personal
-                                : car.sourceKind == "Qars Spin"
-                                ? CarStatus.QarsSpin
-                                : CarStatus.Showroom,context
+                              car.sourceKind == "Individual"
+                                  ? CarStatus.Personal
+                                  : car.sourceKind == "Qars Spin"
+                                  ? CarStatus.QarsSpin
+                                  : CarStatus.Showroom,context
                           ),
                           SizedBox(height: tooSmall?2.h:8.h),
                           Row(

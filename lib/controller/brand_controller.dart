@@ -1,5 +1,4 @@
 
-
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -20,7 +19,14 @@ class BrandController extends GetxController{
   List<CarModel> ownersAds = [];
   List<CarModel> favoriteList = [];
   List<CarModel> myOffersList = [];
+  List <String> postMedia = [];
   final RxBool isLoadingOffers = false.obs;
+  bool oldData = true;
+
+  switchOldData(){
+    oldData = true;
+    update();
+  }
 
   CarModel carDetails =
   CarModel(postId: 0, pinToTop: 0, postCode: "postCode", carNamePl: "carNamePl",
@@ -213,8 +219,8 @@ class BrandController extends GetxController{
                 sourceKind: body["Data"][i]["Source_Kind"],
                 mileage: body["Data"][i]["Mileage"],
                 askingPrice:  body["Data"][i]["Asking_Price"],
-                rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"],
-                rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
+                rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"]??"",
+                rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]??""));
 
       }
       loadingMode = false;
@@ -233,6 +239,7 @@ class BrandController extends GetxController{
   }
 
   getCarDetails(String postKind,String id) async{
+
     print("poststs$postKind");
     final uri = Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetPostByID?Post_Kind=$postKind&Post_ID=$id&Logged_In_User=sv4it",
@@ -277,7 +284,9 @@ class BrandController extends GetxController{
           );
       getSimilarCars(classId: body["Data"][0]["Class_ID"].toString(),postId: body["Data"][0]["Post_ID"].toString(),makeId:body["Data"][0]["Make_ID"].toString() );
       getOwnersAds(postId: body["Data"][0]["Post_ID"].toString(), sourceKind: body["Data"][0]["Source_Kind"], partnerid: "0", userName: "sv4it",);
+      oldData= false;
       update();
+      getPostMedia(id);
 
     }
 
@@ -647,5 +656,25 @@ class BrandController extends GetxController{
 
 
   }
+  getPostMedia(id)async{
+    postMedia = [
+      carDetails.rectangleImageUrl
+    ];
+    final uri = Uri.parse(
+      "$base_url/BrowsingRelatedApi.asmx/GetMediaOfPostByID?Post_ID=$id",
+    );
+
+    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      for(int i = 0; i<body["Data"].length;i++){
+        postMedia.add(body["Data"][i]["Media_URL"]);
+
+      }}
+    update();
+
+
+  }
+
 
 }

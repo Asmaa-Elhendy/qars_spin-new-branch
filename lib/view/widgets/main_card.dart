@@ -41,7 +41,7 @@ class HomeServiceCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(4),
         //    height: large?126.h :120.h, //update asmaa
-        width: large? 53.w: 55.w,
+        width: large? 55.w: 55.w,
         decoration: BoxDecoration(
           color:AppColors.cardBackground(context),
           borderRadius: BorderRadius.circular(6),
@@ -72,7 +72,7 @@ class HomeServiceCard extends StatelessWidget {
                 style: TextStyle(
                   // fontFamily: AppFonts.gilroy,
                   fontWeight: FontWeight.w600,
-                  fontSize:brand?12.w: 16.w, //update asmaa
+                  fontSize:brand?12.w: 12.w, //update asmaa
                   color: Colors.white,
                 ),
               ),
@@ -92,12 +92,12 @@ class HomeServiceCard extends StatelessWidget {
                 imageUrl: imageAsset,
                 fit: BoxFit.cover,//j
                 //  width: 56.88.w,height: 44.h, //update asmaa   brand logo all makes
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primary,
-                    strokeWidth: 2,
-                  ),
-                ),
+                // placeholder: (context, url) => Center(
+                //   child: CircularProgressIndicator(
+                //     color: AppColors.primary,
+                //     strokeWidth: 2,
+                //   ),
+                // ),
                 errorWidget: (context, url, error) => Image.asset(
                   'assets/images/ic_all_cars.png',
                   fit: BoxFit.contain,

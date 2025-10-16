@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:qarsspin/model/global_model.dart';
+import 'ads/data_layer.dart';
 import 'const/base_url.dart';
 
 class MySearchController extends GetxController {
@@ -131,5 +132,53 @@ class MySearchController extends GetxController {
 
       update();
     }
+  }
+  findMeACar({required String makeId, required String classId,required String modelId,required String categoryId,required String fromYear,required String toYear,required String minPrice,required String maxPrice})async{
+
+    final find = {
+      'Make_ID': makeId,
+      'Class_ID': classId,
+      'Model_ID': modelId,
+      'Type_ID': categoryId,
+      'Year_Min': fromYear,
+      'Year_Max': toYear,
+      'Price_Min': minPrice,
+      'Price_Max': maxPrice,
+      'Warranty_isAvailable': '0',
+      'Inspection_Report_isAvailable': '0',
+      'Remarks': 'Looking for a family car' };
+    // {
+    //   "Make_ID": makeId,
+    //   "Class_ID": classId,
+    //   "Model_ID": modelId,
+    //   "Category_ID": categoryId,
+    //   "Year_Min": fromYear,
+    //   "Year_Max": toYear,
+    //   "Price_Min": minPrice,
+    //   "Price_Max": maxPrice,
+    // "Warranty_isAvailable": "0",
+    // "Inspection_Report_isAvailable": "0",
+    // "Remarks": "Looking for a family car"
+    //
+    // };
+    final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/RegisterFindCar');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: {
+        'UserName': "sv4it",
+        'Our_Secret': ourSecret,
+        'FindDetails' :jsonEncode(find)
+        // {Uri.encodeComponent(jsonEncode(find))}
+        //{   "Make_ID": "1",   "Class_ID": "2",   "Model_ID": "3",   "Type_ID": "4",   "Year_Min": "2010",   "Year_Max": "2022",   "Price_Min": "5000",   "Price_Max": "20000",   "Warranty_isAvailable": "0",   "Inspection_Report_isAvailable": "0",   "Remarks": "Looking for a family car" }
+      },
+    );
+    final parsedJson = jsonDecode(response.body);
+
+    print('ssssssssssssssssssss${parsedJson["Desc"]}');
+
   }
 }

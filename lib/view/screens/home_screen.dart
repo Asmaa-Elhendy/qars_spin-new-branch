@@ -213,6 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               HomeServiceCard(
                                 onTap: () {
+                                  Get.find<ShowRoomsController>().switchLoading();
                                   Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop",forSale: false);
                                   Get.to(CarsShowRoom(carCare: true,title: "Car Care",rentRoom: false,));
                                 },
@@ -417,6 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               HomeServiceCard(
                 onTap: () {
+                  Get.find<ShowRoomsController>().switchLoading();
                   Get.find<ShowRoomsController>().fetchShowrooms(forSale: true);
                   Get.to(CarsShowRoom(title: "Cars Showrooms",rentRoom: false,));
                 },
@@ -427,6 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(fromHome: 'true',
                 title: 'Personal Cars',
                 onTap: () {
+                  Get.find<BrandController>().switchLoading();
                 // personal cars
                   Get.find<BrandController>().switchLoading();
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
@@ -457,6 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               HomeServiceCard(
                 onTap: () {
+                  Get.find<RentalCarsController>().switchLoading();
                   Get.find<RentalCarsController>().fetchRentalCars();
                   Get.to(AllRentalCars());
                 },
