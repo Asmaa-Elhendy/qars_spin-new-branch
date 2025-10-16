@@ -246,72 +246,63 @@ class _RegisterPageState extends State<RegisterPage> {
                       setState(() {
                         _isLoading = true;
                       });
-
+                      final authController = Get.find<AuthController>();
                       try {
-                        final authController = Get.find<AuthController>();
-
                         final response = await authController.registerUser(
                           userName: _mobileController.text,
                           fullName: _nameController.text,
                           email: _emailController.text,
                           mobileNumber: _mobileController.text,
                           selectedCountry: _selectedCountry,
-                          firebaseToken: token, // Use the token (might be empty)
+                          firebaseToken: token,
                           preferredLanguage: 'en',
                           ourSecret: ourSecret,
                         );
 
-                        if (response['success'] == true) {
+                        if (response['Code'] == 'OK') {
                           if (mounted) {
-                            // Save user data to shared preferences
                             final prefs = await SharedPreferences.getInstance();
                             await prefs.setString('mobileNumber', _mobileController.text);
-                            
+
                             // Save full name from the response if available
-                            if (response['data'] != null && 
-                                response['data'] is List && 
-                                response['data'].isNotEmpty) {
-                              final userData = response['data'][0];
+                            if (response['Data'] != null && response['Data'] is List && response['Data'].isNotEmpty) {
+                              final userData = response['Data'][0];
                               if (userData['Full_Name'] != null) {
                                 await prefs.setString('fullName', userData['Full_Name']);
                               }
                             }
-                            
-                            showSuccessDialog(
-                              title: 'Success',
-                              message: 'Registration successful!',
-                              context: context,
-                              onConfirm: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                                  (route) => false, // This removes all previous routes
-                                );
-                              },
-                            );
+
+                            // Show success and navigate
+                            if (mounted) {
+                              showSuccessDialog(
+                                title: 'Success',
+                                message: 'Registration successful!',
+                                context: context,
+                                onConfirm: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => HomeScreen()),
+
+                                  );
+                                },
+                              );
+                            }
                           }
                         } else {
+                          // Handle error response
+                          final errorMessage = response['Desc'] ?? 'Registration failed';
                           if (mounted) {
-                            showErrorAlert(
-                              response['message'] ?? 'Registration failed',
-                              context,
-                            );
+                            showErrorAlert(errorMessage, context);
                           }
                         }
                       } catch (e) {
                         if (mounted) {
-                          showErrorAlert(
-                            'An error occurred. Please try again.',
-                            context,
-                          );
+                          showErrorAlert('An error occurred during registration: $e', context);
                         }
-                        debugPrint('Registration error: $e');
                       } finally {
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
+                        setState(() {
+                          _isLoading = false;
+                        });
                       }
                     },
                     child: Container(

@@ -225,7 +225,11 @@ class MyAccount extends StatelessWidget {
         buildMenuItem(
           icon: Icons.logout,
           title: "Sign Out",
-            context: context
+            context: context,onTap: ()async{
+          final authController = Get.find<AuthController>();
+          await authController.clearUserData();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegistrationScreen()));
+        }
 
         ),
         buildMenuItem(

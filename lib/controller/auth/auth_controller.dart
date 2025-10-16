@@ -56,10 +56,23 @@ class AuthController extends GetxController {
   // Clear user data (for logout)
   Future<void> clearUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username');
+    
+    // Log the data before clearing (for debugging)
+    final mobileNumber = prefs.getString('mobileNumber');
+    final fullName = prefs.getString('fullName');
+    
+    // Clear all user data
+    await prefs.remove('mobileNumber');
     await prefs.remove('fullName');
+    
+    // Update the state
     _registered.value = false;
     _fullName.value = '';
+    
+    // Log the action
+    log('User signed out. Cleared data:', 
+        name: 'AuthController',
+        error: 'Mobile: $mobileNumber, Full Name: $fullName');
   }
 
   // Get current user data
