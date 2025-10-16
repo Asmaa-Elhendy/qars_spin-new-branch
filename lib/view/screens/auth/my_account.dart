@@ -11,13 +11,20 @@ import '../../../controller/const/colors.dart';
 import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
 
-class MyAccount extends StatelessWidget {
-  const MyAccount({super.key});
+class MyAccount extends StatefulWidget {
+
+  @override
+  State<MyAccount> createState() => _MyAccountState();
+}
+
+class _MyAccountState extends State<MyAccount> {
+  final authController2 = Get.find<AuthController>();
+
 
   @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
-    
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       body: Obx(() => SingleChildScrollView(
@@ -68,8 +75,8 @@ class MyAccount extends StatelessWidget {
             25.verticalSpace,
             SizedBox(
               height: 750.h,
-              child: authController.registered 
-                ? bodyWithRegistered(context) 
+              child: authController.registered
+                ? bodyWithRegistered(context)
                 : bodyWithoutRegister(context),
             )
           ],
@@ -77,6 +84,7 @@ class MyAccount extends StatelessWidget {
       )),
     );
   }
+
   Widget bodyWithoutRegister(context){
   return  Padding(
     padding:  EdgeInsets.symmetric(horizontal: 20.w),
@@ -88,7 +96,7 @@ class MyAccount extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListTile(
-            
+
             leading: const Icon(Icons.person, color: Colors.black),
             title:  Text(
               "Register Now",
@@ -127,6 +135,7 @@ class MyAccount extends StatelessWidget {
   );
 
   }
+
   Widget bodyWithRegistered(context){
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -159,11 +168,11 @@ class MyAccount extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children:  [
-                    Text("sv4it",
+                    Text( authController2.userFullName ?? "Guest",
                         style: TextStyle(
                           fontFamily: fontFamily,
                             fontWeight: FontWeight.bold, fontSize: 16.sp)),
-                    Text("97433998885",
+                    Text(  authController2.getCurrentUser()['mobileNumber'] ?? "",
 
                         style: TextStyle(
                             fontFamily: fontFamily,
@@ -241,6 +250,7 @@ class MyAccount extends StatelessWidget {
       ],
     );
   }
+
   Widget buildMenuItem({
     required IconData icon,
     required String title,

@@ -27,7 +27,6 @@ class _AllCarsState extends State<AllCars> {
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
-          //adContainer(),
           AdContainer(//update banner
             bigAdHome: true,
             targetPage: 'Cars For Sale - List Page',
@@ -59,7 +58,7 @@ class _AllCarsState extends State<AllCars> {
                           makeName: controller.carBrands[index].name,
                         );
                         Get.to(CarsBrandList(
-                          postKind: "CarForSale", //makes only in car for sale
+                            postKind: "CarForSale", //makes only in car for sale
                             brandName: controller.carBrands[index].name));
                       },
                       brand: true,
