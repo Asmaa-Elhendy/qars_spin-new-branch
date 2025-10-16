@@ -6,7 +6,7 @@ import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/view/screens/auth/registration_screen.dart';
 import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
-import '../../../controller/auth.dart';
+import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/colors.dart';
 import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
@@ -96,8 +96,9 @@ class MyAccount extends StatelessWidget {
               color: AppColors.blackColor(context)
               ),
             ),
-            trailing:  Icon(Icons.arrow_forward_ios,
-                size: 16, color: AppColors.iconColor(context)),
+            trailing:   Image.asset("assets/images/arrow.png",scale: 1.8,),
+            // Icon(Icons.arrow_forward_ios,
+            //     size: 16, color: AppColors.iconColor(context)),
             onTap: () {
               Get.to(RegistrationScreen());
             },
@@ -112,8 +113,10 @@ class MyAccount extends StatelessWidget {
             "Notifications",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          trailing:  Icon(Icons.arrow_forward_ios,
-              size: 16, color: AppColors.iconColor(context)),
+          trailing:
+         Image.asset("assets/images/arrow.png",scale: 1.8,),
+          // Icon(Icons.arrow_forward_ios,
+          //     size: 16, color: AppColors.iconColor(context)),
           onTap: () {
             Get.to(NotificationsPage());
 

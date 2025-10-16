@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorDialog {
-  static void show(BuildContext context, String errorMessage, VoidCallback? onOkPressed, {bool isModifyMode = false}) {
+  static void show(BuildContext context, String errorMessage, VoidCallback? onOkPressed, {bool isModifyMode = false,bool fromOtp=false}) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: const Text('Error'),
-        content: Text(isModifyMode ? 'Failed to update ad: $errorMessage' : 'Failed to create ad: $errorMessage'),
+        content: Text(fromOtp?'Error: $errorMessage':isModifyMode ? 'Failed to update ad: $errorMessage' : 'Failed to create ad: $errorMessage'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,

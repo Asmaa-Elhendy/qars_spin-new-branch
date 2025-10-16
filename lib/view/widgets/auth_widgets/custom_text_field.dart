@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../controller/const/colors.dart';
 
@@ -64,7 +65,7 @@ class CustomTextField extends StatelessWidget {
         focusNode: focusNode,
         textCapitalization: textCapitalization,
         style:  TextStyle(
-          fontSize: 16,
+          fontSize: 17.w,
           color: AppColors.textPrimary(context),
         ),
         decoration: InputDecoration(

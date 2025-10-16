@@ -1,1 +1,0 @@
-bool registered = true;

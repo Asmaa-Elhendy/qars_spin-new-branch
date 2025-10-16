@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../controller/const/colors.dart';
 
@@ -42,7 +43,7 @@ class CountryDropdown extends StatelessWidget {
                 child: Text(
                   '+${country['prefix']} ${country['name']}',
                   style:  TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.w,
                     color: AppColors.textPrimary(context),
                   ),
                 ),
@@ -71,7 +72,7 @@ class CountryDropdown extends StatelessWidget {
             Text(
               '+${selectedCountry['prefix']} ${selectedCountry['name']}',
               style:  TextStyle(
-                fontSize: 16,
+                fontSize: 17.w,
                 color: AppColors.textPrimary(context),
               ),
             ),

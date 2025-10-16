@@ -48,16 +48,18 @@ class PrimaryButton extends StatelessWidget {
           ),
           padding: padding,
         ),
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : child,
+        child:
+        // isLoading   //update nor loading in same button
+        //     ? const SizedBox(
+        //         width: 24,
+        //         height: 24,
+        //         child: CircularProgressIndicator(
+        //           strokeWidth: 2,
+        //           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        //         ),
+        //       )
+        //     :
+        child,
       ),
     );
   }
