@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
+import 'package:qarsspin/controller/my_ads/my_ad_data_layer.dart';
 import 'package:qarsspin/view/screens/auth/registration_screen.dart';
 import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
-import '../../../controller/auth/auth_controller.dart';
+import 'package:qarsspin/controller/auth/auth_controller.dart';
+import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/const/colors.dart';
 import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
@@ -141,6 +143,7 @@ class _MyAccountState extends State<MyAccount> {
   }
 
   Widget bodyWithRegistered(context){
+    final myAdsController = Get.put(MyAdCleanController(MyAdDataLayer()));
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -160,10 +163,11 @@ class _MyAccountState extends State<MyAccount> {
                     child: Icon(Icons.person, size: 80.w, color: Colors.black),
                   ),
                   8.verticalSpace,
-                  Text("Active Ads: 0",
+                  Obx(() => Text(
+                      "Active Ads: ${myAdsController.activeAdsCount}",
                       style: TextStyle(
                           fontSize: 14.sp,
-                          color: AppColors.shadowColor(context))),
+                          color: AppColors.shadowColor(context)))),
                 ],
               ),
               16.horizontalSpace,
