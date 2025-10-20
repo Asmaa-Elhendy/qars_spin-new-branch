@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/model/showroom_model.dart';
 import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
+
+import '../../../controller/auth/auth_controller.dart';
+import '../auth_widgets/register_dialog.dart';
 
 class CareInfo extends StatelessWidget {
   Showroom show;
@@ -67,7 +72,18 @@ class CareInfo extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      yellowButtons(title: "Follow", onTap: (){}, w: 110.w,context:context),
+                      yellowButtons(title: "Follow", onTap: (){
+                        final authController = Get.find<AuthController>();
+                        if(authController.registered){
+
+                        }else{
+                          showDialog(
+                            context: context,
+                            builder: (_) => RegisterDialog(),
+                          );
+                        }
+
+                      }, w: 110.w,context:context),
 
                       8.horizontalSpace,
                       Column(

@@ -2,7 +2,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:qarsspin/controller/auth/auth_controller.dart';
 import '../../controller/const/base_url.dart';
 import '../../model/car_brand.dart';
 import '../../model/car_category.dart';
@@ -11,7 +14,8 @@ import '../../model/car_model_class.dart';
 import '../../model/create_ad_model.dart';
 import 'dart:io';
 String ourSecret='1244';
-String userName= 'Asmaa2';
+//String userName= 'Asmaa2';
+String userName= Get.find<AuthController>().userFullName!;
 class AdRepository {
   Future<List<CarBrand>> fetchCarMakes() async {
     final url = Uri.parse(
@@ -98,13 +102,13 @@ class AdRepository {
       final List<dynamic> data = parsedJson['Data'];
       print('Data list length: ${data.length}');
       print('First data item: ${data.isNotEmpty ? data[0] : 'No data'}');
-      
+
       final categories = data.map((item) {
         final category = CarCategory.fromJson(item);
         print('Parsed category: ${category.id} - ${category.name}');
         return category;
       }).toList();
-      
+
       print('Total categories parsed: ${categories.length}');
       return categories;
     } else {
@@ -134,7 +138,7 @@ class AdRepository {
       'partnerID':''
 
     };
-  log(requestBody.toString());
+    log(requestBody.toString());
     try {
       final response = await http.post(
         url,
@@ -237,11 +241,11 @@ class AdRepository {
 
       // Create multipart request
       final request = http.MultipartRequest('POST', url);
-      
+
       // Add form fields
       request.fields['Post_ID'] = postId;
       request.fields['Our_Secret'] = ourSecret;
-      
+
       // Add image file
       final imageFile = await http.MultipartFile.fromPath(
         'PhotoBytes',
@@ -361,7 +365,7 @@ class AdRepository {
   Map<String, dynamic> _parseUploadResponse(String jsonString) {
     try {
       final parsedJson = jsonDecode(jsonString);
-      
+
       return {
         'Code': parsedJson['Code'] ?? 'Error',
         'Desc': parsedJson['Desc'] ?? 'Upload failed',

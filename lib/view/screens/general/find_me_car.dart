@@ -6,8 +6,10 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/widgets/car_details/snack_bar.dart';
 import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 
+import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/search_controller.dart';
 import '../../../model/global_model.dart';
+import '../../widgets/auth_widgets/register_dialog.dart';
 
 class FindMeACar extends StatefulWidget {
   const FindMeACar({super.key});
@@ -204,12 +206,23 @@ class _FindMeACarState extends State<FindMeACar> {
                             keyboardType: TextInputType.number),
                         20.verticalSpace,
                         yellowButtons(title: "Activate Notification", onTap: (){
-                          controller.findMeACar(makeId: selctedMakeId, classId: selectedClassId, modelId: selectedModelId, categoryId: selectedTypeId,  fromYear: fromYearController.text.isEmpty?"0":fromYearController.text,
-                            toYear: toYearController.text.isEmpty ? "0" : toYearController.text,
-                            minPrice: fromPriceController.text.isEmpty?"0":fromPriceController.text,
-                            maxPrice: toPriceController.text.isEmpty?"0":toPriceController.text,);
-                          Get.back();
-                          showSuccessSnackBar(context, "your Request has been sent successfully ");
+                          final authController = Get.find<AuthController>();
+
+                          if(authController.registered){
+                            controller.findMeACar(makeId: selctedMakeId, classId: selectedClassId, modelId: selectedModelId, categoryId: selectedTypeId,  fromYear: fromYearController.text.isEmpty?"0":fromYearController.text,
+                              toYear: toYearController.text.isEmpty ? "0" : toYearController.text,
+                              minPrice: fromPriceController.text.isEmpty?"0":fromPriceController.text,
+                              maxPrice: toPriceController.text.isEmpty?"0":toPriceController.text,);
+                            Get.back();
+                            showSuccessSnackBar(context, "your Request has been sent successfully ");
+                          }else{
+                            showDialog(
+                              context: context,
+                              builder: (_) => RegisterDialog(),
+                            );
+
+                          }
+
                         }, w: double.infinity,context: context),
                         40.verticalSpace
 

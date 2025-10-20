@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:get/get.dart';
+import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/controller/rental_cars_controller.dart';
 import 'package:qarsspin/model/car_model.dart';
 import 'package:qarsspin/model/showroom_model.dart';
@@ -84,7 +85,7 @@ class ShowRoomsController extends GetxController {
 
 
         showRooms.add(Showroom(
-            carsCount: await getCarsCount(forSale: forSale, postId: "0", sourceKind: "Partner", partnerid: body["Data"][i]["Partner_ID"].toString(), userName: "sv4it"),
+            carsCount: await getCarsCount(forSale: forSale, postId: "0", sourceKind: "Partner", partnerid: body["Data"][i]["Partner_ID"].toString(), userName: userName??""),
             rentalCars: rentalCarsOfShowRoom,
             carsForSale: carsForSale,
             partnerId: body["Data"][i]["Partner_ID"],
@@ -138,10 +139,10 @@ class ShowRoomsController extends GetxController {
     var count = 0;
     final url = forSale?
     Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=${userName}",
     )
         :Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
     );
 
     final response = await http.get(url);
@@ -278,10 +279,10 @@ class ShowRoomsController extends GetxController {
   getCarsCount({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName})async{
     final url = forSale?
     Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
     )
         :Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
     );
 
     final response = await http.get(url);
@@ -373,7 +374,7 @@ class ShowRoomsController extends GetxController {
           'Country_Code': "QA",
           'Rating_Source': "APP",
           'User_Type': "User",
-          'UserName': "sv4it",
+          'UserName': username,
         },
       );
 

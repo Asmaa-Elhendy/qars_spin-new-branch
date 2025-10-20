@@ -58,35 +58,46 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
 
 
       body: GetBuilder<BrandController>(
-        builder: (controller) {
-          return ListView(
-            children: [
-              SizedBox(height: 20.h,),
-              for(int i =0; i<controller.favoriteList.length;i++)
-              GestureDetector(
-                onTap: (){
-                  controller.getCarDetails(controller.favoriteList[i].postKind, controller.favoriteList[i].postId.toString());
-                  Get.to(CarDetails(sourcekind:controller.favoriteList[i].sourceKind,postKind: controller.favoriteList[i].postKind,id: controller.favoriteList[i].postId,));
-                },
-                child: FavouriteCarCard(
-                  title: controller.favoriteList[i].carNamePl,
-                  price: controller.favoriteList[i].askingPrice,
-                  location: "controller.favoriteList[i].",
-                  meilage: controller.favoriteList[i].mileage.toString(),
-                  manefactureYear:controller.favoriteList[i].manufactureYear.toString(),
-                  imageUrl:controller.favoriteList[i].rectangleImageUrl,
-                  onHeartTap: (){
-                    controller.removeFavItem(controller.favoriteList[i]);
-                    controller.alterPostFavorite(add: false, postId: controller.favoriteList[i].postId);
-
-                  },
+          builder: (controller) {
+            if (controller.favoriteList.isEmpty) {
+              return Center(
+                child: Text(
+                  'No items found',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
+              );
+            }
+            return ListView(
+              children: [
+                SizedBox(height: 20.h,),
+                for(int i =0; i<controller.favoriteList.length;i++)
+                  GestureDetector(
+                    onTap: (){
+                      controller.getCarDetails(controller.favoriteList[i].postKind, controller.favoriteList[i].postId.toString());
+                      Get.to(CarDetails(sourcekind:controller.favoriteList[i].sourceKind,postKind: controller.favoriteList[i].postKind,id: controller.favoriteList[i].postId,));
+                    },
+                    child: FavouriteCarCard(
+                      title: controller.favoriteList[i].carNamePl,
+                      price: controller.favoriteList[i].askingPrice,
+                      location: "controller.favoriteList[i].",
+                      meilage: controller.favoriteList[i].mileage.toString(),
+                      manefactureYear:controller.favoriteList[i].manufactureYear.toString(),
+                      imageUrl:controller.favoriteList[i].rectangleImageUrl,
+                      onHeartTap: (){
+                        controller.removeFavItem(controller.favoriteList[i]);
+                        controller.alterPostFavorite(add: false, postId: controller.favoriteList[i].postId);
+
+                      },
+                    ),
+                  ),
 
 
-            ],
-          );
-        }
+              ],
+            );
+          }
       )
       ,
 
@@ -104,7 +115,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            Get.offAll(OffersScreen());
+              Get.offAll(OffersScreen());
 
               break;
             case 2:

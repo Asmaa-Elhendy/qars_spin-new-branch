@@ -5,19 +5,19 @@ import 'dart:developer';
 
 class AuthController extends GetxController {
   final AuthDataLayer _authDataLayer = AuthDataLayer();
-  
+
   // Registered state
   final RxBool _registered = false.obs;
-  
+
   // Getter for registered state
   bool get registered => _registered.value;
-  
+
   // Loading state
   final RxBool isLoading = false.obs;
-  
+
   // Error message
   final RxString errorMessage = ''.obs;
-  
+
   // Success message
   final RxString successMessage = ''.obs;
 
@@ -39,7 +39,7 @@ class AuthController extends GetxController {
       _fullName.value = prefs.getString('fullName') ?? '';
       _userName.value=prefs.getString('username')??'';
     }
-    
+
     // Print current user data
     log('User is ${_registered.value ? 'registered' : 'not registered'}');
     if (_registered.value) {
@@ -67,21 +67,21 @@ class AuthController extends GetxController {
   // Clear user data (for logout)
   Future<void> clearUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Log the data before clearing (for debugging)
     final mobileNumber = prefs.getString('username');
     final fullName = prefs.getString('fullName');
-    
+
     // Clear all user data
     await prefs.remove('username');
     await prefs.remove('fullName');
-    
+
     // Update the state
     _registered.value = false;
     _fullName.value = '';
-    
+
     // Log the action
-    log('User signed out. Cleared data:', 
+    log('User signed out. Cleared data:',
         name: 'AuthController',
         error: 'Mobile: $mobileNumber, Full Name: $fullName');
   }

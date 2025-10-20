@@ -11,6 +11,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../model/car_brand.dart';
 import '../model/car_model.dart';
+import 'auth/auth_controller.dart';
 
 class BrandController extends GetxController{
   bool loadingMode = true;
@@ -22,6 +23,7 @@ class BrandController extends GetxController{
   List <String> postMedia = [];
   final RxBool isLoadingOffers = false.obs;
   bool oldData = true;
+  final authController = Get.find<AuthController>();
 
   switchOldData(){
     oldData = true;
@@ -87,7 +89,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName': userName,
+          'UserName': authController.userFullName,
           'Our_Secret': ourSecret,
         },
       );
@@ -240,9 +242,9 @@ class BrandController extends GetxController{
 
   getCarDetails(String postKind,String id) async{
 
-    print("poststs$postKind");
+
     final uri = Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetPostByID?Post_Kind=$postKind&Post_ID=$id&Logged_In_User=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetPostByID?Post_Kind=$postKind&Post_ID=$id&Logged_In_User=${authController.userFullName}",
     );
     final response = await http.get(uri);
     getCarSpec(id);
@@ -283,7 +285,7 @@ class BrandController extends GetxController{
 
           );
       getSimilarCars(classId: body["Data"][0]["Class_ID"].toString(),postId: body["Data"][0]["Post_ID"].toString(),makeId:body["Data"][0]["Make_ID"].toString() );
-      getOwnersAds(postId: body["Data"][0]["Post_ID"].toString(), sourceKind: body["Data"][0]["Source_Kind"], partnerid: "0", userName: "sv4it",);
+      getOwnersAds(postId: body["Data"][0]["Post_ID"].toString(), sourceKind: body["Data"][0]["Source_Kind"], partnerid: "0", userName: userName??"",);
       oldData= false;
       update();
       getPostMedia(id);
@@ -379,7 +381,7 @@ class BrandController extends GetxController{
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: {
-        'UserName': "sv4it",
+        'UserName': userName??"",
         'Post_ID': carDetails.postId.toString(),
         'Offer_Origin': "MobileApp",
         'Asking_Price':carDetails.askingPrice.toString(),
@@ -405,7 +407,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName':"sv4it",
+          'UserName':userName,
           'Post_ID': id.toString(),
           'Our_Secret': ourSecret
         },
@@ -545,7 +547,7 @@ class BrandController extends GetxController{
     print("owwwnenrnr");
     ownersAds=[];
     final url = Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=sv4it",
+      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
     );
     final response = await http.get(url);
     if (response.statusCode == 200) {
@@ -590,7 +592,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName': "sv4it",
+          'UserName': userName,
           'Post_ID': postId.toString(),
           'Operation': add?"Add":"Remove",
           'Our_Secret': ourSecret,
@@ -619,15 +621,16 @@ class BrandController extends GetxController{
   }
   getFavList()async{
     favoriteList=[];
-
+    print("Authhh${authController.userFullName}");
     final uri = Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetFavoritesByUser?UserName=sv4it&Our_Secret=$ourSecret",
+      "$base_url/BrowsingRelatedApi.asmx/GetFavoritesByUser?UserName=${authController.userFullName}&Our_Secret=$ourSecret",
     );
 
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
+      print("favvvv${body["Data"]}");
       for(int i = 0; i<body["Data"].length;i++){
         favoriteList.add(
             CarModel(postId: body["Data"][i]["Post_ID"],

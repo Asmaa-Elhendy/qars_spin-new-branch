@@ -17,10 +17,10 @@ import '../../widgets/auth_widgets/country_dropdown.dart';
 import '../../widgets/auth_widgets/custom_text_field.dart' as e;
 
 class RegisterPage extends StatefulWidget {
- String code;
- String country;
- String mobile;
- RegisterPage({required this.code,required this.country,required this.mobile});
+  String code;
+  String country;
+  String mobile;
+  RegisterPage({required this.code,required this.country,required this.mobile});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _mobileController.text = widget.mobile;
     _selectedCountry = widget.code;
     _selectedCountryPrefix = widget.country;
-        _initializeFirebaseAndGetToken();
+    _initializeFirebaseAndGetToken();
 
   }
   Future<void> _initializeFirebaseAndGetToken() async {
@@ -249,63 +249,63 @@ class _RegisterPageState extends State<RegisterPage> {
                         _isLoading = true;
                       });
                       final authController = Get.find<AuthController>();
- //                      try {//k
- //                        final response = await authController.registerUser(
- //                          userName:_selectedCountryPrefix+_mobileController.text,
- //                          fullName: _nameController.text,
- //                          email: _emailController.text,
- //                          mobileNumber: _mobileController.text,
- //                          selectedCountry: _selectedCountry,
- //                          firebaseToken: token,
- //                          preferredLanguage: 'en',
- //                          ourSecret: ourSecret,
- //                        );
- // log('$response     ${_selectedCountry +_selectedCountryPrefix+_mobileController.text}');
- //                        if (response['Code'] == 'OK') {
- //                          if (mounted) {
- //                            final prefs = await SharedPreferences.getInstance();
- //                            await prefs.setString('mobileNumber', _mobileController.text);
- //
- //                            // Save full name from the response if available
- //                            if (response['Code'] == 'OK' && response['Data'] != null && response['Data'].isNotEmpty) {
- //                              final userData = response['Data'][0];
- //                              if (userData['Full_Name'] != null) {
- //                                await prefs.setString('fullName', userData['Full_Name']);
- //                              }
- //                            }
- //
- //                            // Show success and navigate
- //                            if (mounted) {
- //                              showSuccessDialog(
- //                                title: 'Success',
- //                                message: 'Registration successful!',
- //                                context: context,
- //                                onConfirm: () {
- //                                  Navigator.pushReplacement(
- //                                    context,
- //                                    MaterialPageRoute(builder: (context) => HomeScreen()),
- //
- //                                  );
- //                                },
- //                              );
- //                            }
- //                          }
- //                        } else {
- //                          // Handle error response
- //                          final errorMessage = response['Desc'] ?? 'Registration failed';
- //                          if (mounted) {
- //                            showErrorAlert(errorMessage, context);
- //                          }
- //                        }
- //                      } catch (e) {
- //                        if (mounted) {
- //                          showErrorAlert('An error occurred during registration: $e', context);
- //                        }
- //                      } finally {
- //                        setState(() {
- //                          _isLoading = false;
- //                        });
- //                      }
+                      //                      try {//k
+                      //                        final response = await authController.registerUser(
+                      //                          userName:_selectedCountryPrefix+_mobileController.text,
+                      //                          fullName: _nameController.text,
+                      //                          email: _emailController.text,
+                      //                          mobileNumber: _mobileController.text,
+                      //                          selectedCountry: _selectedCountry,
+                      //                          firebaseToken: token,
+                      //                          preferredLanguage: 'en',
+                      //                          ourSecret: ourSecret,
+                      //                        );
+                      // log('$response     ${_selectedCountry +_selectedCountryPrefix+_mobileController.text}');
+                      //                        if (response['Code'] == 'OK') {
+                      //                          if (mounted) {
+                      //                            final prefs = await SharedPreferences.getInstance();
+                      //                            await prefs.setString('mobileNumber', _mobileController.text);
+                      //
+                      //                            // Save full name from the response if available
+                      //                            if (response['Code'] == 'OK' && response['Data'] != null && response['Data'].isNotEmpty) {
+                      //                              final userData = response['Data'][0];
+                      //                              if (userData['Full_Name'] != null) {
+                      //                                await prefs.setString('fullName', userData['Full_Name']);
+                      //                              }
+                      //                            }
+                      //
+                      //                            // Show success and navigate
+                      //                            if (mounted) {
+                      //                              showSuccessDialog(
+                      //                                title: 'Success',
+                      //                                message: 'Registration successful!',
+                      //                                context: context,
+                      //                                onConfirm: () {
+                      //                                  Navigator.pushReplacement(
+                      //                                    context,
+                      //                                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                      //
+                      //                                  );
+                      //                                },
+                      //                              );
+                      //                            }
+                      //                          }
+                      //                        } else {
+                      //                          // Handle error response
+                      //                          final errorMessage = response['Desc'] ?? 'Registration failed';
+                      //                          if (mounted) {
+                      //                            showErrorAlert(errorMessage, context);
+                      //                          }
+                      //                        }
+                      //                      } catch (e) {
+                      //                        if (mounted) {
+                      //                          showErrorAlert('An error occurred during registration: $e', context);
+                      //                        }
+                      //                      } finally {
+                      //                        setState(() {
+                      //                          _isLoading = false;
+                      //                        });
+                      //                      }
                       try {
                         final response = await authController.registerUser(
                           userName: _selectedCountryPrefix + _mobileController.text,
@@ -324,7 +324,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           // Save user data
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('username', _mobileController.text);
-String fullName='';
+                          String fullName='';
                           if (response['Data'] != null && response['Data'] is List && response['Data'].isNotEmpty) {
                             final userData = response['Data'][0];
                             if (userData['Full_Name'] != null) {
@@ -335,13 +335,13 @@ String fullName='';
                           // To get the current value
 // To update the value
                           Get.find<AuthController>().updateRegisteredStatus(true,_mobileController.text,fullName);  // or false
-                          
+
                           // Navigate to home and remove all previous routes
                           if (mounted) {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(builder: (context) => HomeScreen()),
-                              (route) => false,
+                                  (route) => false,
                             );
                           }
                         } else {

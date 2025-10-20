@@ -57,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     try {
       _phoneNumber = '${_selectedCountry}${_selectedCountryPrefix}${_mobileController.text}';
       _otpSecret = (Random().nextInt((9989 - 1001) + 1) + 1001).toString();
-      
+
       // Show OTP in console for testing
       l.log('Phone: $_phoneNumber');
       l.log('OTP for testing: $_otpSecret');
@@ -74,7 +74,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         l.log('Setting OTP count to: $_otpCount');
 
         // Show OTP dialog instead of showing field in the same screen
-l.log("res    ${response['data']['Data'][0]['UserName']}");
+        l.log("res    ${response['data']['Data'][0]['UserName']}");
         _showOtpDialog(response['data']['Data'][0]['UserName'],response['data']['Data'][0]['Full_Name']);
       } else {
         _showErrorAlert(response['message'] ?? 'Failed to send OTP');
@@ -115,7 +115,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
             ),
           ),
         );
-        
+
         // If registration was successful (result is true), navigate to home
         if (result == true) {
           if (mounted) {
@@ -239,7 +239,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
       context,
       message,
           () {
-       // Navigator.pop(context);
+        // Navigator.pop(context);
       }, fromOtp:true,
       isModifyMode: false,
 
@@ -280,7 +280,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
         elevation: 0, // نشيل الشادو الافتراضي
 
         title: Text(
-            AppStrings.createAccount,
+          AppStrings.createAccount,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -319,7 +319,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
                       });
                     },
                     selectedCountry: _countries.firstWhere(
-                      (c) => c['code'] == _selectedCountry,
+                          (c) => c['code'] == _selectedCountry,
                       orElse: () => _countries.first,
                     ),
                   ),
@@ -338,7 +338,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
                     controller: _mobileController,
                     keyboardType: TextInputType.phone,
                     hintText: AppStrings.enterYourMobileNumber,
-                 //   prefixText: '+${_countries.firstWhere((c) => c['code'] == _selectedCountry)['prefix']} ',
+                    //   prefixText: '+${_countries.firstWhere((c) => c['code'] == _selectedCountry)['prefix']} ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppStrings.fieldRequired;
@@ -350,7 +350,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
                       return null;
                     },
                   ),
-                   SizedBox(height: height*.02),
+                  SizedBox(height: height*.02),
                   // OTP Field (shown after initial request)
                   if (_showOtpField) ...[
                     const SizedBox(height: 24),
@@ -384,9 +384,9 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
                     child: Text(
                       'REGISTER NOW',
                       style: TextStyle(
-                        fontSize: 17.w, 
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black
+                          fontSize: 17.w,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black
                       ),
                     ),
                   ),
@@ -403,7 +403,7 @@ l.log("res    ${response['data']['Data'][0]['UserName']}");
                 ),
               ),
             ),
-          
+
         ],
       ),
     );

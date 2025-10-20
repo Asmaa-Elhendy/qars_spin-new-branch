@@ -23,9 +23,9 @@ class AuthDataLayer {
 
     try {
       final url = Uri.parse('$base_url$_registerUserEndpoint');
-      
+
       log('👤 Registering new user: $userName');
-      
+
       final userDetails = {
         'Full_Name': fullName,
         'Email_Address': email,
@@ -45,7 +45,7 @@ class AuthDataLayer {
       );
 
       log('📥 Register user response: ${response.statusCode} - ${response.body}');
-      
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         return {//
@@ -78,9 +78,9 @@ class AuthDataLayer {
     log("iam in otp");
     try {
       final url = Uri.parse('$base_url$_requestOtpEndpoint');
-      
+
       log('🔐 Requesting OTP for: $userName');
-      
+
       final response = await http.post(
         url,
         headers: {

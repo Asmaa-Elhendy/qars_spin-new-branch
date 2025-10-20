@@ -17,7 +17,7 @@ class MyAdCleanController extends GetxController {
   var isLoadingMyAds = false.obs;
   var myAdsError = Rxn<String>();
   var myAdsResponse = Rxn<MyAdResponse>();
-  
+
   // Computed property for active ads count
   int get activeAdsCount => myAds.where((ad) => ad.postStatus == 'Active').length;
 
@@ -56,20 +56,20 @@ class MyAdCleanController extends GetxController {
 
     try {
       final response = await repository.getListOfPostsByUserName(
-        userName: userName,
+        userName: userName??"",
         ourSecret: ourSecret,
       );
 
       if (response['Code'] == 'OK') {
         final myAdResponse = MyAdResponse.fromJson(response);
         myAdsResponse.value = myAdResponse;
-        
+
         // Print only Rectangle_Image_URL for each post
         for (int i = 0; i < myAdResponse.data.length; i++) {
           final post = myAdResponse.data[i];
           print('${post.rectangleImageUrl}');
         }
-        
+
         myAds.assignAll(myAdResponse.data);
       } else {
         myAdsError.value = response['Desc'] ?? 'Failed to fetch ads';
@@ -86,11 +86,11 @@ class MyAdCleanController extends GetxController {
   /// Silent refresh my ads without showing loader or triggering any UI updates
   Future<void> silentRefreshMyAds() async {
     print('🔄 [CONTROLLER] silentRefreshMyAds() called');
-    
+
     try {
       final response = await repository.getListOfPostsByUserName(
-        userName: userName,
-        ourSecret: ourSecret,
+        userName: 'Asmaa2',
+        ourSecret: '1244',
       );
 
       if (response['Code'] == 'OK') {
@@ -122,7 +122,7 @@ class MyAdCleanController extends GetxController {
     try {
       print('Fetching media for post ID: $postId');
       final mediaResponse = await repository.getMediaOfPostByID(postId: postId);
-      
+
       if (mediaResponse.code == 'OK') {
         postMedia.value = mediaResponse;
         print('✅ Successfully fetched ${mediaResponse.count} media items');
@@ -156,21 +156,21 @@ class MyAdCleanController extends GetxController {
         photoFile: photoFile,
         ourSecret: ourSecret,
       );
-      
+
       print('📤 [CONTROLLER] Raw response from repository: $response');
       print('📤 [CONTROLLER] Response Code: ${response['Code']}');
       print('📤 [CONTROLLER] Response Desc: ${response['Desc']}');
-      
+
       if (response['Code'] == 'OK') {
         uploadSuccess.value = true;
         print('✅ Photo uploaded successfully');
         print('📤 Upload response: $response');
-        
+
         // Refresh media list after successful upload (unless skipRefresh is true)
         if (!skipRefresh) {
           await fetchPostMedia(postId);
         }
-        
+
         return true;
       } else {
         uploadError.value = response['Desc'] ?? 'Unknown upload error';
@@ -211,7 +211,7 @@ class MyAdCleanController extends GetxController {
         videoPath: videoPath,
         ourSecret: ourSecret,
       );
-      
+
       print('🎬 [CONTROLLER] Raw response from repository: $response');
       print('🎬 [CONTROLLER] Response Code: ${response['Code']}');
       print('🎬 [CONTROLLER] Response Desc: ${response['Desc']}');
@@ -219,17 +219,17 @@ class MyAdCleanController extends GetxController {
       if (response.containsKey('Data')) {
         print('🎬 [CONTROLLER] Response Data: ${response['Data']}');
       }
-      
+
       if (response['Code'] == 'OK') {
         uploadSuccess.value = true;
         print('✅ Video uploaded successfully');
         print('🎬 Upload response: $response');
-        
+
         // Refresh media list after successful upload (unless skipRefresh is true)
         if (!skipRefresh) {
           await fetchPostMedia(postId);
         }
-        
+
         return true;
       } else {
         uploadError.value = response['Desc'] ?? 'Unknown upload error';
@@ -262,16 +262,16 @@ class MyAdCleanController extends GetxController {
         ourSecret: ourSecret, // Using the same secret as in ad creation
         imagePath: photoFile.path,
       );
-      
+
       print('📤 [CONTROLLER] Raw response from repository: $response');
       print('📤 [CONTROLLER] Response Code: ${response['Code']}');
       print('📤 [CONTROLLER] Response Desc: ${response['Desc']}');
-      
+
       if (response['Code'] == 'OK') {
         uploadSuccess.value = true;
         print('✅ Cover image uploaded successfully');
         print('📤 Upload response: $response');
-        
+
         return true;
       } else {
         uploadError.value = response['Desc'] ?? 'Unknown upload error';
@@ -297,14 +297,14 @@ class MyAdCleanController extends GetxController {
         mediaId: mediaId,
         ourSecret: ourSecret,
       );
-      
+
       if (response['Code'] == 'OK') {
         print('✅ Gallery image deleted successfully');
         print('🗑️ Delete response: $response');
-        
+
         // Refresh media list after successful deletion
         await fetchPostMedia(postId);
-        
+
         return true;
       } else {
         print('❌ Delete failed: ${response['Desc']}');
@@ -325,11 +325,11 @@ class MyAdCleanController extends GetxController {
     try {
       print('🖼️ Updating cover image for post ID: $postId');
       print('🖼️ New cover image URL: $newCoverImageUrl');
-      
+
       // For now, we'll simulate the update by storing the new cover image URL
       // In a real implementation, this would call an API to update the Rectangle_Image_URL
       // Since there's no specific API for this, we'll need to use the general post update API
-      
+
       // TODO: Implement actual API call when available
       // For now, we'll just return success and let the UI handle the local update
       print('✅ Cover image updated successfully (simulated)');

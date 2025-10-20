@@ -169,7 +169,7 @@ class MySearchController extends GetxController {
         'Accept': 'application/json',
       },
       body: {
-        'UserName': "sv4it",
+        'UserName': userName,
         'Our_Secret': ourSecret,
         'FindDetails' :jsonEncode(find)
         // {Uri.encodeComponent(jsonEncode(find))}

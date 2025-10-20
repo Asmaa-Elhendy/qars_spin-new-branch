@@ -4,8 +4,12 @@ import 'package:get/get.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/model/specification.dart';
+import 'package:qarsspin/view/screens/auth/my_account.dart';
 import 'package:qarsspin/view/screens/get_loan.dart';
+import 'package:qarsspin/view/widgets/auth_widgets/register_dialog.dart';
 import 'package:qarsspin/view/widgets/car_details/qars_apin_bottom_navigation_bar.dart';
+import '../../../controller/auth/auth_controller.dart';
+import '../../../controller/auth/unregister_func.dart';
 import '../../../controller/const/colors.dart';
 import '../../../model/car_model.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
@@ -34,9 +38,12 @@ class _CarDetailsState extends State<CarDetails> {
     super.initState();
     print("source${widget.postKind}");
   }
+  final authController = Get.find<AuthController>();
+
   @override
   Widget build(BuildContext context) {
     List<CarModel> carsList = [];
+
 
     return GetBuilder<BrandController>(builder: (controller) {
       return Scaffold(
@@ -45,20 +52,25 @@ class _CarDetailsState extends State<CarDetails> {
         bottomNavigationBar: widget.sourcekind == "Qars Spin"
             ? QarsApinBottomNavigationBar(
           onLoan: (){
-            Get.to(GetLoan(car: controller.carDetails));
+            authController.registered? Get.to(GetLoan(car: controller.carDetails)):
+            showDialog(
+              context: context,
+              builder: (_) =>RegisterDialog(),
+            );
+
           },
           onMakeOffer: ()async {
             // Handle make offer
             await showDialog(
               context: context,
-              builder: (_) =>  MakeOfferDialog(),
+              builder: (_) =>authController.registered?  MakeOfferDialog():RegisterDialog(),
             );
           },
           onRequestToBuy: ()async {
             // Handle make offer
             await showDialog(
               context: context,
-              builder: (_) =>  MakeOfferDialog(offer: false,requestToBuy: true,price: controller.carDetails.askingPrice,),
+              builder: (_) =>  authController.registered?MakeOfferDialog(offer: false,requestToBuy: true,price: controller.carDetails.askingPrice,):RegisterDialog(),
             );
 
 
@@ -68,10 +80,10 @@ class _CarDetailsState extends State<CarDetails> {
           onMakeOffer: () async {
             // Handle make offer
 
-            await showDialog(
+            await authController.registered? showDialog(
               context: context,
               builder: (_) =>  MakeOfferDialog(),
-            );
+            ):unRegisterFunction(context);
           },
           onWhatsApp: () {
             // Handle WhatsApp
@@ -145,7 +157,11 @@ class _CarDetailsState extends State<CarDetails> {
                     12.horizontalSpace,
                     InkWell(
                         onTap: () {
-                          controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id);
+                          authController.registered?  controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id)
+                              : showDialog(
+                            context: context,
+                            builder: (_) =>RegisterDialog(),
+                          );
                         },
                         child:  Theme.of(context).brightness == Brightness.dark?Icon(
                           Icons.favorite,
