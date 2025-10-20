@@ -1,12 +1,53 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:qarsspin/controller/const/base_url.dart';
+import '../controller/ads/data_layer.dart';
 import '../model/banner_model.dart';
 
 class BannerService {
-
   static const String endpoint = '/BannersRelatedAPI.asmx/GetListOfActiveBanners';
+  static const String impressionEndpoint = '/BannersRelatedAPI.asmx/InsertAdBannerImpression';
+
+  Future<void> trackBannerImpression(int bannerId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Get user ID (username or "0" for guests)
+      final userId = prefs.getString('username')??'';
+      
+      // Get current language (default to 'en' if not set)
+      final userLanguage ='en';
+      
+      // Prepare request body
+      final requestBody = {
+        'Banner_ID': bannerId.toString(),
+        'User_ID': userId,
+        'User_Language': userLanguage,
+        'Impression_Source': 'Android',
+        'Our_Secret': ourSecret,
+      };
+      
+      final url = Uri.parse('$base_url$impressionEndpoint');
+      
+      log('🔵 ==== BANNER IMPRESSION TRACKING STARTED ====');
+      log('🔗 URL: $url');
+      log('📝 Request body: $requestBody');
+      
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: requestBody,
+      );
+      
+      log('✅ Banner impression tracked - Status: ${response.statusCode}');
+    } catch (e) {
+      log('❌ Error tracking banner impression: $e');
+    }
+  }
 
   Future<List<BannerModel>> getActiveBanners() async {
     final url = Uri.parse('$base_url$endpoint');

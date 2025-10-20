@@ -57,6 +57,8 @@ class _AdContainerState extends State<AdContainer> {
       
       if (banner != null) {
         print('✅ Displaying banner: ${banner.bannerId} - ${banner.bannerType}');
+        // Track banner impression
+        _trackBannerImpression(banner.bannerId);
       } else {
         print('ℹ️ No matching banner found for current criteria');
       }
@@ -72,6 +74,15 @@ class _AdContainerState extends State<AdContainer> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  // Track banner impression
+  void _trackBannerImpression(int bannerId) {
+    try {
+      _bannerService.trackBannerImpression(bannerId);
+    } catch (e) {
+      print('❌ Error tracking banner impression: $e');
     }
   }
 
