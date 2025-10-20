@@ -13,13 +13,13 @@ class BannerService {
   Future<void> trackBannerImpression(int bannerId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Get user ID (username or "0" for guests)
       final userId = prefs.getString('username')??'';
-      
+
       // Get current language (default to 'en' if not set)
       final userLanguage ='en';
-      
+
       // Prepare request body
       final requestBody = {
         'Banner_ID': bannerId.toString(),
@@ -28,13 +28,13 @@ class BannerService {
         'Impression_Source': 'Android',
         'Our_Secret': ourSecret,
       };
-      
+
       final url = Uri.parse('$base_url$impressionEndpoint');
-      
+
       log('🔵 ==== BANNER IMPRESSION TRACKING STARTED ====');
       log('🔗 URL: $url');
       log('📝 Request body: $requestBody');
-      
+
       final response = await http.post(
         url,
         headers: {
@@ -42,16 +42,49 @@ class BannerService {
         },
         body: requestBody,
       );
-      
+
       log('✅ Banner impression tracked - Status: ${response.statusCode}');
     } catch (e) {
       log('❌ Error tracking banner impression: $e');
     }
   }
 
+  Future<void> trackBannerClick(int bannerId) async {
+    final url = Uri.parse('$base_url/BannersRelatedAPI.asmx/InsertAdBannerClick');
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final userId = prefs.getString('username') ?? '';
+
+      final body = {
+        'Banner_ID': bannerId.toString(), // must match exactly
+        'User_ID': userId,
+        'Click_Source': 'Android',
+        'User_Language': 'en',
+        'Our_Secret': ourSecret, // include if required for auth
+      };
+
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        log('Response body: ${response.body}');
+      } else {
+        log('⚠️ Failed to register click: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('❌ Error during banner click registration: $e');
+    }
+  }
+
   Future<List<BannerModel>> getActiveBanners() async {
     final url = Uri.parse('$base_url$endpoint');
-    
+
     // Prepare the request body
     final requestBody = {
       'Client_Date':'01-25-2025',
@@ -74,10 +107,10 @@ class BannerService {
       log('\n📥 Response received');
       log('Status: ${response.statusCode}');
       log('Headers: ${response.headers}');
-      
+
       // Log response body (first 500 chars)
-      final responsePreview = response.body.length > 500 
-          ? '${response.body.substring(0, 500)}...' 
+      final responsePreview = response.body.length > 500
+          ? '${response.body.substring(0, 500)}...'
           : response.body;
       log('Response (first 500 chars):\n$responsePreview');
 
@@ -86,15 +119,15 @@ class BannerService {
           // Parse the response
           final dynamic jsonResponse = json.decode(response.body);
           log('\n🔍 Parsed JSON type: ${jsonResponse.runtimeType}');
-          
+
           final bannerResponse = BannerResponse.fromJson(jsonResponse);
-          
+
           log('\n📊 Parsed response:');
           log('Code: ${bannerResponse.code}');
           log('Description: ${bannerResponse.desc}');
           log('Count: ${bannerResponse.count}');
           log('Banners found: ${bannerResponse.data.length}');
-          
+
           if (bannerResponse.code == 'OK' || bannerResponse.code == '200') {
             if (bannerResponse.data.isNotEmpty) {
               log('✅ Success! Found ${bannerResponse.data.length} banners');
@@ -132,14 +165,14 @@ class BannerService {
       log('   Error: $e');
       log('   Stack trace: $stackTrace');
     }
-    
+
     log('\n🔴 Returning empty banner list');
     return [];
   }
 
   BannerModel? getBannerByPriority(List<BannerModel> banners, String page, String type) {
     if (banners.isEmpty) return null;
-    
+
     final priorityOrder = [
       {'type': type, 'target': page},
       {'type': type, 'target': 'Global'},
@@ -148,7 +181,7 @@ class BannerService {
     ];
 
     log('🔍 Looking for banner with type: $type and page: $page');
-    
+
     for (var priority in priorityOrder) {
       // final matches = banners
       //     .where((b) => b.bannerType == priority['type'] &&
@@ -169,7 +202,7 @@ class BannerService {
         log('ℹ️ No match for ${priority['type']} - ${priority['target']}');
       }
     }
-    
+
     log('⚠️ No banner found matching criteria');
     return null;
   }

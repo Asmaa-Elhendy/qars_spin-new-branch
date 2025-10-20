@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qarsspin/controller/const/colors.dart';
@@ -85,6 +87,9 @@ class _AdContainerState extends State<AdContainer> {
       print('❌ Error tracking banner impression: $e');
     }
   }
+
+
+
 
   Widget _buildErrorWidget() {
     return GestureDetector(
@@ -222,8 +227,21 @@ class _AdContainerState extends State<AdContainer> {
   }
 
   Future<void> _launchUrl(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (_banner == null) return;
+
+    try {
+      // 🔵 Track click before opening the ad
+      await _bannerService.trackBannerClick(_banner!.bannerId);
+
+      // 🔗 Launch the ad URL
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        log('⚠️ Could not launch URL: $url');
+      }
+    } catch (e) {
+      log('❌ Error during banner click handling: $e');
     }
   }
+
 }
