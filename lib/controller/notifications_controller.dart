@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import '../../model/notification_model.dart';
-import '../../services/notification_database.dart';
-import '../../services/fcm_service.dart';
+import 'dart:developer';
 
+import '../model/notification_model.dart';
+import '../services/notification_database.dart';
+import '../services/fcm_service.dart';
+import 'ads/data_layer.dart'; // لو فعلاً مستخدمه
 
 class NotificationsController extends GetxController {
   final RxList<NotificationModel> _notifications = <NotificationModel>[].obs;
@@ -14,15 +16,14 @@ class NotificationsController extends GetxController {
 
   List<NotificationModel> get notifications => _notifications.reversed.toList();
   bool get isLoading => _isLoading.value;
-  int get unreadCount => _notifications.where((n) => !n.isRead).length;
 
   @override
   void onInit() {
     super.onInit();
     _setupFCMListeners();
-    loadNotifications();
-    
-    // Handle when app is opened from terminated state
+    getNotifications();
+
+    // لما يفتح التطبيق من إشعار (terminated state)
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         _handleMessage(message);
@@ -30,31 +31,47 @@ class NotificationsController extends GetxController {
     });
   }
 
-  Future<void> loadNotifications() async {
-    _isLoading.value = true;
+  /// 🔹 جلب الإشعارات من API
+  Future<void> getNotifications() async {
     try {
-      final notifications = await _database.getNotifications();
-      _notifications.assignAll(notifications);
-      _notifications.refresh();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading notifications: $e');
+      _isLoading.value = true;
+      log('📡 Fetching notifications for user: $userName');
+
+      final List<NotificationModel> apiNotifications =
+      await _database.fetchNotificationsFromAPI(
+        userName: userName,
+        ourSecret: ourSecret,
+      );
+
+      log('📩 Notifications received: ${apiNotifications.length}');
+      _notifications.clear();
+      _notifications.addAll(apiNotifications);
+
+      if (apiNotifications.isEmpty) {
+        log('⚠️ No notifications found.');
+      } else {
+        log('✅ Loaded ${_notifications.length} notifications into controller.');
       }
+    } catch (e, s) {
+      log('❌ Error loading notifications: $e');
+      log('$s');
       Get.snackbar('Error', 'Failed to load notifications');
     } finally {
       _isLoading.value = false;
     }
   }
 
+  /// 🔹 تهيئة مستمعي الـ FCM
   void _setupFCMListeners() {
-    // Listen for new FCM messages
     _fcmService.onMessageReceived.listen((message) async {
       try {
         final notification = NotificationModel.fromFCM(message);
-        await _database.insertNotification(notification);
-        await loadNotifications(); // Refresh the list
-        
-        // Show a snackbar for new notifications
+
+        // أضف الإشعار الجديد مباشرة للقائمة
+        _notifications.insert(0, notification);
+        _notifications.refresh();
+
+        // عرض Snackbar
         if (Get.isSnackbarOpen != true) {
           Get.snackbar(
             message.notification?.title ?? 'New Notification',
@@ -65,96 +82,39 @@ class NotificationsController extends GetxController {
         }
       } catch (e) {
         if (kDebugMode) {
-          print('Error handling new notification: $e');
+          print('Error handling new FCM notification: $e');
         }
       }
     });
   }
 
-  Future<void> markAsRead(NotificationModel notification) async {
-    try {
-      final updated = notification.copyWith(isRead: true);
-      await _database.updateNotification(updated);
-      final index = _notifications.indexWhere((n) => n.id == notification.id);
-      if (index != -1) {
-        _notifications[index] = updated;
-        _notifications.refresh();
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error marking notification as read: $e');
-      }
-      rethrow;
-    }
-  }
-
-  Future<void> markAllAsRead() async {
-    try {
-      await _database.markAllNotificationsAsRead();
-      for (var i = 0; i < _notifications.length; i++) {
-        _notifications[i] = _notifications[i].copyWith(isRead: true);
-      }
-      _notifications.refresh();
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error marking all as read: $e');
-      }
-      rethrow;
-    }
-  }
-
-  Future<void> deleteNotification(NotificationModel notification) async {
-    try {
-      await _database.deleteNotification(notification.id!);
-      _notifications.removeWhere((n) => n.id == notification.id);
-      _notifications.refresh();
-     // Get.snackbar('Success', 'Notification deleted');
-    } catch (e) {
-    //  Get.snackbar('Error', 'Failed to delete notification');
-    }
-  }
-
-  Future<void> clearAllNotifications() async {
-    try {
-      await _database.clearAllNotifications();
-      _notifications.clear();
-      _notifications.refresh();
-     // Get.snackbar('Success', 'All notifications cleared');
-    } catch (e) {
-      //Get.snackbar('Error', 'Failed to clear notifications');
-    }
-  }
-
+  /// 🔹 التعامل مع إشعار تم النقر عليه
   void _handleMessage(RemoteMessage message) {
     try {
       final notification = NotificationModel.fromFCM(message);
       _navigateBasedOnNotification(notification);
     } catch (e) {
       if (kDebugMode) {
-        print('Error handling message: $e');
+        print('Error handling FCM message: $e');
       }
     }
   }
 
+  /// 🔹 التنقل بناءً على الإشعار
   void _navigateBasedOnNotification(NotificationModel notification) {
     try {
-      // Example: Navigate based on postCode if available
       if (notification.postCode != null) {
-        // Uncomment and implement your navigation logic
+        // مثال: فتح صفحة إعلان
         // Get.to(() => PostDetailsScreen(postId: notification.postCode!));
-      }
-      
-      // Mark as read when handled
-      if (!notification.isRead) {
-        markAsRead(notification);
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error in navigation: $e');
+        print('Error navigating based on notification: $e');
       }
     }
   }
 
+  /// 🔹 تحديث توكن الـ FCM
   Future<void> updateFCMToken() async {
     try {
       await _fcmService.updateFCMToken();

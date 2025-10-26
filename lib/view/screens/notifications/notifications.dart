@@ -7,13 +7,22 @@ import '../../../controller/notifications_controller.dart';
 import '../../../model/notification_model.dart';
 import '../../widgets/notification_card.dart';
 
-class NotificationsPage extends StatelessWidget {
-  final NotificationsController controller = Get.put(NotificationsController());
+class NotificationsPage extends GetView<NotificationsController> {
+  NotificationsPage({Key? key}) : super(key: key) {
+    // Initialize the controller and load notifications
+    Get.put(NotificationsController());
+    // Schedule the initial load after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🔔 Initial notifications load triggered');
+      controller.getNotifications();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🔔 Building NotificationsPage');
+    
     return Scaffold(
-
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -28,9 +37,9 @@ class NotificationsPage extends StatelessWidget {
         backgroundColor: AppColors.background(context),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color:AppColors.background(context),
+            color: AppColors.background(context),
             boxShadow: [
-              BoxShadow( //update asmaa
+              BoxShadow(
                 color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
@@ -39,20 +48,18 @@ class NotificationsPage extends StatelessWidget {
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: Colors.red),
-            onPressed: () => _showDeleteAllDialog(context),
-          ),
-        ],
       ),
       backgroundColor: AppColors.background(context),
       body: Obx(() {
+        debugPrint('🔄 Notifications state updated - Loading: ${controller.isLoading}, Count: ${controller.notifications.length}');
+        
         if (controller.isLoading) {
-          return Center(child: CircularProgressIndicator());
+          debugPrint('⏳ Loading indicator shown');
+          return Center(child: CircularProgressIndicator(color: AppColors.primary,));
         }
 
         if (controller.notifications.isEmpty) {
+          debugPrint('ℹ️ No notifications to display');
           return Center(
             child: Text(
               'No notifications yet',
@@ -61,15 +68,20 @@ class NotificationsPage extends StatelessWidget {
           );
         }
 
+        debugPrint('✅ Displaying ${controller.notifications.length} notifications');
         return RefreshIndicator(
-          onRefresh: () => controller.loadNotifications(),
+          onRefresh: () {
+            debugPrint('🔄 Pull-to-refresh triggered');
+            return controller.getNotifications();
+          },
           child: ListView.builder(
             padding: EdgeInsets.all(12.r),
             itemCount: controller.notifications.length,
             itemBuilder: (context, index) {
               final notification = controller.notifications[index];
+              debugPrint('📌 Rendering notification ${index + 1}/${controller.notifications.length}: ${notification.title}');
               return Dismissible(
-                key: Key(notification.id.toString()),
+                key: Key(notification.id?.toString() ?? 'notification_$index'),
                 direction: DismissDirection.endToStart,
                 background: Container(
                   alignment: Alignment.centerRight,
@@ -81,7 +93,8 @@ class NotificationsPage extends StatelessWidget {
                   return await _showDeleteDialog(context, notification);
                 },
                 onDismissed: (direction) {
-                  controller.deleteNotification(notification);
+                  debugPrint('🗑️ Dismissed notification: ${notification.id}');
+                  // controller.deleteNotification(notification);
                 },
                 child: NotificationCard(notification: notification),
               );
@@ -137,11 +150,6 @@ class NotificationsPage extends StatelessWidget {
           ),
         ],
       ),
-    ) ??
-        false;
-
-    if (confirmed == true) {
-      await controller.clearAllNotifications();
-    }
+    ) ?? false;
   }
 }
