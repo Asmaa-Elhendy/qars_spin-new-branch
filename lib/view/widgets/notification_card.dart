@@ -30,7 +30,7 @@ class NotificationCard extends StatelessWidget {
         color: AppColors.background(context),
         border: Border.all(
           color: AppColors.divider(context),
-          width: 1.5.w,
+          width: 0.8.w,
         ),
         borderRadius: BorderRadius.circular(5),
       ),
