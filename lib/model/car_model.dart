@@ -25,6 +25,7 @@ enum CarStatus{
 }
 
 class CarModel{
+  final int? offerId;
   final int postId;
   final int pinToTop;
   final String postCode;
@@ -51,6 +52,7 @@ class CarModel{
   int? makeId;
 
   CarModel({
+    this.offerId=null,
     this.classId,this.makeId,
     required this.postId,
     required this.pinToTop,

@@ -8,6 +8,7 @@ import 'package:qarsspin/view/widgets/navigation_bar.dart';
 import 'package:qarsspin/view/screens/cars_for_sale/car_details.dart';
 import 'package:qarsspin/view/widgets/ads/dialogs/loading_dialog.dart';
 
+import '../../controller/auth/auth_controller.dart';
 import 'ads/create_ad_options_screen.dart';
 import 'favourites/favourite_screen.dart';
 import 'general/contact_us.dart';
@@ -25,6 +26,8 @@ class OffersScreen extends StatefulWidget {
 class _OffersScreenState extends State<OffersScreen> {
   int _selectedIndex = 1;
   final BrandController _controller = Get.find<BrandController>();
+  String userName= Get.find<AuthController>().userFullName!;
+
   bool _isLoading = false;
 
   @override
@@ -133,6 +136,76 @@ class _OffersScreenState extends State<OffersScreen> {
                         imageUrl: offer.rectangleImageUrl,
                         onHeartTap: () {
                           // Handle remove offer if needed
+                        },
+                        onDeleteTap: () async {
+                          final result = await showDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Delete Offer',
+                                  style: TextStyle(fontSize: 19.w, fontWeight: FontWeight.bold),
+                                ),
+                                content: const Text('Are you sure you want to delete this offer?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(color: AppColors.textPrimary(context)),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      controller.deleteOffer(offerId: offer.offerId.toString(), loggedInUser: userName);
+                                      Navigator.pop(context, true);
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (result == true) {
+                            try {
+                              final response = await _controller.deleteOffer(
+                                offerId: offer.postId.toString(),
+                                loggedInUser: _controller.authController.userFullName ?? 'unknown',
+                              );
+
+                              if (response['Code'] == 'OK') {
+                                Get.snackbar(
+                                  'Success',
+                                  'Offer deleted successfully',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                );
+                                // Refresh the offers list
+                                await _loadOffers();
+                              } else {
+                                Get.snackbar(
+                                  'Error',
+                                  response['Desc'] ?? 'Failed to delete offer',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                              }
+                            } catch (e) {
+                              Get.snackbar(
+                                'Error',
+                                'An error occurred while deleting the offer',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            }
+                          }
                         },
                       ),
                     );

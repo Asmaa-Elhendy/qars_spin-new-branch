@@ -12,6 +12,7 @@ class FavouriteCarCard extends StatelessWidget {
   final String manefactureYear;
   final String meilage;
   final VoidCallback onHeartTap;
+  final VoidCallback? onDeleteTap;
   final String? myOffer;
 
   const FavouriteCarCard({
@@ -23,6 +24,7 @@ class FavouriteCarCard extends StatelessWidget {
     required this.imageUrl,
     required this.manefactureYear,
     required this.meilage,
+    this.onDeleteTap,
     this.myOffer = null,
   });
 
@@ -156,7 +158,18 @@ class FavouriteCarCard extends StatelessWidget {
                         ],
                       ),
                       myOffer != null
-                          ? SizedBox()
+                          ? InkWell(
+                              onTap: () {
+                                if (onDeleteTap != null) {
+                                  onDeleteTap!();
+                                }
+                              },
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: const Color(0xffEC6D64),
+                                size: 28.w,
+                              ),
+                            )
                           : InkWell(
                               onTap: onHeartTap,
                               child: Icon(

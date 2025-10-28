@@ -778,7 +778,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete $mediaType'),
+        title: Text('Delete $mediaType',style: TextStyle(fontSize: 19.w,fontWeight: FontWeight.bold)),
         content: Text('Are you sure you want to delete this $mediaType?'),
         actions: [
           TextButton(
@@ -790,11 +790,12 @@ class _GalleryManagementState extends State<GalleryManagement> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              'Delete',
-              style: TextStyle(color: AppColors.brandBlue),
+    style: TextButton.styleFrom(
+    foregroundColor: Colors.red,
+    ),
+    child: const Text('Delete'),
             ),
-          ),
+
         ],
       ),
     ) ??
@@ -822,7 +823,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
       final success = await controller.deletePostGalleryPhoto(
         mediaId: mediaId,
         postId: widget.postId.toString(),
-        ourSecret: '1244', // Using the same secret as other API calls
+        ourSecret: ourSecret, // Using the same secret as other API calls
       );
       return success;
     } catch (e) {

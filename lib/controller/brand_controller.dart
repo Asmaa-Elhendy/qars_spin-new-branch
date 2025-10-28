@@ -1,7 +1,7 @@
-
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
@@ -77,6 +77,63 @@ class BrandController extends GetxController{
     return timeago.format(dateTime);
   }
 
+  Future<Map<String, dynamic>> deleteOffer({
+    required String offerId,
+    required String loggedInUser,
+  }) async {
+    final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/SetOfferInactive');
+
+    log('Deleting offer with ID: $offerId');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: {
+          'Offer_ID': offerId,
+          'Logged_In_User': loggedInUser,
+        },
+      );
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        log('Parsed JSON: $parsedJson');
+        
+        // If deletion was successful, refresh the offers list
+        if (parsedJson['Code'] == 'OK') {
+          await getMyOffers();
+        }
+        
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'AffectedRows': parsedJson['AffectedRows'] ?? 0,
+        };
+      } else {
+        log('❌ HTTP Error: Status code ${response.statusCode}');
+        log('Response Body: ${response.body}');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to delete offer. Status code: ${response.statusCode}',
+          'AffectedRows': 0,
+        };
+      }
+    } catch (e) {
+      log('Error deleting offer: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'AffectedRows': 0,
+      };
+    }
+  }
+
   Future<void> getMyOffers() async {
     try {
       isLoadingOffers.value = true;
@@ -103,6 +160,7 @@ class BrandController extends GetxController{
           myOffersList = offersData.map((offer) {
             print('Processing offer: $offer'); // Debug log
             return CarModel(
+              offerId: offer['Offer_ID']??0,
               postId: offer['Post_ID'] ?? 0,
               pinToTop: offer['Pin_To_Top'] ?? 0,
               postCode: offer['Post_Code'] ?? '',
