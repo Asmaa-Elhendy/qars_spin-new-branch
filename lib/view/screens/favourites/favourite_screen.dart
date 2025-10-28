@@ -37,7 +37,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
-            fontSize: 20.sp,
+            fontSize: 20.w,
           ),
         ),
         backgroundColor: AppColors.background(context),

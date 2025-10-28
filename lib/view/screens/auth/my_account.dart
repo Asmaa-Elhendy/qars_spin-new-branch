@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_data_layer.dart';
 import 'package:qarsspin/view/screens/auth/registration_screen.dart';
+import 'package:qarsspin/view/screens/favourites/favourite_screen.dart';
 import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
 import 'package:qarsspin/controller/auth/auth_controller.dart';
@@ -70,7 +71,7 @@ class _MyAccountState extends State<MyAccount> {
                       style: TextStyle(
                         color: AppColors.blackColor(context),
                         fontFamily: 'Gilroy',
-                        fontSize: 16.sp,
+                        fontSize: 20.w,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -229,7 +230,11 @@ class _MyAccountState extends State<MyAccount> {
         buildMenuItem(
             icon: Icons.favorite,
             title: "My Favorites",
-            context: context
+            context: context,
+          onTap: (){
+            Get.to(FavouriteScreen());
+
+          }
 
         ),
         buildMenuItem(
