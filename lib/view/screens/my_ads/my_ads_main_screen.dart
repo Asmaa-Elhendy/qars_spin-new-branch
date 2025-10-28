@@ -161,7 +161,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                     );
                   }
 
-                  return RefreshIndicator(
+                  return RefreshIndicator(color: AppColors.primary,
                     onRefresh: controller.fetchMyAds,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,

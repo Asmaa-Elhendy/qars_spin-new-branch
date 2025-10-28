@@ -106,7 +106,7 @@ class _OffersScreenState extends State<OffersScreen> {
                 );
               }
               
-              return RefreshIndicator(
+              return RefreshIndicator(color: AppColors.primary,
                 onRefresh: _loadOffers,
                 child: ListView.builder(
                   padding: EdgeInsets.symmetric(vertical: 20.h),

@@ -83,7 +83,7 @@ class NotificationsPage extends GetView<NotificationsController> {
             }
 
             debugPrint('✅ Displaying ${controller.notifications.length} notifications');
-            return RefreshIndicator(
+            return RefreshIndicator(color: AppColors.primary,
               onRefresh: () {
                 debugPrint('🔄 Pull-to-refresh triggered');
                 return controller.getNotifications();
