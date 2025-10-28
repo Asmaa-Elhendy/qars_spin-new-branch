@@ -6,6 +6,7 @@ import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/notifications_controller.dart';
 import '../../../model/notification_model.dart';
 import '../../widgets/notification_card.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 
 class NotificationsPage extends GetView<NotificationsController> {
   NotificationsPage({Key? key}) : super(key: key) {
@@ -50,13 +51,15 @@ class NotificationsPage extends GetView<NotificationsController> {
         ),
       ),
       backgroundColor: AppColors.background(context),
-      body: Obx(() {
-        debugPrint('🔄 Notifications state updated - Loading: ${controller.isLoading}, Count: ${controller.notifications.length}');
-        
-        if (controller.isLoading) {
-          debugPrint('⏳ Loading indicator shown');
-          return Center(child: CircularProgressIndicator(color: AppColors.primary,));
-        }
+      body: Stack(
+        children: [
+          Obx(() {
+            debugPrint('🔄 Notifications state updated - Loading: ${controller.isLoading}, Count: ${controller.notifications.length}');
+            
+            if (controller.isLoading) {
+              debugPrint('⏳ Loading indicator shown');
+              return const SizedBox.shrink(); // Empty widget when loading, we'll show the overlay
+            }
 
         if (controller.notifications.isEmpty) {
           debugPrint('ℹ️ No notifications to display');
@@ -69,39 +72,67 @@ class NotificationsPage extends GetView<NotificationsController> {
         }
 
         debugPrint('✅ Displaying ${controller.notifications.length} notifications');
-        return RefreshIndicator(
-          onRefresh: () {
-            debugPrint('🔄 Pull-to-refresh triggered');
-            return controller.getNotifications();
-          },
-          child: ListView.builder(
-            padding: EdgeInsets.all(12.r),
-            itemCount: controller.notifications.length,
-            itemBuilder: (context, index) {
-              final notification = controller.notifications[index];
-              debugPrint('📌 Rendering notification ${index + 1}/${controller.notifications.length}: ${notification.title}');
-              return Dismissible(
-                key: Key(notification.id?.toString() ?? 'notification_$index'),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(right: 20.w),
-                  color: Colors.red,
-                  child: Icon(Icons.delete, color: Colors.white),
+            if (controller.notifications.isEmpty) {
+              debugPrint('ℹ️ No notifications to display');
+              return Center(
+                child: Text(
+                  'No notifications yet',
+                  style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                 ),
-                confirmDismiss: (direction) async {
-                  return await _showDeleteDialog(context, notification);
-                },
-                onDismissed: (direction) {
-                  debugPrint('🗑️ Dismissed notification: ${notification.id}');
-                  // controller.deleteNotification(notification);
-                },
-                child: NotificationCard(notification: notification),
               );
-            },
-          ),
-        );
-      }),
+            }
+
+            debugPrint('✅ Displaying ${controller.notifications.length} notifications');
+            return RefreshIndicator(
+              onRefresh: () {
+                debugPrint('🔄 Pull-to-refresh triggered');
+                return controller.getNotifications();
+              },
+              child: ListView.builder(
+                padding: EdgeInsets.all(12.r),
+                itemCount: controller.notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = controller.notifications[index];
+                  debugPrint('📌 Rendering notification ${index + 1}/${controller.notifications.length}: ${notification.title}');
+                  return Dismissible(
+                    key: Key(notification.id?.toString() ?? 'notification_$index'),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(right: 20.w),
+                      color: Colors.red,
+                      child: Icon(Icons.delete, color: Colors.white),
+                    ),
+                    confirmDismiss: (direction) async {
+                      return await _showDeleteDialog(context, notification);
+                    },
+                    onDismissed: (direction) {
+                      debugPrint('🗑️ Dismissed notification: ${notification.id}');
+                      // controller.deleteNotification(notification);
+                    },
+                    child: NotificationCard(notification: notification),
+                  );
+                },
+              ),
+            );
+          }),
+          
+          // Loading Overlay
+          Obx(() {
+            if (controller.isLoading) {
+              return Container(
+                color: Colors.black.withOpacity(0.2),
+                child: const Center(
+                  child: AppLoadingWidget(
+                    title: 'Loading...\nPlease Wait...',
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
+      ),
     );
   }
 
