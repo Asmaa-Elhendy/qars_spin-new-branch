@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
+import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/my_ads/my_ad_data_layer.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
@@ -18,6 +19,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   final MyAdCleanController controller = Get.put(
     MyAdCleanController(MyAdDataLayer()),
   );
+  String userName= Get.find<AuthController>().userFullName!;
 
   bool _isGlobalLoading = false;
 
@@ -167,6 +169,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                       itemBuilder: (context, index) {
                         final ad = controller.myAds[index];
                         return MyAdCard(
+                          userName,
                           ad,
                           context,
                           onShowLoader: _showGlobalLoader,

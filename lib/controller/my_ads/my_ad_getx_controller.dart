@@ -5,6 +5,7 @@ import 'package:qarsspin/controller/my_ads/my_ad_data_layer.dart';
 import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 import 'package:qarsspin/model/post_media.dart';
+import 'package:flutter/material.dart';
 
 class MyAdCleanController extends GetxController {
   final MyAdDataLayer repository;
@@ -41,10 +42,63 @@ class MyAdCleanController extends GetxController {
   final Rxn<String> requestError = Rxn<String>();
   final RxBool requestSuccess = RxBool(false);
 
+  // Delete ad state
+  final RxBool isDeletingAd = false.obs;
+  final Rxn<String> deleteError = Rxn<String>();
+  final RxBool deleteSuccess = RxBool(false);
+
   @override
   void onInit() {
     super.onInit();
     fetchMyAds();
+  }
+
+  /// Delete an ad
+  Future<void> deleteAd(String postId, String loggedInUser) async {
+    try {
+      isDeletingAd.value = true;
+      deleteError.value = null;
+      
+      final response = await repository.deletePost(
+        postId: postId,
+        loggedInUser: loggedInUser,
+      );
+
+      if (response['Code'] == 'OK') {
+        deleteSuccess.value = true;
+        // Remove the deleted ad from the list
+        myAds.removeWhere((ad) => ad.postId.toString() == postId);
+        myAds.refresh(); // Trigger UI update
+        // Get.snackbar(
+        //   'Success',
+        //   'Ad deleted successfully',
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
+      } else {
+        deleteError.value = response['Desc'] ?? 'Failed to delete ad';
+        // Get.snackbar(
+        //   'Error',
+        //   deleteError.value!,
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.red,
+        //   colorText: Colors.white,
+        // );
+      }
+    } catch (e) {
+      log('Error deleting ad: $e');
+      deleteError.value = 'An error occurred while deleting the ad';
+      // Get.snackbar(
+      //   'Error',
+      //   deleteError.value!,
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.red,
+      //   colorText: Colors.white,
+      // );
+    } finally {
+      isDeletingAd.value = false;
+    }
   }
 
   /// Fetch user's ads

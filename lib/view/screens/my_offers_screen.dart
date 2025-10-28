@@ -156,51 +156,11 @@ class _OffersScreenState extends State<OffersScreen> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () async {
-                                      try {
-                                        final response = await controller.deleteOffer(
-                                          offerId: offer.postId.toString(), // Using postId instead of offerId
-                                          loggedInUser: userName,
-                                        );
-                                        
-                                        if (response['Code'] == 'OK') {
-                                          await _loadOffers();
-                                          if (mounted) {
-                                            Navigator.pop(context, true);
-                                            Get.snackbar(
-                                              'Success',
-                                              'Offer deleted successfully',
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: Colors.green,
-                                              colorText: Colors.white,
-                                            );
-                                          }
-                                        } else {
-                                          if (mounted) {
-                                            Navigator.pop(context, false);
-                                            Get.snackbar(
-                                              'Error',
-                                              response['Desc'] ?? 'Failed to delete offer',
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: Colors.red,
-                                              colorText: Colors.white,
-                                            );
-                                          }
-                                        }
-                                      } catch (e) {
-                                        if (mounted) {
-                                          Navigator.pop(context, false);
-                                          Get.snackbar(
-                                            'Error',
-                                            'An error occurred while deleting the offer',
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            backgroundColor: Colors.red,
-                                            colorText: Colors.white,
-                                          );
-                                        }
-                                      }
+                                    onPressed: () {
+                                      controller.deleteOffer(offerId: offer.offerId.toString(), loggedInUser: userName);
+                                      Navigator.pop(context, true);
                                     },
-                                    style: TextButton.styleFrom(
+                                    style: TextButton.styleFrom(//k
                                       foregroundColor: Colors.red,
                                     ),
                                     child: const Text('Delete'),

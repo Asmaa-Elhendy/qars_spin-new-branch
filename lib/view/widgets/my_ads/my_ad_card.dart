@@ -18,6 +18,7 @@ import 'package:qarsspin/view/widgets/payments/payment_methods_dialog.dart';
 const String fontFamily = 'Gilroy';
 
 Widget MyAdCard(
+    String userName,
     MyAdModel ad,
     BuildContext context, {
       required VoidCallback onShowLoader,
@@ -79,8 +80,9 @@ Widget MyAdCard(
                 ),
               ),
               SizedBox(width: 8.w),
-              Flexible(
-                child: Container(
+              // Flexible(
+              //   child:
+                Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
                   decoration: BoxDecoration(
                     color: AppColors.extraLightGray.withOpacity(.6),
@@ -97,7 +99,66 @@ Widget MyAdCard(
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
+           //   ),
+              5.horizontalSpace,
+              GetBuilder<MyAdCleanController>(
+                builder: (controller) {
+                  return InkWell(
+                    onTap: () async {
+                      final result = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Delete Ad',
+                              style: TextStyle(
+                                fontSize: 19.w,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: const Text('Are you sure you want to delete this ad?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary(context),
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                ),
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (result == true) {
+                        try {
+                          onShowLoader();
+                          await controller.deleteAd(
+                            ad.postId.toString(),
+                          userName,
+                          );
+                        } finally {
+                          onHideLoader();
+                        }
+                      }
+                    },
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: const Color(0xffEC6D64),
+                      size: 27.w,
+                    ),
+                  );
+                },
+              )
             ],
           ),
         ),

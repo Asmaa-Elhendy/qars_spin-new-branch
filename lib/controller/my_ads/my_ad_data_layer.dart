@@ -6,6 +6,57 @@ import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/model/post_media.dart';
 
 class MyAdDataLayer {
+  /// Delete a post by marking it as inactive
+  Future<Map<String, dynamic>> deletePost({
+    required String postId,
+    required String loggedInUser,
+  }) async {
+    final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/SetPostInactive');
+
+    log('Deleting post with ID: $postId');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: {
+          'Post_ID': postId,
+          'Logged_In_User': loggedInUser,
+        },
+      );
+
+      log('Delete post response status: ${response.statusCode}');
+      log('Delete post response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        return {
+          'Code': responseData['Code'] ?? 'Error',
+          'Desc': responseData['Desc'] ?? 'Unknown error',
+          'AffectedRows': responseData['AffectedRows'] ?? 0,
+        };
+      } else {
+        log('❌ HTTP Error: Status code ${response.statusCode}');
+        log('Response Body: ${response.body}');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to delete post. Status code: ${response.statusCode}',
+          'AffectedRows': 0,
+        };
+      }
+    } catch (e) {
+      log('❌ Exception in deletePost: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Exception: $e',
+        'AffectedRows': 0,
+      };
+    }
+  }
+
   /// Get list of posts by user name
   Future<Map<String, dynamic>> getListOfPostsByUserName({
     required String userName,
