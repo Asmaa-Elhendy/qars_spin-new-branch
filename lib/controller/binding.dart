@@ -14,6 +14,9 @@ import 'auth/auth_controller.dart';
 import 'brand_controller.dart';
 import 'my_ads/my_ad_getx_controller.dart';
 import 'my_ads/my_ad_data_layer.dart';
+import 'notifications_controller.dart';
+import 'package:qarsspin/services/notification_database.dart';
+import 'package:qarsspin/services/fcm_service.dart';
 
 class MyBinding implements  Bindings {
   @override
@@ -26,8 +29,9 @@ class MyBinding implements  Bindings {
     Get.lazyPut(() => AdCleanController(AdRepository()), fenix: true);
     Get.lazyPut(() => MyAdCleanController(MyAdDataLayer()), fenix: true);
     Get.lazyPut(() => MySearchController(),fenix: true);
-    // In your main.dart or app bindings file
-
-
+    
+    // Initialize FCM Service and Notifications Controller
+    Get.lazyPut(() => FCMService(), fenix: true);
+    Get.lazyPut(() => NotificationsController(), fenix: true);
   }
 }

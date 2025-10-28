@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/showrooms_controller.dart';
+import '../../controller/notifications_controller.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/const/colors.dart';
 import '../../controller/rental_cars_controller.dart';
@@ -31,7 +32,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  int notificationCount = 3;
+  // Get the notifications controller
+  final NotificationsController notificationsController = Get.find<NotificationsController>();
   VoidCallback onMenuTap = () {};
   VoidCallback onAccountTap = () {};
   bool _isMenuVisible = false;
@@ -50,8 +52,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     Get.find<BrandController>().fetchCarMakes();
+    
+    // Load notifications when home screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🔔 HomeScreen - Loading notifications...');
+      notificationsController.getNotifications().then((_) {
+        debugPrint('🔔 HomeScreen - Notifications loaded: ${notificationsController.notifications.length}');
+      }).catchError((error) {
+        debugPrint('🔔 HomeScreen - Error loading notifications: $error');
+      });
+    });
   }
 
   @override
@@ -101,15 +113,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: AppColors.blackColor(context),
                   ),
                 ),
-                if (notificationCount > 0)
-                  Positioned(
-                    right: 25.w,//update asmaa
+                Obx(() {
+                  final count = notificationsController.notifications.length;
+                  debugPrint('🔔 Notification count: $count');
+                  
+                  if (count == 0) {
+                    return const SizedBox.shrink();
+                  }
+                  
+                  return Positioned(
+                    right: 25.w,
                     top: 15.h,
                     child: Container(
                       height: 17.h,
                       width: 18.w,
-                      constraints:
-                      const BoxConstraints(minWidth: 14, minHeight: 8),
+                      constraints: const BoxConstraints(minWidth: 14, minHeight: 8),
                       decoration: BoxDecoration(
                         color: AppColors.danger,
                         shape: BoxShape.rectangle,
@@ -124,18 +142,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.center,
                       child: Center(
                         child: Text(
-                          notificationCount > 99
-                              ? '99+'
-                              : notificationCount.toString(),
+                          count > 99 ? '99+' : count.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
-                            //    fontWeight: FontWeight.bold, //update asmaa
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  );
+                })
               ],
             ),
           )
