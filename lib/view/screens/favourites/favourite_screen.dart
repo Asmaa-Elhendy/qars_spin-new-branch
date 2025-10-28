@@ -41,6 +41,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           ),
         ),
         backgroundColor: AppColors.background(context),
+        toolbarHeight: 60.h,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: AppColors.background(context),

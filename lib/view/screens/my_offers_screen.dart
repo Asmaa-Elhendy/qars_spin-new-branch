@@ -72,6 +72,7 @@ class _OffersScreenState extends State<OffersScreen> {
           ),
         ),
         backgroundColor: AppColors.background(context),
+        toolbarHeight: 60.h,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: AppColors.background(context),
@@ -218,7 +219,7 @@ class _OffersScreenState extends State<OffersScreen> {
           // Loading Overlay
           if (_isLoading)
             Container(
-              color:Colors.black.withOpacity(0.5),
+              color: Colors.black.withOpacity(0.2), // Reduced opacity from 0.5 to 0.2
               child: const Center(
                 child: AppLoadingWidget(
                   title: 'Loading...\nPlease Wait...',
