@@ -52,7 +52,7 @@ class NotificationsController extends GetxController {
           id: item['Notification_ID'] is int 
               ? item['Notification_ID']
               : int.tryParse(item['Notification_ID']?.toString() ?? '0') ?? 0,
-          title: item['Notification_Summary_PL']?.toString() ?? 'New Notification',
+          title: "Qars Spin Update for Post ${ item['Notification_ID'] }",
           date: DateTime.tryParse(item['Subscription_Date']?.toString() ?? '') ?? DateTime.now(),
           // Add other fields as needed
           postKind: item['Post_Kind']?.toString() ?? '',

@@ -46,7 +46,7 @@ class NotificationCard extends StatelessWidget {
             notification.title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 16.w,
               color: AppColors.blackColor(context)
             ),
           ),
@@ -82,27 +82,13 @@ class NotificationCard extends StatelessWidget {
             ),
           ],
 
-          // Show message ID if available
-          if (messageId != null) ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                'ID: $messageId',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
-          ],
 
           // Post details
           if (notification.postKind != null || notification.postCode != null) ...[
             // if (notification.postKind != null)
             //   Text('Post Kind: ${notification.postKind}'),
             if (notification.postCode != null)
-              Text('Post Code: ${notification.postCode}'),
+              Text('Post Code: ${notification.id}',style: TextStyle(fontSize: 15.w),),
             const SizedBox(height: 4),
           ],
 
@@ -110,20 +96,20 @@ class NotificationCard extends StatelessWidget {
           if (notification.summaryPL != null) ...[
             Text(
               notification.summaryPL!,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style:  TextStyle(fontWeight: FontWeight.w500,fontSize: 15.w)
             ),
           ],
           if (notification.summarySL != null) ...[
             Text(
               notification.summarySL!,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style:  TextStyle(fontWeight: FontWeight.w500,fontSize: 15.w),
             ),
           ],
           if (notification.reason?.isNotEmpty == true) ...[
             const SizedBox(height: 4),
             Text(
               notification.reason!,
-              style: const TextStyle(height: 1.4),
+              style:  TextStyle(height: 1.4,fontSize: 15.w),
             ),
           ],
 
@@ -138,8 +124,8 @@ class NotificationCard extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                _formatDate(notification.date),
-                style: TextStyle(color: Colors.grey.shade700),
+                _formatDate(notification.date,),
+                style: TextStyle(color: Colors.grey.shade700,fontSize: 15.w),
               ),
             ],
           ),
