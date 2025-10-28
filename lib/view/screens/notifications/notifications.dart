@@ -36,11 +36,12 @@ class NotificationsPage extends GetView<NotificationsController> {
           ),
         ),
         backgroundColor: AppColors.background(context),
+        toolbarHeight: 60.h,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: AppColors.background(context),
             boxShadow: [
-              BoxShadow(
+              BoxShadow( //update asmaa
                 color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
