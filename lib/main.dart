@@ -22,8 +22,8 @@ void main() async{
   await GetStorage.init(); // ضروري قبل استخدام التخزين
   Get.put(ThemeController());
   // ✅ Initialize MyFatoorah SDK
-  // PaymentService.initialize();
-  // Initialize Firebase
+   PaymentService.initialize();
+   //Initialize Firebase
   await Firebase.initializeApp();
 
   // Initialize MyFatoorah SDK
@@ -35,7 +35,7 @@ void main() async{
   await fcmService.initialize();
   Get.put(fcmService);  // Register the instance with GetX
 
-  // Initialize Notifications Controller
+   //Initialize Notifications Controller
   Get.put(NotificationsController());
   settings();
 

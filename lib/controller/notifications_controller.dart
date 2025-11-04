@@ -14,6 +14,7 @@ class NotificationsController extends GetxController {
   final RxInt _notificationCount = 0.obs;
   final NotificationDatabase _database = NotificationDatabase();
   final FCMService _fcmService = Get.find<FCMService>();
+//FCMService? _fcmService;
 
   List<NotificationModel> get notifications => _notifications.reversed.toList();
   bool get isLoading => _isLoading.value;
