@@ -115,8 +115,8 @@ class _CarDetailsState extends State<CarDetails> {
         )
             :Column(children: [
           Container(
-            height: 88.h, // same as your AppBar height
-            padding: EdgeInsets.only(top: 13.h, left: 14.w, right: 14.w),
+           height: 100.h, // same as your AppBar height
+            padding: EdgeInsets.only(top: 25.h, left: 14.w, right: 14.w),
             decoration: BoxDecoration(
               color: AppColors.background(context),
               boxShadow: [

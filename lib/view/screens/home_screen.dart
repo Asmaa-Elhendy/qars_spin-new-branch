@@ -358,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Icon(
                             Icons.keyboard_arrow_down,
-                            color: Colors.white,size: 50.h,
+                            color: Colors.white,size: 45.h,
                           ),
                         ),
                       ),
