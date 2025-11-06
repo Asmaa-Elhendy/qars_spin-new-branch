@@ -10,7 +10,9 @@ import 'package:qarsspin/view/widgets/auth_widgets/register_dialog.dart';
 import 'package:qarsspin/view/widgets/car_details/qars_apin_bottom_navigation_bar.dart';
 import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/auth/unregister_func.dart';
+import '../../../controller/communications.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../../../model/car_model.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/bottom_offer_bar.dart';
@@ -36,18 +38,19 @@ class _CarDetailsState extends State<CarDetails> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("source${widget.postKind}");
   }
   final authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     List<CarModel> carsList = [];
+    var lc = AppLocalizations.of(context)!;
+
 
 
     return GetBuilder<BrandController>(builder: (controller) {
       return Scaffold(
-        backgroundColor: AppColors.background(context),
+      backgroundColor: AppColors.background(context),
 
         bottomNavigationBar: widget.sourcekind == "Qars Spin"
             ? QarsApinBottomNavigationBar(
@@ -77,33 +80,34 @@ class _CarDetailsState extends State<CarDetails> {
           },
         )
             : BottomActionBar(
-          onMakeOffer: () async {
-            // Handle make offer
+                onMakeOffer: () async {
+                  // Handle make offer
 
-            await authController.registered? showDialog(
-              context: context,
-              builder: (_) =>  MakeOfferDialog(),
-            ):unRegisterFunction(context);
-          },
-          onWhatsApp: () {
-            // Handle WhatsApp
-          },
-          onCall: () {
-            // Handle call
-          },
-        ),
-        body: controller.oldData?
-        Center(
-          child: Container(
-            color: AppColors.black.withOpacity(0.5),
-            child: Center(
-              child: AppLoadingWidget(
-                title: 'Loading...\nPlease Wait...',
+                  await authController.registered? showDialog(
+                    context: context,
+                    builder: (_) =>  MakeOfferDialog(),
+                  ):unRegisterFunction(context);
+                },
+                onWhatsApp: () {
+                       openWhatsApp("011", message: "Hello 👋");
+                  // Handle WhatsApp
+                },
+                onCall: () {
+                  // Handle call
+                },
               ),
-            ),
-          ),
-        )
-            :Column(children: [
+        body: controller.oldData?
+            Center(
+              child: Container(
+                color: AppColors.black.withOpacity(0.5),
+                child: Center(
+                  child: AppLoadingWidget(
+                    title: lc.loading,
+                  ),
+                ),
+              ),
+            )
+        :Column(children: [
           Container(
             height: 88.h, // same as your AppBar height
             padding: EdgeInsets.only(top: 13.h, left: 14.w, right: 14.w),
@@ -156,23 +160,23 @@ class _CarDetailsState extends State<CarDetails> {
                     ),
                     12.horizontalSpace,
                     InkWell(
-                        onTap: () {
-                          authController.registered?  controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id)
-                              : showDialog(
-                            context: context,
-                            builder: (_) =>RegisterDialog(),
-                          );
-                        },
-                        child:  Theme.of(context).brightness == Brightness.dark?Icon(
-                          Icons.favorite,
-                          color:
-                          controller.carDetails.isFavorite!
-                              ? AppColors.primary:AppColors.notFavorite(context),
-                        ): controller.carDetails.isFavorite!
-                            ?Icon(
-                          Icons.favorite,color: AppColors.primary,
+                      onTap: () {
+                      authController.registered?  controller.alterPostFavorite(add: controller.carDetails.isFavorite!?false:true, postId: widget.id)
+                      : showDialog(
+                        context: context,
+                        builder: (_) =>RegisterDialog(),
+                      );
+                      },
+                      child:  Theme.of(context).brightness == Brightness.dark?Icon(
+                              Icons.favorite,
+                              color:
+                              controller.carDetails.isFavorite!
+                                  ? AppColors.primary:AppColors.notFavorite(context),
+                            ): controller.carDetails.isFavorite!
+                          ?Icon(
+                         Icons.favorite,color: AppColors.primary,
 
-                        ):Icon(Icons.favorite_border)
+                      ):Icon(Icons.favorite_border)
 
                     )
                   ],
@@ -199,11 +203,11 @@ class _CarDetailsState extends State<CarDetails> {
                             .min, // shrink-wrap instead of expanding
                         children: [
                           blueText(
-                              "${controller.carDetails.visitsCount} people viewed this car"),
+                              "${controller.carDetails.visitsCount} ${lc.people_view}"),
                           4.verticalSpace,
-                          headerText(controller.carDetails.carNamePl,context),
+                          headerText(Get.locale?.languageCode=='ar'?controller.carDetails.carNameSl:controller.carDetails.carNamePl,context),
                           4.verticalSpace,
-                          description(controller.carDetails.description,context: context),
+                          description(Get.locale?.languageCode=='ar'?controller.carDetails.technical_Description_SL:controller.carDetails.description,context: context),
                           12.verticalSpace,
                           Divider(
                             thickness: .5,
@@ -214,13 +218,13 @@ class _CarDetailsState extends State<CarDetails> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                greyText("Price"),
+                                greyText(lc.price),
                                 2.verticalSpace,
                                 price(
-                                    "${controller.carDetails.askingPrice} QAR"),
+                                    "${controller.carDetails.askingPrice} ${lc.currency_Symbol}"),
                                 2.verticalSpace,
                                 boldGrey(
-                                    "${controller.carDetails.offersCount} People made an offer on this car")
+                                    "${controller.carDetails.offersCount} ${lc.people_made_offer}")
                               ],
                             ),
                           ),
@@ -236,14 +240,15 @@ class _CarDetailsState extends State<CarDetails> {
                               children: [
                                 Column(
                                   children: [
-                                    boldGrey("AD Code"),
+                                    boldGrey(lc.ad_code),
                                     4.verticalSpace,
                                     headerText(controller.carDetails.postCode,context),
                                   ],
                                 ),
                                 Column(
                                   children: [
-                                    boldGrey("Year"),
+                                    boldGrey(lc.year,
+                                    ),
                                     4.verticalSpace,
                                     headerText(
                                         "${controller.carDetails.manufactureYear}",context),
@@ -261,7 +266,7 @@ class _CarDetailsState extends State<CarDetails> {
                               children: [
                                 Column(
                                   children: [
-                                    boldGrey("Mileage"),
+                                    boldGrey(lc.mileage),
                                     4.verticalSpace,
                                     headerText(controller.carDetails.mileage
                                         .toString(),context),
@@ -269,7 +274,8 @@ class _CarDetailsState extends State<CarDetails> {
                                 ),
                                 Column(
                                   children: [
-                                    boldGrey("Warranty"),
+                                    boldGrey(lc.warranty),
+
                                     4.verticalSpace,
                                     headerText(controller
                                         .carDetails.warrantyAvailable,context),
@@ -290,7 +296,7 @@ class _CarDetailsState extends State<CarDetails> {
                                   mainAxisSize: MainAxisSize
                                       .min, // shrink-wrap instead of expanding
                                   children: [
-                                    boldGrey("Exterior"),
+                                    boldGrey(lc.exterior),
                                     4.verticalSpace,
                                     Container(
                                       width: 34.w,
@@ -306,7 +312,7 @@ class _CarDetailsState extends State<CarDetails> {
                                 ),
                                 Column(
                                   children: [
-                                    boldGrey("interior"),
+                                    boldGrey(lc.interior),
                                     4.verticalSpace,
                                     Container(
                                       width: 34.w,
@@ -333,12 +339,12 @@ class _CarDetailsState extends State<CarDetails> {
                             children: [
                               12.verticalSpace,
                               Text(
-                                "Specifications",
+                                lc.specifications,
                                 style: TextStyle(
-                                    color: AppColors.blackColor(context),
-                                    fontFamily: fontFamily,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w800
+                                  color: AppColors.blackColor(context),
+                                  fontFamily: fontFamily,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w800
                                 ),
                               ),
                               10.verticalSpace,
@@ -349,26 +355,26 @@ class _CarDetailsState extends State<CarDetails> {
                           16.verticalSpace,
                           //optional Details
                           controller.carDetails.sourceKind == 'Individual' ||
-                              controller.carDetails.sourceKind == 'Partner'
+                                  controller.carDetails.sourceKind == 'Partner'
                               ? SizedBox(
-                              height: 300.h,
-                              child: CustomTabExample(
-                                spec: controller.spec,
-                                offers: controller.offers,
-                              ))
+                                  height: 300.h,
+                                  child: CustomTabExample(
+                                    spec: controller.spec,
+                                    offers: controller.offers,
+                                  ))
                               : SizedBox(),
                           16.verticalSpace,
 
                           controller.carDetails.sourceKind == 'Qars Spin' ||
-                              controller.carDetails.sourceKind == 'Partner'
+                                  controller.carDetails.sourceKind == 'Partner'
                               ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              sectionWithCars("Similar Cars", controller.similarCars),
-                              20.verticalSpace,
-                              sectionWithCars("Owner's Ads", controller.ownersAds),
-                            ],
-                          )
+                                  children: [
+                                    sectionWithCars("Similar Cars", controller.similarCars),
+                                    20.verticalSpace,
+                                    sectionWithCars("Owner's Ads", controller.ownersAds),
+                                  ],
+                                )
                               : SizedBox(),
                           16.verticalSpace
                         ],
@@ -393,7 +399,7 @@ class _CarDetailsState extends State<CarDetails> {
           child: Text(
             title,
             style:  TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700,fontFamily: fontFamily,
-                color: AppColors.blackColor(context)
+              color: AppColors.blackColor(context)
             ),
           ),
         ),
@@ -411,9 +417,9 @@ class _CarDetailsState extends State<CarDetails> {
 
             itemBuilder: (context, index) {
               return carCard(
-                // w: 192.w,
-                // h: 235.h,
-                  context: context,
+                  // w: 192.w,
+                  // h: 235.h,
+                context: context,
                   w: 150.w,
                   h: 50,
                   postKind: widget.postKind,
@@ -493,7 +499,7 @@ class _CarDetailsState extends State<CarDetails> {
               child: Text(
                 title,
                 style: TextStyle(
-                    fontFamily: fontFamily,
+                  fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
                     fontSize: 14.sp, color: AppColors.blackColor(context)),
 
@@ -516,7 +522,7 @@ class _CarDetailsState extends State<CarDetails> {
               child: Text(
                 value,
                 style: TextStyle(
-                    fontFamily: fontFamily,
+                  fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
                     fontSize: 14.sp, color: AppColors.blackColor(context)),
               ),

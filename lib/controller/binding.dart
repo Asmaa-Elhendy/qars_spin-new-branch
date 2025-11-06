@@ -29,7 +29,7 @@ class MyBinding implements  Bindings {
     Get.lazyPut(() => AdCleanController(AdRepository()), fenix: true);
     Get.lazyPut(() => MyAdCleanController(MyAdDataLayer()), fenix: true);
     Get.lazyPut(() => MySearchController(),fenix: true);
-    
+
     // Initialize FCM Service and Notifications Controller
     Get.lazyPut(() => FCMService(), fenix: true);
     Get.lazyPut(() => NotificationsController(), fenix: true);

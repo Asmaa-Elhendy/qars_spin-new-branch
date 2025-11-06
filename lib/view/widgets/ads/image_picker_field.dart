@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:async';
 
+import '../../../l10n/app_localization.dart';
+
 class ImagePickerField extends StatefulWidget {
   final List<String> imagePaths;
   final String? coverImage;
@@ -108,11 +110,13 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   }
 
   Future<void> _pickMedia({required bool isVideo}) async {
+    var lc = AppLocalizations.of(context)!;
+
     try {
       if (isVideo) {
         if (_videoPath != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('You can only add one video')),
+             SnackBar(content: Text(lc.only_one_video)),
           );
           return;
         }
@@ -132,7 +136,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
       } else {
         if (_images.length >= widget.maxImages) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Maximum ${widget.maxImages} images allowed')),
+            SnackBar(content: Text('${lc.max} ${widget.maxImages} ${lc.img_allowed}')),
           );
           return;
         }
@@ -163,7 +167,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
 
           if (selectedImages.length > remainingSlots) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Only $remainingSlots more images can be added')),
+              SnackBar(content: Text('${lc.only} $remainingSlots ${lc.more_img}')),
             );
           }
         }
@@ -171,7 +175,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+      ).showSnackBar(SnackBar(content: Text('${lc.failed_img}: $e')));
     }
   }
 
@@ -198,6 +202,8 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
+        var lc = AppLocalizations.of(context)!;
+
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -205,7 +211,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Add Media',
+                  lc.add_media,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -215,7 +221,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
               Divider(height: 1),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: Colors.black),
-                title: const Text('Add Photo'),
+                title:  Text(lc.add_img),
                 onTap: () {
                   Navigator.pop(context);
                   _pickMedia(isVideo: false);
@@ -224,7 +230,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
               if (_videoPath == null)
                 ListTile(
                   leading: const Icon(Icons.video_library, color: Colors.black),
-                  title: const Text('Add Video'),
+                  title:  Text(lc.add_video),
                   onTap: () {
                     Navigator.pop(context);
                     _pickMedia(isVideo: true);
@@ -242,6 +248,8 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
+
 
     // Combine images and video into a single list for display
     List<Map<String, dynamic>> mediaItems = [];
@@ -324,7 +332,7 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
                       ),
                       child: Center(
                         child: Text(
-                          'Cover',
+                          lc.cover,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

@@ -6,11 +6,11 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/rental_cars_controller.dart';
 import 'package:qarsspin/model/car_model.dart';
 
+import '../../../l10n/app_localization.dart';
 import '../../../model/rental_car_model.dart';
 import '../../widgets/rental_cars/info.dart';
 import '../../widgets/rental_cars/price_table.dart';
 import '../../widgets/rental_cars/rental_bottom_bar.dart';
-import '../../widgets/showrooms_widgets/dealer_info_section.dart';
 import '../../widgets/showrooms_widgets/dealer_tabs.dart';
 import '../../widgets/showrooms_widgets/header_section.dart';
 import '../../widgets/texts/texts.dart';
@@ -28,6 +28,8 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       bottomNavigationBar: RentalBottomNaviagtion(phone: widget.rentalCar.ownerMobile),
@@ -110,7 +112,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                         padding:
                             EdgeInsets.symmetric(horizontal: width * .03),
                         child: Text(
-                          "Rental Prices",
+                          lc.rental_prices,
                           style: TextStyle(
                             color: AppColors.blackColor(context),
                             fontSize: 14.sp,
@@ -145,37 +147,37 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                           children: [
                             Row(
                               children: [
-                                column("Chassis Number",
-                                    widget.rentalCar.chassisNumber),
+                                column(lc.chassis_number,
+                                    widget.rentalCar.chassisNumber,lc),
                                 Spacer(),
                                 column(
-                                    "Year",
+                                    lc.year,
                                     widget.rentalCar.manufactureYear
-                                        .toString())
+                                        .toString(),lc)
                               ],
                             ),
                             30.verticalSpace,
                             Row(
                               children: [
-                                column("Mileage",
-                                    widget.rentalCar.mileage.toString()),
+                                column(lc.mileage,
+                                    widget.rentalCar.mileage.toString(),lc),
                                 Spacer(),
                                 column(
-                                    "For Leasing",
+                                    lc.for_leasing,
                                     widget.rentalCar.availableForLease == 0
-                                        ? "No"
-                                        : "Yes")
+                                        ? lc.value_No
+                                        : lc.value_Yes,lc)
                               ],
                             ),
                             30.verticalSpace,
                             Row(
                               children: [
-                                column("Exterior",
-                                    widget.rentalCar.mileage.toString(),
+                                column(lc.exterior,
+                                    widget.rentalCar.mileage.toString(),lc,
                                     color: true),
                                 Spacer(),
-                                column("Interior",
-                                    widget.rentalCar.mileage.toString(),
+                                column(lc.interior,
+                                    widget.rentalCar.mileage.toString(),lc,
                                     color: true),
                               ],
                             ),
@@ -183,7 +185,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                         ),
                       ),
                       16.verticalSpace,
-                      headerText("Specifications",context),
+                      headerText(lc.specifications,context),
                       8.verticalSpace,
 
                       GetBuilder<RentalCarsController>(
@@ -204,7 +206,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
     );
   }
 
-  column(key, value, {bool color = false}) {
+  column(key, value,lc, {bool color = false}) {
     return Column(
       children: [
         SizedBox(
@@ -223,7 +225,7 @@ class _RentalCarDetailsState extends State<RentalCarDetails> {
                     height: 34.h,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: key == "Exterior"
+                        color: key == lc.exterior
                             ? widget.rentalCar.colorExterior
                             : widget.rentalCar.colorInterior,
                         border: Border.all(color: AppColors.darkGray)),

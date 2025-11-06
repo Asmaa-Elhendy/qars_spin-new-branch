@@ -17,12 +17,7 @@ enum CarType {
   /// Caravan available for rent
   caravanForRent,
 }
-enum CarStatus{
-  Personal,
-  Showroom,
-  QarsSpin
-
-}
+enum CarStatus { personal, showroom, qarsSpin }
 
 class CarModel{
   final int? offerId;
@@ -44,6 +39,7 @@ class CarModel{
   Color? interiorColor;
   Color? exteriorColor;
   String? description;
+  String? technical_Description_SL;
   int? offersCount;
   String? warrantyAvailable;
   int? visitsCount;
@@ -59,6 +55,7 @@ class CarModel{
     required this.postCode,
     required this.carNamePl,
     this.interiorColor,
+    this.technical_Description_SL,
     this.exteriorColor,
     this.description,
     this.offersCount,
@@ -76,11 +73,11 @@ class CarModel{
     required this.askingPrice,
     required this.rectangleImageFileName,
     required this.rectangleImageUrl,
-  });
+});
 
 
 }
-/// Converts a string to CarType enum
+  /// Converts a string to CarType enum
 //   factory CarType.fromString(String value) {
 //   switch (value.toLowerCase()) {
 //     case 'forrent':

@@ -6,6 +6,7 @@ import 'package:qarsspin/model/rental_car_model.dart';
 import 'package:qarsspin/model/showroom_model.dart';
 
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../showrooms_widgets/rating_tab_show_room_detail.dart';
 import '../showrooms_widgets/showroom_details_tab_widget.dart';
 
@@ -40,6 +41,9 @@ class _CarCareTapBarState extends State<CarCareTapBar>
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
+
     return Column(children: [
       // --- Tab Bar ---
       Container(
@@ -64,8 +68,8 @@ class _CarCareTapBarState extends State<CarCareTapBar>
               fontWeight: FontWeight.w800,
               fontSize: 16.sp),
           tabs: [
-            Tab(text: "Gallery"),
-            Tab(text: "Rating"),
+            Tab(text: lc.gallery),
+            Tab(text: lc.rating),
           ],
         ),
       ),

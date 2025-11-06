@@ -33,8 +33,8 @@ class ValidationMethods {
         askingPrice.isEmpty ||
         mileage.isEmpty||
         fuelType.isEmpty||
-       cylinders.isEmpty||
-    transmission.isEmpty
+        cylinders.isEmpty||
+        transmission.isEmpty
     //  ||  description.isEmpty
     ) {
       showMissingFieldsDialog("Please fill all (*)  mandatory fields");

@@ -8,6 +8,7 @@ import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/view/screens/auth/my_account.dart';
 
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 
 class RegisterDialog extends StatefulWidget {
   bool offer;
@@ -25,6 +26,8 @@ class _RegisterDialogState extends State<RegisterDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Dialog(
       backgroundColor: Colors.grey.shade200, // grey background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
@@ -38,7 +41,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
             /// Title
             Center(
               child: Text(
-                "Not Registered",
+                lc.not_register,
                 style: TextStyle(
                     color: AppColors.black,
                     fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
@@ -51,7 +54,8 @@ class _RegisterDialogState extends State<RegisterDialog> {
               padding:  EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 textAlign: TextAlign.center,
-                "Would you like to register now?",
+                lc.register_now,
+
                 style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily,color: AppColors.black),
               ),
             ),
@@ -71,7 +75,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child:  Text("Cancel",style: TextStyle(color: AppColors.black),),
+                    child:  Text(lc.btn_Cancel,style: TextStyle(color: AppColors.black),),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -79,7 +83,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       Get.to(MyAccount());
-                    },
+    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.black,
@@ -87,7 +91,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text("Register"),
+                    child:  Text(lc.register),
                   ),
                 ),
               ],

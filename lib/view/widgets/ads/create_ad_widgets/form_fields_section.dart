@@ -10,6 +10,7 @@ import '../../../../controller/const/base_url.dart';
 import '../../../../controller/const/colors.dart';
 import '../../../../controller/specs/specs_controller.dart';
 import '../../../../controller/specs/specs_data_layer.dart';
+import '../../../../l10n/app_localization.dart';
 import '../../../screens/my_ads/specs_management.dart';
 import '../color_picker_field.dart';
 import '../drop_Down_field.dart';
@@ -158,23 +159,25 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: height * .02),
 
-        Text("(*) Mandatory Choice", style: TextStyle(fontSize: width * .04)),
+        Text(lc.mandatory_choice, style: TextStyle(fontSize: width * .04)),
         SizedBox(height: height * .01),
 
         // Make Dropdown
         Obx(
               () => CustomDropDownTyping(
-            label: "Choose Make(*)",
+            label: "${lc.choose_make}(*)",
             controller: widget.makeController,
             options: brandController.carBrands.map((b) => b.name).toList()
               ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
-            hintText: "Choose Make",
+            hintText: lc.choose_make,
             onChanged: (value) {
               final selected = brandController.carBrands.firstWhereOrNull(
                     (b) => b.name == value,
@@ -206,7 +209,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         // Class Dropdown
         Obx(() {
           return CustomDropDownTyping(
-            label: "Choose Class(*)",
+            label: "${lc.choose_class}(*)",
             controller: widget.classController,
             options: brandController.carClasses.map((c) => c.name).toList()
               ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
@@ -236,7 +239,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         // Model Dropdown
         Obx(() {
           return CustomDropDownTyping(
-            label: "Choose Model(*)",
+            label: "${lc.choose_model}(*)",
             controller: widget.modelController,
             options: brandController.carModels.map((m) => m.name).toList()
               ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())),
@@ -268,7 +271,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             print('Category options: $categoryOptions');
 
             return CustomDropDownTyping(
-              label: "Choose Type(*)",
+              label: "${lc.choose_type}(*)",
               controller: widget.typeController,
               options: categoryOptions,
               enableSearch: false,
@@ -300,7 +303,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         // Year Dropdown
         CustomDropDownTyping(
-          label: "Manufacture Year(*)",
+          label: "${lc.manufacture_year}(*)",
           controller: widget.yearController,
           options: List.generate(
             51,
@@ -321,11 +324,11 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.askingPriceController,
-          label: "Price(*)",
+          label: "${lc.price}(*)",
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
-          hintText: "Enter asking price",
+          hintText: lc.enter_price,
         ),
         SizedBox(height: height * .01),
 
@@ -333,11 +336,11 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.minimumPriceController,
-          label: "Minimum biding price you want to see",
+          label: lc.mini_biding_price,
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
-          hintText: "Enter minimum price",
+          hintText: lc.enter_mini_price,
         ),
         SizedBox(height: height * .01),
 
@@ -345,9 +348,9 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.mileageController,
-          label: "Mileage(*)",
+          label: "${lc.mileage}(*)",
           keyboardType: TextInputType.number,
-          hintText: "Enter mileage",
+          hintText: lc.enter_mileage,
         ),
 
         SizedBox(height: height * .01),
@@ -355,7 +358,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         // Exterior Color Picker
         ColorPickerField(
           key: Key('exterior_color_${widget.exteriorColor.hashCode}'),
-          label: "Exterior Color",
+          label: lc.exterior,
           initialColor: widget.exteriorColor,
           onColorSelected: widget.onExteriorColorSelected,
           isExterior: true, // Show exterior colors
@@ -366,7 +369,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         // Interior Color Picker
         ColorPickerField(
           key: Key('interior_color_${widget.interiorColor.hashCode}'),
-          label: "Interior Color",
+          label: lc.interior,
           initialColor: widget.interiorColor,
           onColorSelected: widget.onInteriorColorSelected,
           isExterior: false, // Show interior colors
@@ -377,11 +380,11 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.plateNumberController,
-          label: "Plate Number",
+          label: lc.plate_number,
           keyboardType: TextInputType.number,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
-          hintText: "Enter plate number",
+          hintText: lc.enter_plate_number,
         ),
         SizedBox(height: height * .01),
 
@@ -389,11 +392,11 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         CustomTextField(
           fromCreateAd: true,
           controller: widget.chassisNumberController,
-          label: "Chassis Number",
+          label: lc.chassis_number,
           keyboardType: TextInputType.text,
           cursorColor: AppColors.brandBlue,
           cursorHeight: 25.h,
-          hintText: "Enter chassis number",
+          hintText: lc.enter_chassis,
         ),//l
         SizedBox(height: height * .01),
         widget.postData == null
@@ -420,7 +423,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   children: [
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[0].specHeaderPl+'(*)' ,
+                      Get.locale?.languageCode=='ar'?controller.specsStatic[0].specHeaderSl:controller.specsStatic[0].specHeaderPl+'(*)' ,
                       // 👈 اسم الخيار
                       controller:widget.fuelTypeController,
                       // 👈 كل spec له كنترولر خاص
@@ -429,7 +432,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                       ),
                       // 👈 ال options بتاعته
                       enableSearch: false,
-                      hintText: "Select",
+                      hintText: lc.select,
                       onChanged: (value) {
                         specsController.updateLocal(specId: specsController.specsStatic[0].specId, specValuePl: widget.fuelTypeController.text);
                         // هنا تعملي أي action على اختيار الـ option
@@ -439,7 +442,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                     SizedBox(height: height * .01),
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[1].specHeaderPl+'(*)' ,
+                      Get.locale?.languageCode=='ar'?controller.specsStatic[1].specHeaderSl+'(*)' : controller.specsStatic[1].specHeaderPl+'(*)' ,
                       // 👈 اسم الخيار
                       controller: widget.cylindersController,
                       // 👈 كل spec له كنترولر خاص
@@ -448,7 +451,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                       ),
                       // 👈 ال options بتاعته
                       enableSearch: false,
-                      hintText: "Select",
+                      hintText: lc.select,
                       onChanged: (value) {
                         specsController.updateLocal(specId: specsController.specsStatic[1].specId, specValuePl: widget.cylindersController.text);
 
@@ -459,7 +462,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                     SizedBox(height: height * .01),
                     CustomDropDownTyping(
                       label:
-                      controller.specsStatic[2].specHeaderPl +'(*)',
+                      Get.locale?.languageCode=='ar'?controller.specsStatic[2].specHeaderSl+'(*)' :  controller.specsStatic[2].specHeaderPl +'(*)',
                       // 👈 اسم الخيار
                       controller: widget.transmissionController,
                       // 👈 كل spec له كنترولر خاص
@@ -469,7 +472,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                       // 👈 ال options بتاعته
 
                       enableSearch: false,
-                      hintText: "Select",
+                      hintText: lc.select,
                       onChanged: (value) {
                         specsController.updateLocal(specId: specsController.specsStatic[2].specId, specValuePl: widget.transmissionController.text);
 
@@ -498,9 +501,9 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             : SizedBox(),
 
         CustomDropDownTyping(
-          label: "Under Warranty",
+          label: lc.under_warranty,
           controller: widget.warrantyController,
-          options: ["No", "Yes"],
+          options: [lc.value_No, lc.value_Yes],
           enableSearch: false,
           hintText: "",
           onChanged: (value) {
@@ -512,7 +515,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: height * .01),
 
         Text(
-          'Car Description',
+          lc.car_desc,
           style: TextStyle(
             fontSize: 15.w,
             fontWeight: FontWeight.w500,
@@ -523,9 +526,9 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
 
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.black, width: 0.3), //update color asmaa
-            borderRadius: BorderRadius.circular(5),
-            color: AppColors.white
+              border: Border.all(color: AppColors.black, width: 0.3), //update color asmaa
+              borderRadius: BorderRadius.circular(5),
+              color: AppColors.white
           ),
           child: TextField(
             controller: widget.descriptionController,
@@ -536,7 +539,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
               fillColor: AppColors.white,
 
               border: InputBorder.none,
-              hintText: 'Enter car description...',
+              hintText: lc.enter_desc,
               hintStyle: TextStyle(color: Colors.grey.shade400),
             ),
           ),
@@ -599,7 +602,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 ),
                 Expanded(
                   child: Text(
-                    'Make Your Advertisement special by 360 session (100 riyal only for full shooting session)',
+                    lc.make_360,
                     style: TextStyle(
                       fontSize: 14.4.w,
                       fontWeight: FontWeight.bold,
@@ -620,7 +623,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 ),
                 Expanded(
                   child: Text(
-                    'Pin your advertisement at the top for (150) QR only',
+                    lc.pin_ad,
                     style: TextStyle(
                       fontSize: 14.4.w,
                       fontWeight: FontWeight.bold,
@@ -642,7 +645,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
             ),
             Expanded(
               child: Text(
-                'I agree to the Terms and Conditions',
+                lc.agreement,
                 style: TextStyle(fontSize: 14.4.w, fontWeight: FontWeight.bold),
               ),
             ),
@@ -665,7 +668,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 children: [
                   SizedBox(height: 15.h),
                   Text(
-                    'I confirm the accuracy of the information provided',
+                    lc.confirm_info,
                     style: TextStyle(
                       fontSize: 14.4.w,
                       fontWeight: FontWeight.bold,
@@ -696,7 +699,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    "Save as draft",
+                    lc.save_draft,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16.w,
@@ -719,8 +722,8 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                     alignment: Alignment.center,
                     child: Text(
                       widget.postData['PostStatus'].toString() == "Approved"
-                          ? "RePublish"
-                          : "Save",
+                          ? lc.republish
+                          : lc.save,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 16.w,
@@ -747,7 +750,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    "Publish",
+                    lc.publish,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16.w,
@@ -764,7 +767,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         SizedBox(height: 10.h),
         Center(
           child: Text(
-            'You agree to Qars Spin Terms & Conditions',
+            lc.condition_agreement,
             style: TextStyle(fontSize: 12.w),
           ),
         ),

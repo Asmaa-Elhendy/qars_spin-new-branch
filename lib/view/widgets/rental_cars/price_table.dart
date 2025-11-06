@@ -3,12 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/model/rental_car_model.dart';
 
+import '../../../l10n/app_localization.dart';
+
 class PriceTable extends StatelessWidget {
   RentalCar car;
    PriceTable({required this.car,super.key});
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return SizedBox(
       height: 160.h,
       child: Container(
@@ -16,11 +20,11 @@ class PriceTable extends StatelessWidget {
         child: Column(
 
           children: [
-            dataRow("Daily", double.parse(car.rentPerDay)==0?"-":car.rentPerDay, true,context),
+            dataRow(lc.daily, double.parse(car.rentPerDay)==0?"-":car.rentPerDay,lc, true,context),
             4.verticalSpace,
-            dataRow("Weekly", double.parse(car.rentPerWeek)==0?"-":car.rentPerWeek, false,context),
+            dataRow(lc.weekly, double.parse(car.rentPerWeek)==0?"-":car.rentPerWeek, lc,false,context),
             4.verticalSpace,
-            dataRow("Monthly", double.parse(car.rentPerMonth)==0?"-":car.rentPerMonth, true,context),
+            dataRow(lc.monthly, double.parse(car.rentPerMonth)==0?"-":car.rentPerMonth, lc,true,context),
       
       
           ],
@@ -29,7 +33,7 @@ class PriceTable extends StatelessWidget {
     );
   }
 
-  dataRow(String key, value,bool grey,context){
+  dataRow(String key, value,lc,bool grey,context){
     return Row(
       children: [
         Container(
@@ -73,7 +77,7 @@ class PriceTable extends StatelessWidget {
           ),
 
           child: Center(
-            child: Text(value=="-"?value:"$value QAR",
+            child: Text(value=="-"?value:"$value ${lc.currency_Symbol}",
               style: TextStyle(
                   color: AppColors.blackColor(context),
                   fontSize: 14.sp,

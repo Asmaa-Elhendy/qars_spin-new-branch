@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
 
-Widget featuredContainer(){
+Widget featuredContainer(context){
+  var lc = AppLocalizations.of(context)!;
+
 
   return Container( //update asmaa
     width: 80.w,
@@ -14,7 +17,7 @@ Widget featuredContainer(){
 
     ),
     child: Center(
-      child: Text("Featured",
+      child: Text(lc.featured,
 
         style: TextStyle(
             color: Colors.white,

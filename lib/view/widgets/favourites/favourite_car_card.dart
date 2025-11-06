@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../controller/const/base_url.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 
 class FavouriteCarCard extends StatelessWidget {
   final String title;
@@ -30,6 +32,7 @@ class FavouriteCarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
       // Margin خارجي
@@ -91,20 +94,22 @@ class FavouriteCarCard extends StatelessWidget {
                           // Price
                           myOffer != null
                               ? Text(
-                                  'Asking Price:' + ' ' + price + ' ' + 'QAR',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.blackColor(context),
-                                  ),
-                                )
+                            '${lc.ask_price}' + ' ' + price + ' ' + '${lc.currency_Symbol}',
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 12.sp,
+                              color: AppColors.blackColor(context),
+                            ),
+                          )
                               : Text(
-                                  price + ' ' + 'QAR',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                            price + ' ' + '${lc.currency_Symbol}',
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 12.sp,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           SizedBox(height: 6.h),
 
                           Row(
@@ -130,54 +135,54 @@ class FavouriteCarCard extends StatelessWidget {
                               myOffer != null
                                   ? SizedBox()
                                   : SvgPicture.asset(
-                                      'assets/images/new_svg/ic_mileage.svg',
-                                      width: 24.w,
-                                      height: 24.h,
-                                      color: AppColors.black,
-                                    ),
+                                'assets/images/new_svg/ic_mileage.svg',
+                                width: 24.w,
+                                height: 24.h,
+                                color: AppColors.black,
+                              ),
                               myOffer != null
                                   ? SizedBox()
                                   : Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 2.w,
-                                      ),
-                                      child: Text(
-                                        meilage,
-                                        style: TextStyle(
-                                          fontSize: 15.w,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 2.w,
+                                ),
+                                child: Text(
+                                  meilage,
+                                  style: TextStyle(
+                                    fontSize: 15.w,
 
-                                          color: AppColors.textSecondary(
-                                            context,
+                                    color: AppColors.textSecondary(
+                                      context,
 
-                                          ),
-                                        ),
-                                      ),
                                     ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ],
                       ),
                       myOffer != null
                           ? InkWell(
-                              onTap: () {
-                                if (onDeleteTap != null) {
-                                  onDeleteTap!();
-                                }
-                              },
-                              child: Icon(
-                                Icons.delete_outline,
-                                color: const Color(0xffEC6D64),
-                                size: 28.w,
-                              ),
-                            )
+                        onTap: () {
+                          if (onDeleteTap != null) {
+                            onDeleteTap!();
+                          }
+                        },
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: const Color(0xffEC6D64),
+                          size: 28.w,
+                        ),
+                      )
                           : InkWell(
-                              onTap: onHeartTap,
-                              child: Icon(
-                                Icons.favorite, // Black border layer
-                                size: 25.sp,
-                                color: AppColors.primary,
-                              ),
-                            ),
+                        onTap: onHeartTap,
+                        child: Icon(
+                          Icons.favorite, // Black border layer
+                          size: 25.sp,
+                          color: AppColors.primary,
+                        ),
+                      ),
                     ],
                   ),
                 ],

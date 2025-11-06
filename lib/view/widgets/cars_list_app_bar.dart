@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/view/screens/notifications/notifications.dart';
 
 import '../../controller/const/colors.dart';
+import '../../controller/notifications_controller.dart';
 
 
- carListAppBar({required int notificationCount,required BuildContext context}){
+ carListAppBar(NotificationsController notificationsController,{required int notificationCount,required BuildContext context}){
 
   return AppBar(
     centerTitle: true,
@@ -31,7 +33,10 @@ import '../../controller/const/colors.dart';
       ),
     ),
     leading: GestureDetector(
-      onTap: () => Get.back(),
+      onTap: () {
+        Navigator.pop(context);
+       // Get.back();
+      },
       child: Icon(Icons.arrow_back,
           color: Theme.of(context).iconTheme.color),
     ),
@@ -46,52 +51,75 @@ import '../../controller/const/colors.dart';
       ),
     ),
     actions: [
-      Stack(
-        clipBehavior: Clip.none,
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: Padding(
-              padding: EdgeInsets.only(right: 15.w),
-              child: Image.asset(
-                'assets/images/logo_the_q.png',
-                width: 40.w,
-                height: 35.h,
+      SizedBox(
+        width: 64, // give Stack a stable box inside AppBar actions
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // The tappable "Q" icon
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                child: Image.asset(
+                  'assets/images/logo_the_q.png',
+                  width: 40.w,
+                  height: 35.h,
+                ),
               ),
             ),
-          ),
-          if (notificationCount > 0)
-            Positioned(
-              right: 40.w,
-              top: 10.h,
-              child: Container(
-                height: 18.h,
-                constraints: const BoxConstraints(minWidth: 14, minHeight: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.danger,
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.18),
-                      blurRadius: 3,
+
+            // The badge MUST be a direct child of Stack
+            Obx(() {
+              final count = notificationsController.notifications.length;
+              debugPrint('🔔 Notification count: $count');
+
+              // if (count == 0) {
+              //   return const SizedBox.shrink(); // hide when zero
+              // }
+
+              return PositionedDirectional(
+                // works for both LTR/RTL without manual left/right logic
+                start: 6.w,
+                top: 10.h,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => NotificationsPage()),
+                    );
+                  },
+                  child: Container(
+                    height: 17.h,
+                    width: 18.w,
+                    constraints: const BoxConstraints(minWidth: 14, minHeight: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.danger,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.18),
+                          blurRadius: 3,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  notificationCount > 99
-                      ? '99+'
-                      : notificationCount.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
+                    alignment: Alignment.center,
+                    child: Text(
+                      count > 99 ? '99+' : count.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     ],
+
   );
 
  }

@@ -5,6 +5,8 @@ import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 
+import '../../../l10n/app_localization.dart';
+
 class RateShowroomSheet extends StatefulWidget {
   final Function(int) onConfirm;
 
@@ -19,12 +21,13 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     final Map<int, String> ratingWords = {
-      5: "Five Stars",
-      4: "Four Stars",
-      3: "Three Stars",
-      2: "Two Stars",
-      1: "One Star",
+      5: lc.five_stars,
+      4: lc.four_stars,
+      3: lc.three_stars,
+      2: lc.two_stars,
+      1: lc.one_star,
     };
     return Container(
       padding:  EdgeInsets.symmetric(vertical: 25.h, horizontal: 16.w),
@@ -45,7 +48,7 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
             ),
           ),
            Text(
-            "Rate Showroom",
+            lc.rate_room,
             style: TextStyle(
                 color: AppColors.black,
                 fontSize: 16.sp, fontWeight: FontWeight.w700,fontFamily: fontFamily),
@@ -114,7 +117,7 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
 
                   ),
                   child: Center(
-                    child: Text("Cancel",
+                    child: Text(lc.btn_Cancel,
 
                       style: TextStyle(
                         color: AppColors.black,
@@ -152,7 +155,7 @@ class _RateShowroomSheetState extends State<RateShowroomSheet> {
 
                   ),
                   child: Center(
-                    child: Text("Confirm",
+                    child: Text(lc.btn_Confirm,
 
                       style: TextStyle(
                         color: AppColors.black,

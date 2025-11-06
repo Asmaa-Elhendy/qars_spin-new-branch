@@ -5,6 +5,7 @@ import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/my_ads/my_ad_data_layer.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/my_ads/my_ad_card.dart';
 
@@ -62,6 +63,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
       body: Stack(
@@ -100,20 +102,20 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "My Advertisements",
+                            lc.adv_lbl,
                             style: TextStyle(
                               color: AppColors.blackColor(context),
-                              fontFamily: 'Gilroy',
+                              fontFamily: fontFamily,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
                           SizedBox(height: 3),
                           Obx(() => Text(
-                            "Active Ads ${controller.activeAdsCount} Of ${controller.myAds.length}",
+                            "${lc.active_ads} ${controller.activeAdsCount} ${lc.of_lbl} ${controller.myAds.length}",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Gilroy',
+                              color: AppColors.blackColor(context),
+                              fontFamily: fontFamily,
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w800,
                             ),
@@ -135,13 +137,13 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Error: ${controller.myAdsError.value}',
+                            '${lc.error_lbl} ${controller.myAdsError.value}',
                             style: TextStyle(color: Colors.red),
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => controller.fetchMyAds(),
-                            child: Text('Retry'),
+                            child: Text(lc.retry),
                           ),
                         ],
                       ),
@@ -152,7 +154,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                       !controller.isLoadingMyAds.value) {
                     return Center(
                       child: Text(
-                        'No ads found',
+                        lc.no_ads,
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: Colors.grey,
@@ -190,7 +192,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
                   child: AppLoadingWidget(
-                    title: 'Loading...\nPlease Wait...',
+                    title:lc.loading,
                   ),
                 ),
               ),

@@ -58,7 +58,7 @@ class MyAdCleanController extends GetxController {
     try {
       isDeletingAd.value = true;
       deleteError.value = null;
-      
+
       final response = await repository.deletePost(
         postId: postId,
         loggedInUser: loggedInUser,

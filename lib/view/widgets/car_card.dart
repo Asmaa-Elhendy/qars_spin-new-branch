@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
+import '../../l10n/l10n.dart';
 import '../../model/car_model.dart';
 import '../screens/cars_for_sale/car_details.dart';
 import 'featured_widget.dart';
@@ -35,8 +37,9 @@ Widget carCard({
     onTap: () {
 
       if(postKind!=""){
+        print("Good job");
         Get.find<BrandController>().switchOldData();
-        Get.find<BrandController>().getCarDetails(postKind, car.postId.toString());
+        Get.find<BrandController>().getCarDetails(postKind, car.postId.toString(),context: context);
         Get.to(CarDetails(sourcekind:car.sourceKind,postKind: car.postKind,id: car.postId,));
 
 
@@ -94,7 +97,7 @@ Widget carCard({
                   ),
                 ),
                 if (car.pinToTop == 1)
-                  Positioned(bottom: 3, left: 3, child: featuredContainer()),
+                  Positioned(bottom: 3, left: 3, child: featuredContainer(context)),
               ],
             ),
 
@@ -111,7 +114,7 @@ Widget carCard({
                       padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left: 6.w), // no horizontal padding
                       child: SizedBox(height: 40.h,
                         child: Text(
-                          car.carNamePl.trim(),
+                          Get.locale?.languageCode=='ar'?car.carNameSl :car.carNamePl.trim(),
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
@@ -127,11 +130,11 @@ Widget carCard({
                         children: [
                           carStatus(
 
-                              car.sourceKind == "Individual"
-                                  ? CarStatus.Personal
-                                  : car.sourceKind == "Qars Spin"
-                                  ? CarStatus.QarsSpin
-                                  : CarStatus.Showroom,context
+                            car.sourceKind == "Individual"
+                                ? CarStatus.personal
+                                : car.sourceKind == "Qars Spin"
+                                ? CarStatus.qarsSpin
+                                : CarStatus.showroom,context
                           ),
                           SizedBox(height: tooSmall?2.h:8.h),
                           Row(
@@ -211,24 +214,27 @@ Widget carCard({
 }
 
 Widget carStatus(CarStatus status,context) {
+  var lc = AppLocalizations.of(context)!;
+  
+
   return Container(
-    width: 82.w,   //update asmaa
+    width: 93.w,   //update asmaa
     height: 23.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w,),//update
 
     decoration: BoxDecoration(
-      color: status == CarStatus.Personal
+      color: status == CarStatus.personal
           ? AppColors.success
-          : status == CarStatus.Showroom
+          : status == CarStatus.showroom
           ? AppColors
 
           .accent
           : AppColors.divider(context),
     ),
 
-    child: status == CarStatus.QarsSpin
+    child: status == CarStatus.qarsSpin
         ? SizedBox(
-      width: 30.w,
+      width: 40.w,
       height: 23.h,
       child: Image.asset(
         "assets/images/ic_top_logo_colored.png",
@@ -237,10 +243,22 @@ Widget carStatus(CarStatus status,context) {
     )
         : Center(
       child: Text(
-        status.name,
+        lc.getText(getCarStatusKey(status)),
+        //getCarStatusName(status, lc),
+          //lc.translate('CarStatus_${status.name}'),
 
         style: TextStyle(color: Colors.white, fontSize: 13.sp,fontFamily: fontFamily),
       ),
     ),
   );
+}
+String getCarStatusKey(CarStatus status) {
+  switch (status) {
+    case CarStatus.personal:
+      return 'carStatus_personal';
+    case CarStatus.showroom:
+      return 'carStatus_showroom';
+    case CarStatus.qarsSpin:
+      return 'carStatus_qarsSpin';
+  }
 }

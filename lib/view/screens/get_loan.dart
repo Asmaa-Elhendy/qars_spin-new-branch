@@ -12,6 +12,7 @@ import 'package:qarsspin/view/widgets/texts/texts.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/calculate_loan.dart' as loan_calc;
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
 import '../widgets/car_details/slider.dart';
 import '../widgets/car_details/snack_bar.dart';
 
@@ -55,6 +56,8 @@ class _GetLoanState extends State<GetLoan> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar: AppBar(
@@ -73,7 +76,7 @@ class _GetLoanState extends State<GetLoan> {
           ),
         ),
         title: Text(
-          "Get a Loan",
+          lc.get_loan,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.w700,
@@ -101,24 +104,24 @@ class _GetLoanState extends State<GetLoan> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            blueText("Ad Code: ${widget.car.postCode}"),
+            blueText("${lc.ad_code}: ${widget.car.postCode}"),
             8.verticalSpace,
-            headerText(widget.car.carNamePl,context),
+            headerText(Get.locale?.languageCode=='ar'?widget.car.carNameSl:widget.car.carNamePl,context),
             8.verticalSpace,
-            description(widget.car.description,small: true,context: context),
+            description(Get.locale?.languageCode=='ar'?widget.car.technical_Description_SL:widget.car.description,small: true,context: context),
             8.verticalSpace,
-            price("Price: ${widget.car.askingPrice} QAR",small:true),
+            price("${lc.price}: ${widget.car.askingPrice} ${lc.currency_Symbol}",small:true),
             14.verticalSpace,
             Divider(color: AppColors.black,thickness: .5.h,),
             8.verticalSpace,
             Padding(
               padding:  EdgeInsets.symmetric(horizontal: 10.w),
-              child: calcMode?calculateMode()
+              child: calcMode?calculateMode(lc)
                   :Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "How would you describe yourself?",
+                    lc.describe_your_self,
                     style: TextStyle(
                       fontFamily: fontFamily,
                       fontSize: 14.sp,
@@ -129,11 +132,11 @@ class _GetLoanState extends State<GetLoan> {
                   8.verticalSpace,
                   Padding(padding: EdgeInsets.symmetric(horizontal: 14.w),
 
-                  child: twoCheckBox(),
+                  child: twoCheckBox(lc),
                   ),
                   24.verticalSpace,
                   Text(
-                    "Your Down Payment",
+                    lc.down_payment,
                     style: TextStyle(
                         fontFamily: fontFamily,
                         fontSize: 14.sp,
@@ -186,7 +189,7 @@ class _GetLoanState extends State<GetLoan> {
                         ),
                         child: Center(
                           child:  Text(
-                            "QAR",
+                           lc.currency_Symbol,
                             style: TextStyle(fontSize: 16.sp,
                               color: AppColors.black,
                               fontFamily: fontFamily,
@@ -198,7 +201,7 @@ class _GetLoanState extends State<GetLoan> {
                   ),
                   35.verticalSpace,
                   Text(
-                    "loan Installments (Months)",
+                    lc.loan_installments,
                     style: TextStyle(
                         fontFamily: fontFamily,
                         fontSize: 14.sp,
@@ -211,7 +214,7 @@ class _GetLoanState extends State<GetLoan> {
                   35.verticalSpace,
                   GestureDetector(
                     onTap: (){
-                      _calculateLoan();
+                      _calculateLoan(lc);
                       setState(() {
                         calcMode = true;
                       });
@@ -226,7 +229,7 @@ class _GetLoanState extends State<GetLoan> {
 
                       ),
                       child: Center(
-                        child:Text("Calculate",
+                        child:Text(lc.calculate,
                         style: TextStyle(
                           color: AppColors.black,
                           fontSize: 13.sp,
@@ -250,11 +253,11 @@ class _GetLoanState extends State<GetLoan> {
       ),
     );
   }
-  Widget twoCheckBox(){
+  Widget twoCheckBox(lc){
     return Column(
       children: [
         customCheckboxTile(
-          title: "I Am Qatari National",
+          title: lc.qatari_national,
           checked: firstChecked,
           onChanged: (value) {
             setState(() {
@@ -266,7 +269,7 @@ class _GetLoanState extends State<GetLoan> {
           },
         ),
         customCheckboxTile(
-          title: "I Am A Resident In Qatar",
+          title: lc.resident_qatar,
           checked: secondChecked,
           onChanged: (value) {
             setState(() {
@@ -317,7 +320,7 @@ class _GetLoanState extends State<GetLoan> {
       ),
     );
   }
-  Widget calculateMode(){
+  Widget calculateMode(lc){
     // double annualInterestRate = 5.0; // Default 5% if not provided
     // final monthlyRate = (annualInterestRate / 12) / 100;
     // final rateFactor = pow(1 + monthlyRate, termInMonths).toDouble();
@@ -331,14 +334,14 @@ class _GetLoanState extends State<GetLoan> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        containerWithValue("Legal Status", firstChecked?"I Am Qatari National":"I Am A Resident In Qatar"),
-        containerWithValue("Your Down Payments", "${_offerController.text==""?"-":_offerController.text} QAR"),
-        containerWithValue("Loan Installments Count", "${monthsNotifier.value} Month(s)"),
-        containerWithValue("Loan Installments Value", " ${_monthlyPayment} QAR"),
-        containerWithValue("Total Loan Value", " ${_totalPayment} QAR"),
+        containerWithValue(lc.legal_status, firstChecked?lc.qatari_national:lc.resident_qatar),
+        containerWithValue(lc.down_payment, "${_offerController.text==""?"-":_offerController.text} ${lc.currency_Symbol}"),
+        containerWithValue(lc.loan_installments_count, "${monthsNotifier.value} ${lc.month_number}"),
+        containerWithValue(lc.loan_installments, " ${_monthlyPayment} ${lc.currency_Symbol}"),
+        containerWithValue(lc.total_loan_value, " ${_totalPayment} ${lc.currency_Symbol}"),
         22.verticalSpace,
         Padding(padding: EdgeInsets.symmetric(horizontal: 40.w),
-          child:         hintText("These figures are estimates, the accurate and\n    final figures will be sent to you by email.",context),
+          child:         hintText(lc.loan_figure,context),
 
         ),
 
@@ -361,7 +364,7 @@ class _GetLoanState extends State<GetLoan> {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
-                  child: Text("Re-Calculate",
+                  child: Text(lc.re_calculate,
 
                     style: TextStyle(
                       color: AppColors.black,
@@ -393,8 +396,8 @@ class _GetLoanState extends State<GetLoan> {
                   calcMode = false;
                 });
                 String code =  await Get.find<BrandController>().buyWithLoan(downPayment: _offerController.text, installmentsCount: "${_monthlyPayment}", nationality: firstChecked?"I Am Qatari National":"I Am A Resident In Qatar");
-                code=="OK"?  showSuccessSnackBar(context,"Your request has been submitted successfully!"):
-                showSuccessSnackBar(context,"Something went wrong please try again later");
+                code=="OK"?  showSuccessSnackBar(context,lc.request_success):
+                showSuccessSnackBar(context,lc.wnt_wrg);
 
               },
               child: Container(
@@ -405,7 +408,7 @@ class _GetLoanState extends State<GetLoan> {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
-                  child: Text("Send Request",
+                  child: Text(lc.btn_Send_Request,
 
                     style: TextStyle(
                       color: AppColors.black,
@@ -468,7 +471,7 @@ class _GetLoanState extends State<GetLoan> {
     );
   }
 
-  void _calculateLoan() {
+  void _calculateLoan(lc) {
     final price = double.tryParse(widget.car.askingPrice) ?? 0;
     final downPayment = double.tryParse(_offerController.text) ?? 0;
     final term = monthsNotifier.value ?? 48;
@@ -479,7 +482,7 @@ class _GetLoanState extends State<GetLoan> {
     if (principal <= 0) {
       // Show error if principal is 0 or negative
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid loan amount. Check price and down payment.')),
+         SnackBar(content: Text(lc.invalid_loan)),
       );
       return;
     }

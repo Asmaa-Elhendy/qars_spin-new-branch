@@ -121,8 +121,8 @@ class AdCleanController extends GetxController {
 
     try {
       // Validate required selections
-      if (selectedMake.value == null || 
-          selectedClass.value == null || 
+      if (selectedMake.value == null ||
+          selectedClass.value == null ||
           selectedModel.value == null) {
         throw Exception('Please select valid Make, Class, and Model');
       }
@@ -150,7 +150,7 @@ class AdCleanController extends GetxController {
 
       // Call API
       final result = await repository.createCarAd(adModel: updatedAdData);
-      
+
       // Handle response
       if (result['Code'] == 'OK') {
         createAdSuccess.value = result;

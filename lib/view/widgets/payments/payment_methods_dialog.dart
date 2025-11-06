@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/payments/payment_service.dart';
+import '../../../l10n/app_localization.dart';
 
 class PaymentMethodDialog extends StatefulWidget {
   final double amount;
@@ -42,7 +43,9 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
     if (mounted) setState(() => loading = false);
   }
 
-  void _startPayment(MFPaymentMethod method) async {
+  void _startPayment(MFPaymentMethod method,BuildContext context) async {
+    final lc = AppLocalizations.of(context)!;
+
     setState(() {
       errorMessage = null;
       loading = true;
@@ -60,13 +63,13 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
         // Redirect: فقط نعلم المستخدم
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Redirecting to payment page...")),
+             SnackBar(content: Text(lc.redirecting_payment)),
           );
         }
       }
     } catch (e) {
       setState(() {
-        errorMessage = "Payment failed: ${e.toString()}";
+        errorMessage = "${lc.payment_failed}: ${e.toString()}";
       });
     } finally {
       if (mounted) setState(() => loading = false);
@@ -75,6 +78,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final lc = AppLocalizations.of(context)!;
     return Dialog(
       backgroundColor: AppColors.toastBackground,
       shape: RoundedRectangleBorder(
@@ -87,7 +91,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Choose Payment Method",
+             lc.choose_payment_method,
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -99,7 +103,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
               const Center(child: CircularProgressIndicator(color: AppColors.primary))
             else if (methods.isEmpty)
               Text(
-                "No payment methods available",
+                lc.no_payment_methods_available,
                 style: TextStyle(color: Colors.white, fontSize: 14.sp),
               )
             else
@@ -110,7 +114,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                   itemBuilder: (context, index) {
                     final method = methods[index];
                     return InkWell(
-                      onTap: () => _startPayment(method),
+                      onTap: () => _startPayment(method,context),
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
                         decoration: BoxDecoration(
@@ -129,7 +133,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                             12.horizontalSpace,
                             Expanded(
                               child: Text(
-                                method.paymentMethodEn ?? "Unknown",
+                                method.paymentMethodEn ?? lc.unknown,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.sp,
@@ -156,7 +160,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _cancelButton(() => Navigator.pop(context, false), "Cancel"),
+                _cancelButton(() => Navigator.pop(context, false), lc.btn_Cancel),
               ],
             )
           ],

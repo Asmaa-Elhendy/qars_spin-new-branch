@@ -140,7 +140,7 @@ class MyAdDataLayer {
         // Parse JSON response
         final parsedJson = jsonDecode(response.body);
         log('Parsed JSON: $parsedJson');
-        
+
         return PostMedia.fromJson(parsedJson);
       } else {
         print('❌ HTTP Error: Status code ${response.statusCode}');
@@ -167,7 +167,7 @@ class MyAdDataLayer {
   Map<String, dynamic> _parseJsonResponse(String jsonString) {
     try {
       final parsedJson = jsonDecode(jsonString);
-      
+
       return {
         'Code': parsedJson['Code'] ?? 'Error',
         'Desc': parsedJson['Desc'] ?? 'Unknown error',
@@ -190,23 +190,23 @@ class MyAdDataLayer {
     required String ourSecret,
   }) async {
     final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/UploadPostGalleryPhoto');
-    
+
     try {
       print('📤 Uploading photo for post ID: $postId');
       print('📤 Request URL: $url');
       print('📤 Photo file: ${photoFile.path}');
       print('📤 Photo size: ${await photoFile.length()} bytes');
-      
+
       // Read file as bytes
       final photoBytes = await photoFile.readAsBytes();
-      
+
       // Create multipart request
       var request = http.MultipartRequest('POST', url);
-      
+
       // Add form fields
       request.fields['Post_ID'] = postId;
       request.fields['Our_Secret'] = ourSecret;
-      
+
       // Add photo file
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -215,19 +215,19 @@ class MyAdDataLayer {
           filename: 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg',
         ),
       );
-      
+
       print('📤 Sending request with fields: ${request.fields}');
       print('📤 Sending request with files: ${request.files.length} file(s)');
-      
+
       // Send request
       final response = await request.send();
-      
+
       print('📤 Response status: ${response.statusCode}');
-      
+
       // Get response body
       final responseBody = await response.stream.bytesToString();
       print('📤 Response body: $responseBody');
-      
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(responseBody);
         print('📤 Upload successful: $jsonResponse');
@@ -253,7 +253,7 @@ class MyAdDataLayer {
 
     try {
       log('Uploading cover photo for post ID: $postId');
-      
+
       // Read the image file
       final file = File(imagePath);
       if (!await file.exists()) {
@@ -265,11 +265,11 @@ class MyAdDataLayer {
 
       // Create multipart request
       final request = http.MultipartRequest('POST', url);
-      
+
       // Add form fields
       request.fields['Post_ID'] = postId;
       request.fields['Our_Secret'] = ourSecret;
-      
+
       // Add image file
       final imageFile = await http.MultipartFile.fromPath(
         'PhotoBytes',
@@ -340,7 +340,7 @@ class MyAdDataLayer {
         // Parse JSON response
         final parsedJson = jsonDecode(response.body);
         log('Parsed JSON: $parsedJson');
-        
+
         return {
           'Code': parsedJson['Code'] ?? 'Error',
           'Desc': parsedJson['Desc'] ?? 'Unknown error',
@@ -401,7 +401,7 @@ class MyAdDataLayer {
         // Parse JSON response
         final parsedJson = jsonDecode(response.body);
         log('Parsed JSON: $parsedJson');
-        
+
         return {
           'Code': parsedJson['Code'] ?? 'Error',
           'Desc': parsedJson['Desc'] ?? 'Unknown error',
@@ -605,7 +605,7 @@ class MyAdDataLayer {
   Map<String, dynamic> _parseUploadResponse(String jsonString) {
     try {
       final parsedJson = jsonDecode(jsonString);
-      
+
       return {
         'Code': parsedJson['Code'] ?? 'Error',
         'Desc': parsedJson['Desc'] ?? 'Upload failed',

@@ -45,9 +45,9 @@ class NotificationCard extends StatelessWidget {
           Text(
             notification.title,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.w,
-              color: AppColors.blackColor(context)
+                fontWeight: FontWeight.bold,
+                fontSize: 16.w,
+                color: AppColors.blackColor(context)
             ),
           ),
 
@@ -95,8 +95,8 @@ class NotificationCard extends StatelessWidget {
           // Status and reason
           if (notification.summaryPL != null) ...[
             Text(
-              notification.summaryPL!,
-              style:  TextStyle(fontWeight: FontWeight.w500,fontSize: 15.w)
+                notification.summaryPL!,
+                style:  TextStyle(fontWeight: FontWeight.w500,fontSize: 15.w)
             ),
           ],
           if (notification.summarySL != null) ...[

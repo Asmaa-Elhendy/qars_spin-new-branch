@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
+import '../../../l10n/app_localization.dart';
+
 class QarsApinBottomNavigationBar extends StatefulWidget {
   final VoidCallback onRequestToBuy;
   final VoidCallback onMakeOffer;
@@ -16,14 +18,11 @@ class QarsApinBottomNavigationBar extends StatefulWidget {
 }
 
 class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBar> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    print("Qarsspsos");
-    super.initState();
-  }
+
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -33,9 +32,9 @@ class _QarsApinBottomNavigationBarState extends State<QarsApinBottomNavigationBa
       child: Row(spacing: 2.w,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          button("Request\n To Buy", widget.onRequestToBuy, "assets/images/new_svg/requestBuy.svg"),
-          button("Make\n Offer", widget.onMakeOffer, "assets/images/new_svg/makeOffer.svg"),
-          button("Buy With\n Loan", widget.onLoan, "assets/images/new_svg/loan.svg"),
+          button(lc.btn_request_to_buy, widget.onRequestToBuy, "assets/images/new_svg/requestBuy.svg"),
+          button(lc.btn_make_offer, widget.onMakeOffer, "assets/images/new_svg/makeOffer.svg"),
+          button(lc.btn_byu_loan, widget.onLoan, "assets/images/new_svg/loan.svg"),
 
         ],
       ),

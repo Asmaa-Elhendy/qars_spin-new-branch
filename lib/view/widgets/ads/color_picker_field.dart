@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:developer';//kh
+import '../../../l10n/app_localization.dart';
 import '../my_ads/color_picker_dialog.dart';
 
 class ColorPickerField extends StatefulWidget {
@@ -126,6 +127,7 @@ class _ColorPickerFieldState extends State<ColorPickerField> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

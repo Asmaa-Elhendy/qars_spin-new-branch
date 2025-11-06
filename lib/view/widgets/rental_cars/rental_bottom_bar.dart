@@ -5,6 +5,7 @@ import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 
 import '../../../controller/communications.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 
 class RentalBottomNaviagtion extends StatelessWidget {
   String phone;
@@ -12,6 +13,8 @@ class RentalBottomNaviagtion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Container(
       height: 90.h,
       padding: EdgeInsets.symmetric(horizontal: 30.w,vertical: 20.h),
@@ -28,7 +31,7 @@ class RentalBottomNaviagtion extends StatelessWidget {
             Image.asset("assets/images/callNow.png",scale: .1.w,),
             8.horizontalSpace,
             Text(
-              "Call Now",
+              lc.call_now,
               style: TextStyle(
                 fontFamily: fontFamily,
                 fontWeight: FontWeight.w700,
@@ -44,7 +47,7 @@ class RentalBottomNaviagtion extends StatelessWidget {
             Image.asset("assets/images/whats.png"),
             8.horizontalSpace,
             Text(
-              "WhatsApp",
+              lc.whats_app,
               style: TextStyle(
                   fontFamily: fontFamily,
                   fontWeight: FontWeight.w700,

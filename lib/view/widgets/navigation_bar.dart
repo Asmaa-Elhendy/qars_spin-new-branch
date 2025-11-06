@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -20,6 +21,8 @@ class CustomBottomNavBar extends StatelessWidget {
     final double addButtonSize = 60.0;
     final double iconSize = 24.0;
     final double labelFontSize = 10.0;
+    var lc = AppLocalizations.of(context)!;
+
 
     return Container(
 
@@ -44,7 +47,7 @@ class CustomBottomNavBar extends StatelessWidget {
               children: [
                 _buildNavItem(
                   index: 0,
-                  label: 'Home',
+                  label: lc.navigation_home,
                   isSelected: selectedIndex == 0,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
@@ -53,7 +56,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                 _buildNavItem(
                   index: 1,
-                  label: 'Offers',
+                  label: lc.navigation_offers,
                   isSelected: selectedIndex == 1,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
@@ -65,7 +68,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   opacity: 0,
                   child: _buildNavItem(
                     index: 2,
-                    label: 'Add',
+                    label: lc.navigation_add,
                     isSelected: false,
                     iconSize: iconSize,
                     labelFontSize: labelFontSize,
@@ -76,7 +79,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                 _buildNavItem(
                   index: 3,
-                  label: 'Favorite',
+                  label: lc.navigation_favorites,
                   isSelected: selectedIndex == 3,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
@@ -85,7 +88,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                 _buildNavItem(
                   index: 4,
-                  label: 'Contact',
+                  label: lc.navigation_call_us,
                   isSelected: selectedIndex == 4,
                   iconSize: iconSize,
                   labelFontSize: labelFontSize,
@@ -126,7 +129,7 @@ class CustomBottomNavBar extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Add',
+                        lc.navigation_add,
                         style: TextStyle(
                           color: Colors.white, // White text
                           fontSize: 11,

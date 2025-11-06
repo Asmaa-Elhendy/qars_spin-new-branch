@@ -14,7 +14,6 @@ class NotificationsController extends GetxController {
   final RxInt _notificationCount = 0.obs;
   final NotificationDatabase _database = NotificationDatabase();
   final FCMService _fcmService = Get.find<FCMService>();
-//FCMService? _fcmService;
 
   List<NotificationModel> get notifications => _notifications.reversed.toList();
   bool get isLoading => _isLoading.value;
@@ -50,7 +49,7 @@ class NotificationsController extends GetxController {
       final List<dynamic> notificationsData = responseData['Data'] ?? [];
       final List<NotificationModel> apiNotifications = notificationsData.map((item) {
         return NotificationModel(
-          id: item['Notification_ID'] is int 
+          id: item['Notification_ID'] is int
               ? item['Notification_ID']
               : int.tryParse(item['Notification_ID']?.toString() ?? '0') ?? 0,
           title: "Qars Spin Update for Post ${ item['Notification_ID'] }",
@@ -69,11 +68,11 @@ class NotificationsController extends GetxController {
       log('📩 Notifications received: ${apiNotifications.length}');
       _notifications.clear();
       _notifications.addAll(apiNotifications);
-      
+
       // Update the count from API response
       if (responseData['Count'] != null) {
-        _notificationCount.value = responseData['Count'] is int 
-            ? responseData['Count'] 
+        _notificationCount.value = responseData['Count'] is int
+            ? responseData['Count']
             : int.tryParse(responseData['Count'].toString()) ?? 0;
         log('📊 Notification count from API: ${_notificationCount.value}');
       } else {

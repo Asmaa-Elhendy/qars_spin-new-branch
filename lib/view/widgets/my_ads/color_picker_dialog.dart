@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 
+import '../../../l10n/app_localization.dart';
 import 'dialog.dart';
 
 class ColorData {
@@ -50,6 +53,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
@@ -133,7 +137,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                                 ),
                               ),
                               child: Text(
-                                colorData.namePL,
+                                Get.locale?.languageCode=='ar'?colorData.nameSL:colorData.namePL,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 8.sp,
@@ -175,7 +179,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(width: 130.w
-                  ,child: cancelButton(() => Navigator.pop(context, null),"CANCEL",false),),
+                  ,child: cancelButton(() => Navigator.pop(context, null),lc.btn_Cancel,false),),
 
                 // TextButton(
                 //   onPressed: () => Navigator.pop(context, null),
@@ -191,7 +195,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                 //     ),
                 //   ),
                 // ),
-                yellowButtons(title:"Select",onTap:() => Navigator.pop(context, selectedColor)
+                yellowButtons(title:lc.select,onTap:() => Navigator.pop(context, selectedColor)
 
                     ,w: 130.w, context: context),
                 // ElevatedButton(

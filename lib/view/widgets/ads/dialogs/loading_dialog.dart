@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../controller/const/colors.dart';
+import '../../../../l10n/app_localization.dart';
 
 class AppLoadingWidget extends StatelessWidget {
   final String title;
@@ -13,6 +14,7 @@ class AppLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -42,12 +44,13 @@ class AppLoadingWidget extends StatelessWidget {
 }
 
 class LoadingDialog {
-  static void show(BuildContext context, {bool isModifyMode = false}) {
+  static void show(BuildContext context, {bool isModifyMode = false,}) {
+    var lc = AppLocalizations.of(context)!;
     showCupertinoDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(isModifyMode ? 'Updating Ad' : 'Creating Ad'),
+        title: Text(isModifyMode ? lc.update_ad : lc.creating_ad),
         content: Row(
           children: [
             CupertinoActivityIndicator(),
@@ -55,8 +58,8 @@ class LoadingDialog {
             Expanded(
               child: Text(
                 isModifyMode
-                    ? 'Please wait while your ad is being updated...'
-                    : 'Please wait while your ad is being created...',
+                    ? lc.please_wait_update
+                    : lc.please_wait_create,
               ),
             ),
           ],
@@ -67,8 +70,8 @@ class LoadingDialog {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'OK',
+            child:  Text(
+              lc.ok_lbl,
               style: TextStyle(color: CupertinoColors.activeBlue),
             ),
           ),

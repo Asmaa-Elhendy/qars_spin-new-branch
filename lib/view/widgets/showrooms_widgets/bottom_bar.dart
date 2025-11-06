@@ -8,32 +8,37 @@ import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 
 import '../../../controller/communications.dart';
 import '../../../controller/const/base_url.dart';
+import '../../../controller/notifications_controller.dart';
 import '../../../controller/rental_cars_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../screens/cars_for_rent/all_rental_cars.dart';
 
 class ShowRoomBottomBar extends StatelessWidget {
   Showroom showRoom;
   bool carCare;
-  ShowRoomBottomBar({required this.carCare,required this.showRoom,super.key});
+  NotificationsController notificationsController;
+   ShowRoomBottomBar(this.notificationsController,{required this.carCare,required this.showRoom,super.key});
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Container(
-      //width: double.infinity,
+     //width: double.infinity,
       height: 80.h,
       padding: EdgeInsets.symmetric(horizontal: 30.w,vertical: 14.h),
       decoration: BoxDecoration(
-          color: AppColors.background(context)
+        color: AppColors.background(context)
       ),
       child: Row(
         spacing: 18.w,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
 
-          !carCare? carButton((){
+         !carCare? carButton((){
             Get.find<RentalCarsController>().setRentalCars(showRoom.rentalCars??[]);
-            Get.to(AllRentalCars());
-          },"Cars(${showRoom.carsCount})"):SizedBox(),
+            Get.to(AllRentalCars(notificationsController));
+          },"${lc.cars}(${showRoom.carsCount})"):SizedBox(),
           //20.horizontalSpace,
           squareButton(Icon(Icons.location_on_rounded,color: AppColors.whiteColor(context),size: 30.w),(){
             openMap(showRoom.mapsUrl);
@@ -58,7 +63,7 @@ class ShowRoomBottomBar extends StatelessWidget {
               ),
               child: Center(
                 child:Icon(
-                    Icons.call
+                  Icons.call
                 ),
               ),
             ),
@@ -78,10 +83,10 @@ class ShowRoomBottomBar extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 160.w,
+         width: 160.w,
         height: 100.h,
 
-        // padding: EdgeInsets.symmetric(horizontal: 35.w,vertical: 10.h),
+       // padding: EdgeInsets.symmetric(horizontal: 35.w,vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.primary,
           borderRadius: BorderRadius.circular(4), // optional rounded corners
@@ -106,16 +111,16 @@ class ShowRoomBottomBar extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-          width: 50.w,
-          height: 105.h,
-          // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
-          decoration: BoxDecoration(
-            color:!green? AppColors.primary:AppColors.success,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Center(
-            child: icon,
-          )
+        width: 50.w,
+        height: 105.h,
+       // padding: EdgeInsets.symmetric(vertical: 8.h,horizontal: 12.w),
+        decoration: BoxDecoration(
+          color:!green? AppColors.primary:AppColors.success,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: icon,
+        )
       ),
     );
   }

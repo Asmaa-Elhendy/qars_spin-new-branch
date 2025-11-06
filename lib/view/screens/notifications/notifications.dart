@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
 import '../../../controller/notifications_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../../model/notification_model.dart';
 import '../../widgets/notification_card.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
@@ -21,14 +22,15 @@ class NotificationsPage extends GetView<NotificationsController> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     debugPrint('🔔 Building NotificationsPage');
-    
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'Notifications',
+          lc.lbl_notifications,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -56,28 +58,28 @@ class NotificationsPage extends GetView<NotificationsController> {
         children: [
           Obx(() {
             debugPrint('🔄 Notifications state updated - Loading: ${controller.isLoading}, Count: ${controller.notifications.length}');
-            
+
             if (controller.isLoading) {
               debugPrint('⏳ Loading indicator shown');
               return const SizedBox.shrink(); // Empty widget when loading, we'll show the overlay
             }
 
-        if (controller.notifications.isEmpty) {
-          debugPrint('ℹ️ No notifications to display');
-          return Center(
-            child: Text(
-              'No notifications yet',
-              style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-            ),
-          );
-        }
-
-        debugPrint('✅ Displaying ${controller.notifications.length} notifications');
             if (controller.notifications.isEmpty) {
               debugPrint('ℹ️ No notifications to display');
               return Center(
                 child: Text(
-                  'No notifications yet',
+                  lc.no_notify,
+                  style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                ),
+              );
+            }
+
+            debugPrint('✅ Displaying ${controller.notifications.length} notifications');
+            if (controller.notifications.isEmpty) {
+              debugPrint('ℹ️ No notifications to display');
+              return Center(
+                child: Text(
+                  lc.no_notify,
                   style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                 ),
               );
@@ -117,15 +119,15 @@ class NotificationsPage extends GetView<NotificationsController> {
               ),
             );
           }),
-          
+
           // Loading Overlay
           Obx(() {
             if (controller.isLoading) {
               return Container(
                 color: Colors.black.withOpacity(0.2),
-                child: const Center(
+                child:  Center(
                   child: AppLoadingWidget(
-                    title: 'Loading...\nPlease Wait...',
+                    title: lc.loading,
                   ),
                 ),
               );
@@ -139,6 +141,7 @@ class NotificationsPage extends GetView<NotificationsController> {
 
   Future<bool> _showDeleteDialog(
       BuildContext context, NotificationModel notification) async {
+    var lc = AppLocalizations.of(context)!;
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -147,12 +150,12 @@ class NotificationsPage extends GetView<NotificationsController> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('CANCEL'),
+            child: Text(lc.btn_Cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
-              'DELETE',
+              lc.delete,
               style: TextStyle(color: Colors.red),
             ),
           ),
@@ -163,20 +166,21 @@ class NotificationsPage extends GetView<NotificationsController> {
   }
 
   Future<void> _showDeleteAllDialog(BuildContext context) async {
+    var lc = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Clear All Notifications'),
-        content: Text('Are you sure you want to delete all notifications?'),
+        title: Text(lc.clear_all_notifications_message),
+        content: Text(lc.delete_notification_message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('CANCEL'),
+            child: Text(lc.btn_Cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
-              'DELETE ALL',
+              lc.btn_delete_all,
               style: TextStyle(color: Colors.red),
             ),
           ),

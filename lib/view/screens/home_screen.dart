@@ -7,6 +7,7 @@ import '../../controller/notifications_controller.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/const/colors.dart';
 import '../../controller/rental_cars_controller.dart';
+import '../../l10n/app_localization.dart';
 import '../widgets/ad_container.dart';
 import '../widgets/main_card.dart';
 import '../widgets/navigation_bar.dart';
@@ -24,7 +25,7 @@ import 'my_offers_screen.dart';
 
 class HomeScreen extends StatefulWidget {
 
-   HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -54,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Get.find<BrandController>().fetchCarMakes();
-    
+
     // Load notifications when home screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('🔔 HomeScreen - Loading notifications...');
@@ -68,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor:AppColors.background(context),
       appBar: AppBar(
@@ -105,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               clipBehavior: Clip.none,
               children: [
                 Padding(
-                  padding:  EdgeInsets.only(right: 15.w),
+                  padding:  EdgeInsets.symmetric(horizontal: 15.w),
                   child: Image.asset(
                     'assets/images/ic_personal_account.png',
                     width: 20.w, //update asmaa
@@ -116,11 +119,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 Obx(() {
                   final count = notificationsController.notifications.length;
                   debugPrint('🔔 Notification count: $count');
-                  
-                  if (count == 0) {
-                    return const SizedBox.shrink();
-                  }
-                  
+
+                  // if (count == 0) {
+                  //   return const SizedBox.shrink();
+                  // }
+
                   return Positioned(
                     right: 25.w,
                     top: 15.h,
@@ -210,9 +213,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     cardView = "forSale";
                                   });
                                 },
-                                title: 'Cars For Sale',
+                                title: lc.cars_for_sale,//'Cars For Sale',
                                 imageAsset:
-                                'assets/images/new_svg/home1.svg',
+                                Get.locale?.languageCode=='ar'? 'assets/images/Dark mode icons/QS D-Mode-21.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-01.svg' :'assets/images/new_svg/home1.svg',
+
                                 large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
@@ -222,25 +226,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                     cardView = "forRent";
                                   });
                                 },
-                                title: 'Cars For Rent',
+                                title: lc.cars_for_rent,
                                 imageAsset:
-                                'assets/images/new_svg/home2.svg',
+                                Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-02.svg' :'assets/images/new_svg/home2.svg',
                                 large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
                                 onTap: () {
                                   Get.find<ShowRoomsController>().switchLoading();
-                                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop",forSale: false);
-                                  Get.to(CarsShowRoom(carCare: true,title: "Car Care",rentRoom: false,));
+                                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Car Care Shop",forSale: false,context: context);
+                                  Get.to(CarsShowRoom(notificationsController,carCare: true,title: lc.car_care,rentRoom: false,));
                                 },
-                                title: 'Car Care',
-                                imageAsset: 'assets/images/new_svg/home3.svg',
+                                title: lc.car_care,
+                                imageAsset:
+                                Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-03.svg' :'assets/images/new_svg/home3.svg',
                                 large: true,fromHome: 'true',
                               ),
                               HomeServiceCard(
                                 onTap: () => _toggleMenu(true),
-                                title: 'Garages',
-                                imageAsset: 'assets/images/new_svg/home4.svg',
+                                title: lc.garages,
+                                imageAsset:
+                                Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-04.svg' :'assets/images/new_svg/home4.svg',
                                 large: true,
                                 fromHome: 'true',
                               ),
@@ -265,8 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 width: 125.w, //update asmaa
                                 child: HomeServiceCard(
-                                  title: 'Bikes',
-                                  imageAsset: 'assets/images/new_svg/bikes.svg',
+                                  title: lc.bikes,
+                                  imageAsset:
+                                  Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-05.svg' :'assets/images/new_svg/bikes.svg',
                                   large: false,fromHome: 'true',fromHomeSmall: true,
                                 ),
                               ),
@@ -274,8 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 width: 125.w, //update asmaa
                                 child: HomeServiceCard(
-                                  title: 'Caravans',
-                                  imageAsset: 'assets/images/new_svg/caravans.svg',
+                                  title: lc.caravans,
+                                  imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-06.svg' :'assets/images/new_svg/caravans.svg',
                                   large: false,fromHome: 'true',fromHomeSmall: true,
                                 ),
                               ),
@@ -283,8 +290,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 width: 125.w, //update asmaa
                                 child: HomeServiceCard(
-                                  title: 'Plates',
-                                  imageAsset: 'assets/images/new_svg/plates.svg',
+                                  title: lc.plates,
+                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+                                  plate: true,
+                                  imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-07.svg' :'assets/images/new_svg/plates.svg',
                                   large: false,fromHome: 'true',fromHomeSmall: true,
                                 ),
                               ),
@@ -324,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      child: sildeUpGridView()
+                      child: sildeUpGridView(lc)
                   ),
 
                   // Arrow tab at top center
@@ -374,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            Get.offAll(OffersScreen());
+              Get.offAll(OffersScreen());
 
               break;
             case 2:
@@ -383,6 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
 
             case 3:
+              Get.find<BrandController>().switchLoading();
               Get.find<BrandController>().getFavList();
               Get.offAll(FavouriteScreen());
               break;
@@ -399,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
   }
-  sildeUpGridView(){
+  sildeUpGridView(lc){
 
     switch (cardView) {
       case 'forSale':
@@ -415,10 +425,10 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               HomeServiceCard(
                 onTap: () {
-                  Get.to(AllCars());
+                  Get.to(AllCars(notificationsController));
                 },
-                title: 'All Cars',fromHome: 'true',
-                imageAsset: 'assets/images/new_svg/Group.svg',
+                title: lc.all_cars,fromHome: 'true',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-09.svg' :'assets/images/new_svg/Group.svg',
                 large: false,
               ),
               HomeServiceCard(
@@ -426,33 +436,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   // qar spin show room
                   Get.find<BrandController>().switchLoading();
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
-                  Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",postKind: "",));
+                  Get.to(CarsBrandList(notificationsController,brandName: lc.qar_spin_showroom,postKind: "CarForSale",));
                 },
-                title: 'Qars Spin Showrooms',fromHome: 'true',
-                imageAsset: 'assets/images/new_svg/Group (1).svg',
+                title: lc.qar_spin_showroom,fromHome: 'true',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-11.svg' :'assets/images/new_svg/Group (1).svg',
                 large: false,
               ),
               HomeServiceCard(
                 onTap: () {
                   Get.find<ShowRoomsController>().switchLoading();
-                  Get.find<ShowRoomsController>().fetchShowrooms(forSale: true);
-                  Get.to(CarsShowRoom(title: "Cars Showrooms",rentRoom: false,));
+                  Get.find<ShowRoomsController>().fetchShowrooms(context:context,forSale: true);
+                  Get.to(CarsShowRoom(notificationsController,title: lc.cars_showroom,rentRoom: false,));
                 },
-                title: 'Cars Showrooms',fromHome: 'true',
-                imageAsset: 'assets/images/new_svg/Group (2).svg',
+                title: lc.cars_showroom,fromHome: 'true',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-10.svg' :'assets/images/new_svg/Group (2).svg',
                 large: false,
               ),
               HomeServiceCard(fromHome: 'true',
-                title: 'Personal Cars',
+                title: lc.personal_cars,
                 onTap: () {
                   Get.find<BrandController>().switchLoading();
-                // personal cars
+                  // personal cars
                   Get.find<BrandController>().switchLoading();
                   Get.find<BrandController>().getCars(make_id: 0, makeName: "Personal Cars",sourceKind: "Individual");
 
-                  Get.to(CarsBrandList(brandName: "Personal Cars",postKind: "",));
+                  Get.to(CarsBrandList(notificationsController,brandName: lc.personal_cars,postKind: "CarForSale",));
                 },
-                imageAsset: 'assets/images/new_svg/Group (3).svg',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-12.svg' :'assets/images/new_svg/Group (3).svg',
                 large: false,
               ),
             ],
@@ -477,21 +487,21 @@ class _HomeScreenState extends State<HomeScreen> {
               HomeServiceCard(
                 onTap: () {
                   Get.find<RentalCarsController>().switchLoading();
-                  Get.find<RentalCarsController>().fetchRentalCars();
-                  Get.to(AllRentalCars());
+                  Get.find<RentalCarsController>().fetchRentalCars(context: context);
+                  Get.to(AllRentalCars(notificationsController));
                 },
-                title: 'All Rental Cars',
+                title: lc.all_rental_cars,
                 fromHome: 'true',
-                imageAsset: 'assets/images/new_svg/home2.svg',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-02.svg' :'assets/images/new_svg/home2.svg',
                 large: false,
               ),
               HomeServiceCard(
                 onTap: () {
-                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Rent a Car",forSale: false);
-                  Get.to(CarsShowRoom(title: "Rental Showrooms",rentRoom: true,));
+                  Get.find<ShowRoomsController>().fetchShowrooms(partnerKind: "Rent a Car",forSale: false,context: context);
+                  Get.to(CarsShowRoom(notificationsController,title: lc.rental_showroom,rentRoom: true,));
                 },
-                title: 'Rental Showrooms',fromHome: 'true',
-                imageAsset: 'assets/images/new_svg/Group (5).svg',
+                title: lc.rental_showroom,fromHome: 'true',
+                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-20.svg' :'assets/images/new_svg/Group (5).svg',
                 large: false,
               ),
 

@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../controller/auth/auth_controller.dart';
 import '../../../../controller/const/base_url.dart';
 import '../../../../controller/const/colors.dart';
+import '../../../../l10n/app_localization.dart';
 import 'error_dialog.dart';
 
 class OTPDialog extends StatefulWidget {
@@ -61,7 +62,7 @@ class OTPDialog extends StatefulWidget {
       context: context,
       barrierDismissible: false,
       builder: (context) => OTPDialog(
-       mobile:mobile,
+        mobile:mobile,
         name:name,
         otpController: otpController,
         otpSecret: otpSecret,
@@ -81,6 +82,8 @@ class _OTPDialogState extends State<OTPDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Dialog(
       backgroundColor: AppColors.toastBackground,
       shape: RoundedRectangleBorder(
@@ -96,7 +99,7 @@ class _OTPDialogState extends State<OTPDialog> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Enter OTP',
+              lc.verify_msg,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.primary,
@@ -107,7 +110,7 @@ class _OTPDialogState extends State<OTPDialog> {
             ),
             8.verticalSpace,
             Text(
-              'Please enter the OTP sent to your phone',
+              lc.enter_otp_msg,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.white,
@@ -122,7 +125,7 @@ class _OTPDialogState extends State<OTPDialog> {
                 controller: widget.otpController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'Enter OTP',
+                  hintText: lc.verify_msg,
                   hintStyle: TextStyle(color: Colors.grey.shade400),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.1),
@@ -150,10 +153,10 @@ class _OTPDialogState extends State<OTPDialog> {
               children: [
                 cancelButton(() {
                   Navigator.pop(context);
-                }, "Cancel", widget.request),
+                }, lc.btn_Cancel, widget.request),
                 10.horizontalSpace,
                 yellowButtons(
-                  title: "Verify",
+                  title: lc.btn_Verify,
                   onTap: () async {
                     if (widget.otpController.text.isEmpty) {
                       showErrorAlert('Please enter the OTP',context);
@@ -266,6 +269,6 @@ void showErrorAlert(String message,BuildContext context) {
         // Navigator.pop(context);
       },
       isModifyMode: false,
-       fromOtp:true);
+      fromOtp:true);
 
-      }
+}

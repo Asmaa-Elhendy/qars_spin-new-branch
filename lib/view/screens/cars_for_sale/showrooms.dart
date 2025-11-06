@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
+import '../../../controller/notifications_controller.dart';
 import '../../../controller/showrooms_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ad_container.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/car_list_grey_bar.dart';
@@ -14,7 +16,8 @@ class CarsShowRoom extends StatefulWidget {
   bool carCare;
   String title;
   bool rentRoom;
-  CarsShowRoom({required this.rentRoom,required this.title,this.carCare = false,super.key});
+  NotificationsController notificationsController;
+  CarsShowRoom(this.notificationsController,{required this.rentRoom,required this.title,this.carCare = false,super.key});
 
   @override
   State<CarsShowRoom> createState() => _CarsShowRoomState();
@@ -23,9 +26,11 @@ class CarsShowRoom extends StatefulWidget {
 class _CarsShowRoomState extends State<CarsShowRoom> {
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
-      appBar: carListAppBar(notificationCount: 3,context: context),
+      appBar: carListAppBar(widget.notificationsController,notificationCount: 3,context: context),
       body: GetBuilder<ShowRoomsController>(
           builder: (controller) {
             return Stack(
@@ -36,7 +41,7 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
                       bigAdHome: true,
                       targetPage: 'Partners - List Page',//not found name in db
                     ),                    8.verticalSpace,
-                    carListGreyBar(onSearchResult:(_){},title: widget.title,context: context,showroom: !widget.carCare,carCare: widget.carCare,partnerKind: widget.carCare?"Car Care Shop":widget.rentRoom?"Rent a Car":"Car Showroom"),
+                    carListGreyBar(widget.notificationsController,onSearchResult:(_){},title: widget.title,context: context,showroom: !widget.carCare,carCare: widget.carCare,partnerKind: widget.carCare?"Car Care Shop":widget.rentRoom?"Rent a Car":"Car Showroom"),
                     8.verticalSpace,
                     Expanded(
                       child:  ListView.builder(
@@ -44,7 +49,7 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
                           padding:  EdgeInsets.symmetric(horizontal: 18.w),
                           itemCount: controller.showRooms.length,
                           itemBuilder: (context, index) {
-                            return ShowroomCard(showroom:  controller.showRooms[index],carCare: widget.carCare,
+                            return ShowroomCard(widget.notificationsController,showroom:  controller.showRooms[index],carCare: widget.carCare,
                               rental: widget.rentRoom,
                             );
 
@@ -62,7 +67,7 @@ class _CarsShowRoomState extends State<CarsShowRoom> {
                       color: AppColors.black.withOpacity(0.5),
                       child: Center(
                         child: AppLoadingWidget(
-                          title: 'Loading...\nPlease Wait...',
+                          title: lc.loading,
                         ),
                       ),
                     ),

@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
+import '../../../controller/notifications_controller.dart';
 import '../../../controller/rental_cars_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ad_container.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/car_list_grey_bar.dart';
@@ -11,7 +13,8 @@ import '../../widgets/cars_list_app_bar.dart';
 import '../../widgets/rental_car_card.dart';
 
 class AllRentalCars extends StatefulWidget {
-  const AllRentalCars({super.key});
+  NotificationsController notificationsController;
+  AllRentalCars(this.notificationsController);
 
   @override
   State<AllRentalCars> createState() => _AllRentalCarsState();
@@ -20,9 +23,12 @@ class AllRentalCars extends StatefulWidget {
 class _AllRentalCarsState extends State<AllRentalCars> {
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
-      appBar: carListAppBar(notificationCount: 3,context: context),
+      appBar: carListAppBar(widget.notificationsController,notificationCount: 3,context: context),
       body:  GetBuilder<RentalCarsController>(
           init:  RentalCarsController(),
           builder: (controller) {
@@ -34,7 +40,7 @@ class _AllRentalCarsState extends State<AllRentalCars> {
                       bigAdHome: true,
                       targetPage: 'Cars For Rent - List Page',////not found name in db
                     ),                    8.verticalSpace,
-                    carListGreyBar(onSearchResult:(_){},title: "All Rental Cars",context: context,squareIcon: true,rental: true),
+                    carListGreyBar(widget.notificationsController,onSearchResult:(_){},title: lc.all_rental_cars,context: context,squareIcon: true,rental: true),
                     8.verticalSpace,
                     GetBuilder<RentalCarsController>(
                         init:  RentalCarsController(),
@@ -72,7 +78,7 @@ class _AllRentalCarsState extends State<AllRentalCars> {
                       color: AppColors.black.withOpacity(0.5),
                       child: Center(
                         child: AppLoadingWidget(
-                          title: 'Loading...\nPlease Wait...',
+                          title: lc.loading,
                         ),
                       ),
                     ),

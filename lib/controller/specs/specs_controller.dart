@@ -14,10 +14,10 @@ class SpecsController extends GetxController {
   var isLoadingSpecs = false.obs;
   var specsError = Rxn<String>();
   var specsResponse = Rxn<Map<String, dynamic>>();
-  
+
   // Track modified specs directly
   final List<Specs> _modifiedSpecsList = [];
-  
+
   // Track when _modifiedSpecIds is cleared
   void _clearModifiedSpecs() {
     log('\n⚠️ [CLEAR] Clearing _modifiedSpecsList. Current count: ${_modifiedSpecsList.length}');
@@ -28,9 +28,9 @@ class SpecsController extends GetxController {
     }
     _modifiedSpecsList.clear();
   }
-  
- 
-  
+
+
+
   // Track all modifications to _modifiedSpecsList
   void _trackModifiedSpecsChange(String action, Specs? spec) {
     log('🔄 [_modifiedSpecsList] $action - Current count: ${_modifiedSpecsList.length}');
@@ -48,7 +48,7 @@ class SpecsController extends GetxController {
     super.onInit();
     log('🔄 [SPECS] SpecsController initialized, _modifiedSpecsList count: ${_modifiedSpecsList.length}');
   }
-  
+
   /// Clear the list of modified specs (call this after successful upload)
   void clearModifiedSpecs() {
     _clearModifiedSpecs();
@@ -245,7 +245,7 @@ class SpecsController extends GetxController {
     // Specs(postId: "0", specId: "45", specType: "Number", specHeaderPl: "Towing Capacity", specValuePl: "", specHeaderSl: "قدرة السحب", specValueSl: "", isHidden: false),
     // Specs(postId: "0", specId: "46", specType: "Yes - No", specHeaderPl: "Roof Rails", specValuePl: "", specHeaderSl: "قضبان السقف", specValueSl: "", isHidden: false),
   ];
-  
+
   /// Update spec value locally in specsStatic list
   void _logSpecsState(String message) {
     log('📊 [STATE] $message');
@@ -264,26 +264,26 @@ class SpecsController extends GetxController {
       // Log current state before any changes
       log('\n📌 [UPDATE STARTED] Spec ID: $specId, New Value: "$specValuePl"');
       _logSpecsState('BEFORE UPDATE');
-      
+
       // Find the spec in specsStatic list
       final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
-      
+
       if (specIndex == -1) {
         log('❌ [ERROR] Spec ID $specId not found in specsStatic');
         return;
       }
-      
+
       final oldSpec = specsStatic[specIndex];
       final oldValue = oldSpec.specValuePl;
-      
+
       // Only proceed if the value has actually changed
       if (oldValue == specValuePl && (specValueSl == null || oldSpec.specValueSl == specValueSl)) {
         log('ℹ️ [LOCAL] No change in value for spec ID: $specId, skipping update');
         return;
       }
-      
+
       log('🔄 [DROPDOWN] Changing spec ID: $specId from "$oldValue" to "$specValuePl"');
-      
+
       // Create updated spec with new value
       final updatedSpec = Specs(
         postId: oldSpec.postId,
@@ -296,13 +296,13 @@ class SpecsController extends GetxController {
         isHidden: oldSpec.isHidden,
         options: oldSpec.options,
       );
-      
+
       // Update the specsStatic list
       specsStatic[specIndex] = updatedSpec;
-      
+
       // Check if we already have this spec in the modified list
       final existingIndex = _modifiedSpecsList.indexWhere((s) => s.specId == specId);
-      
+
       if (existingIndex != -1) {
         // Update existing modified spec
         _modifiedSpecsList[existingIndex] = updatedSpec;
@@ -312,19 +312,19 @@ class SpecsController extends GetxController {
         _modifiedSpecsList.add(updatedSpec);
         log('➕ [MODIFIED] Added new modified spec: ${updatedSpec.specHeaderPl} = "$specValuePl"');
       }
-      
+
       // Log all modified specs with their values
       log('📋 [MODIFIED SPECS] Current state (${_modifiedSpecsList.length} specs):');
       for (final spec in _modifiedSpecsList) {
         log('   - ${spec.specId}: ${spec.specHeaderPl} = "${spec.specValuePl}"');
       }
-      
+
       // Log the current state of all specs
       _logAllSpecs();
-      
+
       // Trigger UI update for GetBuilder
       update();
-      
+
       log('✅ [LOCAL] Successfully updated spec in specsStatic and _modifiedSpecsList:');
       log('  Header: ${updatedSpec.specHeaderPl}');
       log('  New Value: ${updatedSpec.specValuePl}');
@@ -340,7 +340,7 @@ class SpecsController extends GetxController {
   }) {
     try {
       log('🔧 [LOCAL] Clearing spec value - Spec ID: $specId');
-      
+
       // Find the spec in specsStatic list
       final specIndex = specsStatic.indexWhere((spec) => spec.specId == specId);
 
@@ -360,26 +360,26 @@ class SpecsController extends GetxController {
 
         // Update the specsStatic list
         specsStatic[specIndex] = updatedSpec;
-        
+
         // Track before updating in modified list
         _trackModifiedSpecsChange('CLEARING', updatedSpec);
-        
+
         // Remove if exists (to avoid duplicates)
         _modifiedSpecsList.removeWhere((s) => s.specId == specId);
-        
+
         // Add the updated spec to modified list
         _modifiedSpecsList.add(updatedSpec);
-        
+
         // Track after updating
         _trackModifiedSpecsChange('CLEARED', updatedSpec);
-        
+
         // Trigger UI update for GetBuilder
         update();
 
         log('✅ [LOCAL] Successfully cleared spec value in specsStatic and _modifiedSpecsList:');
         log('  Header: ${updatedSpec.specHeaderPl}');
         log('  Spec ID: ${updatedSpec.specId}');
-        
+
         // Log all modified specs with their values
         log('📋 [MODIFIED SPECS] Current state after clear:');
         for (final spec in _modifiedSpecsList) {
@@ -399,7 +399,7 @@ class SpecsController extends GetxController {
     log('📋 [DEBUG] === Current State of All Specs ===');
     log('📋 [DEBUG] Total specs: ${specsStatic.length}');
     log('📋 [DEBUG] Modified specs count: ${_modifiedSpecsList.length}');
-    
+
     for (final spec in specsStatic) {
       final isModified = _modifiedSpecsList.any((s) => s.specId == spec.specId);
       log('  - ${spec.specId.padLeft(2)} | ${spec.specHeaderPl.padRight(20)} | Value: "${spec.specValuePl}" | Modified: ${isModified ? '✅' : '❌'}');
@@ -411,24 +411,24 @@ class SpecsController extends GetxController {
     try {
       log('🔍 [FILTER] === Starting getModifiedSpecs() ===');
       _logAllSpecs();
-      
+
       log('🔍 [FILTER] Found ${_modifiedSpecsList.length} modified specs');
-      
+
       // Filter out any specs with empty values
       final modifiedWithValues = _modifiedSpecsList.where((s) => s.specValuePl.trim().isNotEmpty).toList();
-      
+
       log('🔍 [FILTER] Found ${modifiedWithValues.length} modified specs with non-empty values:');
       for (final spec in modifiedWithValues) {
         log('  - ${spec.specId.padLeft(2)} | ${spec.specHeaderPl.padRight(20)} | Value: "${spec.specValuePl}"');
       }
-      
+
       if (modifiedWithValues.isEmpty) {
         log('⚠️ [FILTER] No modified specs found with values. Possible issues:');
         log('  - Specs might be modified but not marked in _modifiedSpecsList');
         log('  - Specs might be marked as modified but have empty values');
         log('  - _modifiedSpecsList might have been cleared unexpectedly');
       }
-      
+
       return modifiedWithValues;
     } catch (e) {
       log('❌ [FILTER] Error getting modified specs: $e');

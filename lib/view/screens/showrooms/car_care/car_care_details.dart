@@ -6,17 +6,18 @@ import 'package:qarsspin/controller/rental_cars_controller.dart';
 import 'package:qarsspin/controller/showrooms_controller.dart';
 import 'package:qarsspin/model/showroom_model.dart';
 
+import '../../../../controller/notifications_controller.dart';
 import '../../../widgets/car_care/care_info.dart';
 import '../../../widgets/car_care/tab_Bar.dart';
 import '../../../widgets/showrooms_widgets/action_buttons.dart';
 import '../../../widgets/showrooms_widgets/bottom_bar.dart';
-import '../../../widgets/showrooms_widgets/dealer_info_section.dart';
 import '../../../widgets/showrooms_widgets/header_section.dart';
 
 class CarCareDetails extends StatefulWidget {
   Showroom carCare;
   bool isCarCare;
-  CarCareDetails({required this.carCare,required this.isCarCare,super.key});
+  NotificationsController notificationsController;
+   CarCareDetails(this.notificationsController,{required this.carCare,required this.isCarCare,super.key});
 
   @override
   State<CarCareDetails> createState() => _CarCareDetailsState();
@@ -29,7 +30,7 @@ class _CarCareDetailsState extends State<CarCareDetails> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: AppColors.background(context),
-      bottomNavigationBar: ShowRoomBottomBar(showRoom: widget.carCare,carCare: widget.isCarCare,),
+      bottomNavigationBar: ShowRoomBottomBar(widget.notificationsController,showRoom: widget.carCare,carCare: widget.isCarCare,),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,11 +62,11 @@ class _CarCareDetailsState extends State<CarCareDetails> {
                     size: 30.w,
                   ),
                 ),
-                // 105.horizontalSpace,
+               // 105.horizontalSpace,
                 Center(
                   child:
                   SizedBox(
-                      width: 147.w,
+                    width: 147.w,
 
                       child: Image.asset(Theme.of(context).brightness == Brightness.dark
                           ? 'assets/images/balckIconDarkMode.png'
@@ -80,31 +81,31 @@ class _CarCareDetailsState extends State<CarCareDetails> {
                   SizedBox(
                       width: 25.w,
                       child: Image.asset("assets/images/share.png",
-                          fit: BoxFit.cover,
-                          color:   AppColors.blackColor(context)
+                      fit: BoxFit.cover,
+                        color:   AppColors.blackColor(context)
                       )),
                 )
               ],
             ),
           ),
           HeaderSection(realImage: widget.carCare.spin360Url,),
-          // 15.verticalSpace,
+         // 15.verticalSpace,
 
 
           CareInfo(show: widget.carCare,),
           //14.verticalSpace,
           GetBuilder<ShowRoomsController>(
-              init: ShowRoomsController(),
-              builder: (controller) {
-                return Expanded(child: SizedBox(
-                    height: 600.h,
-                    child: CarCareTapBar(
-                      rate: controller.partnerRating,
-                      showroom: widget.carCare,
-                      gallery: controller.gallery,
+            init: ShowRoomsController(),
+            builder: (controller) {
+              return Expanded(child: SizedBox(
+                  height: 600.h,
+                  child: CarCareTapBar(
+                    rate: controller.partnerRating,
+                    showroom: widget.carCare,
+                    gallery: controller.gallery,
 
-                      cars: widget.carCare.rentalCars??[],avgRating: widget.carCare.avgRating.toString(),)));
-              }
+                    cars: widget.carCare.rentalCars??[],avgRating: widget.carCare.avgRating.toString(),)));
+            }
           )
 
 

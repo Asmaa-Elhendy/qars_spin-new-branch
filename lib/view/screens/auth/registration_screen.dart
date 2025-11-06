@@ -10,6 +10,7 @@ import 'package:qarsspin/view/screens/home_screen.dart';
 import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/app_strings.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/dialogs/error_dialog.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/otp_dialog.dart';
@@ -257,6 +258,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     double width=MediaQuery.of(context).size.width;
     double height=MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar: AppBar(
@@ -280,7 +283,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         elevation: 0, // نشيل الشادو الافتراضي
 
         title: Text(
-          AppStrings.createAccount,
+          lc.title_create_new_account,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -301,7 +304,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   const SizedBox(height: 24),
                   // Country Selection
                   Text(
-                    AppStrings.yourCountry,
+                    lc.lbl_your_country,
                     style:  TextStyle(
                       fontSize: 17.w,
                       fontWeight: FontWeight.bold,
@@ -326,7 +329,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   const SizedBox(height: 24),
                   // Mobile Number
                   Text(
-                    AppStrings.yourMobileNumber,
+                    lc.lbl_your_mobile_number,
                     style:  TextStyle(
                       fontSize: 17.w,
                       fontWeight: FontWeight.bold,
@@ -337,7 +340,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   CustomTextField(
                     controller: _mobileController,
                     keyboardType: TextInputType.phone,
-                    hintText: AppStrings.enterYourMobileNumber,
+                    hintText: lc.hint_enter_your_mobile_number,
                     //   prefixText: '+${_countries.firstWhere((c) => c['code'] == _selectedCountry)['prefix']} ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -355,7 +358,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   if (_showOtpField) ...[
                     const SizedBox(height: 24),
                     Text(
-                      'Enter OTP',
+                      lc.verify_msg,
                       style: TextStyle(
                         fontSize: 17.w,
                         fontWeight: FontWeight.bold,
@@ -382,7 +385,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     onPressed: _isLoading ? null : _requestOtp,
                     borderRadius: 4,
                     child: Text(
-                      'REGISTER NOW',
+                      lc.register_account_cap,
                       style: TextStyle(
                           fontSize: 17.w,
                           fontWeight: FontWeight.bold,

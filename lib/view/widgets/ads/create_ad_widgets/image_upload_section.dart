@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../l10n/app_localization.dart';
 import '../image_picker_field.dart';
 import '../video_player_widget.dart';
 
@@ -59,14 +60,16 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    var lc = AppLocalizations.of(context)!;
+
 
     return Column(
       children: [
         widget.isModifyMode ?SizedBox(height: height*.02,):   Padding(
           padding: EdgeInsets.symmetric(vertical: height * .01),
-          child: const Center(
+          child:  Center(
             child: Text(
-              "Upload Your up to 15 Photos and 1 Video ",
+              lc.upload_txt,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -104,7 +107,7 @@ class _ImageUploadSectionState extends State<ImageUploadSection> {
                           Icon(Icons.videocam, size: 50, color: Colors.grey[600]),
                           SizedBox(height: 10),
                           Text(
-                            'Video Cover',
+                            lc.video_cover,
                             style: TextStyle(color: Colors.grey[600]),
                           ),
                         ],

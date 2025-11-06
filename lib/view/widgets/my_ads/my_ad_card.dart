@@ -10,13 +10,13 @@ import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/payments/payment_service.dart';
+import '../../../l10n/app_localization.dart';
 import '../../screens/ads/create_new_ad.dart';
 import '../../widgets/my_ads/dialog.dart';
 import '../../widgets/my_ads/yellow_buttons.dart';
 import 'package:qarsspin/view/widgets/payments/payment_methods_dialog.dart';
 
-const String fontFamily = 'Gilroy';
-
+String fontFamily =Get.locale?.languageCode=='ar'?'noor':'Gilroy';
 Widget MyAdCard(
     String userName,
     MyAdModel ad,
@@ -24,6 +24,7 @@ Widget MyAdCard(
       required VoidCallback onShowLoader,
       required VoidCallback onHideLoader,
     }) {
+  var lc = AppLocalizations.of(context)!;
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
     padding: EdgeInsets.only(bottom: 12.h),
@@ -82,24 +83,24 @@ Widget MyAdCard(
               SizedBox(width: 8.w),
               // Flexible(
               //   child:
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.extraLightGray.withOpacity(.6),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Text(
-                    ad.postStatus,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 14.sp,
-                      color: AppColors.blackColor(context),
-                      fontWeight: FontWeight.w700,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                decoration: BoxDecoration(
+                  color: AppColors.extraLightGray.withOpacity(.6),
+                  borderRadius: BorderRadius.circular(3),
                 ),
-           //   ),
+                child: Text(
+                  ad.postStatus,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 14.sp,
+                    color: AppColors.blackColor(context),
+                    fontWeight: FontWeight.w700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              //   ),
               5.horizontalSpace,
               GetBuilder<MyAdCleanController>(
                 builder: (controller) {
@@ -110,18 +111,18 @@ Widget MyAdCard(
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text(
-                              'Delete Ad',
+                              lc.delete_ad,
                               style: TextStyle(
                                 fontSize: 19.w,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            content: const Text('Are you sure you want to delete this ad?'),
+                            content:  Text(lc.delete_ad_confirm_msg),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),
                                 child: Text(
-                                  'Cancel',
+                                  lc.btn_Cancel,
                                   style: TextStyle(
                                     color: AppColors.textPrimary(context),
                                   ),
@@ -132,7 +133,7 @@ Widget MyAdCard(
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.red,
                                 ),
-                                child: const Text('Delete'),
+                                child:  Text(lc.delete),
                               ),
                             ],
                           );
@@ -144,7 +145,7 @@ Widget MyAdCard(
                           onShowLoader();
                           await controller.deleteAd(
                             ad.postId.toString(),
-                          userName,
+                            userName,
                           );
                         } finally {
                           onHideLoader();
@@ -187,14 +188,14 @@ Widget MyAdCard(
             children: [
               yellowButtons(
                 context: context,
-                title: "Request 360 Service",
+                title: lc.request_360,
                 onTap: () {
                   SuccessDialog.show(
                     request: false,
                     context: context,
-                    title: "Ready to showCase your vehicle like a pro?",
+                    title: lc.ready_pro,
                     message:
-                    "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges 100 riyal can apply.",
+                    lc.msg_360,
                     onClose: () {},
                     onTappp: () async {
                       // // 1) Close confirmation dialog
@@ -266,8 +267,8 @@ Widget MyAdCard(
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Confirmation",
-                            message: "We Have Received Your Request",
+                            title: lc.confirmation,
+                            message: lc.receive_request_msg,
                             onClose: () {},
                             onTappp: () {},
                           );
@@ -275,8 +276,8 @@ Widget MyAdCard(
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Cancellation",
-                            message: "Failed To Send A Request",
+                            title: lc.cancellation,
+                            message: lc.request_failed,
                             onClose: () {},
                             onTappp: () {},
                           );
@@ -286,8 +287,8 @@ Widget MyAdCard(
                         SuccessDialog.show(
                           request: true,
                           context: context,
-                          title: 'Payment Failed',
-                          message: 'Payment failed or cancelled.',
+                          title: lc.payment_failed,
+                          message: lc.payment_failed_or_cancelled,
                           onClose: () {},
                           onTappp: () {},
                         );
@@ -302,14 +303,14 @@ Widget MyAdCard(
               ),
               yellowButtons(
                 context: context,
-                title: "Feature Your Ad",
+                title: lc.feature_ad,
                 onTap: () {
                   SuccessDialog.show(
                     request: false,
                     context: context,//
-                    title: "Let's make your post the center \n of orientation",
+                    title: lc.centered_ad,
                     message:
-                    "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!",
+                    lc.feature_ad_msg,
                     onClose: () {},
                     onTappp: () async {
                       // 1) Close confirmation dialog
@@ -335,8 +336,8 @@ Widget MyAdCard(
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Confirmation",
-                            message: "We Have Received Your Request",
+                            title: lc.confirmation,
+                            message:lc.receive_request_msg,
                             onClose: () {},
                             onTappp: () {},
                           );
@@ -345,8 +346,8 @@ Widget MyAdCard(
                           SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: "Cancellation",
-                            message: "Failed To Send A Request",
+                            title: lc.cancellation,
+                            message: lc.request_failed,
                             onClose: () {},
                             onTappp: () {},
                           );
@@ -356,8 +357,8 @@ Widget MyAdCard(
                         SuccessDialog.show(
                           request: true,//
                           context: context,
-                          title:    'Payment',
-                          message:   'Payment was cancelled or failed',
+                          title:    lc.payment,
+                          message:   lc.payment_failed_or_cancelled,
                           onClose: () {},
                           onTappp: () {},
                         );
@@ -384,7 +385,7 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         context: context,
-                        title: "Modify",
+                        title: lc.modify,
                         onTap: () {
                           Get.to(
                             SellCarScreen(
@@ -406,7 +407,7 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         context: context,
-                        title: "Specs",
+                        title: lc.specs,
                         onTap: () {
                           Get.to(SpecsManagemnt(postId: ad.postId.toString()));
                         },
@@ -423,7 +424,7 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         context: context,
-                        title: "Gallery",
+                        title: lc.gallery,
                         onTap: () {
                           // Navigate to GalleryManagement and auto-refresh when returning
                           Get.to(
@@ -446,7 +447,7 @@ Widget MyAdCard(
                     Expanded(
                       child: yellowButtons(
                         context: context,
-                        title: "Publish",
+                        title: lc.publish,
                         onTap: () async {
                           if(ad.postStatus!="Pending Approval"){
                             final myAdController = Get.find<MyAdCleanController>();
@@ -464,9 +465,9 @@ Widget MyAdCard(
                               SuccessDialog.show(
                                 request: true,
                                 context: context,
-                                title: "Confirmation",
+                                title: lc.confirmation,
                                 message:
-                                "We Have Receive Your Request",
+                                lc.receive_request_msg,
                                 onClose: () {//l
                                   // Refresh the ads list when the dialog is closed
                                   print('🔄 [REFRESH] Closing dialog, refreshing ads...');
@@ -480,8 +481,8 @@ Widget MyAdCard(
                               SuccessDialog.show(
                                 request: true,
                                 context: context,
-                                title: "Cancellation",
-                                message: "Failed To Send A Request",
+                                title: lc.cancellation,
+                                message: lc.request_failed,
                                 onClose: () {},
                                 onTappp: () {},
                               );
@@ -490,9 +491,9 @@ Widget MyAdCard(
                             SuccessDialog.show(
                               request: true,
                               context: context,
-                              title: "Information",
+                              title: lc.info,
                               message:
-                              "This ad is pending approval, Please wait \n while we review your ad",
+                              lc.waiting_ad_approval,
                               onClose: () {//l
                                 // Refresh the ads list when the dialog is closed
                                 print('🔄 [REFRESH] Closing dialog, refreshing ads...');
@@ -521,7 +522,7 @@ Widget MyAdCard(
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Text(
-            "Creation Date: ${ad.createdDateTime.split(' ')[0]} - Expiry Date: ${ad.expirationDate.split(' ')[0]}",
+            "${lc.creation_date} ${ad.createdDateTime.split(' ')[0]} - ${lc.ex_date} ${ad.expirationDate.split(' ')[0]}",
             style: TextStyle(
               color: AppColors.textMuted,
               fontSize: 12.5.sp,

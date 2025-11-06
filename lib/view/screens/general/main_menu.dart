@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/view/screens/general/privacy_policey.dart';
+import 'package:qarsspin/view/screens/general/terms_and_conditions.dart';
 
 import '../../../controller/Theme_controller.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
+import '../../../l10n/l10n.dart';
+import 'about_qars_spin.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -17,6 +22,8 @@ class _MainMenuState extends State<MainMenu> {
   final ThemeController themeController = Get.find();
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar: AppBar(
@@ -24,53 +31,64 @@ class _MainMenuState extends State<MainMenu> {
           backgroundColor: AppColors.background(context),
           toolbarHeight: 60.h,
           shadowColor: Colors.grey.shade300,
-
           elevation: .4,
-
           title: Text(
-            "Main Menu",
+            lc.title_Main_Menu,
             style: TextStyle(
                 color: AppColors.blackColor(context),
                 fontWeight: FontWeight.bold,
-                fontSize: 18.sp
-            ),
-          )
-      ),
-
+                fontSize: 18.sp),
+          )),
       body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 25.h,horizontal: 20.w),
+        padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 20.w),
         children: [
           // Dark Mode Switch
-          Obx(() =>  SwitchListTile(
-            title:  Text("Dark Mode",
-                style: TextStyle(
-                    color: AppColors.blackColor(context),
-                    fontSize: 16, fontWeight: FontWeight.w500)),
-            secondary:  Icon(Icons.dark_mode, color: AppColors.blackColor(context)),
-            value: themeController.themeMode.value == ThemeMode.dark,
-            onChanged: (_) => themeController.toggleTheme(),
-          )),
+          Obx(() => SwitchListTile(
+                title: Text(lc.dark_mode,
+                    style: TextStyle(
+                        color: AppColors.blackColor(context),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500)),
+                secondary:
+                    Icon(Icons.dark_mode, color: AppColors.blackColor(context)),
+                value: themeController.themeMode.value == ThemeMode.dark,
+                onChanged: (_) => themeController.toggleTheme(),
+              )),
           20.verticalSpace,
 
           buildMenuItem(
             icon: Icons.language,
-            title: "Change Language",
+            title: lc.lbl_change_language,
+            onTap: () {
+              final controller = Get.find<LanguageController>();
+              if (controller.currentLocale.languageCode == 'en') {
+                controller.changeLanguage('ar');
+              } else {
+                controller.changeLanguage('en');
+              }
+            },
           ),
           buildMenuItem(
             icon: Icons.support_agent,
-            title: "Support / Help Desk",
+            title: lc.lbl_support_help_desk,
           ),
           buildMenuItem(
-            icon: Icons.privacy_tip,
-            title: "Privacy Policy",
-          ),
+              icon: Icons.privacy_tip,
+              title: lc.lbl_privacy_policy,
+              onTap: () {
+                Get.to(PrivacyPolicey());
+              }),
           buildMenuItem(
-            icon: Icons.description,
-            title: "Terms and Conditions",
-          ),
+              icon: Icons.description,
+              title: lc.lbl_terms_and_conditions,
+              onTap: () {
+                Get.to(TermsAndConditions());
+              }),
           buildMenuItem(
+            onTap: (){Get.to(AboutQarsSpin());}
+            ,
             icon: Icons.info,
-            title: "About Qars Spin",
+            title: lc.lbl_about_qars_spin,
           ),
         ],
       ),
@@ -85,16 +103,23 @@ class _MainMenuState extends State<MainMenu> {
     return Column(
       children: [
         Padding(
-          padding:  EdgeInsets.only(bottom: 10.h),
+          padding: EdgeInsets.only(bottom: 10.h),
           child: ListTile(
-
             leading: Icon(icon, color: AppColors.blackColor(context)),
-            title: Text(title, style:  TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w400,color: AppColors.blackColor(context))),
-            trailing: Image.asset("assets/images/arrow.png",scale: 1.8,color: AppColors.iconColor(context),),
+            title: Text(title,
+                style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.blackColor(context))),
+            trailing: Image.asset(
+              "assets/images/arrow.png",
+              scale: 1.8,
+              color: AppColors.iconColor(context),
+            ),
             onTap: onTap,
           ),
         ),
-         Container(height: .8.h, color: AppColors.darkGray),
+        Container(height: .8.h, color: AppColors.darkGray),
       ],
     );
   }

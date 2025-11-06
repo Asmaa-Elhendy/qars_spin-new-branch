@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/ads/data_layer.dart';
 import 'package:qarsspin/controller/rental_cars_controller.dart';
@@ -31,12 +32,17 @@ class ShowRoomsController extends GetxController {
   }
 
   //helpful functions
-  String convertToTimeAgo(String dateString) {
-    // Parse the string into DateTime
-    DateTime dateTime = DateTime.parse(dateString);
+  String convertToTimeAgo(BuildContext context, String dateString) {
+    // نحول التاريخ لتوقيت الجهاز المحلي
+    DateTime dateTime = DateTime.parse(dateString).toLocal();
 
-    // Format with timeago
-    return timeago.format(dateTime);
+    // نعرف اللغة الحالية للتطبيق
+    String currentLocale = Localizations.localeOf(context).languageCode;
+
+    // نختار اللغة المناسبة
+    String locale = currentLocale == 'ar' ? 'ar' : 'en';
+
+    return timeago.format(dateTime, locale: locale);
   }
   Color hexToColor(String hex) {
     hex = hex.replaceAll("#", ""); // remove the "#"
@@ -45,7 +51,7 @@ class ShowRoomsController extends GetxController {
     }
     return Color(int.parse(hex, radix: 16));
   }
-  fetchShowrooms({required bool forSale,String partnerKind = "Car Showroom",String sort = "lb_Sort_By_Avg_Rating_Desc" }) async {
+  fetchShowrooms({required BuildContext context,required bool forSale,String partnerKind = "Car Showroom",String sort = "lb_Sort_By_Avg_Rating_Desc", }) async {
 
     showRooms = [];
     for (var showRoom in showRooms) {
@@ -62,69 +68,42 @@ class ShowRoomsController extends GetxController {
 
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
-      List<CarModel> myCars = [];
-      List<RentalCar> myRentalCars = [];
-      for (int i = 0; i < body["Data"].length; i++) {
-        String time = convertToTimeAgo(body["Data"][i]["Joining_Date"]);
-        // if(forSale){
-        //   myCars = await fetchCarsOfShowRooms(
-        //     forSale: forSale,
-        //       postId: "0",
-        //       sourceKind: "Partner",
-        //       partnerid: body["Data"][i]["Partner_ID"].toString(),
-        //       userName: "sv4it");
-        // }
-        // else{
-        //   myRentalCars = await fetchCarsOfShowRooms(
-        //     forSale: forSale,
-        //       postId: "0",
-        //       sourceKind: "Partner",
-        //       partnerid: body["Data"][i]["Partner_ID"].toString(),
-        //       userName: "sv4it");
-        // }
-
-
-        showRooms.add(Showroom(
-            carsCount: await getCarsCount(forSale: forSale, postId: "0", sourceKind: "Partner", partnerid: body["Data"][i]["Partner_ID"].toString(), userName: userName??""),
-            rentalCars: rentalCarsOfShowRoom,
-            carsForSale: carsForSale,
-            partnerId: body["Data"][i]["Partner_ID"],
-            partnerNamePl: body["Data"][i]["Partner_Name_PL"],
-            logoUrl: body["Data"][i]["Logo_URL"],
-            visitsCount: body["Data"][i]["Visits_Count"],
-            avgRating: body["Data"][i]["Avg_Rating"],
-            pinToTop: body["Data"][i]["Pin_To_Top"] == 1 ? true : false,
-            partnerKind: body["Data"][i]["Avg_Rating"],
-            activePosts: body["Data"][i]["Active_Posts"],
-            bannerFileNamePl: body["Data"][i]["Banner_FileName_PL"],
-            bannerFileNameSl: body["Data"][i]["Banner_URL_SL"],
-            bannerUrlPl: body["Data"][i]["Banner_URL_PL"],
-            bannerUrlSl: body["Data"][i]["Banner_URL_SL"],
-            branchNamePl: body["Data"][i]["Branch_Name_PL"],
-            branchNameSl: body["Data"][i]["Branch_Name_SL"],
-            contactPhone: body["Data"][i]["Contact_Phone"],
-            contactWhatsApp: body["Data"][i]["Contact_WhatsApp"],
-            countryCode: body["Data"][i]["Country_Code"],
-            followersCount: body["Data"][i]["Followers_Count"],
-            joiningDate: time,
-            logoFileName: body["Data"][i]["Logo_FileName"],
-            mapsUrl: body["Data"][i]["Maps_URL"],
-            partnerDescPl: body["Data"][i]["Partner_Desc_PL"],
-            partnerDescSl: body["Data"][i]["Partner_Desc_SL"],
-            partnerNameSl: body["Data"][i]["Partner_Name_SL"],
-
-            spin360Url: body["Data"][i]["Spin360_URL"]));
-        // if(partnerKind!="Car Care Shop"){
-        // fetchCarsOfShowRooms(
-        //   forSale: forSale,
-        //     postId: "0",
-        //     sourceKind: "Partner",
-        //     partnerid: body["Data"][i]["Partner_ID"].toString(),
-        //     userName: "sv4it");
-        // }
-      }
-      loadingMode = false;
-      update();
+        List<CarModel> myCars = [];
+        List<RentalCar> myRentalCars = [];
+        for (int i = 0; i < body["Data"].length; i++) {
+          String time = convertToTimeAgo(context,body["Data"][i]["Joining_Date"]);
+          showRooms.add(Showroom(
+              carsCount: await getCarsCount(forSale: forSale, postId: "0", sourceKind: "Partner", partnerid: body["Data"][i]["Partner_ID"].toString(), userName: userName??""),
+              rentalCars: rentalCarsOfShowRoom,
+              carsForSale: carsForSale,
+              partnerId: body["Data"][i]["Partner_ID"],
+              partnerNamePl: body["Data"][i]["Partner_Name_PL"],
+              logoUrl: body["Data"][i]["Logo_URL"],
+              visitsCount: body["Data"][i]["Visits_Count"],
+              avgRating: body["Data"][i]["Avg_Rating"],
+              pinToTop: body["Data"][i]["Pin_To_Top"] == 1 ? true : false,
+              partnerKind: body["Data"][i]["Avg_Rating"],
+              activePosts: body["Data"][i]["Active_Posts"],
+              bannerFileNamePl: body["Data"][i]["Banner_FileName_PL"],
+              bannerFileNameSl: body["Data"][i]["Banner_URL_SL"],
+              bannerUrlPl: body["Data"][i]["Banner_URL_PL"],
+              bannerUrlSl: body["Data"][i]["Banner_URL_SL"],
+              branchNamePl: body["Data"][i]["Branch_Name_PL"],
+              branchNameSl: body["Data"][i]["Branch_Name_SL"],
+              contactPhone: body["Data"][i]["Contact_Phone"],
+              contactWhatsApp: body["Data"][i]["Contact_WhatsApp"],
+              countryCode: body["Data"][i]["Country_Code"],
+              followersCount: body["Data"][i]["Followers_Count"],
+              joiningDate: time,
+              logoFileName: body["Data"][i]["Logo_FileName"],
+              mapsUrl: body["Data"][i]["Maps_URL"],
+              partnerDescPl: body["Data"][i]["Partner_Desc_PL"],
+              partnerDescSl: body["Data"][i]["Partner_Desc_SL"],
+              partnerNameSl: body["Data"][i]["Partner_Name_SL"],
+              spin360Url: body["Data"][i]["Spin360_URL"]));
+        }
+        loadingMode = false;
+        update();
 
     } else {
       throw Exception("Failed to load data: ${response.statusCode}");
@@ -132,7 +111,7 @@ class ShowRoomsController extends GetxController {
   }
 
   //ApI calls
-  fetchCarsOfShowRooms({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName,required String showroomName}) async {
+  fetchCarsOfShowRooms({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName,required String showroomName,required BuildContext context}) async {
     rentalCarsOfShowRoom = [];
     carsForSale = [];
 
@@ -141,7 +120,7 @@ class ShowRoomsController extends GetxController {
     Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=${userName}",
     )
-        :Uri.parse(
+    :Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
     );
 
@@ -158,10 +137,12 @@ class ShowRoomsController extends GetxController {
           getCarSpec(body["Data"][i]["Post_ID"]);
           Color interior = hexToColor(body["Data"][i]["Color_Interior"]);
           Color exterior = hexToColor(body["Data"][i]["Color_Exterior"]);
-          String time = convertToTimeAgo(body["Data"][i]["Created_DateTime"]);
-          forSale?carsForSale.add(CarModel(postId: body["Data"][i]["Post_ID"],
+          String time = convertToTimeAgo(context,body["Data"][i]["Created_DateTime"]);
+          forSale?carsForSale.add(
+              CarModel(postId: body["Data"][i]["Post_ID"],
               pinToTop: body["Data"][i]["Pin_To_Top"],
               postKind: "",
+              technical_Description_SL: "",
 
               postCode:body["Data"][i]["Post_Code"],
               carNamePl:body["Data"][i]["Car_Name_PL"],
@@ -274,26 +255,26 @@ class ShowRoomsController extends GetxController {
 
       return rentalCarsOfShowRoom;
     }
-    //  return forSale?carsForSale:rentalCarsOfShowRoom;
+  //  return forSale?carsForSale:rentalCarsOfShowRoom;
   }
-  getCarsCount({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName})async{
-    final url = forSale?
-    Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
-    )
-        :Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
-    );
+getCarsCount({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName})async{
+  final url = forSale?
+  Uri.parse(
+    "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
+  )
+      :Uri.parse(
+    "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForRent?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
+  );
 
-    final response = await http.get(url);
+  final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      final body = json.decode(response.body);
+  if (response.statusCode == 200) {
+    final body = json.decode(response.body);
 
-      return body["Count"];
-    }
-
+    return body["Count"];
   }
+
+}
   getPartnerGallery(partnerId)async{
     gallery = [];
     final url = Uri.parse(
@@ -306,7 +287,7 @@ class ShowRoomsController extends GetxController {
       for(int i =0;i < body["Data"].length;i++){
         gallery.add(body["Data"][i]["Image_URL"]);
       }
-    }
+      }
     update();
 
   }

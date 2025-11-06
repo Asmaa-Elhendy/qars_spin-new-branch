@@ -50,7 +50,7 @@ class CustomTextField extends StatelessWidget {
     double height=MediaQuery.of(context).size.height;
     return Container(
       height:height*.06 ,
-      color: AppColors.background(context),
+      color: AppColors.white,
       child: TextFormField(
 
         controller: controller,
@@ -66,7 +66,7 @@ class CustomTextField extends StatelessWidget {
         textCapitalization: textCapitalization,
         style:  TextStyle(
           fontSize: 17.w,
-          color: AppColors.textPrimary(context),
+          color: AppColors.black,
         ),
         decoration: InputDecoration(
           hintText: hintText,
@@ -81,7 +81,7 @@ class CustomTextField extends StatelessWidget {
           ),
           suffixIcon: suffixIcon,
           filled: true,
-          fillColor: AppColors.background(context),
+          fillColor: AppColors.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -109,7 +109,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         validator: validator,
-        
+
       ),
     );
   }

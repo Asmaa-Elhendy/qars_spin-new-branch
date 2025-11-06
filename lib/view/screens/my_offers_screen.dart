@@ -9,6 +9,7 @@ import 'package:qarsspin/view/screens/cars_for_sale/car_details.dart';
 import 'package:qarsspin/view/widgets/ads/dialogs/loading_dialog.dart';
 
 import '../../controller/auth/auth_controller.dart';
+import '../../l10n/app_localization.dart';
 import 'ads/create_ad_options_screen.dart';
 import 'favourites/favourite_screen.dart';
 import 'general/contact_us.dart';
@@ -58,13 +59,14 @@ class _OffersScreenState extends State<OffersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar: AppBar(
         centerTitle: true, // يخلي العنوان في نص العرض
         elevation: 0, // نشيل الشادو الافتراضي
         title: Text(
-          "My Offers",
+          lc.lbl_my_offers,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -97,7 +99,7 @@ class _OffersScreenState extends State<OffersScreen> {
               if (controller.myOffersList.isEmpty) {
                 return Center(
                   child: Text(
-                    'No offers found',
+                    lc.no_offers,
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: Colors.grey,
@@ -105,7 +107,7 @@ class _OffersScreenState extends State<OffersScreen> {
                   ),
                 );
               }
-              
+
               return RefreshIndicator(color: AppColors.primary,
                 onRefresh: _loadOffers,
                 child: ListView.builder(
@@ -116,11 +118,12 @@ class _OffersScreenState extends State<OffersScreen> {
                     return GestureDetector(
                       onTap: () {
                         controller.getCarDetails(
+                          context: context,
                           offer.postKind,
                           offer.postId.toString(),
                         );
                         Get.to(
-                          () => CarDetails(
+                              () => CarDetails(
                             sourcekind: offer.sourceKind,
                             postKind: offer.postKind,
                             id: offer.postId,
@@ -129,10 +132,10 @@ class _OffersScreenState extends State<OffersScreen> {
                       },
                       child: FavouriteCarCard(
                         myOffer: 'Offer',
-                        title: offer.carNamePl,
+                        title: Get.locale?.languageCode=='ar'?offer.carNameSl:offer.carNamePl,
                         price: offer.askingPrice,
                         location: '',
-                        meilage: '${offer.mileage} KM',
+                        meilage: '${offer.mileage} ${lc.mileage_Unit}',
                         manefactureYear: offer.manufactureYear.toString(),
                         imageUrl: offer.rectangleImageUrl,
                         onHeartTap: () {
@@ -144,15 +147,15 @@ class _OffersScreenState extends State<OffersScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text(
-                                  'Delete Offer',
+                                  lc.delete_offer,
                                   style: TextStyle(fontSize: 19.w, fontWeight: FontWeight.bold),
                                 ),
-                                content: const Text('Are you sure you want to delete this offer?'),
+                                content:  Text(lc.sure_delete_offer),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context, false),
                                     child: Text(
-                                      'Cancel',
+                                      lc.btn_Cancel,
                                       style: TextStyle(color: AppColors.textPrimary(context)),
                                     ),
                                   ),
@@ -164,7 +167,7 @@ class _OffersScreenState extends State<OffersScreen> {
                                     style: TextButton.styleFrom(//k
                                       foregroundColor: Colors.red,
                                     ),
-                                    child: const Text('Delete'),
+                                    child:  Text(lc.delete),
                                   ),
                                 ],
                               );
@@ -180,8 +183,8 @@ class _OffersScreenState extends State<OffersScreen> {
 
                               if (response['Code'] == 'OK') {
                                 Get.snackbar(
-                                  'Success',
-                                  'Offer deleted successfully',
+                                  lc.success,
+                                  lc.offer_deleted,
                                   snackPosition: SnackPosition.BOTTOM,
                                   backgroundColor: Colors.green,
                                   colorText: Colors.white,
@@ -190,8 +193,8 @@ class _OffersScreenState extends State<OffersScreen> {
                                 await _loadOffers();
                               } else {
                                 Get.snackbar(
-                                  'Error',
-                                  response['Desc'] ?? 'Failed to delete offer',
+                                  lc.error_lbl,
+                                  response['Desc'] ??lc.failed_delete_offer,
                                   snackPosition: SnackPosition.BOTTOM,
                                   backgroundColor: Colors.red,
                                   colorText: Colors.white,
@@ -199,8 +202,8 @@ class _OffersScreenState extends State<OffersScreen> {
                               }
                             } catch (e) {
                               Get.snackbar(
-                                'Error',
-                                'An error occurred while deleting the offer',
+                               lc.error_lbl,
+                                lc.error_on_delete,
                                 snackPosition: SnackPosition.BOTTOM,
                                 backgroundColor: Colors.red,
                                 colorText: Colors.white,
@@ -215,14 +218,14 @@ class _OffersScreenState extends State<OffersScreen> {
               );
             },
           ),
-          
+
           // Loading Overlay
           if (_isLoading)
             Container(
-              color: Colors.black.withOpacity(0.5), // Reduced opacity from 0.5 to 0.2
-              child: const Center(
+              color:Colors.black.withOpacity(0.5),
+              child:  Center(
                 child: AppLoadingWidget(
-                  title: 'Loading...\nPlease Wait...',
+                  title: lc.loading,
                 ),
               ),
             ),
@@ -245,7 +248,7 @@ class _OffersScreenState extends State<OffersScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            Get.offAll(OffersScreen());
+              Get.offAll(OffersScreen());
 
               break;
             case 2:
@@ -254,6 +257,7 @@ class _OffersScreenState extends State<OffersScreen> {
               break;
 
             case 3:
+              Get.find<BrandController>().switchLoading();
               Get.find<BrandController>().getFavList();
               Get.offAll(FavouriteScreen());
               break;

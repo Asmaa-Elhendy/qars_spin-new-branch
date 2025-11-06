@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/model/rental_car_model.dart';
 import 'package:qarsspin/view/widgets/texts/texts.dart';
+
+import '../../../l10n/app_localization.dart';
 
 class RentalCarInfo extends StatelessWidget {
   RentalCar car;
@@ -11,6 +15,9 @@ class RentalCarInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
+
     return Container(
       color: AppColors.background(context),
       child: Column(
@@ -35,7 +42,7 @@ class RentalCarInfo extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4).r
                 ),
                 child: Center(
-                  child: Text("New",
+                  child: Text(lc.tag_New,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12.sp,
@@ -49,9 +56,9 @@ class RentalCarInfo extends StatelessWidget {
             ],
           ),
           20.verticalSpace,
-          headerText(car.carNamePL,context),
+          headerText(Get.locale?.languageCode=='ar'?car.carNameSL:car.carNamePL,context),
           16.verticalSpace,
-          description(car.technicalDescriptionPL,context: context),
+          description(Get.locale?.languageCode=='ar'?car.technicalDescriptionSL:car.technicalDescriptionPL,context: context),
           25.verticalSpace,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

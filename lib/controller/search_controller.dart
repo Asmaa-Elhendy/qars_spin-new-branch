@@ -19,7 +19,7 @@ class MySearchController extends GetxController {
   }
 
   fetchCarMakes({String sort = "MakeName"}) async {
-    print("callllmakes");
+   print("callllmakes");
 
     final url = Uri.parse(
       '$base_url/BrowsingRelatedApi.asmx/GetListOfCarMakes?Order_By=$sort',
@@ -138,14 +138,14 @@ class MySearchController extends GetxController {
     final find = {
       'Make_ID': makeId,
       'Class_ID': classId,
-      'Model_ID': modelId,
-      'Type_ID': categoryId,
-      'Year_Min': fromYear,
+     'Model_ID': modelId,
+     'Type_ID': categoryId,
+     'Year_Min': fromYear,
       'Year_Max': toYear,
-      'Price_Min': minPrice,
+     'Price_Min': minPrice,
       'Price_Max': maxPrice,
       'Warranty_isAvailable': '0',
-      'Inspection_Report_isAvailable': '0',
+     'Inspection_Report_isAvailable': '0',
       'Remarks': 'Looking for a family car' };
     // {
     //   "Make_ID": makeId,

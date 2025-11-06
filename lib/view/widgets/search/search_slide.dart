@@ -8,13 +8,16 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/model/global_model.dart';
 
+import '../../../controller/notifications_controller.dart';
 import '../../../controller/search_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../screens/cars_for_sale/cars_brand_list.dart';
 import '../my_ads/yellow_buttons.dart';
 
 class CustomFormSheet extends StatefulWidget {
   String myCase;
-  CustomFormSheet({required this.myCase, super.key});
+  NotificationsController notificationsController;
+  CustomFormSheet(this.notificationsController,{required this.myCase, super.key});
 
   @override
   State<CustomFormSheet> createState() => _CustomFormSheetState();
@@ -65,6 +68,8 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return GetBuilder<MySearchController>(
       init: MySearchController(), // يضمن أنه يتعمل init مرة واحدة
       builder: (controller) {
@@ -99,11 +104,11 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
                       ),
                     ),
                     18.verticalSpace,
-                    Center(child: title("Search")),
+                    Center(child: title(lc.search)),
                     8.verticalSpace,
                     Divider(color: AppColors.darkGray, thickness: .5.h),
                     16.verticalSpace,
-                    form(controller), // 👈 مررت نفس الـ controller
+                    form(controller,lc), // 👈 مررت نفس الـ controller
                   ],
                 ),
               ),
@@ -126,12 +131,13 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
     );
   }
 
-  Widget form(MySearchController controller) {
+  Widget form(MySearchController controller,lc) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
         children: [
           buildSearchableDropdown(
+            viewLabel:lc.choose_make,
             label: "Choose Make",
             items: controller.makes,
             myController: makeController,
@@ -139,12 +145,15 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
           ),
           buildSearchableDropdown(
             key: ValueKey(controller.classes.length), // 👈 key مرتبطة بالقائمة
+            viewLabel: lc.choose_class,
             label: "Choose Class",
+
             items: controller.classes,
             myController: classController,
             searchController: controller,
           ),
           buildSearchableDropdown(
+            viewLabel: lc.choose_model,
             label: "Choose Model",
             items: controller.models,
             myController: modelController,
@@ -152,6 +161,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
             key: ValueKey(controller.models.length),
           ),
           buildSearchableDropdown(
+            viewLabel: lc.choose_type,
             label: "Choose Type",
             items: controller.types,
             myController: typeController,
@@ -164,6 +174,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
             children: [
               Expanded(
                 child: buildSearchableDropdown(
+                    viewLabel: lc.from_year,
                     label: "From Year",
                     items: years,
                     myController: fromYearController,
@@ -171,6 +182,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
               ),
               Expanded(
                 child: buildSearchableDropdown(
+                    viewLabel: lc.to_year,
                     label: "To Year",
                     items: years,
                     myController: toYearController,
@@ -183,11 +195,11 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
             spacing: 30.w,
             children: [
               Expanded(
-                child: buildTextField("From Price", fromPriceController,
+                child: buildTextField(lc.from_price, fromPriceController,
                     keyboardType: TextInputType.number),
               ),
               Expanded(
-                child: buildTextField("To Price", toPriceController,
+                child: buildTextField(lc.to_price, toPriceController,
                     keyboardType: TextInputType.number),
               ),
             ],
@@ -199,7 +211,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
             children: [
               cancelButton(() {
                 Navigator.pop(context, "");
-              }, "Cancel"),
+              }, lc.btn_Cancel),
               searchButton(() {
                 Navigator.pop(context);//no data
 
@@ -234,7 +246,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
                         priceMax: toPriceController.text.isEmpty?"0":toPriceController.text,
                         catId: selectedTypeId
                     );
-                    Get.to(CarsBrandList(brandName: makeController.text,postKind:"CarForSale" ,));
+                    Get.to(CarsBrandList(widget.notificationsController,brandName: makeController.text,postKind:"CarForSale" ,));
                     break;
                   case "Qars spin":
                     Get.find<BrandController>().switchLoading();
@@ -254,7 +266,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
 
                     );
                     // Get.find<BrandController>().getCars(make_id: 0, makeName: "Qars Spin Showrooms",sourceKind: "Qars spin");
-                    Get.to(CarsBrandList(brandName: "Qars Spin \n Showroom",postKind: "",));
+                    Get.to(CarsBrandList(widget.notificationsController,brandName: "Qars Spin \n Showroom",postKind: "",));
                     break;
                   case "Personal Cars":
                     Get.find<BrandController>().switchLoading();
@@ -271,7 +283,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
                         catId: selectedTypeId,
                       sourceKind: "Individual"
                     );
-                    Get.to(CarsBrandList(brandName: makeController.text,postKind:"CarForSale" ,));
+                    Get.to(CarsBrandList(widget.notificationsController,brandName: makeController.text,postKind:"CarForSale" ,));
 
                 }
 
@@ -284,7 +296,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
                  // selectedClassId = "";
                  // selectedModelId = "";
                  // selectedTypeId = "";
-              })
+              },lc)
             ],
           )
         ],
@@ -294,6 +306,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
 
   Widget buildSearchableDropdown({
     required String label,
+    required String viewLabel,
     required List<GlobalModel> items,
     required TextEditingController myController,
     required MySearchController searchController,
@@ -304,7 +317,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
+          Text(viewLabel,
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Gilroy',
@@ -487,7 +500,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
     );
   }
 
-  Widget searchButton(onTap) {
+  Widget searchButton(onTap,lc) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -499,7 +512,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
         ),
         child: Center(
           child: Text(
-            "Search",
+            lc.search,
             style: TextStyle(
               color: AppColors.black,
               fontFamily: fontFamily,

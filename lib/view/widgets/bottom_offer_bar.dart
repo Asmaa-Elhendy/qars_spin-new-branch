@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../controller/communications.dart';
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
 
 class BottomActionBar extends StatelessWidget {
   final VoidCallback onMakeOffer;
@@ -19,6 +20,8 @@ class BottomActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -44,15 +47,15 @@ class BottomActionBar extends StatelessWidget {
                 elevation: 0,
               ),
               icon: Image.asset("assets/images/Group.png"),
-              label: const Text(
-                "Make Offer",
+              label:  Text(
+                lc.btn_make_offer,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
               ),
               onPressed: onMakeOffer,
             ),
           ),
           SizedBox(width: 8.w),
-          squareButton(Image.asset("assets/images/whats.png",),(){ openWhatsApp("011", message: "Hello 👋");},green: true),
+          squareButton(Image.asset("assets/images/whats.png",),onWhatsApp,green: true),
 
           // InkWell(
           //   onTap: onWhatsApp,

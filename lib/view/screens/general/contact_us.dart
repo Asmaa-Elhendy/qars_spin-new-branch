@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 
 import '../../../controller/brand_controller.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/navigation_bar.dart';
 import '../ads/create_ad_options_screen.dart';
 import '../home_screen.dart';
@@ -25,23 +27,25 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar:  AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.background(context),
-        toolbarHeight: 60.h,
-        shadowColor: Colors.grey.shade300,
-        elevation: .4,
-        title: Text(
-          "My Account",
-          style: TextStyle(
-              color: AppColors.blackColor(context),
-              fontWeight: FontWeight.bold,
-              fontSize: 18.sp
-          ),
-        )
-    ),
+          centerTitle: true,
+          backgroundColor: AppColors.background(context),
+          toolbarHeight: 60.h,
+          shadowColor: Colors.grey.shade300,
+          elevation: .4,
+          title: Text(
+            lc.navigation_call_us,
+            style: TextStyle(
+                color: AppColors.blackColor(context),
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp
+            ),
+          )
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.zero,
         //padding:  EdgeInsets.symmetric(vertical: 2.h,horizontal: 8.w),
@@ -51,25 +55,33 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           children: [
             // Logo
             SizedBox(
-             height: 70,
+              height: 70,
               width: 190,
               child: Image.asset(
                 'assets/images/ic_top_logo_colored.png',
                 fit: BoxFit.cover,
               ),
             ),
-          // 8.verticalSpace,
-             Text(
-              "Specialized in selling cars using 360° technology",
-              style: TextStyle(color: AppColors.blackColor(context)),
+            // 8.verticalSpace,
+            Text(
+              lc.specialized_techno,
+              style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.blackColor(context)),
               textAlign: TextAlign.center,
             ),
 
-              4.verticalSpace,
+            4.verticalSpace,
             // Live Chat
-            const Text(
-              "Live chat",
-              style: TextStyle(fontWeight: FontWeight.bold),
+             Text(
+              lc.live_chat,
+
+
+              style: TextStyle( fontFamily: fontFamily,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             blackCircle("assets/images/liveChat.png"),
@@ -86,15 +98,22 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    "Contact Us",
+                   Text(
+                    lc.navigation_call_us,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                        fontFamily: fontFamily,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700
+                        ),
                   ),
                   const SizedBox(height: 8),
-                   Text(
-                    "To sell your car, buy a car, or any other questions",
-                    style: TextStyle(color: AppColors.white),
+                  Text(
+                    lc.cnt_reason,
+                    style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.white),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
@@ -115,9 +134,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             const SizedBox(height: 30),
 
             // For Business Inquiries
-            const Text(
-              "For Business Inquiries",
-              style: TextStyle(fontWeight: FontWeight.bold),
+             Text(
+              lc.for_business,
+              style: TextStyle(
+
+                  fontFamily: fontFamily,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700
+              ),
             ),
             const SizedBox(height: 12),
             blackCircle("assets/images/message.png"),
@@ -134,11 +158,15 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    "Social Media Accounts",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                   Text(
+                    lc.social_accounts,
+                    style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700
+                    ),
                   ),
-                   12.verticalSpace,
+                  12.verticalSpace,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:  [
@@ -202,7 +230,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               Get.offAll(HomeScreen());
               break;
             case 1:
-            Get.offAll(OffersScreen());
+              Get.offAll(OffersScreen());
 
               break;
             case 2:
@@ -211,6 +239,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               break;
 
             case 3:
+              Get.find<BrandController>().switchLoading();
               Get.find<BrandController>().getFavList();
               Get.offAll(FavouriteScreen());
               break;
@@ -237,7 +266,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           height: 20,
           child: Image.asset(assets,color: Colors.white,
 
-          fit: BoxFit.contain,
+            fit: BoxFit.contain,
           ))),
     );
   }

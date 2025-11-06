@@ -8,17 +8,21 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/search_controller.dart';
 
 import '../../../controller/brand_controller.dart';
+import '../../../controller/notifications_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ad_container.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/car_card.dart';
 import '../../widgets/car_list_grey_bar.dart';
 import '../../widgets/cars_list_app_bar.dart';
 import '../general/find_me_car.dart';
+import 'dart:io' show Platform;
 
 class CarsBrandList extends StatefulWidget {
   String brandName;
   String postKind;
-  CarsBrandList({required this.postKind, required this.brandName, super.key});
+  NotificationsController notificationsController;
+  CarsBrandList(this.notificationsController,{required this.postKind, required this.brandName, super.key});
 
   @override
   State<CarsBrandList> createState() => _CarsBrandListState();
@@ -28,22 +32,29 @@ class _CarsBrandListState extends State<CarsBrandList> {
   bool isGrid = true; // controls which view to show
   String searchResult = "";
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("btrandName = ${widget.brandName}");
+  }
+  @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background(context),
-      appBar: carListAppBar(notificationCount: 3,context: context),
+      appBar: carListAppBar(widget.notificationsController,notificationCount: 3,context: context),
       body: GetBuilder<BrandController>(builder: (controller) {
         return Stack(
           children: [
             Column(
               children: [
-            //    adContainer(),
                 AdContainer(//update banner
                   bigAdHome: true,
                   targetPage: 'Cars For Sale - Makes Page',
                 ),
                 8.verticalSpace,
-                carListGreyBar(
+                carListGreyBar(widget.notificationsController,
                     listCars:widget.brandName!="Qars Spin \n Showroom"&& widget.brandName!="Personal Cars",//true,
                     listCarsInQarsSpinShowRoom: widget.brandName=="Qars Spin \n Showroom",
                     personalsCars: widget.brandName=="Personal Cars",
@@ -55,7 +66,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
                       });
                     },
                     context: context,
-                    title: controller.currentMakeName==""?"All Cars":controller.currentMakeName,
+                    title: controller.currentMakeName==""?lc.all_cars:widget.brandName,
                     squareIcon: true,
                     onSwap: () {
                       setState(() {
@@ -63,27 +74,27 @@ class _CarsBrandListState extends State<CarsBrandList> {
                       });
                     }),
                 8.verticalSpace,
-                 controller.loadingMode?SizedBox():
-                 controller.carsList.isNotEmpty
-                        ? Expanded(
-                            child: isGrid
-                                ? listAsAGread(controller.carsList)
-                                : listAsAList(controller.carsList))
-                        : noResultFoud()
+                controller.loadingMode?SizedBox():
+                controller.carsList.isNotEmpty
+                    ? Expanded(
+                    child: isGrid
+                        ? listAsAGread(controller.carsList)
+                        : listAsAList(controller.carsList))
+                    : noResultFoud(lc)
               ],
             ),
-           if(controller.loadingMode)
-                 Positioned.fill(
+            if(controller.loadingMode)
+              Positioned.fill(
 
-              child: Container(
-                color: AppColors.black.withOpacity(0.5),
-                child: Center(
-                  child: AppLoadingWidget(
-                    title: 'Loading...\nPlease Wait...',
+                child: Container(
+                  color: AppColors.black.withOpacity(0.5),
+                  child: Center(
+                    child: AppLoadingWidget(
+                      title: lc.loading,
+                    ),
                   ),
                 ),
-              ),
-            )
+              )
 
           ],
         );
@@ -94,7 +105,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
   Widget listAsAGread(cars) {
     return Padding(
         padding:
-            EdgeInsets.symmetric(horizontal: 13.w, vertical: 8), //update asmaa
+        EdgeInsets.symmetric(horizontal: 13.w, vertical: 8), //update asmaa
         child: GridView.builder(
             itemCount: cars.length,
 
@@ -102,12 +113,12 @@ class _CarsBrandListState extends State<CarsBrandList> {
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
               crossAxisSpacing: 10.w, //update asmaa
-              childAspectRatio: .785, //.877 adjust for card height .6  update grid cars asmaa
+              childAspectRatio: Platform.isAndroid ? 0.785 : 0.76, // adjust as needed ios / android
             ),
             itemBuilder: (context, index) {
 
               return carCard(
-                context: context,
+                  context: context,
                   w: 192.w,
                   h: 235.h,
                   car: cars[index],
@@ -131,7 +142,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
                 car: cars[index],
                 postKind: widget.postKind,
                 large:
-                    true, // you can use this flag if your card has different styles for list
+                true, // you can use this flag if your card has different styles for list
               ),
               8.verticalSpace
             ],
@@ -141,13 +152,13 @@ class _CarsBrandListState extends State<CarsBrandList> {
     );
   }
 
-  Widget noResultFoud() {
+  Widget noResultFoud(lc) {
     return Column(
       children: [
         55.verticalSpace,
         Center(
           child: Text(
-            "No Result Found",
+            lc.no_result,
             style: TextStyle(
                 color: AppColors.blackColor(context),
                 fontFamily: fontFamily,
@@ -161,21 +172,24 @@ class _CarsBrandListState extends State<CarsBrandList> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 25.w),
               child: Text(
-                "Unfortunately what you are looking for is\ncurrently not available. Please activate a",
+                lc.sorry,
                 style: TextStyle(
                     color: AppColors.blackColor(context),
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w300,
-                    fontSize: 15.sp),
+                    fontSize: 13.sp),
               ),
             ),
-            Text(
-              "notification using\"Find me a car\"yp be updates",
-              style: TextStyle(
-                  color: AppColors.blackColor(context),
-                  fontFamily: fontFamily,
-                  fontWeight: FontWeight.w300,
-                  fontSize: 15.sp),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 10.w),
+              child: Text(
+                lc.sorry_notify,
+                style: TextStyle(
+                    color: AppColors.blackColor(context),
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 13.sp),
+              ),
             ),
             33.verticalSpace,
             Center(
@@ -184,18 +198,19 @@ class _CarsBrandListState extends State<CarsBrandList> {
                   Get.to(FindMeACar());
                 },
                 child: Container(
-                  width: 160.w,
+                  //width: 180.w,
                   height: 55.h,
+                  margin: EdgeInsets.symmetric(horizontal: 120.w),
                   padding:
-                      EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
                   decoration: BoxDecoration(
                     color: AppColors.textSecondary(context),
                     borderRadius:
-                        BorderRadius.circular(4), // optional rounded corners
+                    BorderRadius.circular(4), // optional rounded corners
                   ),
                   child: Center(
                     child: Text(
-                      "Find Me A Car",
+                  lc.find_me_car,
                       style: TextStyle(
                         color: AppColors.black,
                         fontFamily: fontFamily,
@@ -213,4 +228,3 @@ class _CarsBrandListState extends State<CarsBrandList> {
     );
   }
 }
-

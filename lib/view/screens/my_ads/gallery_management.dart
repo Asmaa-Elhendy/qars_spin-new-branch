@@ -13,6 +13,7 @@ import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
 import 'package:qarsspin/model/post_media.dart';
 
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import 'dart:developer';
 import 'dart:async';
@@ -104,6 +105,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
+        var lc = AppLocalizations.of(context)!;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -111,7 +113,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Add Media',
+                  lc.add_media,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -121,18 +123,18 @@ class _GalleryManagementState extends State<GalleryManagement> {
               Divider(height: 1),
               ListTile(
                 leading: Icon(Icons.photo_library, color: Colors.black),
-                title: Text('Add Photo'),
+                title: Text(lc.add_img),
                 onTap: () {
                   Navigator.pop(context);
-                  _pickImages();
+                  _pickImages(lc);
                 },
               ),
               ListTile(
                 leading: Icon(Icons.video_library, color: Colors.black),
-                title: Text('Add Video'),
+                title: Text(lc.add_video),
                 onTap: () {
                   Navigator.pop(context);
-                  _pickVideo();
+                  _pickVideo(lc);
                 },
               ),
               SizedBox(height: 8),
@@ -144,7 +146,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   /// Pick video from gallery
-  Future<void> _pickVideo() async {
+  Future<void> _pickVideo(lc) async {
     try {
       // Check if there's already a video
       final apiImages = controller.postMedia.value?.data ?? [];
@@ -152,7 +154,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
       if (hasVideo) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("You can only add one video")),
+          SnackBar(content: Text(lc.only_one_video)),
         );
         return;
       }
@@ -219,14 +221,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
     }
   }
 
-  Future<void> _pickImages() async {
+  Future<void> _pickImages(lc) async {
     log('🚀 [DEBUG] _pickImages method started!');
 
     final totalImages =
         images.length + (controller.postMedia.value?.data.length ?? 0);
     if (totalImages >= 15) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You can only select up to 15 images.")),
+         SnackBar(content: Text(lc.only_15_img)),
       );
       return;
     }
@@ -262,7 +264,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Please edit image ${i + 1} and tap SAVE when done',
+                '${lc.please_edit_img} ${i + 1} ${lc.tap_save}',
               ),
               duration: Duration(seconds: 3),
             ),
@@ -333,7 +335,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           log('❌ [EDITING] Image ${i + 1} cancelled or invalid in editor');
 
           // Ask user if they want to retry
-          bool shouldRetry = await _showRetryDialog(context, i + 1);
+          bool shouldRetry = await _showRetryDialog(context, i + 1,lc);
           if (shouldRetry) {
             log('🔄 [EDITING] Retrying image ${i + 1}...');
             i--; // Retry the same image
@@ -423,7 +425,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                "Failed to upload $failCount image${failCount > 1 ? 's' : ''}",
+                "${lc.upload_failed} $failCount ${lc.image}${Get.locale?.languageCode=='ar'?failCount > 1 ? 's' : '':''}",
               ),
               backgroundColor: Colors.red,
             ),
@@ -441,23 +443,23 @@ class _GalleryManagementState extends State<GalleryManagement> {
     }
   }
 
-  Future<bool> _showRetryDialog(BuildContext context, int imageNumber) async {
+  Future<bool> _showRetryDialog(BuildContext context, int imageNumber,lc) async {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Image Editing Cancelled'),
+        title: Text(lc.cancel_edit_img),
         content: Text(
-          'Image $imageNumber was cancelled. Do you want to retry editing it?',
+          '${lc.image} $imageNumber ${lc.was_cancelled}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Skip', style: TextStyle(color: AppColors.primary)),
+            child: Text(lc.skip, style: TextStyle(color: AppColors.primary)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
-              'Retry',
+              lc.retry,
               style: TextStyle(color: AppColors.primary),
             ),
           ),
@@ -544,7 +546,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   // Method to load cover image from postDetails (similar to create_new_ad.dart)
-  void _loadCoverImageFromPostDetails() {
+  void _loadCoverImageFromPostDetails(lc) {
     if (postDetails != null && postDetails!['Rectangle_Image_URL'] != null) {
       setState(() {
         // Set currentCoverImage equal to Rectangle_Image_URL from postDetails
@@ -565,6 +567,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   Future<void> _fetchPostDetails() async {
+    var lc = AppLocalizations.of(context)!;
     log('🚀 [DEBUG] Fetching post details for post ID: ${widget.postId}');
     log('🚀 [DEBUG] Post Kind: ${widget.postKind}');
     log('🚀 [DEBUG] User Name: ${widget.userName}');
@@ -588,7 +591,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         });
 
         // Load cover image from postDetails (similar to create_new_ad.dart)
-        _loadCoverImageFromPostDetails();
+        _loadCoverImageFromPostDetails(lc);
 
         // Now fetch the media/images for this post
         await controller.fetchPostMedia(widget.postId.toString());
@@ -612,7 +615,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   /// Toggle video playback inline in the card
-  Future<void> _toggleVideoPlayback(String videoUrl) async {
+  Future<void> _toggleVideoPlayback(String videoUrl,lc) async {
     log('🎬 [VIDEO] Toggling video playback for: $videoUrl');
 
     try {
@@ -645,7 +648,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
               initError.toString().contains('format') ||
               initError.toString().contains('capabilities')) {
             log('🎬 [VIDEO] High resolution video detected, launching external player');
-            await _launchVideoPlayerExternally(videoUrl);
+            await _launchVideoPlayerExternally(videoUrl,lc);
             return;
           }
           return;
@@ -682,13 +685,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   children: [
                     Icon(Icons.error_outline, color: Colors.red, size: 50),
                     SizedBox(height: 10),
+
                     Text(
-                      'Video cannot be played',
+                      lc.video_not_play,
                       style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'This video may be too high resolution for your device',
+                      lc.over_video,
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                       textAlign: TextAlign.center,
                     ),
@@ -696,9 +700,9 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     ElevatedButton(
                       onPressed: () {
                         _stopCurrentVideo();
-                        _launchVideoPlayerExternally(videoUrl);
+                        _launchVideoPlayerExternally(videoUrl,lc);
                       },
-                      child: Text('Open in External Player'),
+                      child: Text(lc.open_external_player),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
@@ -746,7 +750,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
 
   /// Launch video player using external app as fallback
-  Future<void> _launchVideoPlayerExternally(String videoUrl) async {
+  Future<void> _launchVideoPlayerExternally(String videoUrl,lc) async {
     log('🎬 [VIDEO] Launching external video player for URL: $videoUrl');
 
     try {
@@ -756,45 +760,45 @@ class _GalleryManagementState extends State<GalleryManagement> {
       } else {
         log('❌ [VIDEO] Could not launch URL: $videoUrl');
         Get.snackbar(
-          'Error',
-          'Could not play video. Please check your video player app.',
+          lc.error_lbl,
+          lc.no_video_app,
           snackPosition: SnackPosition.BOTTOM,
         );
       }
     } catch (e) {
       log('❌ [VIDEO] Error launching video player: $e');
       Get.snackbar(
-        'Error',
-        'Failed to play video. Please try again.',
+        lc.error_lbl,
+        lc.field_video,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   }
 
-  Future<bool> _showDeleteConfirmationDialog(MediaItem mediaItem) async {
+  Future<bool> _showDeleteConfirmationDialog(MediaItem mediaItem,lc) async {
     final isVideo = _isVideoFile(mediaItem.mediaFileName);
     final mediaType = isVideo ? 'video' : 'image';
 
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete $mediaType',style: TextStyle(fontSize: 19.w,fontWeight: FontWeight.bold)),
-        content: Text('Are you sure you want to delete this $mediaType?'),
+        title: Text('${lc.delete} $mediaType',style: TextStyle(fontSize: 19.w,fontWeight: FontWeight.bold)),
+        content: Text('${lc.delete_generally_confirm} $mediaType?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
-              'Cancel',
+              lc.btn_Cancel,
               style: TextStyle(color: AppColors.textPrimary(context)),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-    style: TextButton.styleFrom(
-    foregroundColor: Colors.red,
-    ),
-    child: const Text('Delete'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
             ),
+            child:  Text(lc.delete),
+          ),
 
         ],
       ),
@@ -834,7 +838,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
 
   /// Pick cover image from gallery
-  Future<void> _pickCoverImageFromGallery() async {
+  Future<void> _pickCoverImageFromGallery(lc) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -843,7 +847,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
       if (pickedFile != null) {
         final File imageFile = File(pickedFile.path);
-        await _uploadAndSetCoverImage(imageFile);
+        await _uploadAndSetCoverImage(imageFile,lc);
       }
     } catch (e) {
       log('❌ Error picking image from gallery: $e');
@@ -857,7 +861,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
   }
 
   /// Upload image and set as cover
-  Future<void> _uploadAndSetCoverImage(File imageFile) async {
+  Future<void> _uploadAndSetCoverImage(File imageFile,lc) async {
     try {
       // Show ONE loading indicator for the entire process
       controller.isLoadingMedia.value = true;
@@ -911,6 +915,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -955,10 +960,10 @@ class _GalleryManagementState extends State<GalleryManagement> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Gallery Management",
+                          lc.gallery_management,
                           style: TextStyle(
                             color: Colors.black,
-                            fontFamily: 'Gilroy',
+                            fontFamily: fontFamily,
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w800,
                           ),
@@ -972,8 +977,8 @@ class _GalleryManagementState extends State<GalleryManagement> {
                               images.length +
                                   imageCount;
                           //khk
-                          String displayText = "${totalImages+1} of 15 images";//1 for add cover photo to count images
-                          displayText += " and $videoCount of 1 video";
+                          String displayText = "${totalImages+1} ${lc.of_lbl} 15 ${lc.images}}";//1 for add cover photo to count images
+                          displayText += " ${lc.and} $videoCount ${lc.of_lbl} 1 ${lc.video}";
 
 
 
@@ -997,7 +1002,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                         if (hasVideo) {
                           // If video exists, directly pick images (old behavior)
-                          _pickImages();
+                          _pickImages(lc);
                         } else {
                           // If no video, show selection dialog
                           _showMediaSelectionDialog();
@@ -1019,7 +1024,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   if (controller.mediaError.value != null) {
                     return Center(//l
                       child: Text(
-                        'Error loading images: ${controller.mediaError.value}',
+                        '${lc.error_loading_image}: ${controller.mediaError.value}',
                         style: TextStyle(color: Colors.red),
                       ),
                     );
@@ -1029,7 +1034,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   final allImages = [//ks
                     ...apiImages.map(
-                          (mediaItem) => _buildApiImageItem(mediaItem),
+                          (mediaItem) => _buildApiImageItem(mediaItem,lc),
                     ),
                     ...images.map((file) => _buildLocalImageItem(file)),
                   ];
@@ -1047,6 +1052,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                           mediaUrl: currentCoverImage!,
                           displayOrder: 0,
                         ),
+                          lc
                         );
                       },
                     );
@@ -1054,7 +1060,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   // Show "No images found" only if no cover image either
                   if (allImages.isEmpty && (currentCoverImage == null || currentCoverImage!.isEmpty)) {
-                    return Center(child: Text('No images found'));
+                    return Center(child: Text(lc.no_img));
                   }
 
                   // Only show cover image if it exists
@@ -1071,6 +1077,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                             mediaUrl: currentCoverImage!,
                             displayOrder: 0,
                           ),
+                            lc
                           );
                         }
                         return allImages[index - 1];
@@ -1101,7 +1108,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                   child: Center(
                     child: AppLoadingWidget(
                       //kjjkj
-                      title: 'Loading...\nPlease Wait...',
+                      title: lc.loading,
                     ),
                   ),
                 ),
@@ -1114,7 +1121,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
     );
   }
 
-  Widget _buildApiImageItem(MediaItem mediaItem) {
+  Widget _buildApiImageItem(MediaItem mediaItem,lc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1168,7 +1175,9 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     )
                         : GestureDetector(
                       // Show video preview with play button
-                      onTap: () => _toggleVideoPlayback(mediaItem.mediaUrl),
+                      onTap: () {
+                        _toggleVideoPlayback(mediaItem.mediaUrl,lc);
+                      },
                       child: Container(
                         color: Colors.black,
                         child: Center(
@@ -1220,7 +1229,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                 top: 8.h,
                 child: GestureDetector(
                   onTap: () async {
-                    await _pickCoverImageFromGallery();
+                    await _pickCoverImageFromGallery(lc);
                   },
                   child: Container(
                     width: 40.w,
@@ -1248,7 +1257,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
                     if (index != -1) {
                       // Show confirmation dialog
                       final shouldDelete =
-                      await _showDeleteConfirmationDialog(mediaItem);
+                      await _showDeleteConfirmationDialog(mediaItem,lc);
                       if (shouldDelete) {
                         final success = await _deleteApiImage(
                           mediaItem.mediaId.toString(),

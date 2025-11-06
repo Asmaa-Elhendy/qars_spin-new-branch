@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/app_strings.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/dialogs/otp_dialog.dart';
 import '../../widgets/auth_widgets/country_dropdown.dart';
 import '../../widgets/auth_widgets/custom_text_field.dart' as e;
@@ -96,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     double height = MediaQuery
         .of(context)
         .size
@@ -123,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         elevation: 0,
         title: Text(
-          'Register',
+          lc.register,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -141,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 const SizedBox(height: 15),
                 Text(
-                  'Full Name(*)',
+                  lc.full_name,
                   style: TextStyle(
                     fontSize: 17.w,
                     fontWeight: FontWeight.bold,
@@ -151,12 +153,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 8),
                 e.CustomTextField(
                   controller: _nameController,
-                  hintText: 'Enter Full Name',
+                  hintText: lc.enter_full_name,
 
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Email(*)',
+                  lc.email,
                   style: TextStyle(
                     fontSize: 17.w,
                     fontWeight: FontWeight.bold,
@@ -166,13 +168,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 8),
                 e.CustomTextField(
                   controller: _emailController,
-                  hintText: 'Enter Email',
+                  hintText: lc.enter_email,
                   keyboardType: TextInputType.emailAddress,
 
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Country(*)',
+                  lc.country,
                   style: TextStyle(
                     fontSize: 17.w,
                     fontWeight: FontWeight.bold,
@@ -202,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Mobile Number(*)',
+                  lc.mbl_number,
                   style: TextStyle(
                     fontSize: 17.w,
                     fontWeight: FontWeight.bold,
@@ -239,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (_nameController.text.isEmpty ||
                           _mobileController.text.isEmpty ||
                           _emailController.text.isEmpty) {
-                        showErrorAlert('PLease fill all fields', context);
+                        showErrorAlert(lc.please_fill_fields, context);
                         return;
                       }
 
@@ -381,7 +383,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        'Register',
+                        lc.register,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.w,
@@ -407,12 +409,13 @@ class _RegisterPageState extends State<RegisterPage> {
     required BuildContext context,
     required VoidCallback onConfirm,
   }) {
+    var lc = AppLocalizations.of(context)!;
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) =>
           CupertinoAlertDialog(//h
-            title: const Text('Confirmation'),
-            content: Text('Registered Successfully'),
+            title:  Text(lc.confirmation),
+            content: Text(lc.register_success),
             actions: <CupertinoDialogAction>[
               CupertinoDialogAction(
                 isDefaultAction: true,
@@ -420,8 +423,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   Navigator.pop(context);
                   onConfirm();
                 },
-                child: const Text(
-                  'OK',
+                child:  Text(
+                  lc.ok_lbl,
                   style: TextStyle(color: CupertinoColors.activeBlue),
                 ),
               ),

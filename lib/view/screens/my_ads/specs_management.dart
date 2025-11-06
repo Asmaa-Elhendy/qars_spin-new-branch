@@ -6,6 +6,7 @@ import 'package:qarsspin/controller/specs/specs_controller.dart';
 import 'package:qarsspin/controller/specs/specs_data_layer.dart';
 import 'package:qarsspin/view/widgets/ads/dialogs/loading_dialog.dart';
 
+import '../../../l10n/app_localization.dart';
 import '../../../model/specs.dart';
 import '../../widgets/my_ads/edit_name.dart';
 
@@ -70,6 +71,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
       body: Stack(
@@ -105,7 +107,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                     105.horizontalSpace,
                     Center(
                       child: Text(
-                        "Specs Management",
+                        lc.specs_management,
                         style: TextStyle(
                           color: AppColors.blackColor(context),
                           fontFamily: 'Gilroy',
@@ -135,7 +137,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     itemCount: specsController.specs.length,
                     itemBuilder: (context, index) {
-                      return specsContainer(specsController.specs[index],context,specsController,_showGlobalLoader,_hideGlobalLoader,false);
+                      return specsContainer(lc,specsController.specs[index],context,specsController,_showGlobalLoader,_hideGlobalLoader,false);
                     },
                   );
                 }),
@@ -152,7 +154,7 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
                   child: AppLoadingWidget(
-                    title: 'Loading...\nPlease Wait...',
+                    title: lc.loading,
                   ),
                 ),
               ),
@@ -220,7 +222,7 @@ Widget _buildEmptyState() {
   );
 }
 
-Widget specsContainer(Specs spec,BuildContext context,specsController,_showGlobalLoader,_hideGlobalLoader,bool fromCreateAd) {
+Widget specsContainer(lc,Specs spec,BuildContext context,specsController,_showGlobalLoader,_hideGlobalLoader,bool fromCreateAd) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
     margin: EdgeInsets.only(bottom: 18.h),
@@ -232,7 +234,7 @@ Widget specsContainer(Specs spec,BuildContext context,specsController,_showGloba
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(spec.specHeaderPl,
+        Text(Get.locale?.languageCode=='ar'?spec.specHeaderSl:spec.specHeaderPl,
             style: TextStyle(
                 color: AppColors.blackColor(context),
                 fontFamily: 'Gilroy',
@@ -241,8 +243,8 @@ Widget specsContainer(Specs spec,BuildContext context,specsController,_showGloba
         5.verticalSpace,
         Text(
           spec.specValuePl.isEmpty || spec.specValuePl == " "
-              ? '(Hidden)'
-              : spec.specValuePl,
+              ? lc.hidden
+              : Get.locale?.languageCode=='ar'?spec.specValueSl:spec.specValuePl,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontFamily: 'Gilroy',

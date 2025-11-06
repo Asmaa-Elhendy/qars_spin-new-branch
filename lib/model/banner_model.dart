@@ -58,7 +58,7 @@ class BannerResponse {
           return _parseBannerData(decoded);
         }
       }
-      
+
       throw FormatException('Invalid JSON format');
     } catch (e) {
       print('❌ Error parsing BannerResponse: $e');
@@ -83,11 +83,11 @@ class BannerResponse {
     return BannerResponse(
       code: (data['Code'] ?? data['code'] ?? '').toString(),
       desc: (data['Desc'] ?? data['desc'] ?? '').toString(),
-      count: data['Count'] is int 
-          ? data['Count'] as int 
+      count: data['Count'] is int
+          ? data['Count'] as int
           : data['count'] is int
-              ? data['count'] as int
-              : int.tryParse((data['Count'] ?? data['count'] ?? '0').toString()) ?? 0,
+          ? data['count'] as int
+          : int.tryParse((data['Count'] ?? data['count'] ?? '0').toString()) ?? 0,
       data: dataList
           .where((e) => e is Map<String, dynamic>)
           .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))

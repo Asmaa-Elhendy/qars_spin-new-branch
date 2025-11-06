@@ -8,6 +8,8 @@ import '../../../controller/const/base_url.dart';
 import '../../../controller/const/colors.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../../l10n/app_localization.dart';
+
 
 class InspectioDialog extends StatefulWidget {
   String id;
@@ -20,6 +22,8 @@ class InspectioDialog extends StatefulWidget {
 class _InspectioDialogState extends State<InspectioDialog> {
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Dialog(
       backgroundColor: Colors.grey.shade200, // grey background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
@@ -33,7 +37,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
             /// Title
             Center(
               child: Text(
-               "Request Inspection Report",
+               lc.inspection_report,
                 style: TextStyle(
                     color: AppColors.black,
                     fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
@@ -46,7 +50,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
               padding:  EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 textAlign: TextAlign.center,
-                "Are you sure you want to request new car inspection for this car? (this is a prepaid service. Our tean will contact you soon to get more details.)",
+                lc.inspection_text,
                 style: TextStyle(
                     color: AppColors.black,
                     fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily),
@@ -69,7 +73,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text("Cancel"),
+                    child:  Text(lc.btn_Cancel),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -87,7 +91,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text("Confirm"),
+                    child: Text(lc.btn_Confirm),
                   ),
                 ),
               ],
@@ -97,7 +101,7 @@ class _InspectioDialogState extends State<InspectioDialog> {
             /// Terms & Conditions
             Center(
               child: Text(
-                "You agree to Qars Spin Terms & Conditions",
+               lc.condition_agreement,
                 style: TextStyle(fontSize: 12, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),

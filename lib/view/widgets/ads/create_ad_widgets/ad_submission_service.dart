@@ -560,7 +560,7 @@ class AdSubmissionService {
     log('Model: $model');
     log('Type: $type');
     log('Year: $year');
-    log('ce: $askingPrice');
+    log('Asking Price: $askingPrice');
     log('Image Count: $imageCount');
     log('Has Video: $hasVideo');
     log('========================');

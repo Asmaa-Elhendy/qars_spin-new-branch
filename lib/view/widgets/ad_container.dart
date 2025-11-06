@@ -11,7 +11,7 @@ import '../../model/banner_model.dart';
 class AdContainer extends StatefulWidget {
   final bool bigAdHome;
   final String targetPage; // e.g., 'Home Page', 'Cars For Sale - List Page'
-  
+
   const AdContainer({
     Key? key,
     this.bigAdHome = false,
@@ -35,15 +35,15 @@ class _AdContainerState extends State<AdContainer> {
 
   Future<void> _loadBanner() async {
     if (!mounted) return;
-    
+
     try {
       print('🔄 Loading banners for ${widget.targetPage}...');
       setState(() => _isLoading = true);
-      
+
       final banners = await _bannerService.getActiveBanners();
-      
+
       if (!mounted) return;
-      
+
       if (banners.isEmpty) {
         print('⚠️ No banners received from API');
         setState(() => _isLoading = false);
@@ -56,7 +56,7 @@ class _AdContainerState extends State<AdContainer> {
         widget.targetPage,
         bannerType,
       );
-      
+
       if (banner != null) {
         print('✅ Displaying banner: ${banner.bannerId} - ${banner.bannerType}');
         // Track banner impression
@@ -147,7 +147,7 @@ class _AdContainerState extends State<AdContainer> {
     }
 
     return GestureDetector(
-      onTap: _banner?.targetUrlPl?.isNotEmpty == true 
+      onTap: _banner?.targetUrlPl?.isNotEmpty == true
           ? () => _launchUrl(_banner!.targetUrlPl!)
           : null,
       child: Container(
@@ -168,25 +168,25 @@ class _AdContainerState extends State<AdContainer> {
           borderRadius: BorderRadius.circular(8.r),
           child: _banner?.imageUrlPl?.isNotEmpty == true
               ? Image.network(
-                  _banner!.imageUrlPl!,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(color: AppColors.primary,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    print('❌ Error loading banner image: $error');
-                    return _buildErrorWidget();
-                  },
-                )
+            _banner!.imageUrlPl!,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              print('❌ Error loading banner image: $error');
+              return _buildErrorWidget();
+            },
+          )
               : _buildErrorWidget(),
         ),
       ),

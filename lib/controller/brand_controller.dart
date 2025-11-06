@@ -52,6 +52,7 @@ class BrandController extends GetxController{
       id: 0,
       make_count: 0,
       name: 'All Cars',
+      slName: "جميع السيارات",
       imageUrl: 'assets/images/ic_all_cars.png',
       isAllCars: true,
     ),
@@ -69,12 +70,17 @@ class BrandController extends GetxController{
     }
     return Color(int.parse(hex, radix: 16));
   }
-  String convertToTimeAgo(String dateString) {
-    // Parse the string into DateTime
-    DateTime dateTime = DateTime.parse(dateString);
+  String convertToTimeAgo(BuildContext context, String dateString) {
+    // نحول التاريخ لتوقيت الجهاز المحلي
+    DateTime dateTime = DateTime.parse(dateString).toLocal();
 
-    // Format with timeago
-    return timeago.format(dateTime);
+    // نعرف اللغة الحالية للتطبيق
+    String currentLocale = Localizations.localeOf(context).languageCode;
+
+    // نختار اللغة المناسبة
+    String locale = currentLocale == 'ar' ? 'ar' : 'en';
+
+    return timeago.format(dateTime, locale: locale);
   }
 
   Future<Map<String, dynamic>> deleteOffer({
@@ -104,12 +110,12 @@ class BrandController extends GetxController{
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
         log('Parsed JSON: $parsedJson');
-        
+
         // If deletion was successful, refresh the offers list
         if (parsedJson['Code'] == 'OK') {
           await getMyOffers();
         }
-        
+
         return {
           'Code': parsedJson['Code'] ?? 'Error',
           'Desc': parsedJson['Desc'] ?? 'Unknown error',
@@ -160,6 +166,7 @@ class BrandController extends GetxController{
           myOffersList = offersData.map((offer) {
             print('Processing offer: $offer'); // Debug log
             return CarModel(
+
               offerId: offer['Offer_ID']??0,
               postId: offer['Post_ID'] ?? 0,
               pinToTop: offer['Pin_To_Top'] ?? 0,
@@ -217,7 +224,9 @@ class BrandController extends GetxController{
         carBrands.add(CarBrand(
             id:data[i]["Make_ID"] ,
             make_count: data[i]["Make_Count"],
-            name: data[i]["Make_Name_PL"], imageUrl: data[i]["Image_URL"]??""));
+            name: data[i]["Make_Name_PL"],
+            slName: data[i]["Make_Name_SL"],
+            imageUrl: data[i]["Image_URL"]??""));
       }
       carBrands[0].make_count = allCarsCount!;
 
@@ -298,15 +307,14 @@ class BrandController extends GetxController{
 
   }
 
-  getCarDetails(String postKind,String id) async{
-
+  getCarDetails(String postKind,String id,{required BuildContext context}) async{
 
     final uri = Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetPostByID?Post_Kind=$postKind&Post_ID=$id&Logged_In_User=${authController.userFullName}",
     );
     final response = await http.get(uri);
     getCarSpec(id);
-    getOffers(id);
+    getOffers(id,context: context);
     if(response.statusCode == 200){
       final body = jsonDecode(response.body);
       print("detststt$body");
@@ -333,8 +341,9 @@ class BrandController extends GetxController{
               exteriorColor: exterior,
               interiorColor:interior,
               description: body["Data"][0]["Technical_Description_PL"],
+              technical_Description_SL:  body["Data"][0]["Technical_Description_SL"],
               offersCount: body["Data"][0]["Offers_Count"],
-              warrantyAvailable: body["Data"][0]["Warranty_isAvailable"] ==0?"No":"Yes",
+              warrantyAvailable: body["Data"][0]["Warranty_isAvailable"] ==0? Get.locale?.languageCode=='ar'?"لا":"No":Get.locale?.languageCode=='ar'?"نعم":"Yes",
               visitsCount: body["Data"][0]["Visits_Count"],
               classId:body["Data"][0]["Class_ID"] ,
               makeId: body["Data"][0]["Make_ID"],
@@ -343,8 +352,7 @@ class BrandController extends GetxController{
 
           );
       getSimilarCars(classId: body["Data"][0]["Class_ID"].toString(),postId: body["Data"][0]["Post_ID"].toString(),makeId:body["Data"][0]["Make_ID"].toString() );
-      getOwnersAds(postId: body["Data"][0]["Post_ID"].toString(), sourceKind: body["Data"][0]["Source_Kind"], partnerid: "0", userName: userName??"",);
-      oldData= false;
+      getOwnersAds(context:context,postId: body["Data"][0]["Post_ID"].toString(), sourceKind: body["Data"][0]["Source_Kind"], partnerid: "0", userName: userName??"",);      oldData= false;
       update();
       getPostMedia(id);
 
@@ -357,8 +365,9 @@ class BrandController extends GetxController{
 
   getCarSpec(id) async{
     spec =[];
+    String selectLanguage = Get.locale?.languageCode=='ar'?"ar":"en";
     final uri = Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetSpecsOfPostByID?Post_ID=$id&Selected_Language=PL",
+      "$base_url/BrowsingRelatedApi.asmx/GetSpecsOfPostByID?Post_ID=$id&Selected_Language=$selectLanguage",
     );
     final response = await http.get(uri);
     if(response.statusCode==200){
@@ -376,7 +385,7 @@ class BrandController extends GetxController{
 
   }
 
-  getOffers(id)async{
+  getOffers(id,{required BuildContext context})async{
     offers =[];
     final uri = Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetOffersOfPostByID?Post_ID=$id",
@@ -386,7 +395,7 @@ class BrandController extends GetxController{
       final body = jsonDecode(response.body);
       if(body["Data"]!=null){
         for(int i =0;i<body["Data"].length;i++){
-          String time = convertToTimeAgo( body["Data"][i]["Offer_DateTime"]);
+          String time = convertToTimeAgo(context, body["Data"][i]["Offer_DateTime"]);
           offers.add(Offer(
               id: body["Data"][i]["Offer_ID"],
               price: body["Data"][i]["Offer_Price"],
@@ -398,12 +407,14 @@ class BrandController extends GetxController{
               userName: body["Data"][i]["UserName"]));
 
         }}
+      print("offersBody${body["Data"]}");
       update();
     }
 
   }
 
-  makeOffer({ required String offerPrice})async{
+  makeOffer({ required String offerPrice,required BuildContext context})async{
+    print("CheckUseName${Get.find<AuthController>().userName!}");
     try {
       final response = await http.post(
         Uri.parse('$base_url/BrowsingRelatedApi.asmx/RegisterOfferFromUser'),
@@ -411,7 +422,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName': userName,
+          'UserName': Get.find<AuthController>().userName!,
           'Post_ID': carDetails.postId.toString(),
           'Offer_Origin': "MobileApp",
           'Our_Secret': ourSecret,
@@ -420,8 +431,8 @@ class BrandController extends GetxController{
       );
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
-        getOffers(carDetails.postId);
-
+        getOffers(carDetails.postId,context: context);
+        print("offers${body}");
       }
     }catch(e){
       return {
@@ -601,8 +612,7 @@ class BrandController extends GetxController{
 
   }
 
-  getOwnersAds({required String postId,required String sourceKind, required String partnerid,  required String userName})async{
-    print("owwwnenrnr");
+  getOwnersAds({required BuildContext context,required String postId,required String sourceKind, required String partnerid,  required String userName})async{    print("owwwnenrnr");
     ownersAds=[];
     final url = Uri.parse(
       "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
@@ -619,7 +629,7 @@ class BrandController extends GetxController{
         getCarSpec(body["Data"][i]["Post_ID"]);
         Color interior = hexToColor(body["Data"][i]["Color_Interior"]);
         Color exterior = hexToColor(body["Data"][i]["Color_Exterior"]);
-        String time = convertToTimeAgo(body["Data"][i]["Created_DateTime"]);
+        String time = convertToTimeAgo(context,body["Data"][i]["Created_DateTime"]);
         ownersAds.add(CarModel(postId: body["Data"][i]["Post_ID"],
             pinToTop: body["Data"][i]["Pin_To_Top"],
             postKind: "",
@@ -710,6 +720,7 @@ class BrandController extends GetxController{
                 rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
 
       }
+      loadingMode =false;
       update();
 
 

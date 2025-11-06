@@ -5,6 +5,7 @@ import 'package:qarsspin/model/specification.dart';
 
 import '../../../controller/const/base_url.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import 'offer_part.dart';
 
 class CustomTabExample extends StatefulWidget {
@@ -33,6 +34,8 @@ class _CustomTabExampleState extends State<CustomTabExample>
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return
       Column(
         mainAxisSize: MainAxisSize.min, // shrink-wrap instead of expanding
@@ -58,8 +61,8 @@ class _CustomTabExampleState extends State<CustomTabExample>
               unselectedLabelColor: AppColors.blackColor(context),
               dividerColor: Colors.transparent,
               tabs: [
-                Tab(text: "Specifications"),
-                Tab(text: "Offers"),
+                Tab(text: lc.specifications),
+                Tab(text: lc.offers),
 
               ],
             ),

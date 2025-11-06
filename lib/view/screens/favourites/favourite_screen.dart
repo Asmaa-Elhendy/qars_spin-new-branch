@@ -5,6 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 
+import '../../../l10n/app_localization.dart';
+import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/favourites/favourite_car_card.dart';
 import '../../widgets/navigation_bar.dart';
 import '../ads/create_ad_options_screen.dart';
@@ -27,13 +29,14 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
       appBar: AppBar(
         centerTitle: true, // يخلي العنوان في نص العرض
         elevation: 0, // نشيل الشادو الافتراضي
         title: Text(
-          "My Favourites",
+          lc.my_fav,
           style: TextStyle(
             color: AppColors.blackColor(context),
             fontWeight: FontWeight.bold,
@@ -60,44 +63,65 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
 
       body: GetBuilder<BrandController>(
           builder: (controller) {
-            if (controller.favoriteList.isEmpty) {
-              return Center(
-                child: Text(
-                  'No items found',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.grey,
+            if(controller.loadingMode){
+              return SizedBox(
+                child: Center(
+                  child:  Positioned.fill(
+
+                    child: Container(
+                      color: AppColors.black.withOpacity(0.5),
+                      child: Center(
+                        child: AppLoadingWidget(
+                          title: lc.loading,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               );
             }
-            return ListView(
-              children: [
-                SizedBox(height: 20.h,),
-                for(int i =0; i<controller.favoriteList.length;i++)
-                  GestureDetector(
-                    onTap: (){
-                      controller.getCarDetails(controller.favoriteList[i].postKind, controller.favoriteList[i].postId.toString());
-                      Get.to(CarDetails(sourcekind:controller.favoriteList[i].sourceKind,postKind: controller.favoriteList[i].postKind,id: controller.favoriteList[i].postId,));
-                    },
-                    child: FavouriteCarCard(
-                      title: controller.favoriteList[i].carNamePl,
-                      price: controller.favoriteList[i].askingPrice,
-                      location: "controller.favoriteList[i].",
-                      meilage: controller.favoriteList[i].mileage.toString(),
-                      manefactureYear:controller.favoriteList[i].manufactureYear.toString(),
-                      imageUrl:controller.favoriteList[i].rectangleImageUrl,
-                      onHeartTap: (){
-                        controller.removeFavItem(controller.favoriteList[i]);
-                        controller.alterPostFavorite(add: false, postId: controller.favoriteList[i].postId);
 
-                      },
+            else {
+              if (controller.favoriteList.isEmpty) {
+                return Center(
+                  child: Text(
+                    lc.empty_lbl,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.grey,
                     ),
                   ),
+                );
+              }
+              return ListView(
+                children: [
+
+                  for(int i =0; i<controller.favoriteList.length;i++)
+                    GestureDetector(
+                      onTap: (){
+                        controller.getCarDetails(controller.favoriteList[i].postKind, controller.favoriteList[i].postId.toString(),context: context);
+                        Get.to(CarDetails(sourcekind:controller.favoriteList[i].sourceKind,postKind: controller.favoriteList[i].postKind,id: controller.favoriteList[i].postId,));
+                      },
+                      child: FavouriteCarCard(
+                        title: Get.locale?.languageCode=='ar'?controller.favoriteList[i].carNameSl:controller.favoriteList[i].carNamePl,
+
+                        price: controller.favoriteList[i].askingPrice,
+                        location: "controller.favoriteList[i].",
+                        meilage: controller.favoriteList[i].mileage.toString(),
+                        manefactureYear:controller.favoriteList[i].manufactureYear.toString(),
+                        imageUrl:controller.favoriteList[i].rectangleImageUrl,
+                        onHeartTap: (){
+                          controller.removeFavItem(controller.favoriteList[i]);
+                          controller.alterPostFavorite(add: false, postId: controller.favoriteList[i].postId);
+
+                        },
+                      ),
+                    ),
 
 
-              ],
-            );
+                ],
+              );
+            }
           }
       )
       ,
@@ -125,6 +149,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               break;
 
             case 3:
+              Get.find<BrandController>().switchLoading();
               Get.find<BrandController>().getFavList();
               Get.offAll(FavouriteScreen());
               break;

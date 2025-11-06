@@ -35,7 +35,7 @@ class PaymentService {
   static Future<bool> executePaymentWithPolling(
       BuildContext context, int methodId, double amount) async {
     log('[EXECUTE] Starting payment process');
-    
+
     try {
       final request = MFExecutePaymentRequest(invoiceValue: amount)
         ..paymentMethodId = methodId;
@@ -47,31 +47,31 @@ class PaymentService {
         await MFSDK.executePayment(
           request,
           MFLanguage.ENGLISH,
-          (String invoiceId) async {
+              (String invoiceId) async {
             log('[EXECUTE] Invoice created: $invoiceId');
-            
+
             // Add retry logic for status checking
             int retries = 3;
             bool statusChecked = false;
-            
+
             while (retries > 0 && !statusChecked && !isAuthError) {
               try {
                 log('[STATUS] Checking payment status (attempt ${4 - retries}/3)');
                 await Future.delayed(const Duration(seconds: 5));
-                
+
                 try {
                   log('[STATUS] Getting status for invoice: $invoiceId');
                   final statusResponse = await getPaymentStatus(invoiceId);
-                  
+
                   if (statusResponse != null) {
                     final status = statusResponse.invoiceStatus?.toUpperCase() ?? "UNKNOWN";
                     log('[STATUS] Invoice $invoiceId → $status');
-                    
+
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            status == "PAID" 
+                            status == "PAID"
                                 ? "Payment successful!"
                                 : "Payment status: $status",
                           ),
@@ -79,7 +79,7 @@ class PaymentService {
                         ),
                       );
                     }
-                    
+
                     paymentSuccess = status == "PAID" || status == "PENDING";
                     statusChecked = true;
                   }
@@ -95,7 +95,7 @@ class PaymentService {
               } catch (e) {
                 log('[STATUS][ERROR] $e');
                 retries--;
-                
+
                 if (retries == 0 && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -109,7 +109,7 @@ class PaymentService {
                 }
               }
             }
-            
+
             if (isAuthError) {
               log('[STATUS] Exiting due to authentication error');
               if (context.mounted) {
@@ -147,7 +147,7 @@ class PaymentService {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.code == 107 
+              e.code == 107
                   ?"Payment authentication error. Please check your payment details and try again."
                   : "Payment error: ${e.message}",
             ),
@@ -186,12 +186,12 @@ class PaymentService {
       // Log the full error details
       log('[GET_STATUS][MFError] code=${e.code}, message=${e.message}');
       log('[GET_STATUS][MFError] Full error: $e');
-      
+
       // If this is an authentication error, log it specifically
       if (e.code == 107) {
         log('[GET_STATUS][AUTH_ERROR] Authentication failed for invoice: $invoiceId');
       }
-      
+
       // Rethrow to be handled by the caller
       rethrow;
     } catch (e) {

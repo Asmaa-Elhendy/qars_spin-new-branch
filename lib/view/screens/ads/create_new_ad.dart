@@ -7,6 +7,7 @@ import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
 import '../../../controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
+import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
@@ -562,7 +563,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
         );
       }
     }else{
-       _submitAd(shouldPublish: shouldPublish);//handle add post without payment
+      _submitAd(shouldPublish: shouldPublish);//handle add post without payment
 
     }
 
@@ -774,6 +775,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    var lc = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -804,7 +807,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
           elevation: 0, // نشيل الشادو الافتراضي
 
           title: Text(
-            widget.postData != null ? "Modify Car" : "Sell Your Car",
+            widget.postData != null ? lc.modify_car : lc.sell_car,
             style: TextStyle(
               color: AppColors.blackColor(context),
               fontWeight: FontWeight.bold,
@@ -983,7 +986,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
                   child: AppLoadingWidget(
-                    title: 'Loading car data...',
+                    title: lc.loading_car_data,
                   ),
                 ),
               ),

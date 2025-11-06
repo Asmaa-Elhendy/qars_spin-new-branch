@@ -11,8 +11,11 @@ import 'package:qarsspin/controller/showrooms_controller.dart';
 import 'package:qarsspin/view/widgets/search/search_slide.dart';
 import 'package:qarsspin/view/widgets/showrooms_widgets/sort_by_widgets.dart';
 import '../../controller/const/colors.dart';
+import '../../controller/notifications_controller.dart';
+import '../../l10n/app_localization.dart';
 
 Widget carListGreyBar(
+NotificationsController notificationsController,
     {required Function(dynamic)? onSearchResult,
     required context,
     required String title,
@@ -26,7 +29,10 @@ Widget carListGreyBar(
     bool makes = false,
     bool carCare = false,
     String partnerKind = "Rent a Car"}) {
+
   Get.find<MySearchController>();
+  var lc = AppLocalizations.of(context)!;
+
 
   return Container(
     width: double.infinity,
@@ -55,7 +61,7 @@ Widget carListGreyBar(
                   ? "Qars spin"
                   : personalsCars
                   ? "Personal Cars"
-                  : "listCars",
+                  : "listCars",notificationsController
             );
             if (onSearchResult != null) onSearchResult(result);
           },
@@ -77,7 +83,7 @@ Widget carListGreyBar(
                 ),
                 8.horizontalSpace,
                 Text(
-                  "Search",
+                lc.search,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.black,
@@ -101,9 +107,10 @@ Widget carListGreyBar(
                   BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 builder: (_) => SortBySheet(
+                  
                   showroom: true,
                   onConfirm: (selectedSort) {
-                    print("User selected: $selectedSort");
+
                     if (showroom) {
                       // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
                       // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
@@ -111,13 +118,14 @@ Widget carListGreyBar(
                       // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
 
                       Get.find<ShowRoomsController>().fetchShowrooms(
+                        context: context,
                           partnerKind: partnerKind,
                           forSale: partnerKind != "Rent a Car"&&!carCare,
-                          sort: selectedSort == "Sort By Posts Count"
+                          sort: selectedSort == lc.sort_by_post_count
                               ? "lb_Sort_By_Active_Posts_Desc"
-                              : selectedSort == "Sort By Rating"
+                              : selectedSort == lc.sort_by_rating
                               ? "lb_Sort_By_Avg_Rating_Desc"
-                              : selectedSort == "Sort By Visits"
+                              : selectedSort == lc.sort_by_visits
                               ? "lb_Sort_By_Visits_Count_Desc"
                               : "lb_Sort_By_Joining_Date_Asc");
                     }
@@ -138,21 +146,22 @@ Widget carListGreyBar(
                       onConfirm: (selectedSort) {
 
                         Get.find<RentalCarsController>().fetchRentalCars(
+                          context: context,
 
                             sort: selectedSort ==
-                                "Sort By Post Date(Newest First)"
+                               lc.sort_by_post_date_new
                                 ? "lb_Sort_By_Post_Date_Desc"
                                 : selectedSort ==
-                                "Sort By Post Date (Oldest First)"
+                               lc.sort_by_post_date_old
                                 ? "lb_Sort_By_Post_Date_Asc"
                                 : selectedSort ==
-                                "Sort By Price(From High To Low)"
+                               lc.sort_by_price_high
                                 ? "lb_Sort_By_Price_Desc"
                                 : selectedSort ==
-                                "Sort By Price (From Low To High)"
+                               lc.sort_by_price_low
                                 ? "lb_Sort_By_Price_Asc"
                                 : selectedSort ==
-                                "Sort By Manufacture Year (Newest First)"
+                               lc.sort_by_manufacture_year_new
                                 ? "lb_Sort_By_Year_Desc"
                                 : "lb_Sort_By_Year_Asc");
                       }));
@@ -167,16 +176,8 @@ Widget carListGreyBar(
                   builder: (_) => SortBySheet(
                       make: true,
                       onConfirm: (selectedSort) {
-                        print("User selected: $selectedSort");
-
-                        // "lb_Sort_By_Post_Date_Desc" - Sort by post date (newest first)
-                        // "lb_Sort_By_Post_Date_Asc" - Sort by post date (oldest first)
-                        // "lb_Sort_By_Price_Desc" - Sort by price (highest first)
-                        // "lb_Sort_By_Price_Asc" - Sort by price (lowest first)
-                        // "lb_Sort_By_Year_Desc" - Sort by year (newest first)
-                        // "lb_Sort_By_Year_Asc" - Sort by year (oldest first)
                         Get.find<BrandController>().fetchCarMakes(
-                            sort: selectedSort =="MakeName"?"MakeName":"Make_Count"
+                            sort: selectedSort ==lc.make_name?"MakeName":"Make_Count"
                         );
                       }));
             }
@@ -191,7 +192,6 @@ Widget carListGreyBar(
                 builder: (_) => SortBySheet(
                   showroom: true,
                   onConfirm: (selectedSort) {
-                    print("User selected: $selectedSort");
                     if (carCare) {
                       // "lb_Sort_By_Active_Posts_Desc" - Sort by number of active posts (highest first)
                       // "lb_Sort_By_Avg_Rating_Desc" - Sort by average rating (highest first)
@@ -199,12 +199,13 @@ Widget carListGreyBar(
                       // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
 
                       Get.find<ShowRoomsController>().fetchShowrooms(
+                        context: context,
                           partnerKind: partnerKind,// car Care
-                          sort: selectedSort == "Sort By Posts Count"
+                          sort: selectedSort == lc.sort_by_post_count
                               ? "lb_Sort_By_Active_Posts_Desc"
-                              : selectedSort == "Sort By Rating"
+                              : selectedSort == lc.sort_by_rating
                               ? "lb_Sort_By_Avg_Rating_Desc"
-                              : selectedSort == "Sort By Visits"
+                              : selectedSort == lc.sort_by_visits
                               ? "lb_Sort_By_Visits_Count_Desc"
                               : "lb_Sort_By_Joining_Date_Asc", forSale: partnerKind != "Rent a Car"&&!carCare);
                     }
@@ -224,7 +225,6 @@ Widget carListGreyBar(
                 builder: (_) => SortBySheet(
                     carList: true,
                     onConfirm: (selectedSort) {
-                      print("User selected: $selectedSort");
 
                       String currentSourceKind =  Get.find<BrandController>().currentSourceKind;
                       int currentMakeId = Get.find<BrandController>().currentMakeId;
@@ -235,19 +235,19 @@ Widget carListGreyBar(
                       Get.find<BrandController>().getCars(
                           make_id: currentMakeId, makeName: currentMakeName,
                           sort: selectedSort ==
-                              "Sort By Post Date(Newest First)"
+                              lc.sort_by_post_date_new
                               ? "lb_Sort_By_Post_Date_Desc"
                               : selectedSort ==
-                              "Sort By Post Date (Oldest First)"
+                             lc.sort_by_post_date_old
                               ? "lb_Sort_By_Post_Date_Asc"
                               : selectedSort ==
-                              "Sort By Price(From High To Low)"
+                             lc.sort_by_price_high
                               ? "lb_Sort_By_Price_Desc"
                               : selectedSort ==
-                              "Sort By Price (From Low To High)"
+                              lc.sort_by_price_low
                               ? "lb_Sort_By_Price_Asc"
                               : selectedSort ==
-                              "Sort By Manufacture Year (Newest First)"
+                              lc.sort_by_manufacture_year_new
                               ? "lb_Sort_By_Year_Desc"
                               : "lb_Sort_By_Year_Asc",
                           sourceKind: currentSourceKind
@@ -306,7 +306,7 @@ Widget carListGreyBar(
   );
 }
 
-showCustomBottomSheet(BuildContext context, String myCase) {
+showCustomBottomSheet(BuildContext context, String myCase,NotificationsController notificationsController) {
   return  showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -314,6 +314,6 @@ showCustomBottomSheet(BuildContext context, String myCase) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (context) => CustomFormSheet(myCase: myCase),
+    builder: (context) => CustomFormSheet( notificationsController,myCase: myCase),
   );
 }

@@ -10,7 +10,9 @@ import 'package:qarsspin/view/screens/my_ads/my_ads_main_screen.dart';
 
 import 'package:qarsspin/controller/auth/auth_controller.dart';
 import 'package:qarsspin/controller/my_ads/my_ad_getx_controller.dart';
+import '../../../controller/brand_controller.dart';
 import '../../../controller/const/colors.dart';
+import '../../../l10n/app_localization.dart';
 import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
 
@@ -22,14 +24,12 @@ class MyAccount extends StatefulWidget {
 
 class _MyAccountState extends State<MyAccount> {
   final authController2 = Get.find<AuthController>();
-  @override
-  void initState() {
-    print("auth statst${authController2.registered}");    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
+    var lc = AppLocalizations.of(context)!;
+
 
 
     return Scaffold(
@@ -66,12 +66,12 @@ class _MyAccountState extends State<MyAccount> {
                   125.horizontalSpace,
                   Center(
                     child: Text(
-                      "My Account",
+                      lc.title_Personal_Information,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.blackColor(context),
                         fontFamily: 'Gilroy',
-                        fontSize: 20.w,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -83,8 +83,8 @@ class _MyAccountState extends State<MyAccount> {
             SizedBox(
               height: 750.h,
               child: authController.registered
-                  ? bodyWithRegistered(context)
-                  : bodyWithoutRegister(context),
+                  ? bodyWithRegistered(context,lc)
+                  : bodyWithoutRegister(context,lc),
             )
           ],
         ),
@@ -92,7 +92,7 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  Widget bodyWithoutRegister(context){
+  Widget bodyWithoutRegister(context,lc){
     return  Padding(
       padding:  EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
@@ -104,9 +104,9 @@ class _MyAccountState extends State<MyAccount> {
             ),
             child: ListTile(
 
-              leading: const Icon(Icons.person, color: Colors.black),
+              leading:  Icon(Icons.person, color: Colors.black),
               title:  Text(
-                "Register Now",
+                lc.register_account,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
                     color: AppColors.blackColor(context)
                 ),
@@ -124,8 +124,8 @@ class _MyAccountState extends State<MyAccount> {
           // Notifications
           ListTile(
             leading: const Icon(Icons.notifications, color: Colors.red),
-            title: const Text(
-              "Notifications",
+            title:  Text(
+              lc.lbl_notifications,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             trailing:
@@ -143,7 +143,7 @@ class _MyAccountState extends State<MyAccount> {
 
   }
 
-  Widget bodyWithRegistered(context){
+  Widget bodyWithRegistered(context,lc){
     final myAdsController = Get.put(MyAdCleanController(MyAdDataLayer()));
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -165,7 +165,7 @@ class _MyAccountState extends State<MyAccount> {
                   ),
                   8.verticalSpace,
                   Obx(() => Text(
-                      "Active Ads: ${myAdsController.activeAdsCount}",
+                      "${lc.active_ads} ${myAdsController.activeAdsCount}",
                       style: TextStyle(
                           fontSize: 14.sp,
                           color: AppColors.shadowColor(context)))),
@@ -201,52 +201,59 @@ class _MyAccountState extends State<MyAccount> {
         // menu
         buildMenuItem(
             icon: Icons.notifications,
-            title: "Notifications",
+            title: lc.lbl_notifications,
             iconColor: Colors.red,
             context: context,
             onTap: (){
               Get.to(NotificationsPage());
-            }
+            },
+            lc: lc
         ),
         buildMenuItem(
             icon: Icons.local_offer,
-            title: "My Offers",
+            title: lc.lbl_my_offers,
             context: context,
             onTap: (){
               Get.to(OffersScreen());
-            }
+            },
+            lc: lc
 
         ),
         buildMenuItem(
             icon: Icons.campaign,
-            title: "My Advertisements",
+            title: lc.adv_lbl,
 
             onTap: (){
               Get.to(MyAdsMainScreen());
             },
-            context: context
+            context: context,
+            lc: lc
 
         ),
         buildMenuItem(
-            icon: Icons.favorite,
-            title: "My Favorites",
-            context: context,
           onTap: (){
-            Get.to(FavouriteScreen());
+            Get.find<BrandController>().switchLoading();
+            Get.find<BrandController>().getFavList();
 
-          }
+            Get.to(FavouriteScreen());},
+            icon: Icons.favorite,
+            title: lc.fav_lbl,
+            context: context,
+            lc: lc
 
         ),
         buildMenuItem(
             icon: Icons.notifications_active,
-            title: "Personalized Notifications",
-            context: context
+            title: lc.person_notification,
+            context: context,
+            lc: lc
 
         ),
         const SizedBox(height: 20),
         buildMenuItem(
             icon: Icons.logout,
-            title: "Sign Out",
+            title: lc.lbl_sign_out,
+            lc: lc,
             context: context,onTap: ()async{
           final authController = Get.find<AuthController>();
           await authController.clearUserData();
@@ -256,8 +263,9 @@ class _MyAccountState extends State<MyAccount> {
         ),
         buildMenuItem(
             icon: Icons.delete_outline,
-            title: "Delete My Account",
-            context: context
+            title: lc.delete_account,
+            context: context,
+            lc: lc
 
         ),
       ],
@@ -269,7 +277,8 @@ class _MyAccountState extends State<MyAccount> {
     required String title,
     Color? iconColor,
     VoidCallback? onTap,
-    context
+    context,
+    required lc
   }) {
     return Column(
       children: [
@@ -279,7 +288,7 @@ class _MyAccountState extends State<MyAccount> {
           trailing: Image.asset("assets/images/arrow.png",scale: 1.8,),
           onTap: onTap,
         ),
-        title=="Sign Out" || title=="Delete My Account"?SizedBox(): Divider(height: 1, color: AppColors.divider(context)),
+        title==lc.lbl_sign_out || title==lc.delete_account?SizedBox(): Divider(height: 1, color: AppColors.divider(context)),
       ],
     );
   }

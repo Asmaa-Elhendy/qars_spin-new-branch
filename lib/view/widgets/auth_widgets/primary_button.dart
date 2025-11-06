@@ -43,7 +43,7 @@ class PrimaryButton extends StatelessWidget {
           foregroundColor: foregroundColor ?? Colors.white,
           elevation: 2,
           shadowColor:  Colors.black,
-        shape: RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           padding: padding,

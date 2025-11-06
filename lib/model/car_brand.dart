@@ -3,12 +3,15 @@ import 'dart:math';
 class CarBrand {
     final int id;
     final String name;
+    final String slName;
+
     final String imageUrl;
      int make_count;
     final bool isAllCars;
 
     CarBrand({
       int? id,
+      required this.slName,
       required this.name,
       required this.imageUrl,
       this.isAllCars = false,

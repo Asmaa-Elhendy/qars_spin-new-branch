@@ -32,6 +32,7 @@ class AdRepository {
           id: item["Make_ID"],
           make_count: item["Make_Count"],
           name: item["Make_Name_PL"],
+          slName: item["Make_Name_SL"],
           imageUrl: item["Image_URL"] ?? "",
         );
       }).toList();

@@ -148,8 +148,8 @@ class MyAdResponse {
       desc: json['Desc'] ?? '',
       count: json['Count'] ?? 0,
       data: (json['Data'] as List<dynamic>?)
-              ?.map((item) => MyAdModel.fromJson(item))
-              .toList() ??
+          ?.map((item) => MyAdModel.fromJson(item))
+          .toList() ??
           [],
     );
   }

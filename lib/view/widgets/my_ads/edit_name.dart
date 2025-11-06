@@ -7,6 +7,7 @@ import 'package:qarsspin/controller/specs/specs_controller.dart';
 import 'package:qarsspin/view/widgets/my_ads/yellow_buttons.dart';
 import 'package:qarsspin/view/widgets/ads/dialogs/loading_dialog.dart';
 
+import '../../../l10n/app_localization.dart';
 import '../../../model/specs.dart';
 
 class EditSpecsName extends StatefulWidget {
@@ -49,6 +50,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -74,7 +76,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                     /// Title
                     Center(
                       child: Text(
-                        widget.spec.specHeaderPl,
+                        Get.locale?.languageCode=='ar'?widget.spec.specHeaderSl:widget.spec.specHeaderPl,
                         style: TextStyle(
                             color: AppColors.black,
                             fontSize: 14.sp, fontFamily:fontFamily,fontWeight: FontWeight.w800),
@@ -108,7 +110,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                          child: yellowButtons(context:context,title: "Cancel", onTap: (){
+                          child: yellowButtons(context:context,title: lc.btn_Cancel, onTap: (){
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             Navigator.pop(context);
@@ -116,7 +118,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
                         ),
                         SizedBox(width: 7.w),
                         Flexible(
-                          child: yellowButtons(context:context,title: "Confirm", onTap: () async {
+                          child: yellowButtons(context:context,title:lc.btn_Confirm, onTap: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
 
                             Navigator.pop(context);

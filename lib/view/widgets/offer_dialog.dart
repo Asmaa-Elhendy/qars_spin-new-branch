@@ -5,12 +5,13 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import '../../controller/const/colors.dart';
+import '../../l10n/app_localization.dart';
 
 class MakeOfferDialog extends StatefulWidget {
   bool offer;
   bool requestToBuy;
   String price;
-   MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
+  MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
 
   @override
   State<MakeOfferDialog> createState() => _MakeOfferDialogState();
@@ -29,6 +30,8 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var lc = AppLocalizations.of(context)!;
+
     return Dialog(
       backgroundColor: Colors.grey.shade200, // grey background
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
@@ -42,7 +45,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
             /// Title
             Center(
               child: Text(
-                widget.offer?"Make Offer":"Request To Buy",
+                widget.offer?lc.btn_make_offer:lc.btn_request_to_buy,
                 style: TextStyle(
                     color: AppColors.black,
                     fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
@@ -55,7 +58,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
               padding:  EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 textAlign: TextAlign.center,
-               widget.offer? "What is your offer?":"You are making an offer matching the request price",
+                widget.offer? lc.what_offer:lc.request_buy_text,
                 style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily,color: AppColors.black),
               ),
             ),
@@ -76,10 +79,10 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                     child: TextField(
                       controller: _offerController,
                       style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
-                        color: AppColors.black
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.sp,
+                          color: AppColors.black
                       ),
 
                       keyboardType: TextInputType.number,
@@ -107,7 +110,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                   ),
                   child: Center(
                     child:  Text(
-                      "QAR",
+                      lc.currency_Symbol,
                       style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.black),
                     ),
                   ),
@@ -128,7 +131,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child:  Text("Cancel",style: TextStyle(color: AppColors.black),),
+                    child:  Text(lc.btn_Cancel,style: TextStyle(color: AppColors.black),),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -136,9 +139,9 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       if(widget.offer){
-                        Get.find<BrandController>().makeOffer(offerPrice: _offerController.text);
+                        Get.find<BrandController>().makeOffer(offerPrice: _offerController.text,context: context);
                       }else{
-                        Get.find<BrandController>().makeOffer(offerPrice: widget.price);
+                        Get.find<BrandController>().makeOffer(offerPrice: widget.price,context: context);
                       }
                       Navigator.pop(context, _offerController.text);
                     },
@@ -149,7 +152,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text("Confirm"),
+                    child:  Text(lc.btn_Confirm),
                   ),
                 ),
               ],
@@ -159,7 +162,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
             /// Terms & Conditions
             Center(
               child: Text(
-                "You agree to Qars Spin Terms & Conditions",
+                lc.condition_agreement,
                 style: TextStyle(fontSize: 12, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
