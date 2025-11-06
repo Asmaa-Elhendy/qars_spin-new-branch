@@ -48,7 +48,7 @@ class BottomActionBar extends StatelessWidget {
               ),
               icon: Image.asset("assets/images/Group.png"),
               label:  Text(
-                lc.btn_make_offer,
+                lc.make_offer_one_line,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
               ),
               onPressed: onMakeOffer,

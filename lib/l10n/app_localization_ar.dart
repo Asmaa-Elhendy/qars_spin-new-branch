@@ -247,7 +247,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get btn_request_to_buy => 'اشتريها \n بهذا السعر';
 
   @override
-  String get btn_make_offer => 'ضع السومة';
+  String get btn_make_offer => 'ضع \n السومة';
+
+  @override
+  String get make_offer_one_line => 'ضع السومة';
 
   @override
   String get btn_byu_loan => 'خذ تمويل';

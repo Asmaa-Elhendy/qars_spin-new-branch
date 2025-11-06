@@ -63,7 +63,7 @@ import 'app_localization_en.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,7 +72,7 @@ abstract class AppLocalizations {
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,17 +85,17 @@ abstract class AppLocalizations {
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en'),
+    Locale('en')
   ];
 
   /// The current Language
@@ -563,19 +563,25 @@ abstract class AppLocalizations {
   /// No description provided for @btn_request_to_buy.
   ///
   /// In en, this message translates to:
-  /// **'Request\\n To Buy'**
+  /// **'Request\n To Buy'**
   String get btn_request_to_buy;
 
   /// No description provided for @btn_make_offer.
   ///
   /// In en, this message translates to:
-  /// **'\"Make\\n Offer\"'**
+  /// **'Make \nOffer'**
   String get btn_make_offer;
+
+  /// No description provided for @make_offer_one_line.
+  ///
+  /// In en, this message translates to:
+  /// **'Make Offer'**
+  String get make_offer_one_line;
 
   /// No description provided for @btn_byu_loan.
   ///
   /// In en, this message translates to:
-  /// **'\"Buy With\\n Loan\"'**
+  /// **'Buy With \n Loan'**
   String get btn_byu_loan;
 
   /// No description provided for @what_offer.
@@ -2100,9 +2106,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+          'an issue with the localizations generation tool. Please file an issue '
+          'on GitHub with a reproducible sample app and the gen-l10n configuration '
+          'that was used.');
 }

@@ -246,13 +246,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offers => 'Offers';
 
   @override
-  String get btn_request_to_buy => 'Request\\n To Buy';
+  String get btn_request_to_buy => 'Request\n To Buy';
 
   @override
-  String get btn_make_offer => '\"Make\\n Offer\"';
+  String get btn_make_offer => 'Make \nOffer';
 
   @override
-  String get btn_byu_loan => '\"Buy With\\n Loan\"';
+  String get make_offer_one_line => 'Make Offer';
+
+  @override
+  String get btn_byu_loan => 'Buy With \n Loan';
 
   @override
   String get what_offer => 'What is your offer?';

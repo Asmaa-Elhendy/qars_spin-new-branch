@@ -74,10 +74,8 @@ class BrandController extends GetxController{
     // نحول التاريخ لتوقيت الجهاز المحلي
     DateTime dateTime = DateTime.parse(dateString).toLocal();
 
-    // نعرف اللغة الحالية للتطبيق
-    String currentLocale = Localizations.localeOf(context).languageCode;
-
-    // نختار اللغة المناسبة
+    // استخدمي اللغة الحالية من GetX بدل الـ context
+    String currentLocale = Get.locale?.languageCode ?? 'en';
     String locale = currentLocale == 'ar' ? 'ar' : 'en';
 
     return timeago.format(dateTime, locale: locale);
@@ -414,7 +412,6 @@ class BrandController extends GetxController{
   }
 
   makeOffer({ required String offerPrice,required BuildContext context})async{
-    print("CheckUseName${Get.find<AuthController>().userName!}");
     try {
       final response = await http.post(
         Uri.parse('$base_url/BrowsingRelatedApi.asmx/RegisterOfferFromUser'),
@@ -613,43 +610,43 @@ class BrandController extends GetxController{
   }
 
   getOwnersAds({required BuildContext context,required String postId,required String sourceKind, required String partnerid,  required String userName})async{    print("owwwnenrnr");
-    ownersAds=[];
-    final url = Uri.parse(
-      "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
-    );
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final body = json.decode(response.body);
-      if(body["Data"]==null){
-        ownersAds=[];
-        update();
-
-      }
-      else{ for (int i = 0; i < body["Data"].length; i++) {
-        getCarSpec(body["Data"][i]["Post_ID"]);
-        Color interior = hexToColor(body["Data"][i]["Color_Interior"]);
-        Color exterior = hexToColor(body["Data"][i]["Color_Exterior"]);
-        String time = convertToTimeAgo(context,body["Data"][i]["Created_DateTime"]);
-        ownersAds.add(CarModel(postId: body["Data"][i]["Post_ID"],
-            pinToTop: body["Data"][i]["Pin_To_Top"],
-            postKind: "",
-            postCode:body["Data"][i]["Post_Code"],
-            carNamePl:body["Data"][i]["Car_Name_PL"],
-            carNameSl: body["Data"][i]["Car_Name_SL"],
-            carNameWithYearPl: body["Data"][i]["Car_Name_With_Year_PL"],
-            carNameWithYearSl: body["Data"][i]["Car_Name_With_Year_SL"],
-            manufactureYear: body["Data"][i]["Manufacture_Year"],
-            tag: body["Data"][i]["Tag"],
-            sourceKind: body["Data"][i]["Source_Kind"],
-            mileage: body["Data"][i]["Mileage"],
-            askingPrice:  body["Data"][i]["Asking_Price"],
-            rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"],
-            rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
-
-      }
+  ownersAds=[];
+  final url = Uri.parse(
+    "$base_url/BrowsingRelatedApi.asmx/GetOwnerCarsForSale?Post_ID=$postId&Source_Kind=$sourceKind&Partner_ID=$partnerid&UserName=$userName",
+  );
+  final response = await http.get(url);
+  if (response.statusCode == 200) {
+    final body = json.decode(response.body);
+    if(body["Data"]==null){
+      ownersAds=[];
       update();
-      }
+
     }
+    else{ for (int i = 0; i < body["Data"].length; i++) {
+      getCarSpec(body["Data"][i]["Post_ID"]);
+      Color interior = hexToColor(body["Data"][i]["Color_Interior"]);
+      Color exterior = hexToColor(body["Data"][i]["Color_Exterior"]);
+      String time = convertToTimeAgo(context,body["Data"][i]["Created_DateTime"]);
+      ownersAds.add(CarModel(postId: body["Data"][i]["Post_ID"],
+          pinToTop: body["Data"][i]["Pin_To_Top"],
+          postKind: "",
+          postCode:body["Data"][i]["Post_Code"],
+          carNamePl:body["Data"][i]["Car_Name_PL"],
+          carNameSl: body["Data"][i]["Car_Name_SL"],
+          carNameWithYearPl: body["Data"][i]["Car_Name_With_Year_PL"],
+          carNameWithYearSl: body["Data"][i]["Car_Name_With_Year_SL"],
+          manufactureYear: body["Data"][i]["Manufacture_Year"],
+          tag: body["Data"][i]["Tag"],
+          sourceKind: body["Data"][i]["Source_Kind"],
+          mileage: body["Data"][i]["Mileage"],
+          askingPrice:  body["Data"][i]["Asking_Price"],
+          rectangleImageFileName:  body["Data"][i]["Rectangle_Image_FileName"],
+          rectangleImageUrl:  body["Data"][i]["Rectangle_Image_URL"]));
+
+    }
+    update();
+    }
+  }
   }
 
   alterPostFavorite({required bool add,required int postId})async{

@@ -36,13 +36,16 @@ class PrivacyPolicey extends StatelessWidget {
           )
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-        Get.locale?.languageCode=='ar'
-                ?PrivacyPolicyAr()
-                : PrivacyPolicyEn()
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Get.locale?.languageCode=='ar'
+                  ?PrivacyPolicyAr()
+                  : PrivacyPolicyEn()
 
-          ],
+            ],
+          ),
         ),
       ),
     );

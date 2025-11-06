@@ -10,6 +10,7 @@ import '../../l10n/app_localization.dart';
 class MakeOfferDialog extends StatefulWidget {
   bool offer;
   bool requestToBuy;
+
   String price;
   MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
 
@@ -137,13 +138,27 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final brandController = Get.find<BrandController>();
                       if(widget.offer){
-                        Get.find<BrandController>().makeOffer(offerPrice: _offerController.text,context: context);
+                        brandController.makeOffer(offerPrice: _offerController.text,context: context);
+
                       }else{
-                        Get.find<BrandController>().makeOffer(offerPrice: widget.price,context: context);
+                        brandController.makeOffer(offerPrice: widget.price,context: context);
                       }
-                      Navigator.pop(context, _offerController.text);
+                      // brandController.getOffers(brandController.carDetails.postId, context: context);
+
+                      Navigator.pop(context);
+
+                      // if (Get.isDialogOpen ?? false) {
+                      //   Get.back();
+                      // }
+
+                      // await Future.delayed(Duration(seconds: 1));
+                      // Navigator.of(context).pop();
+                      // if (!mounted) return; // ✅ تأكدي إن الشاشة لسه موجودة
+                      // Navigator.of(context).pop();
+                      // آمن                     //  Get.find<BrandController>().getOffers( Get.find<BrandController>().carDetails.postId, context: context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

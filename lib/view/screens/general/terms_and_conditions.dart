@@ -62,7 +62,7 @@ class TermsAndConditions extends StatelessWidget {
         child: Column(
           children: [
             Column(
-             // crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -76,9 +76,9 @@ class TermsAndConditions extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               "- ",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.blackColor(context)),
                             ),
                             Expanded(
                               child: Text(
@@ -95,10 +95,10 @@ class TermsAndConditions extends StatelessWidget {
 
               ],
             ),
-        ],
+          ],
         ),
       ),
-      
+
     );
   }
 }

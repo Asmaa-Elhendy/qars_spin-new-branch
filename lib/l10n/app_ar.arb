@@ -80,7 +80,9 @@
   "specifications": "المواصفات",
   "offers": "السومات",
   "btn_request_to_buy": "اشتريها \n بهذا السعر",
-  "btn_make_offer": "ضع السومة",
+  "btn_make_offer": "ضع \n السومة",
+  "make_offer_one_line": "ضع السومة",
+
   "btn_byu_loan": "خذ تمويل",
   "what_offer": "السومة",
   "request_buy_text":"أنت تقدم سومة تطابق سعر الطلب",
