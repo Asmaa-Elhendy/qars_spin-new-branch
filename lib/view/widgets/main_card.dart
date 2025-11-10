@@ -86,7 +86,7 @@ class HomeServiceCard extends StatelessWidget {
                     style: TextStyle(
                       // fontFamily: AppFonts.gilroy,
                       fontWeight: FontWeight.w600,
-                      fontSize:brand?12.w: 12.w, //update asmaa
+                      fontSize:brand?12.w: 14.w, //update asmaa
                       color: Colors.white,
                     ),
                   ),
@@ -152,8 +152,8 @@ class HomeServiceCard extends StatelessWidget {
               child: SvgPicture.asset(
                 fit: BoxFit.fill,
                 imageAsset2!,
-                width:fromHomeSmall?75.w:88.w,
-                height: fromHomeSmall?65.h:100.h,
+                width:large?45.w:fromHomeSmall?75.w:88.w,
+                height:large?70.h: fromHomeSmall?65.h:100.h,
 
               ))
         ],
@@ -192,7 +192,7 @@ class HomeServiceCard extends StatelessWidget {
                 style: TextStyle(
                   // fontFamily: AppFonts.gilroy,
                   fontWeight: FontWeight.w600,
-                  fontSize:brand?12.w: 12.w, //update asmaa
+                  fontSize:brand?12.w: 14.w, //update asmaa
                   color: Colors.white,
                 ),
               ),
@@ -207,7 +207,7 @@ class HomeServiceCard extends StatelessWidget {
                       fit: BoxFit.contain,
                     )))
                 :
-          Expanded(
+            Expanded(
               child: CachedNetworkImage(
                 imageUrl: imageAsset,
                 fit: BoxFit.cover,//j

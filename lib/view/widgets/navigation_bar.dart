@@ -101,7 +101,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
 
           Positioned(
-            bottom:Platform.isAndroid?22.h: 30.h,
+            bottom:Platform.isAndroid?20.h: 30.h,
             child: GestureDetector(
               onTap: onAddPressed,
               child: Container(
@@ -110,7 +110,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.divider(context), // Using navBarGray color
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.background(context), width: 4), // Using navBarWhite constant
+                  border: Border.all(color: AppColors.background(context), width: 3.w), // Using navBarWhite constant
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.15),

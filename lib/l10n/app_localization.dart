@@ -890,6 +890,12 @@ abstract class AppLocalizations {
   /// **'Follow'**
   String get follow;
 
+  /// No description provided for @un_follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Un Follow'**
+  String get un_follow;
+
   /// No description provided for @followers.
   ///
   /// In en, this message translates to:
