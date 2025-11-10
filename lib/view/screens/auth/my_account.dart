@@ -71,7 +71,7 @@ class _MyAccountState extends State<MyAccount> {
                       style: TextStyle(
                         color: AppColors.blackColor(context),
                         fontFamily: 'Gilroy',
-                        fontSize: 16.sp,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
