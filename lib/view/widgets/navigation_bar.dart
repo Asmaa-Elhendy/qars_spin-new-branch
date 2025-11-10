@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../controller/const/colors.dart';
 import '../../l10n/app_localization.dart';
+import 'dart:io' show Platform;
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -17,7 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double barHeight = 60.0;
+    final double barHeight =Platform.isAndroid?60:65.0;//60
     final double addButtonSize = 60.0;
     final double iconSize = 24.0;
     final double labelFontSize = 10.0;
@@ -100,7 +101,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
 
           Positioned(
-            bottom: 22.h,
+            bottom:Platform.isAndroid?30.h: 20.h,
             child: GestureDetector(
               onTap: onAddPressed,
               child: Container(
