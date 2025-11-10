@@ -17,7 +17,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final double barHeight =Platform.isAndroid?60:65.0;//60
+    final double barHeight =Platform.isAndroid?60:65.0;//60
 
     final double addButtonSize = 60.0;
     final double iconSize = 24.0;
@@ -47,53 +47,53 @@ class CustomBottomNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
-                  index: 0,
-                  label: lc.navigation_home,
-                  isSelected: selectedIndex == 0,
-                  iconSize: iconSize,
-                  labelFontSize: labelFontSize,
-                  context: context
+                    index: 0,
+                    label: lc.navigation_home,
+                    isSelected: selectedIndex == 0,
+                    iconSize: iconSize,
+                    labelFontSize: labelFontSize,
+                    context: context
                 ),
 
                 _buildNavItem(
-                  index: 1,
-                  label: lc.navigation_offers,
-                  isSelected: selectedIndex == 1,
-                  iconSize: iconSize,
-                  labelFontSize: labelFontSize,
-                  context: context
+                    index: 1,
+                    label: lc.navigation_offers,
+                    isSelected: selectedIndex == 1,
+                    iconSize: iconSize,
+                    labelFontSize: labelFontSize,
+                    context: context
                 ),
 
                 // Invisible placeholder for the add button
                 Opacity(
                   opacity: 0,
                   child: _buildNavItem(
-                    index: 2,
-                    label: lc.navigation_add,
-                    isSelected: false,
-                    iconSize: iconSize,
-                    labelFontSize: labelFontSize,
-                    context: context
+                      index: 2,
+                      label: lc.navigation_add,
+                      isSelected: false,
+                      iconSize: iconSize,
+                      labelFontSize: labelFontSize,
+                      context: context
 
                   ),
                 ),
 
                 _buildNavItem(
-                  index: 3,
-                  label: lc.navigation_favorites,
-                  isSelected: selectedIndex == 3,
-                  iconSize: iconSize,
-                  labelFontSize: labelFontSize,
-                  context: context
+                    index: 3,
+                    label: lc.navigation_favorites,
+                    isSelected: selectedIndex == 3,
+                    iconSize: iconSize,
+                    labelFontSize: labelFontSize,
+                    context: context
                 ),
 
                 _buildNavItem(
-                  index: 4,
-                  label: lc.navigation_call_us,
-                  isSelected: selectedIndex == 4,
-                  iconSize: iconSize,
-                  labelFontSize: labelFontSize,
-                  context: context
+                    index: 4,
+                    label: lc.navigation_call_us,
+                    isSelected: selectedIndex == 4,
+                    iconSize: iconSize,
+                    labelFontSize: labelFontSize,
+                    context: context
                 ),
               ],
             ),
@@ -101,7 +101,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
 
           Positioned(
-                  bottom:Platform.isAndroid?22.h: 30.h,
+            bottom:Platform.isAndroid?20.h: 30.h,
             child: GestureDetector(
               onTap: onAddPressed,
               child: Container(
@@ -110,7 +110,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.divider(context), // Using navBarGray color
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.background(context), width: 4), // Using navBarWhite constant
+                  border: Border.all(color: AppColors.background(context), width: 3.w), // Using navBarWhite constant
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.15),
@@ -165,15 +165,15 @@ class CustomBottomNavBar extends StatelessWidget {
     if (index == 0) {
       // Home - Flutter Icon
       iconWidget = Icon(
-         Icons.home ,
+        Icons.home ,
         color:  isSelected ?AppColors.divider(context):AppColors.white,
         size: iconSize,
       );
-     // Get.offAll(HomeScreen());
+      // Get.offAll(HomeScreen());
     } else if (index == 3) {
       // Favorite - Flutter Icon
       iconWidget = Icon(
-         Icons.favorite,
+        Icons.favorite,
         color:  isSelected ?AppColors.divider(context):AppColors.white,
         size: iconSize,
       );

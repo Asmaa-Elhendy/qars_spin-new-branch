@@ -414,6 +414,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get follow => 'متابعة';
 
   @override
+  String get un_follow => 'إلغاء المتابعة';
+
+  @override
   String get followers => 'عدد المتابعين';
 
   @override

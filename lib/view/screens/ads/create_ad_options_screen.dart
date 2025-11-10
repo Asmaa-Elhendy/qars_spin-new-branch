@@ -88,10 +88,13 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                   HomeServiceCard(
                     onTap: () {
                       setState(() {
-                        show = true;
+                        //show = true;
                       });
                     },
                     title: lc.create_bike_ad,fromHome: 'true',
+                    plate: true,
+                    imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+
                     imageAsset:
                     Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-05.svg' :'assets/images/new_svg/bikes.svg',
                     large: false,
@@ -99,9 +102,12 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                   HomeServiceCard(
                     onTap: (){
                       setState(() {
-                        show = true;
+                        // show = true;
                       });
                     },
+                    plate: true,
+                    imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+
                     title: lc.create_caravan_ad,
                     imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-06.svg' :'assets/images/new_svg/caravans.svg',
                     large: false,fromHome: 'true',
@@ -132,12 +138,12 @@ class _CreateNewAdOptionsState extends State<CreateNewAdOptions> {
                 },
                 onPersonalAdPressed: () {
                   if(authController.registered){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SellCarScreen(),
-                    ),
-                  );}
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SellCarScreen(),
+                      ),
+                    );}
                   else{
                     unRegisterFunction(context);
                   }

@@ -26,71 +26,72 @@ class _MyAccountState extends State<MyAccount> {
   final authController2 = Get.find<AuthController>();
 
   @override
+  @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
     var lc = AppLocalizations.of(context)!;
 
-
-
     return Scaffold(
       backgroundColor: AppColors.background(context),
-      body: Obx(() => SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 88.h, // same as your AppBar height
-              padding: EdgeInsets.only(top: 13.h,left: 14.w),
-              decoration: BoxDecoration(
-                color: AppColors.background(context),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.blackColor(context).withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5.h,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context); // go back
-                    },
-                    child: Icon(
-                      Icons.arrow_back_outlined,
-                      color: AppColors.blackColor(context),
-                      size: 30.w,
-                    ),
-                  ),
-                  125.horizontalSpace,
-                  Center(
-                    child: Text(
-                      lc.title_Personal_Information,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.blackColor(context),
-                        fontFamily: 'Gilroy',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            25.verticalSpace,
-            SizedBox(
-              height: 750.h,
-              child: authController.registered
-                  ? bodyWithRegistered(context,lc)
-                  : bodyWithoutRegister(context,lc),
-            )
-          ],
+
+      // ✅ نفس AppBar تقريبًا بتاع OffersScreen
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: AppColors.blackColor(context),
+            size: 24.w,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
-      )),
+        title: Text(
+          lc.title_Personal_Information,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.blackColor(context),
+            fontFamily: 'Gilroy',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: AppColors.background(context),
+        toolbarHeight: 60.h,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: AppColors.background(context),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.blackColor(context).withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5.h,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      // ✅ الـ body بس من غير الـ Container اللي كان شبه AppBar
+      body: Obx(
+            () => SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16.w,
+              right: 16.w,
+              top: 16.h,
+              bottom: 16.h,
+            ),
+            child: authController.registered
+                ? bodyWithRegistered(context, lc)
+                : bodyWithoutRegister(context, lc),
+          ),
+        ),
+      ),
     );
   }
+
 
   Widget bodyWithoutRegister(context,lc){
     return  Padding(

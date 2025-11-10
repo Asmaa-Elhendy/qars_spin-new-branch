@@ -113,7 +113,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
               crossAxisSpacing: 10.w, //update asmaa
-              childAspectRatio: Platform.isAndroid ? 0.785 : 0.73, // adjust as needed ios / android
+              childAspectRatio: Platform.isAndroid ? 0.785 : 0.72, // adjust as needed ios / android
             ),
             itemBuilder: (context, index) {
 

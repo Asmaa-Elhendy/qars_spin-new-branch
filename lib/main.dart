@@ -79,7 +79,7 @@ final ThemeController themeController = Get.find();  @override
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: themeController.themeMode.value,// يتحكم في الوضع الحالي
-        title: 'Flutter Demo',
+        title: 'Qars Spin',
         supportedLocales: L10n.all,
         locale: languageController.currentLocale,
         localizationsDelegates: const[

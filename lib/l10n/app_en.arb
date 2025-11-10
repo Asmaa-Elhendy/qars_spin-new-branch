@@ -135,6 +135,7 @@
   "rating": "Rating",
   "join_data": "Join Date",
   "follow": "Follow",
+  "un_follow": "Un Follow",
   "followers": "Followers",
   "create_new_Ad": "Create New Ad",
   "create_bike_ad": "Create Bike Ads",
