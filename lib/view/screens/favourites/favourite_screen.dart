@@ -94,7 +94,11 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 );
               }
               return ListView(
-                children: [
+                padding: EdgeInsets.only(
+                  top: 16.h,
+                  bottom: kBottomNavigationBarHeight + 16.h, // مساحة زيادة فوق الـ nav bar
+                ),
+                children: [//k
 
                   for(int i =0; i<controller.favoriteList.length;i++)
                     GestureDetector(
