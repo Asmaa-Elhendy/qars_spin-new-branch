@@ -17,16 +17,14 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double barHeight =Platform.isAndroid?60:65.0;//60
 
+    final double barHeight =Platform.isAndroid?60:65.0;//60
     final double addButtonSize = 60.0;
     final double iconSize = 24.0;
     final double labelFontSize = 10.0;
     var lc = AppLocalizations.of(context)!;
 
-
     return Container(
-
       child: Stack(
         clipBehavior: Clip.none, // Allow the add button to overflow
         alignment: Alignment.bottomCenter,
