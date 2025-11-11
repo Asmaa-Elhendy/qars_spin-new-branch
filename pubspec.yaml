@@ -103,7 +103,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/new_svg/
-    - assets/images/Dark mode icons
+    - assets/images/Dark mode icons/
   fonts:
     - family: Gilroy
       fonts:
