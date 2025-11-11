@@ -11,6 +11,7 @@ import '../../../l10n/app_localization.dart';
 import '../../widgets/ads/create_ad_widgets/form_fields_section.dart';
 import '../../widgets/ads/create_ad_widgets/image_upload_section.dart';
 import '../../widgets/ads/create_ad_widgets/validation_methods.dart';
+import '../../widgets/ads/dialogs/contact_info_dialog.dart';
 import '../../widgets/ads/dialogs/error_dialog.dart';
 import '../../widgets/ads/dialogs/loading_dialog.dart';
 import '../../widgets/ads/dialogs/missing_fields_dialog.dart';
@@ -543,10 +544,28 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Submit the ad using the service
     // _submitAd(shouldPublish: shouldPublish);//handle add post without payment
     //handle add post with payment
-    if(_isRequest360||_isFeauredPost){
+    if(_isRequest360||_isFeauredPost){   //handle payment from here
       double amount=0;
       _isRequest360?amount+=100:null;
       _isFeauredPost?amount+=150:null;
+      // 1. Import the dialog
+//
+// // 2. Show the dialog and handle the result
+//       final contactInfo = await ContactInfoDialog.show(
+//         context: context,
+//
+//       );
+//
+// // 3. Handle the result
+//       if (contactInfo != null) {
+//         // User submitted the form
+//         String name = contactInfo['name']!;
+//         String mobile = contactInfo['mobile']!;
+//         String email = contactInfo['email']!;
+//
+//         // Use the contact information
+//         print('Name: $name, Mobile: $mobile, Email: $email');
+//       }//comment for now
       final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
 
       if (paid == true) {
@@ -565,7 +584,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     }else{
       _submitAd(shouldPublish: shouldPublish);//handle add post without payment
 
-    }
+     }
 
 
 

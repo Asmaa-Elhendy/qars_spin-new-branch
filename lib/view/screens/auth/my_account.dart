@@ -17,7 +17,6 @@ import '../my_offers_screen.dart';
 import '../notifications/notifications.dart';
 
 class MyAccount extends StatefulWidget {
-
   @override
   State<MyAccount> createState() => _MyAccountState();
 }
@@ -26,7 +25,6 @@ class _MyAccountState extends State<MyAccount> {
   final authController2 = Get.find<AuthController>();
 
   @override
-  @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
     var lc = AppLocalizations.of(context)!;
@@ -34,7 +32,6 @@ class _MyAccountState extends State<MyAccount> {
     return Scaffold(
       backgroundColor: AppColors.background(context),
 
-      // ✅ نفس AppBar تقريبًا بتاع OffersScreen
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -73,29 +70,40 @@ class _MyAccountState extends State<MyAccount> {
         ),
       ),
 
-      // ✅ الـ body بس من غير الـ Container اللي كان شبه AppBar
-      body: Obx(
-            () => SingleChildScrollView(
-          child: Padding(
+      // ✅ هنا مفيش ScrollView ثابتة؛ بنختار حسب حالة الـ user
+      body: Obx(() {
+        if (authController.registered) {
+          // 👈 مسجل → نرجّع الـ ListView زي ما هو مع نفس الـ Padding الخارجي
+          return Padding(
             padding: EdgeInsets.only(
               left: 16.w,
               right: 16.w,
               top: 16.h,
               bottom: 16.h,
             ),
-            child: authController.registered
-                ? bodyWithRegistered(context, lc)
-                : bodyWithoutRegister(context, lc),
-          ),
-        ),
-      ),
+            child: bodyWithRegistered(context, lc),
+          );
+        } else {
+          // 👈 مش مسجل → نفس الكود القديم: Scroll + Padding + Column
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                top: 16.h,
+                bottom: 16.h,
+              ),
+              child: bodyWithoutRegister(context, lc),
+            ),
+          );
+        }
+      }),
     );
   }
 
-
-  Widget bodyWithoutRegister(context,lc){
-    return  Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 20.w),
+  Widget bodyWithoutRegister(context, lc) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         children: [
           Container(
@@ -104,48 +112,48 @@ class _MyAccountState extends State<MyAccount> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: ListTile(
-
-              leading:  Icon(Icons.person, color: Colors.black),
-              title:  Text(
+              leading: const Icon(Icons.person, color: Colors.black),
+              title: Text(
                 lc.register_account,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
-                    color: AppColors.blackColor(context)
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.blackColor(context),
                 ),
               ),
-              trailing:   Image.asset("assets/images/arrow.png",scale: 1.8,),
-              // Icon(Icons.arrow_forward_ios,
-              //     size: 16, color: AppColors.iconColor(context)),
+              trailing: Image.asset(
+                "assets/images/arrow.png",
+                scale: 1.8,
+              ),
               onTap: () {
                 Get.to(RegistrationScreen());
               },
             ),
           ),
           const SizedBox(height: 20),
-
-          // Notifications
           ListTile(
             leading: const Icon(Icons.notifications, color: Colors.red),
-            title:  Text(
+            title: Text(
               lc.lbl_notifications,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-            trailing:
-            Image.asset("assets/images/arrow.png",scale: 1.8,),
-            // Icon(Icons.arrow_forward_ios,
-            //     size: 16, color: AppColors.iconColor(context)),
+            trailing: Image.asset(
+              "assets/images/arrow.png",
+              scale: 1.8,
+            ),
             onTap: () {
               Get.to(NotificationsPage());
-
             },
           ),
         ],
       ),
     );
-
   }
 
-  Widget bodyWithRegistered(context,lc){
+  Widget bodyWithRegistered(context, lc) {
     final myAdsController = Get.put(MyAdCleanController(MyAdDataLayer()));
+
+    // 👇 مفيش أي تغيير في الديزاين هنا؛ نفس الـ ListView اللي عندك
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -165,11 +173,15 @@ class _MyAccountState extends State<MyAccount> {
                     child: Icon(Icons.person, size: 80.w, color: Colors.black),
                   ),
                   8.verticalSpace,
-                  Obx(() => Text(
+                  Obx(
+                        () => Text(
                       "${lc.active_ads} ${myAdsController.activeAdsCount}",
                       style: TextStyle(
-                          fontSize: 14.sp,
-                          color: AppColors.shadowColor(context)))),
+                        fontSize: 14.sp,
+                        color: AppColors.shadowColor(context),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               16.horizontalSpace,
@@ -177,97 +189,96 @@ class _MyAccountState extends State<MyAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children:  [
-                    Text( authController2.userFullName ?? "Guest",
-                        style: TextStyle(
-                            fontFamily: fontFamily,
-                            fontWeight: FontWeight.bold, fontSize: 16.sp)),
-                    Text(  authController2.getCurrentUser()['mobileNumber'] ?? "",
-
-                        style: TextStyle(
-                            fontFamily: fontFamily,
-                            fontWeight: FontWeight.bold)),
-                    //  Text("01/01/1900",
-
-
-                    //),
-
+                  children: [
+                    Text(
+                      authController2.userFullName ?? "Guest",
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    Text(
+                      authController2.getCurrentUser()['mobileNumber'] ?? "",
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
         24.verticalSpace,
-        // menu
         buildMenuItem(
-            icon: Icons.notifications,
-            title: lc.lbl_notifications,
-            iconColor: Colors.red,
-            context: context,
-            onTap: (){
-              Get.to(NotificationsPage());
-            },
-            lc: lc
+          icon: Icons.notifications,
+          title: lc.lbl_notifications,
+          iconColor: Colors.red,
+          context: context,
+          onTap: () {
+            Get.to(NotificationsPage());
+          },
+          lc: lc,
         ),
         buildMenuItem(
-            icon: Icons.local_offer,
-            title: lc.lbl_my_offers,
-            context: context,
-            onTap: (){
-              Get.to(OffersScreen());
-            },
-            lc: lc
-
+          icon: Icons.local_offer,
+          title: lc.lbl_my_offers,
+          context: context,
+          onTap: () {
+            Get.to(OffersScreen());
+          },
+          lc: lc,
         ),
         buildMenuItem(
-            icon: Icons.campaign,
-            title: lc.adv_lbl,
-
-            onTap: (){
-              Get.to(MyAdsMainScreen());
-            },
-            context: context,
-            lc: lc
-
+          icon: Icons.campaign,
+          title: lc.adv_lbl,
+          onTap: () {
+            Get.to(MyAdsMainScreen());
+          },
+          context: context,
+          lc: lc,
         ),
         buildMenuItem(
-          onTap: (){
+          onTap: () {
             Get.find<BrandController>().switchLoading();
             Get.find<BrandController>().getFavList();
-
-            Get.to(FavouriteScreen());},
-            icon: Icons.favorite,
-            title: lc.fav_lbl,
-            context: context,
-            lc: lc
-
+            Get.to(FavouriteScreen());
+          },
+          icon: Icons.favorite,
+          title: lc.fav_lbl,
+          context: context,
+          lc: lc,
         ),
         buildMenuItem(
-            icon: Icons.notifications_active,
-            title: lc.person_notification,
-            context: context,
-            lc: lc
-
+          icon: Icons.notifications_active,
+          title: lc.person_notification,
+          context: context,
+          lc: lc,
         ),
         const SizedBox(height: 20),
         buildMenuItem(
-            icon: Icons.logout,
-            title: lc.lbl_sign_out,
-            lc: lc,
-            context: context,onTap: ()async{
-          final authController = Get.find<AuthController>();
-          await authController.clearUserData();
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>RegistrationScreen()));
-        }
-
+          icon: Icons.logout,
+          title: lc.lbl_sign_out,
+          lc: lc,
+          context: context,
+          onTap: () async {
+            final authController = Get.find<AuthController>();
+            await authController.clearUserData();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegistrationScreen(),
+              ),
+            );
+          },
         ),
         buildMenuItem(
-            icon: Icons.delete_outline,
-            title: lc.delete_account,
-            context: context,
-            lc: lc
-
+          icon: Icons.delete_outline,
+          title: lc.delete_account,
+          context: context,
+          lc: lc,
         ),
       ],
     );
@@ -279,17 +290,25 @@ class _MyAccountState extends State<MyAccount> {
     Color? iconColor,
     VoidCallback? onTap,
     context,
-    required lc
+    required lc,
   }) {
     return Column(
       children: [
         ListTile(
           leading: Icon(icon, color: iconColor ?? AppColors.blackColor(context)),
           title: Text(title, style: const TextStyle(fontSize: 16)),
-          trailing: Image.asset("assets/images/arrow.png",scale: 1.8,),
+          trailing: Image.asset(
+            "assets/images/arrow.png",
+            scale: 1.8,
+          ),
           onTap: onTap,
         ),
-        title==lc.lbl_sign_out || title==lc.delete_account?SizedBox(): Divider(height: 1, color: AppColors.divider(context)),
+        title == lc.lbl_sign_out || title == lc.delete_account
+            ? const SizedBox()
+            : Divider(
+          height: 1,
+          color: AppColors.divider(context),
+        ),
       ],
     );
   }
