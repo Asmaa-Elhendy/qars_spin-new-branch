@@ -143,7 +143,7 @@ class MyAdCleanController extends GetxController {
 
     try {
       final response = await repository.getListOfPostsByUserName(
-        userName: userName,
+          userName: userName,
         ourSecret: ourSecret,
       );
 
