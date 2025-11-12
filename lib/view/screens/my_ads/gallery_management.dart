@@ -1173,10 +1173,10 @@ class _GalleryManagementState extends State<GalleryManagement> {
         backgroundColor: AppColors.background(context),
         toolbarHeight: Platform.isAndroid ? 60.h : 68.h,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: BoxDecoration(//l
             color: AppColors.background(context),
             boxShadow: [
-              BoxShadow(
+              BoxShadow(//h
                 color: AppColors.blackColor(context).withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 5.h,
