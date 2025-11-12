@@ -228,7 +228,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         images.length + (controller.postMedia.value?.data.length ?? 0);
     if (totalImages >= 15) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(lc.only_15_img)),
+        SnackBar(content: Text(lc.only_15_img)),
       );
       return;
     }
@@ -530,9 +530,62 @@ class _GalleryManagementState extends State<GalleryManagement> {
   @override
   void initState() {
     super.initState();
+    
+    log('🔄 [INIT] GalleryManagement initialized');
+    log('🔄 [INIT] Post ID: ${widget.postId}');
+    log('🔄 [INIT] Post Kind: ${widget.postKind}');
+    log('🔄 [INIT] User Name: ${widget.userName}');
+  }
 
-    _fetchPostImages();
-    _fetchPostDetails();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // Only fetch data if we haven't already loaded it
+    if (postDetails == null) {
+      // Start both fetches in parallel
+      final fetchDetails = _fetchPostDetails();
+      final fetchImages = _fetchPostImages();
+      
+      // When post details complete, try to set cover image immediately
+      fetchDetails.then((_) {
+        log('✅ [INIT] _fetchPostDetails completed');
+        // If images are already loaded, try to set cover image
+        if (controller.postMedia.value != null) {
+          _trySetCoverImageFromMedia();
+        }
+      }).catchError((error) {
+        log('❌ [INIT] Error in _fetchPostDetails: $error');
+      });
+      
+      // When images complete, try to set cover image if not already set
+      fetchImages.then((_) {
+        log('✅ [INIT] _fetchPostImages completed');
+        _trySetCoverImageFromMedia();
+      }).catchError((error) {
+        log('❌ [INIT] Error in _fetchPostImages: $error');
+      });
+    }
+  }
+  
+  // Helper method to try setting the cover image from media if not already set
+  void _trySetCoverImageFromMedia() {
+    if (currentCoverImage == null || currentCoverImage!.isEmpty) {
+      final postMedia = controller.postMedia.value;
+      if (postMedia != null && postMedia.data.isNotEmpty) {
+        final firstMedia = postMedia.data.firstWhere(
+          (media) => media.mediaUrl != null && media.mediaUrl!.isNotEmpty,
+          orElse: () => postMedia.data.first,
+        );
+        
+        if (firstMedia.mediaUrl != null && firstMedia.mediaUrl!.isNotEmpty) {
+          setState(() {
+            currentCoverImage = firstMedia.mediaUrl;
+            log('🔄 [COVER_IMAGE] Set cover image from first media item: $currentCoverImage');
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -547,17 +600,79 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   // Method to load cover image from postDetails (similar to create_new_ad.dart)
   void _loadCoverImageFromPostDetails(lc) {
-    if (postDetails != null && postDetails!['Rectangle_Image_URL'] != null) {
-      setState(() {
-        // Set currentCoverImage equal to Rectangle_Image_URL from postDetails
-        currentCoverImage = postDetails!['Rectangle_Image_URL'];
-
-        // Also set widget.coverImage equal to Rectangle_Image_URL
-        // Note: widget.coverImage is final, so we can't modify it directly
-        // But currentCoverImage is now synchronized with the latest Rectangle_Image_URL
-      });
-      log('✅ [DEBUG] Cover image set from postDetails: $currentCoverImage');
-      log('✅ [DEBUG] Rectangle_Image_URL: ${postDetails!['Rectangle_Image_URL']}');
+    log('🖼️ [COVER_IMAGE] Loading cover image from post details...');
+    
+    // First, try to get cover image from post details if available
+    if (postDetails != null && postDetails!.isNotEmpty) {
+      log('📦 [COVER_IMAGE] Post details found. Keys: ${postDetails!.keys}');
+      
+      // Check multiple possible keys for the cover image URL
+      final possibleKeys = [
+        'Rectangle_Image_URL',
+        'RectangleImageURL',
+        'rectangle_image_url',
+        'cover_image',
+        'coverImage',
+        'CoverImage',
+        'Image_URL',
+        'image_url',
+        'main_image',
+        'Main_Image',
+      ];
+      
+      String? coverImageUrl;
+      
+      // Try to find the cover image URL in any of the possible keys
+      for (var key in possibleKeys) {
+        if (postDetails!.containsKey(key) && postDetails![key] != null && postDetails![key].toString().isNotEmpty) {
+          coverImageUrl = postDetails![key].toString();
+          log('✅ [COVER_IMAGE] Found cover image URL in key "$key": $coverImageUrl');
+          break;
+        }
+      }
+      
+      if (coverImageUrl != null && coverImageUrl.isNotEmpty) {
+        log('✅ [COVER_IMAGE] Valid cover image URL found in post details');
+        setState(() {
+          currentCoverImage = coverImageUrl;
+          log('🔄 [COVER_IMAGE] currentCoverImage set to: $currentCoverImage');
+        });
+        return; // Exit early if we found a cover image
+      } else {
+        log('⚠️ [COVER_IMAGE] No valid cover image URL found in post details');
+        log('📋 [COVER_IMAGE] Available keys and values:');
+        postDetails!.forEach((key, value) {
+          log('   - $key: $value');
+        });
+      }
+    } else {
+      log('⚠️ [COVER_IMAGE] postDetails is null or empty');
+    }
+    
+    // If we reach here, we couldn't find a cover image in post details
+    // Try to use the first media item as cover image if available
+    final postMedia = controller.postMedia.value;
+    if (postMedia != null && postMedia.data.isNotEmpty) {
+      final firstMedia = postMedia.data.first;
+      final mediaUrl = firstMedia.mediaUrl;
+      
+      if (mediaUrl != null && mediaUrl.isNotEmpty) {
+        log('🖼️ [COVER_IMAGE] Using first media item as cover: $mediaUrl');
+        setState(() {
+          currentCoverImage = mediaUrl;
+          log('🔄 [COVER_IMAGE] currentCoverImage set to first media item: $currentCoverImage');
+        });
+        
+        // Optionally update the post details with this cover image
+        if (postDetails != null) {
+          postDetails!['cover_image'] = mediaUrl;
+          log('📝 [COVER_IMAGE] Updated postDetails with cover_image');
+        }
+      } else {
+        log('⚠️ [COVER_IMAGE] First media item has no valid URL');
+      }
+    } else {
+      log('⚠️ [COVER_IMAGE] No media items available to use as cover');
     }
   }
 
@@ -568,43 +683,109 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
   Future<void> _fetchPostDetails() async {
     var lc = AppLocalizations.of(context)!;
-    log('🚀 [DEBUG] Fetching post details for post ID: ${widget.postId}');
-    log('🚀 [DEBUG] Post Kind: ${widget.postKind}');
-    log('🚀 [DEBUG] User Name: ${widget.userName}');
+    log('🔍 [FETCH] ===== START FETCHING POST DETAILS =====');
+    log('🔍 [FETCH] Post ID: ${widget.postId}');
+    log('🔍 [FETCH] Post Kind: ${widget.postKind}');
+    log('🔍 [FETCH] User Name: ${widget.userName}');
 
     try {
-      // Fetch complete post details using getPostById
+      log('🔍 [FETCH] Calling controller.getPostById...');
+      log('🔍 [FETCH] Controller: ${controller.runtimeType}');
+      
+      // Log the current state before the call
+      log('🔍 [FETCH] Before getPostById - isLoadingPostDetails: ${controller.isLoadingPostDetails.value}');
+      log('🔍 [FETCH] Before getPostById - postDetails: ${controller.postDetails.value}');
+      
       await controller.getPostById(
         postKind: widget.postKind,
         postId: widget.postId.toString(),
         loggedInUser: widget.userName,
       );
+      
+      // Log the state after the call
+      log('🔍 [FETCH] After getPostById - isLoadingPostDetails: ${controller.isLoadingPostDetails.value}');
+      log('🔍 [FETCH] After getPostById - postDetails: ${controller.postDetails.value}');
+      log('🔍 [FETCH] After getPostById - postDetailsError: ${controller.postDetailsError.value}');
 
       // Check if post details were fetched successfully
       if (controller.postDetails.value != null) {
-        log('✅ [DEBUG] Post details fetched successfully');
-        log('✅ [DEBUG] Post details: ${controller.postDetails.value}');
+        log('✅ [FETCH] Post details fetched successfully');
+        log('📋 [FETCH] Post details keys: ${controller.postDetails.value!.keys}');
+        
+        // Log all post details for debugging with more details
+        log('📋 [FETCH] ===== POST DETAILS =====');
+        bool hasImageUrl = false;
+        
+        controller.postDetails.value!.forEach((key, value) {
+          // Log all keys and values
+          if (value != null) {
+            if (value.toString().length < 100) {
+              log('📋 [FETCH] $key: $value (${value.runtimeType})');
+            } else {
+              log('📋 [FETCH] $key: [${value.runtimeType} with length ${value.toString().length}]');
+            }
+            
+            // Check if this is an image URL
+            if ((key.toString().toLowerCase().contains('image') || 
+                 key.toString().toLowerCase().contains('photo') ||
+                 key.toString().toLowerCase().contains('cover') ||
+                 key.toString().toLowerCase().contains('rectangle')) &&
+                value.toString().startsWith('http')) {
+              hasImageUrl = true;
+              log('🖼️ [FETCH] Found potential cover image URL in key "$key": $value');
+            }
+          } else {
+            log('📋 [FETCH] $key: null');
+          }
+        });
+        
+        if (!hasImageUrl) {
+          log('⚠️ [FETCH] No image URL found in post details');
+          
+          // Log all keys that might contain image URLs
+          final imageKeys = controller.postDetails.value!.keys.where((key) => 
+            key.toString().toLowerCase().contains('image') || 
+            key.toString().toLowerCase().contains('photo') ||
+            key.toString().toLowerCase().contains('cover') ||
+            key.toString().toLowerCase().contains('rectangle')
+          ).toList();
+          
+          if (imageKeys.isNotEmpty) {
+            log('🖼️ [FETCH] Potential image URL keys found:');
+            for (var key in imageKeys) {
+              log('🖼️ [FETCH] - $key: ${controller.postDetails.value![key]}');
+            }
+          } else {
+            log('❌ [FETCH] No potential image URL keys found in post details');
+          }
+        }
 
         // Store post details in local variable
+        log(' [FETCH] Storing post details in state...');
         setState(() {
           postDetails = controller.postDetails.value;
         });
 
-        // Load cover image from postDetails (similar to create_new_ad.dart)
+        // Load cover image from postDetails
+        log(' [FETCH] Loading cover image...');
         _loadCoverImageFromPostDetails(lc);
 
         // Now fetch the media/images for this post
+        log(' [FETCH] Fetching post media...');
         await controller.fetchPostMedia(widget.postId.toString());
 
-        log('✅ [DEBUG] Post media fetched successfully');
+        log(' [FETCH] Post media fetched successfully');
       } else {
-        log('❌ [DEBUG] Failed to fetch post details');
+        log(' [FETCH] Failed to fetch post details: controller.postDetails.value is null');
+        log(' [FETCH] Falling back to fetching media only...');
         // Fallback to just fetching media if post details fail
         await controller.fetchPostMedia(widget.postId.toString());
       }
-    } catch (e) {
-      log('❌ [DEBUG] Error fetching post details: $e');
+    } catch (e, stackTrace) {
+      log(' [FETCH] Error fetching post details: $e');
+      log(' [FETCH] Stack trace: $stackTrace');
       // Fallback to just fetching media if there's an error
+      log(' [FETCH] Falling back to fetching media only due to error...');
       await controller.fetchPostMedia(widget.postId.toString());
     }
   }
@@ -896,7 +1077,7 @@ class _GalleryManagementState extends State<GalleryManagement> {
         newCoverImageUrl: newCoverUrl,
         ourSecret: ourSecret,
       );
-
+//
       if (updateSuccess) {
         // Step 4: Refresh details - this will update the state including currentCoverImage
         await _fetchPostDetails();
@@ -916,12 +1097,14 @@ class _GalleryManagementState extends State<GalleryManagement> {
   @override
   Widget build(BuildContext context) {
     var lc = AppLocalizations.of(context)!;
+    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
           Column(
-            children: [
+            children: [//kf
               /// Header
               Container(
                 height: 106.h,
@@ -1032,27 +1215,33 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   final apiImages = controller.postMedia.value?.data ?? [];
 
-                  final allImages = [//ks
+                  log(' [BUILD] Found ${apiImages.length} API images');
+                  log(' [BUILD] Found ${images.length} local images');
+
+                  final allImages = [
                     ...apiImages.map(
-                          (mediaItem) => _buildApiImageItem(mediaItem,lc),
+                          (mediaItem) => _buildApiImageItem(mediaItem, lc),
                     ),
                     ...images.map((file) => _buildLocalImageItem(file)),
                   ];
 
+
                   // Show cover image even if media list is empty
                   if (allImages.isEmpty && currentCoverImage != null && currentCoverImage!.isNotEmpty) {
+                    log(' [BUILD] Rendering ONLY cover image (no other images)');
                     return ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       itemCount: 1, // Only show cover image
                       separatorBuilder: (_, __) => 16.verticalSpace,
                       itemBuilder: (context, index) {
-                        return _buildApiImageItem(MediaItem(
-                          mediaId: 0,
-                          mediaFileName: 'CoverPhotoForPostGalleryManagement',
-                          mediaUrl: currentCoverImage!,
-                          displayOrder: 0,
-                        ),
-                          lc
+                        return _buildApiImageItem(
+                          MediaItem(
+                            mediaId: 0,
+                            mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                            mediaUrl: currentCoverImage!,
+                            displayOrder: 0,
+                          ),
+                          lc,
                         );
                       },
                     );
@@ -1065,25 +1254,40 @@ class _GalleryManagementState extends State<GalleryManagement> {
 
                   // Only show cover image if it exists
                   if (currentCoverImage != null && currentCoverImage!.isNotEmpty) {
+                    log(' [BUILD] Rendering cover image + ${allImages.length} other images');
+                    
+                    // Verify the cover image URL is valid
+                    try {
+                      log(' [BUILD] Cover image URL: $currentCoverImage');
+                      final uri = Uri.parse(currentCoverImage!);
+                      log(' [BUILD] Parsed cover image URI: $uri');
+                    } catch (e) {
+                      log(' [BUILD] Invalid cover image URL: $e');
+                    }
+                    
                     return ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemCount: allImages.length+1,
+                      itemCount: allImages.length + 1,
                       separatorBuilder: (_, __) => 16.verticalSpace,
                       itemBuilder: (context, index) {
-                        if (index==0){
-                          return   _buildApiImageItem(MediaItem(
-                            mediaId: 0,//ljت
-                            mediaFileName: 'CoverPhotoForPostGalleryManagement',
-                            mediaUrl: currentCoverImage!,
-                            displayOrder: 0,
-                          ),
-                            lc
+                        if (index == 0) {
+                          log(' [BUILD] Building cover image item at index 0');
+                          return _buildApiImageItem(
+                            MediaItem(
+                              mediaId: 0,
+                              mediaFileName: 'CoverPhotoForPostGalleryManagement',
+                              mediaUrl: currentCoverImage!,
+                              displayOrder: 0,
+                            ),
+                            lc,
                           );
                         }
+                        log(' [BUILD] Building gallery image at index ${index - 1}');
                         return allImages[index - 1];
                       },
                     );
                   } else {
+                    log(' [BUILD] No cover image to display, showing only gallery images');
                     // Show only gallery images without cover image
                     return ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),

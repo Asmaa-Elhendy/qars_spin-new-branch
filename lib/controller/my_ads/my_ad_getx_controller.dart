@@ -117,7 +117,7 @@ class MyAdCleanController extends GetxController {
         ourSecret: ourSecret,
       );
 
-   log('post respppppppppppppp, $response  $userName  $ourSecret');
+      log('post respppppppppppppp, $response  $userName  $ourSecret');
       if (response['Code'] == 'OK') {
         final myAdResponse = MyAdResponse.fromJson(response);
         myAdsResponse.value = myAdResponse;
@@ -141,7 +141,7 @@ class MyAdCleanController extends GetxController {
 
     try {
       final response = await repository.getListOfPostsByUserName(
-          userName: userName,
+        userName: userName,
         ourSecret: ourSecret,
       );
 
