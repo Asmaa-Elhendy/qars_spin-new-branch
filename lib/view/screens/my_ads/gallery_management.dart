@@ -1100,102 +1100,189 @@ class _GalleryManagementState extends State<GalleryManagement> {
     
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: AppColors.blackColor(context),
+            size: 24.w,
+          ),
+          onPressed: () {
+            controller.isLoadingMedia.value = false;
+            final myAdsController = Get.find<MyAdCleanController>();
+            myAdsController.silentRefreshMyAds();
+            myAdsController.disableLoaderForReturn();
+            Navigator.pop(context);
+          },
+        ),
+        title: Obx(() {
+          final apiImages = controller.postMedia.value?.data ?? [];
+          final videoCount = apiImages.where((item) => _isVideoFile(item.mediaFileName)).length;
+          final imageCount = apiImages.where((item) => !_isVideoFile(item.mediaFileName)).length;
+          final totalImages = images.length + imageCount;
+
+          String displayText = "${totalImages + 1} ${lc.of_lbl} 15 ${lc.images}"; // +1 for cover
+          displayText += " ${lc.and} $videoCount ${lc.of_lbl} 1 ${lc.video}";
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                lc.gallery_management,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.blackColor(context),
+                  fontFamily: 'Gilroy',
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(height: 3.h),
+              Text(
+                displayText,
+                style: TextStyle(
+                  color: AppColors.blackColor(context),
+                  fontFamily: 'Gilroy',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          );
+        }),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 14.w),
+            child: InkWell(
+              onTap: () {
+                final apiImages = controller.postMedia.value?.data ?? [];
+                final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
+
+                if (hasVideo) {
+                  _pickImages(lc);
+                } else {
+                  _showMediaSelectionDialog();
+                }
+              },
+              child: Image.asset("assets/images/add.png", scale: 25.w),
+            ),
+          ),
+        ],
+        backgroundColor: AppColors.background(context),
+        toolbarHeight: Platform.isAndroid ? 60.h : 68.h,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: AppColors.background(context),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.blackColor(context).withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5.h,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      backgroundColor: AppColors.background(context),
       body: Stack(
         children: [
           Column(
             children: [//kf
               /// Header
-              Container(
-                height: 106.h,
-                padding: EdgeInsets.only(top: 13.h, left: 14.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 5.h,
-                      spreadRadius: 1,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  spacing: 66.w,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        // Turn off any active loaders and silent refresh my ads before going back
-                        controller.isLoadingMedia.value = false;
-                        final myAdsController = Get.find<MyAdCleanController>();
-                        myAdsController.silentRefreshMyAds();
-                        myAdsController.disableLoaderForReturn();
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.arrow_back_outlined,
-                        color: Colors.black,//تالتgf
-                        size: 30.w,
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          lc.gallery_management,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: fontFamily,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Obx(() {
-                          final apiImages = controller.postMedia.value?.data ?? [];
-                          final videoCount = apiImages.where((item) => _isVideoFile(item.mediaFileName)).length;
-                          final imageCount = apiImages.where((item) => !_isVideoFile(item.mediaFileName)).length;
-                          final totalImages =
-                              images.length +
-                                  imageCount;
-                          //khk
-                          String displayText = "${totalImages+1} ${lc.of_lbl} 15 ${lc.images}}";//1 for add cover photo to count images
-                          displayText += " ${lc.and} $videoCount ${lc.of_lbl} 1 ${lc.video}";
-
-
-
-                          return Text(
-                            displayText,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: fontFamily,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                    InkWell(
-                      onTap: () {
-                        // Check if there's already a video in media
-                        final apiImages = controller.postMedia.value?.data ?? [];
-                        final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
-
-                        if (hasVideo) {
-                          // If video exists, directly pick images (old behavior)
-                          _pickImages(lc);
-                        } else {
-                          // If no video, show selection dialog
-                          _showMediaSelectionDialog();
-                        }
-                      },
-                      child: Image.asset("assets/images/add.png", scale: 25.w),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   height: 106.h,
+              //   padding: EdgeInsets.only(top: 13.h, left: 14.w),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black.withOpacity(0.2),
+              //         blurRadius: 5.h,
+              //         spreadRadius: 1,
+              //         offset: Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     spacing: 66.w,
+              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //     children: [
+              //       InkWell(
+              //         onTap: () {
+              //           // Turn off any active loaders and silent refresh my ads before going back
+              //           controller.isLoadingMedia.value = false;
+              //           final myAdsController = Get.find<MyAdCleanController>();
+              //           myAdsController.silentRefreshMyAds();
+              //           myAdsController.disableLoaderForReturn();
+              //           Navigator.pop(context);
+              //         },
+              //         child: Icon(
+              //           Icons.arrow_back_outlined,
+              //           color: Colors.black,//تالتgf
+              //           size: 30.w,
+              //         ),
+              //       ),
+              //       Column(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           Text(
+              //             lc.gallery_management,
+              //             style: TextStyle(
+              //               color: Colors.black,
+              //               fontFamily: fontFamily,
+              //               fontSize: 16.sp,
+              //               fontWeight: FontWeight.w800,
+              //             ),
+              //           ),
+              //           SizedBox(height: 3),
+              //           Obx(() {
+              //             final apiImages = controller.postMedia.value?.data ?? [];
+              //             final videoCount = apiImages.where((item) => _isVideoFile(item.mediaFileName)).length;
+              //             final imageCount = apiImages.where((item) => !_isVideoFile(item.mediaFileName)).length;
+              //             final totalImages =
+              //                 images.length +
+              //                     imageCount;
+              //             //khk
+              //             String displayText = "${totalImages+1} ${lc.of_lbl} 15 ${lc.images}}";//1 for add cover photo to count images
+              //             displayText += " ${lc.and} $videoCount ${lc.of_lbl} 1 ${lc.video}";
+              //
+              //
+              //
+              //             return Text(
+              //               displayText,
+              //               style: TextStyle(
+              //                 color: Colors.black,
+              //                 fontFamily: fontFamily,
+              //                 fontSize: 14.sp,
+              //                 fontWeight: FontWeight.w800,
+              //               ),
+              //             );
+              //           }),
+              //         ],
+              //       ),
+              //       InkWell(
+              //         onTap: () {
+              //           // Check if there's already a video in media
+              //           final apiImages = controller.postMedia.value?.data ?? [];
+              //           final hasVideo = apiImages.any((item) => _isVideoFile(item.mediaFileName));
+              //
+              //           if (hasVideo) {
+              //             // If video exists, directly pick images (old behavior)
+              //             _pickImages(lc);
+              //           } else {
+              //             // If no video, show selection dialog
+              //             _showMediaSelectionDialog();
+              //           }
+              //         },
+              //         child: Image.asset("assets/images/add.png", scale: 25.w),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               10.verticalSpace,
 

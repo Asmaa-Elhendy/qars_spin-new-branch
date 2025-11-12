@@ -111,7 +111,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
           ],
         )),
         backgroundColor: AppColors.background(context),
-        toolbarHeight: Platform.isAndroid?60.h:70.h,
+        toolbarHeight: Platform.isAndroid?60.h:68.h,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: AppColors.background(context),
