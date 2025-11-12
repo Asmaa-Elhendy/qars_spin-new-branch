@@ -90,12 +90,12 @@ class BannerService {
     // Prepare the request body
     final requestBody = {
       'Client_Date':clientDate //'01-25-2025',
-    };
+    };//tk
 
     log('🔵 ==== BANNER FETCH STARTED ====');//k
     log('🔗 URL: $url');
     log('📝 Request body: $requestBody');
-
+//k
     try {
       final response = await http.post(
         url,

@@ -117,6 +117,7 @@ class MyAdCleanController extends GetxController {
         ourSecret: ourSecret,
       );
 
+   log('post respppppppppppppp, $response  $userName  $ourSecret');
       if (response['Code'] == 'OK') {
         final myAdResponse = MyAdResponse.fromJson(response);
         myAdsResponse.value = myAdResponse;
