@@ -472,7 +472,7 @@ Widget MyAdCard(
                                   // Refresh the ads list when the dialog is closed
                                   print('🔄 [REFRESH] Closing dialog, refreshing ads...');
                                   final myAdController = Get.find<MyAdCleanController>();
-                                  myAdController.fetchMyAds();
+                                  myAdController.fetchMyAds(userName: userName, ourSecret: ourSecret);
                                   print('🔄 [REFRESH] Ads refresh initiated');//k
                                 },
                                 onTappp: () {},

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
+import '../../../controller/ads/data_layer.dart';
 import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/my_ads/my_ad_data_layer.dart';
@@ -17,12 +18,52 @@ class MyAdsMainScreen extends StatefulWidget {
 }
 
 class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
-  final MyAdCleanController controller = Get.put(
-    MyAdCleanController(MyAdDataLayer()),
-  );
-  String userName= Get.find<AuthController>().userFullName!;
-
+  final authController = Get.find<AuthController>();
+  late final MyAdCleanController controller;
   bool _isGlobalLoading = false;
+  bool _isInitialized = false;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeController();
+  }
+
+  Future<void> _initializeController() async {
+    try {
+      controller = Get.put(MyAdCleanController(MyAdDataLayer()));
+
+      if (authController.registered) {
+        await _fetchMyAds();
+      }
+
+      if (mounted) {
+        setState(() => _isInitialized = true);
+      }
+    } catch (e) {
+      print('Error initializing controller: $e');
+      if (mounted) {
+        setState(() => _isGlobalLoading = false);
+      }
+    }
+  }
+
+  Future<void> _fetchMyAds() async {
+    if (authController.userName != null && authController.userName!.isNotEmpty) {
+      await controller.fetchMyAds(
+        userName: authController.userName!,
+        ourSecret: ourSecret,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    // Clean up if needed
+    super.dispose();
+  }
 
   void _showGlobalLoader() {
     if (mounted) {
@@ -41,28 +82,15 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   }
 
   @override
-  @override
-  void initState() {
-    super.initState();
-
-    // راقب حالة التحميل
-    ever(controller.isLoadingMyAds, (isLoading) {
-      if (isLoading == true) {
-        _showGlobalLoader();
-      } else {
-        _hideGlobalLoader();
-      }
-    });
-
-    // ✨ مهم: اعمل check أول مرة
-    if (controller.isLoadingMyAds.value == true) {
-      _showGlobalLoader();
-    }
-  }
-
-
-  @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     var lc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
@@ -77,7 +105,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.background(context),
                   boxShadow: [
-                    BoxShadow( //update asmaa
+                    BoxShadow(
                       color: AppColors.blackColor(context).withOpacity(0.2),
                       spreadRadius: 1,
                       blurRadius: 5.h,
@@ -91,7 +119,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Icon(
                         Icons.arrow_back_outlined,
-                        color:AppColors.blackColor(context),
+                        color: AppColors.blackColor(context),
                         size: 30.w,
                       ),
                     ),
@@ -112,14 +140,14 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                           ),
                           SizedBox(height: 3),
                           Obx(() => Text(
-                            "${lc.active_ads} ${controller.activeAdsCount} ${lc.of_lbl} ${controller.myAds.length}",
-                            style: TextStyle(
-                              color: AppColors.blackColor(context),
-                              fontFamily: fontFamily,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          )),
+                                "${lc.active_ads} ${controller.activeAdsCount} ${lc.of_lbl} ${controller.myAds.length}",
+                                style: TextStyle(
+                                  color: AppColors.blackColor(context),
+                                  fontFamily: fontFamily,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              )),
                         ],
                       ),
                     ),
@@ -142,7 +170,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => controller.fetchMyAds(),
+                            onPressed: _fetchMyAds,
                             child: Text(lc.retry),
                           ),
                         ],
@@ -163,15 +191,16 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                     );
                   }
 
-                  return RefreshIndicator(color: AppColors.primary,
-                    onRefresh: controller.fetchMyAds,
+                  return RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: _fetchMyAds,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: controller.myAds.length,
                       itemBuilder: (context, index) {
                         final ad = controller.myAds[index];
                         return MyAdCard(
-                          userName,
+                          authController.userName!,
                           ad,
                           context,
                           onShowLoader: _showGlobalLoader,
