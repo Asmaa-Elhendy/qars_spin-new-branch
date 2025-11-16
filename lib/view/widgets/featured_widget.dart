@@ -8,8 +8,8 @@ Widget featuredContainer(context){
 
 
   return Container( //update asmaa
-    width: 80.w,
-    height: 20.h,
+    width: 100.w,
+    height: 22.h,
     padding: EdgeInsets.symmetric(horizontal: 10.w),
 
     decoration: BoxDecoration(

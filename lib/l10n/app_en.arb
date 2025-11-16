@@ -201,6 +201,8 @@
   "delete_ad": "Delete Ad",
   "delete_ad_confirm_msg": "Are you sure you want to delete this ad?",
   "delete": "Delete",
+  "edit": "Edit",
+  "update": "Update Offer",
   "request_360": "Request 360 Service",
   "ready_pro": "Ready to showCase your vehicle like a pro?",
   "msg_360": "Our 360 photo session will beautifully highlight your post \\nclick Confirm, and we'll handle the rest! \\n   Additional charges 100 riyal can apply.",

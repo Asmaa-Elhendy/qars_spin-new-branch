@@ -622,6 +622,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get edit => 'Edit';
+
+  @override
+  String get update => 'Update Offer';
+
+  @override
   String get request_360 => 'Request 360 Service';
 
   @override

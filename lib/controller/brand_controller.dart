@@ -83,7 +83,9 @@ class BrandController extends GetxController{
 
   Future<Map<String, dynamic>> deleteOffer({
     required String offerId,
+    String?postID,
     required String loggedInUser,
+    required BuildContext context
   }) async {
     final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/SetOfferInactive');
 
@@ -111,6 +113,7 @@ class BrandController extends GetxController{
 
         // If deletion was successful, refresh the offers list
         if (parsedJson['Code'] == 'OK') {
+          getOffers(postID,context: context);
           await getMyOffers();
         }
 
@@ -130,6 +133,57 @@ class BrandController extends GetxController{
       }
     } catch (e) {
       log('Error deleting offer: $e');
+      return {
+        'Code': 'Error',
+        'Desc': 'Network error: ${e.toString()}',
+        'AffectedRows': 0,
+      };
+    }
+  }
+  updateOffer({required BuildContext context,required String offer_ID,required String updateOffer_Price,required String updateOffer_Origin})async{
+    final url = Uri.parse('$base_url/BrowsingRelatedApi.asmx/UpdateOffer ');
+
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: {
+          'Offer_ID': offer_ID,
+          'Update_UserName': userName,
+          'UpdateOffer_Price': updateOffer_Price,
+          'UpdateOffer_Origin':"MobileApp",
+
+        },
+      );
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+
+        // If deletion was successful, refresh the offers list
+        if (parsedJson['Code'] == 'OK') {
+          getOffers(carDetails.postId.toString(),context: context);
+          log("parsedJson$parsedJson");
+        }
+
+        return {
+          'Code': parsedJson['Code'] ?? 'Error',
+          'Desc': parsedJson['Desc'] ?? 'Unknown error',
+          'AffectedRows': parsedJson['AffectedRows'] ?? 0,
+        };
+      } else {
+        log('❌ HTTP Error: Status code ${response.statusCode}');
+        log('Response Body: ${response.body}');
+        return {
+          'Code': 'Error',
+          'Desc': 'Failed to updating offer. Status code: ${response.statusCode}',
+          'AffectedRows': 0,
+        };
+      }
+    } catch (e) {
+      log('Error updating offer: $e');
       return {
         'Code': 'Error',
         'Desc': 'Network error: ${e.toString()}',

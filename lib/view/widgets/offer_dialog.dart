@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -6,13 +8,15 @@ import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import '../../controller/const/colors.dart';
 import '../../l10n/app_localization.dart';
+import 'dart:developer' as print;
 
 class MakeOfferDialog extends StatefulWidget {
   bool offer;
   bool requestToBuy;
-
+  bool update;
   String price;
-  MakeOfferDialog({this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
+  String offer_id;
+  MakeOfferDialog({this.offer_id="0",this.update=false,this.price = "0",this.requestToBuy = false,this.offer= true,super.key});
 
   @override
   State<MakeOfferDialog> createState() => _MakeOfferDialogState();
@@ -46,7 +50,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
             /// Title
             Center(
               child: Text(
-                widget.offer?lc.btn_make_offer:lc.btn_request_to_buy,
+                widget.update?lc.update :widget.offer?lc.btn_make_offer:lc.btn_request_to_buy,
                 style: TextStyle(
                     color: AppColors.black,
                     fontSize: 14.sp, fontWeight: FontWeight.w800,fontFamily: fontFamily),
@@ -59,7 +63,7 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
               padding:  EdgeInsets.symmetric(horizontal: 16.w),
               child: Text(
                 textAlign: TextAlign.center,
-                widget.offer? lc.what_offer:lc.request_buy_text,
+                widget.update?lc.update:widget.offer? lc.what_offer:lc.request_buy_text,
                 style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.w300,fontFamily: fontFamily,color: AppColors.black),
               ),
             ),
@@ -143,7 +147,13 @@ class _MakeOfferDialogState extends State<MakeOfferDialog> {
                       if(widget.offer){
                         brandController.makeOffer(offerPrice: _offerController.text,context: context);
 
-                      }else{
+                      }else if(widget.update){
+                        print.log("widget.update");
+
+                        brandController.updateOffer(context: context, offer_ID: widget.offer_id, updateOffer_Price: _offerController.text, updateOffer_Origin: widget.price);
+
+                      }
+                      else{
                         brandController.makeOffer(offerPrice: widget.price,context: context);
                       }
                       // brandController.getOffers(brandController.carDetails.postId, context: context);

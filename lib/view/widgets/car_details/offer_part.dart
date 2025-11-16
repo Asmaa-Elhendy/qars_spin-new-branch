@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:qarsspin/controller/ads/data_layer.dart';
+import 'package:qarsspin/controller/brand_controller.dart';
 import 'package:qarsspin/controller/const/base_url.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/model/offer.dart';
+import 'dart:developer';
 
+import '../../../controller/auth/auth_controller.dart';
 import '../../../l10n/app_localization.dart';
+import '../auth_widgets/register_dialog.dart';
+import '../offer_dialog.dart';
 
 
 class OfferPart extends StatelessWidget {
   List<Offer> offers;
+  String postID;
   // final List<Map<String, String>> offers = [
   //   {"name": "Jasem", "time": "1 hour ago", "price": "102,000 QAR"},
   //   {"name": "Mhmed", "time": "2 days ago", "price": "100,000 QAR"},
@@ -18,111 +28,64 @@ class OfferPart extends StatelessWidget {
   //   {"name": "Nour", "time": "2 days ago", "price": "83,000 QAR"},
   //   {"name": "Nour", "time": "2 days ago", "price": "83,000 QAR"},
   // ];
-  OfferPart({required this.offers});
+  OfferPart({required this.offers,required this.postID});
 
   @override
   Widget build(BuildContext context) {
     var lc = AppLocalizations.of(context)!;
     return  Container(
-        color: AppColors.background(context),
-        child: Column(
-          children: [
-            /// Top Submit + Offer Row
-            // Padding(
-            //   padding:  EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Expanded(
-            //         child: ElevatedButton(
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: Colors.yellow[700],
-            //             foregroundColor: Colors.black,
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(5),
-            //             ),
-            //             padding: EdgeInsets.symmetric(vertical: 4.h,horizontal: 16.w),
-            //           ),
-            //           onPressed: () {},
-            //           child: Text("SUBMIT",
-            //               style: TextStyle(
-            //                   fontSize: 16.sp, fontWeight: FontWeight.w500)),
-            //         ),
-            //       ),
-            //       SizedBox(width: 10),
-            //       Container(
-            //         width: 230.w,
-            //        height: 52.h,
-            //        // padding: EdgeInsets.symmetric(vertical:  8.h),
-            //         decoration: BoxDecoration(
-            //           border: Border.all(color: Colors.grey.shade400),
-            //           borderRadius: BorderRadius.circular(6),
-            //         ),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //
-            //           children: [
-            //             Container(
-            //               height: 52.h,
-            //              width: 35.w,
-            //              // height: 8.h,
-            //               decoration: BoxDecoration(
-            //                 //border: Border.all(color: Colors.grey.shade400),
-            //                // borderRadius: BorderRadius.circular(6),
-            //                 color: AppColors.star
-            //               ),
-            //               child: InkWell(
-            //                 child: Icon(Icons.remove, color: Colors.black),
-            //                 onTap: () {},
-            //               ),
-            //             ),
-            //           //  10.horizontalSpace,
-            //             Text(
-            //               "make offer +500 QAR minimum",
-            //               style: TextStyle(fontSize: 10.sp, color: AppColors.lightGray),
-            //             ),
-            //           //  Spacer(),
-            //             Container(
-            //               height: 52.h,
-            //               width: 35.w,
-            //               // height: 8.h,
-            //               decoration: BoxDecoration(
-            //                 //border: Border.all(color: Colors.grey.shade400),
-            //                 // borderRadius: BorderRadius.circular(6),
-            //                   color: AppColors.star
-            //               ),
-            //               child: InkWell(
-            //                 child: Icon(Icons.add, color: Colors.black),
-            //                 onTap: () {},
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+      color: AppColors.background(context),
+      child: Column(
+        children: [
 
-            //SizedBox(height: 12),
+          /// List of Offers
+          Expanded(
+            child: ListView.builder(
+              itemCount: offers.length,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) {
+                final offer = offers[index];
+                return Slidable(
+                  enabled: offers[index].userName==Get.find<AuthController>().userName!,
+                  key: ValueKey(1),
 
-            /// List of Offers
-            Expanded(
-              child: ListView.builder(
-                itemCount: offers.length,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  final offer = offers[index];
-                  return Container(
+                  // السحب لليسار (Swipe Left)
+                  endActionPane: ActionPane(
+                    motion: StretchMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) async{
+                          final authController = Get.find<AuthController>();
+
+                          await showDialog(
+
+                            context: context,
+                            builder: (_) =>authController.registered?  MakeOfferDialog(offer:false,update: true,price:offers[index].price,offer_id: offers[index].id.toString(),):RegisterDialog(),
+                          );
+
+                        },
+                        backgroundColor: AppColors.success,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: lc.edit,
+                      ),
+                      SlidableAction(
+                        onPressed: (context) {
+                          Get.find<BrandController>().deleteOffer(postID:postID,offerId: "${offer.id}", loggedInUser: userName, context: context);
+                          print(lc.delete);
+                        },
+                        backgroundColor: AppColors.danger,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: lc.delete,
+                      ),
+                    ],
+                  ),
+
+                  child: Container(
                     margin: EdgeInsets.symmetric(vertical: 4.h),
                     padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                    //  border: Border.(color: Colors.grey.shade300),
-                  // border: Border(
-                  // bottom: BorderSide(
-                  // color: AppColors.white,  // اللون
-                  //   width: .5
-                  //
-                  // ),),
                       color: AppColors.background(context),
                     ),
                     child: Row(
@@ -158,7 +121,7 @@ class OfferPart extends StatelessWidget {
                         Container(
                           width: 160.w,
                           padding: EdgeInsets.symmetric(
-                               vertical: 4.h),
+                              vertical: 4.h),
                           decoration: BoxDecoration(
                             border: Border.all(color: AppColors.extraLightGray),
                             borderRadius: BorderRadius.circular(6).r,
@@ -168,27 +131,28 @@ class OfferPart extends StatelessWidget {
                             child: Text(
                               "${offer.price} ${lc.currency_Symbol}",
                               style: TextStyle(
-                                fontFamily: fontFamily,
+                                  fontFamily: fontFamily,
                                   fontWeight: FontWeight.w600, fontSize: 14.sp),
                             ),
                           ),
                         )
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
+          ),
 
-            /// See More Button
-            // TextButton.icon(
-            //   onPressed: () {},
-            //   icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-            //   label: Text("See more",
-            //       style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-            // )
-          ],
-        ),
+          /// See More Button
+          // TextButton.icon(
+          //   onPressed: () {},
+          //   icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+          //   label: Text("See more",
+          //       style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+          // )
+        ],
+      ),
     );
   }
 }

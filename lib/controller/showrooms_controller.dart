@@ -9,6 +9,7 @@ import 'package:qarsspin/model/car_model.dart';
 import 'package:qarsspin/model/showroom_model.dart';
 import 'package:http/http.dart' as http;
 import 'auth/auth_controller.dart';
+import 'dart:developer';
 
 import '../model/partner_rating.dart';
 import '../model/rental_car_model.dart';
@@ -114,6 +115,9 @@ class ShowRoomsController extends GetxController {
 
   //ApI calls
   fetchCarsOfShowRooms({required bool forSale,required String postId,required String sourceKind, required String partnerid,  required String userName,required String showroomName,required BuildContext context}) async {
+
+    log("callalalla");
+
     rentalCarsOfShowRoom = [];
     carsForSale = [];
 
@@ -133,7 +137,12 @@ class ShowRoomsController extends GetxController {
       if (body["Data"] == null) {
         rentalCarsOfShowRoom = [];
         carsForSale = [];
-        return [];
+        Get.find<BrandController>().setCars(carsForSale, showroomName);
+        Get.find<RentalCarsController>().setRentalCars(rentalCarsOfShowRoom);
+        loadingMode = false;
+        update();
+        log("empty updattes");
+        //return [];
       } else {
         for (int i = 0; i < body["Data"].length; i++) {
           getCarSpec(body["Data"][i]["Post_ID"]);
@@ -222,11 +231,14 @@ class ShowRoomsController extends GetxController {
               ownerMobile: body["Data"][i]["Owner_Mobile"]));
           //Get.find<BrandController>().switchLoading();
           if(forSale) {
+
             Get.find<BrandController>().setCars(carsForSale, showroomName);
           }else{
+
             Get.find<RentalCarsController>().setRentalCars(rentalCarsOfShowRoom);
 
           }
+
           loadingMode = false;
 
           update();

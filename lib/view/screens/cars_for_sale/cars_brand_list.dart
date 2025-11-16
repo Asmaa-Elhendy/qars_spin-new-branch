@@ -113,14 +113,14 @@ class _CarsBrandListState extends State<CarsBrandList> {
               crossAxisCount: 2, // 2 columns
               mainAxisSpacing: 28.h,
               crossAxisSpacing: 10.w, //update asmaa
-              childAspectRatio: Platform.isAndroid ? 0.785 : 0.72, // adjust as needed ios / android
+              childAspectRatio: Platform.isAndroid ? 0.775 : 0.72, // adjust as needed ios / android
             ),
             itemBuilder: (context, index) {
 
               return carCard(
                   context: context,
                   w: 192.w,
-                  h: 235.h,
+                  h: 245.h,
                   car: cars[index],
                   large: false,
                   postKind: widget.postKind);
@@ -210,7 +210,7 @@ class _CarsBrandListState extends State<CarsBrandList> {
                   ),
                   child: Center(
                     child: Text(
-                  lc.find_me_car,
+                      lc.find_me_car,
                       style: TextStyle(
                         color: AppColors.black,
                         fontFamily: fontFamily,

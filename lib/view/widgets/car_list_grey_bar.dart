@@ -15,20 +15,20 @@ import '../../controller/notifications_controller.dart';
 import '../../l10n/app_localization.dart';
 
 Widget carListGreyBar(
-NotificationsController notificationsController,
+    NotificationsController notificationsController,
     {required Function(dynamic)? onSearchResult,
-    required context,
-    required String title,
-    bool squareIcon = false,
-    VoidCallback? onSwap,
-    bool showroom = false,
-    bool listCars = false,
-    bool listCarsInQarsSpinShowRoom = false,
+      required context,
+      required String title,
+      bool squareIcon = false,
+      VoidCallback? onSwap,
+      bool showroom = false,
+      bool listCars = false,
+      bool listCarsInQarsSpinShowRoom = false,
       bool personalsCars =false,
-    bool rental = false,
-    bool makes = false,
-    bool carCare = false,
-    String partnerKind = "Rent a Car"}) {
+      bool rental = false,
+      bool makes = false,
+      bool carCare = false,
+      String partnerKind = "Rent a Car"}) {
 
   Get.find<MySearchController>();
   var lc = AppLocalizations.of(context)!;
@@ -54,14 +54,14 @@ NotificationsController notificationsController,
             ? InkWell(
           onTap: () async {
             final result = await showCustomBottomSheet(
-              context,
-              makes
-                  ? "makes"
-                  : listCarsInQarsSpinShowRoom
-                  ? "Qars spin"
-                  : personalsCars
-                  ? "Personal Cars"
-                  : "listCars",notificationsController
+                context,
+                makes
+                    ? "makes"
+                    : listCarsInQarsSpinShowRoom
+                    ? "Qars spin"
+                    : personalsCars
+                    ? "Personal Cars"
+                    : "listCars",notificationsController
             );
             if (onSearchResult != null) onSearchResult(result);
           },
@@ -83,7 +83,7 @@ NotificationsController notificationsController,
                 ),
                 8.horizontalSpace,
                 Text(
-                lc.search,
+                  lc.search,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.black,
@@ -107,7 +107,7 @@ NotificationsController notificationsController,
                   BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 builder: (_) => SortBySheet(
-                  
+
                   showroom: true,
                   onConfirm: (selectedSort) {
 
@@ -118,7 +118,7 @@ NotificationsController notificationsController,
                       // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
 
                       Get.find<ShowRoomsController>().fetchShowrooms(
-                        context: context,
+                          context: context,
                           partnerKind: partnerKind,
                           forSale: partnerKind != "Rent a Car"&&!carCare,
                           sort: selectedSort == lc.sort_by_post_count
@@ -146,24 +146,24 @@ NotificationsController notificationsController,
                       onConfirm: (selectedSort) {
 
                         Get.find<RentalCarsController>().fetchRentalCars(
-                          context: context,
+                            context: context,
 
                             sort: selectedSort ==
-                               lc.sort_by_post_date_new
-                                ? "lb_Sort_By_Post_Date_Desc"
+                                lc.sort_by_post_date_new
+                                ? "PostDate_Desc"
                                 : selectedSort ==
-                               lc.sort_by_post_date_old
-                                ? "lb_Sort_By_Post_Date_Asc"
+                                lc.sort_by_post_date_old
+                                ? "PostDate_Asc"
                                 : selectedSort ==
-                               lc.sort_by_price_high
-                                ? "lb_Sort_By_Price_Desc"
+                                lc.sort_by_price_high
+                                ? "Price_Desc"
                                 : selectedSort ==
-                               lc.sort_by_price_low
-                                ? "lb_Sort_By_Price_Asc"
+                                lc.sort_by_price_low
+                                ? "Price_Asc"
                                 : selectedSort ==
-                               lc.sort_by_manufacture_year_new
-                                ? "lb_Sort_By_Year_Desc"
-                                : "lb_Sort_By_Year_Asc");
+                                lc.sort_by_manufacture_year_new
+                                ? "Year_Desc"
+                                : "Year_Asc");
                       }));
             }else if(makes){
               showModalBottomSheet(
@@ -199,7 +199,7 @@ NotificationsController notificationsController,
                       // "lb_Sort_By_Joining_Date_Asc" - Sort by joining date (oldest first)
 
                       Get.find<ShowRoomsController>().fetchShowrooms(
-                        context: context,
+                          context: context,
                           partnerKind: partnerKind,// car Care
                           sort: selectedSort == lc.sort_by_post_count
                               ? "lb_Sort_By_Active_Posts_Desc"
@@ -236,20 +236,20 @@ NotificationsController notificationsController,
                           make_id: currentMakeId, makeName: currentMakeName,
                           sort: selectedSort ==
                               lc.sort_by_post_date_new
-                              ? "lb_Sort_By_Post_Date_Desc"
+                              ? "PostDate_Desc"
                               : selectedSort ==
-                             lc.sort_by_post_date_old
-                              ? "lb_Sort_By_Post_Date_Asc"
+                              lc.sort_by_post_date_old
+                              ? "PostDate_Asc"
                               : selectedSort ==
-                             lc.sort_by_price_high
-                              ? "lb_Sort_By_Price_Desc"
+                              lc.sort_by_price_high
+                              ? "Price_Desc"
                               : selectedSort ==
                               lc.sort_by_price_low
-                              ? "lb_Sort_By_Price_Asc"
+                              ? "Price_Asc"
                               : selectedSort ==
                               lc.sort_by_manufacture_year_new
-                              ? "lb_Sort_By_Year_Desc"
-                              : "lb_Sort_By_Year_Asc",
+                              ? "Year_Desc"
+                              : "Year_Asc",
                           sourceKind: currentSourceKind
 
                       );

@@ -94,10 +94,13 @@ class ShowroomCard extends StatelessWidget {
 
                     40.horizontalSpace,
                     yellowButtons(context:context,title: lc.details,w: 100.w,onTap: (){
+
+                      // Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
+
                       Get.find<ShowRoomsController>().getShowRoomRating(showroom.partnerId);
                       Get.find<ShowRoomsController>().getPartnerGallery(showroom.partnerId);
                       Get.find<ShowRoomsController>().checkFollowing(showroom.partnerId);
-                      Get.to(CarCareDetails(notificationsController,carCare: showroom,isCarCare: carCare,));}),
+                      Get.to(CarCareDetails(rental,notificationsController,carCare: showroom,isCarCare: carCare,));}),
 
 
                     35.horizontalSpace,
@@ -142,10 +145,11 @@ class ShowroomCard extends StatelessWidget {
                     // Buttons
 
                     yellowButtons(title: lc.details,w: 100.w,onTap: (){
+                      // Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
                       Get.find<ShowRoomsController>().getShowRoomRating(showroom.partnerId);
                       Get.find<ShowRoomsController>().getPartnerGallery(showroom.partnerId);
                       Get.find<ShowRoomsController>().checkFollowing(showroom.partnerId);
-                      Get.to(CarCareDetails(notificationsController,carCare: showroom,isCarCare: carCare,));},context: context),
+                      Get.to(CarCareDetails(rental,notificationsController,carCare: showroom,isCarCare: carCare,));},context: context),
 
 
                     10.horizontalSpace,
@@ -165,7 +169,7 @@ class ShowroomCard extends StatelessWidget {
                         Get.to(AllRentalCars(notificationsController));
                       }else{
 
-                        Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
+//                        Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
                         Get.find<BrandController>().switchLoading();
                         // Get.find<BrandController>().setCars(showroom.carsForSale!,showroom.partnerNamePl);
                         //

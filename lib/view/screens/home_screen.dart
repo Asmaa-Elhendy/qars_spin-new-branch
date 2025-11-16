@@ -215,7 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 title: lc.cars_for_sale,//'Cars For Sale',
                                 imageAsset:
-                                Get.locale?.languageCode=='ar'? 'assets/images/Dark mode icons/QS D-Mode-21.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-01.svg' :'assets/images/new_svg/home1.svg',
+                                Get.locale?.languageCode=='ar'?'assets/images/QS D-Mode-21.svg':
+                                Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-01.svg' :'assets/images/new_svg/home1.svg',
 
                                 large: true,fromHome: 'true',
                               ),
@@ -246,7 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // onTap: () => _toggleMenu(true),
                                 plate: true,
 
-                                imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+                                imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':
+                                Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
 
                                 title: lc.garages,
                                 imageAsset:
@@ -278,7 +280,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: lc.bikes,
                                   plate: true,
 
-                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':
+                                  Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
 
                                   imageAsset:
                                   Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-05.svg' :'assets/images/new_svg/bikes.svg',
@@ -292,7 +295,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: lc.caravans,
                                   plate: true,
 
-                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+                                  imageAsset2:
+                                  Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':
+                                  Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
 
                                   imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-06.svg' :'assets/images/new_svg/caravans.svg',
                                   large: false,fromHome: 'true',fromHomeSmall: true,
@@ -303,7 +308,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 125.w, //update asmaa
                                 child: HomeServiceCard(
                                   title: lc.plates,
-                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
+                                  imageAsset2: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-69.svg':
+                                  Theme.of(context).brightness == Brightness.dark?'assets/images/soon.svg':'assets/images/soon.svg',
                                   plate: true,
                                   imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-07.svg' :'assets/images/new_svg/plates.svg',
                                   large: false,fromHome: 'true',fromHomeSmall: true,

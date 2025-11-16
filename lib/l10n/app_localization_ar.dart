@@ -253,7 +253,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get make_offer_one_line => 'ضع السومة';
 
   @override
-  String get btn_byu_loan => 'خذ تمويل';
+  String get btn_byu_loan => 'خذ\n تمويل';
 
   @override
   String get what_offer => 'السومة';
@@ -613,6 +613,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get delete => 'إزالة';
+
+  @override
+  String get edit => 'تعديل';
+
+  @override
+  String get update => 'تحديث السومة';
 
   @override
   String get request_360 => 'طلب خدمة 360';
