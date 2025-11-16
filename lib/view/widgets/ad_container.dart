@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -166,7 +168,32 @@ class _AdContainerState extends State<AdContainer> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.r),
-          child: _banner?.imageUrlPl?.isNotEmpty == true
+          child:
+          Get.locale?.languageCode=='ar'?
+          _banner?.imageUrlSl?.isNotEmpty == true
+              ? Image.network(
+            _banner!.imageUrlSl!,
+            width: double.infinity,
+            fit: BoxFit.cover,//l
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              print('❌ Error loading banner image: $error');
+              return _buildErrorWidget();
+            },
+          )
+              : _buildErrorWidget()
+              :
+          _banner?.imageUrlPl?.isNotEmpty == true
               ? Image.network(
             _banner!.imageUrlPl!,
             width: double.infinity,
