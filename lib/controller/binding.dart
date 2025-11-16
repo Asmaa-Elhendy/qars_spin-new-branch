@@ -18,20 +18,25 @@ import 'notifications_controller.dart';
 import 'package:qarsspin/services/notification_database.dart';
 import 'package:qarsspin/services/fcm_service.dart';
 
-class MyBinding implements  Bindings {
+class MyBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put(AuthController());
-    Get.lazyPut(() => BrandController(),fenix: true);
-    Get.lazyPut(() => ShowRoomsController(),fenix: true);
-    Get.lazyPut(() => RentalCarsController(),fenix: true);
-    Get.lazyPut(() => SpecsController(SpecsDataLayer()),fenix:true);
+    // Initialize AuthController first since other controllers depend on it
+    Get.put(AuthController(), permanent: true);
+    
+    // Initialize other controllers
+    Get.lazyPut(() => BrandController(), fenix: true);
+    Get.lazyPut(() => ShowRoomsController(), fenix: true);
+    Get.lazyPut(() => RentalCarsController(), fenix: true);
+    Get.lazyPut(() => SpecsController(SpecsDataLayer()), fenix: true);
     Get.lazyPut(() => AdCleanController(AdRepository()), fenix: true);
     Get.lazyPut(() => MyAdCleanController(MyAdDataLayer()), fenix: true);
-    Get.lazyPut(() => MySearchController(),fenix: true);
+    Get.lazyPut(() => MySearchController(), fenix: true);
 
-    // Initialize FCM Service and Notifications Controller
+    // Initialize FCM Service
     Get.lazyPut(() => FCMService(), fenix: true);
+    
+    // Initialize NotificationsController last since it might depend on other controllers
     Get.lazyPut(() => NotificationsController(), fenix: true);
   }
 }

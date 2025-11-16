@@ -22,6 +22,7 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
+
   final authController2 = Get.find<AuthController>();
 
   @override

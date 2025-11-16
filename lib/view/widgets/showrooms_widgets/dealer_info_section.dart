@@ -31,7 +31,7 @@ class DealerInfoSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-                     Text(
+                    Text(
                       "Car Dealer",
                       style: TextStyle(
                           fontFamily: fontFamily,
@@ -44,8 +44,8 @@ class DealerInfoSection extends StatelessWidget {
                         Text(
                           "Join date: 01/11/2024",
                           style: TextStyle(
-                              fontFamily: fontFamily,
-                              color: AppColors.lightGray, fontSize: 14.sp,
+                            fontFamily: fontFamily,
+                            color: AppColors.lightGray, fontSize: 14.sp,
 
 
                           ),
@@ -95,8 +95,8 @@ class DealerInfoSection extends StatelessWidget {
                                   child:  Text(
                                     "Follow",
                                     style: TextStyle(color: AppColors.black,
-                                    fontSize: 14.sp,
-                                    fontFamily: fontFamily,
+                                      fontSize: 14.sp,
+                                      fontFamily: fontFamily,
                                       fontWeight: FontWeight.w800,
                                     ),
                                   ),
@@ -108,10 +108,10 @@ class DealerInfoSection extends StatelessWidget {
                                 Text(
                                   "Followers",
                                   style: TextStyle(
-                                    fontFamily: fontFamily,
-                                    color: AppColors.darkGray,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w800
+                                      fontFamily: fontFamily,
+                                      color: AppColors.darkGray,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w800
                                   ),
                                 ),
                                 Text(

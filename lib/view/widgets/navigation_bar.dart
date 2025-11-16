@@ -17,14 +17,16 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final double barHeight =Platform.isAndroid?60:65.0;//60
+
     final double addButtonSize = 60.0;
     final double iconSize = 24.0;
     final double labelFontSize = 10.0;
     var lc = AppLocalizations.of(context)!;
 
+
     return Container(
+
       child: Stack(
         clipBehavior: Clip.none, // Allow the add button to overflow
         alignment: Alignment.bottomCenter,
@@ -42,6 +44,7 @@ class CustomBottomNavBar extends StatelessWidget {
               ],
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
@@ -200,27 +203,32 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTabSelected(index),
       behavior: HitTestBehavior.opaque,
-      child: Container(
-
-        padding:  EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            iconWidget,
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? AppColors.divider(context) : AppColors.white,
-                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                fontSize: labelFontSize,
-                fontFamily: 'Gilroy',
-                letterSpacing: -0.2,
-                height: 1.0,
-              ),
+      child: Padding(
+        padding:  EdgeInsets.only(bottom:Platform.isAndroid? 0:4.sp),
+        child: Container(
+        //h
+          padding:  EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,//j
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                iconWidget,
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? AppColors.divider(context) : AppColors.white,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: labelFontSize,
+                    fontFamily: 'Gilroy',
+                    letterSpacing: -0.2,
+                    height: 1.0,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

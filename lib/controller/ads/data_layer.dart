@@ -94,8 +94,8 @@ class AdRepository {
 
     print('Fetching car categories from: $url');
     final response = await http.get(url, headers: {'Accept': 'application/json'});
-    print('API Response status: ${response.statusCode}');
-    print('API Response body: ${response.body}');
+    // print('API Response status: ${response.statusCode}');
+    // print('API Response body: ${response.body}');
 //k
     if (response.statusCode == 200) {
       final parsedJson = jsonDecode(response.body);

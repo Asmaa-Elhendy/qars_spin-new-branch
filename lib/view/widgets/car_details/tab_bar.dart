@@ -11,7 +11,8 @@ import 'offer_part.dart';
 class CustomTabExample extends StatefulWidget {
   List<Specifications> spec;
   List<Offer> offers;
-  CustomTabExample({required this.spec,required this.offers});
+  String postId;
+  CustomTabExample({required this.postId,required this.spec,required this.offers});
   @override
   _CustomTabExampleState createState() => _CustomTabExampleState();
 }
@@ -75,7 +76,6 @@ class _CustomTabExampleState extends State<CustomTabExample>
               children: [
                 specifications(),
                 offers(),
-
               ],
             ),
           ),
@@ -86,42 +86,10 @@ class _CustomTabExampleState extends State<CustomTabExample>
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
       child: Column(
-         children: [
-           for(int i =0; i < widget.spec.length;i++)
-
-           specificationsRow(widget.spec[i].key,widget.spec[i].value),
-           // specificationsRow("Seats Type","5"),
-           // specificationsRow("Slide Roof","Yes"),
-           // specificationsRow("Park sensors","yes"),
-           // specificationsRow("Camera","yes"),
-           // specificationsRow("Bluetooth","Yes"),
-           // specificationsRow("Gps","yes"),
-           // specificationsRow("Engine Power","2.0"),
-           // specificationsRow("Interior Color","Red"),
-           // specificationsRow("Fuel Type","Hybrid"),
-           // specificationsRow("Transmission","automatic"),
-           // specificationsRow("Upholstery Material","Leather And Chamois"),
-           // specificationsRow("Steering Wheel features","All Options"),
-           // specificationsRow("Wheels","19"),
-           // specificationsRow("Headlights","Yes"),
-           // specificationsRow("Tail Lights","yes"),
-           // specificationsRow("Fog Lamps","Yes"),
-           // specificationsRow("Body Type","sedan"),
-           //
-           // specificationsRow("ABS","Yes"),
-           // specificationsRow("Lane Assist","Yes"),
-           // specificationsRow("Adaptive Cruise Control","Yes"),
-           // specificationsRow("Automatic Emergency","Yes"),
-           // specificationsRow("Wireless Charging","Yes"),
-           // specificationsRow("Apple Carplay/Android","CarPlay"),
-           //
-           // specificationsRow("USB Parts","Yes"),
-           // specificationsRow("Voice Commands","Yes"),
-           // specificationsRow("Exterior Colors","Gray"),
-           // specificationsRow("Warranty Period","6 Years"),
-           // specificationsRow("Roof Rails","Chamois"),
-           //
-         ],
+        children: [
+          for(int i =0; i < widget.spec.length;i++)
+            specificationsRow(widget.spec[i].key,widget.spec[i].value),
+        ],
       ),
     ) ;
   }
@@ -141,7 +109,7 @@ class _CustomTabExampleState extends State<CustomTabExample>
                 color: AppColors.extraLightGray,
                 width: 1,
               ),
-             // borderRadius: BorderRadius.circular(5),
+              // borderRadius: BorderRadius.circular(5),
             ),
             child: Center(
               child: Text(
@@ -164,7 +132,7 @@ class _CustomTabExampleState extends State<CustomTabExample>
                 color: AppColors.extraLightGray,
                 width: 1,
               ),
-             // borderRadius: BorderRadius.circular(5),
+              // borderRadius: BorderRadius.circular(5),
             ),
             child: Center(
               child: Text(
@@ -181,7 +149,7 @@ class _CustomTabExampleState extends State<CustomTabExample>
     );
   }
   Widget offers(){
-    return OfferPart(offers: widget.offers,);
+    return OfferPart(postID:widget.postId,offers: widget.offers,);
 
   }
 }

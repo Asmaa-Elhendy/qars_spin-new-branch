@@ -365,6 +365,7 @@ class _CarDetailsState extends State<CarDetails> {
                               ? SizedBox(
                               height: 300.h,
                               child: CustomTabExample(
+                                postId: widget.id.toString(),
                                 spec: controller.spec,
                                 offers: controller.offers,
                               ))

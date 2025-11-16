@@ -16,7 +16,7 @@ class SpecsDataLayer {
     );//
 
     log('Fetching specs for post ID: $postId, showHidden: $showHidden');
-    log('API URL: $url');
+    // log('API URL: $url');
 
     try {
       final response = await http.post(
@@ -31,8 +31,8 @@ class SpecsDataLayer {
         },
       );
 
-      log('API Response status: ${response.statusCode}');
-      log('API Response body: ${response.body}');
+      // log('API Response status: ${response.statusCode}');
+      // log('API Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return _parseJsonResponse(response.body);
@@ -63,7 +63,7 @@ class SpecsDataLayer {
     );
 
     log('Updating spec value - Post ID: $postId, Spec ID: $specId, Value: $specValue, Language: $selectedLanguage');
-    log('API URL: $url');
+ //   log('API URL: $url');
 
     try {
       final response = await http.post(
@@ -78,11 +78,11 @@ class SpecsDataLayer {
           'Spec_ID': specId,
           'Spec_Value': specValue,
           'Our_Secret': ourSecret,
-        },
+        },//k
       );
 
-      log('API Response status: ${response.statusCode}');
-      log('API Response body: ${response.body}');
+      // log('API Response status: ${response.statusCode}');
+      // log('API Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return _parseJsonResponse(response.body);

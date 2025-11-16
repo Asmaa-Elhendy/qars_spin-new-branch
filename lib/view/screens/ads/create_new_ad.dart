@@ -698,7 +698,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     Get.off(() => const MyAdsMainScreen());
 
     // Refresh My Ads screen
-    Get.find<MyAdCleanController>().fetchMyAds();
+    Get.find<MyAdCleanController>().fetchMyAds(userName: userName,ourSecret: ourSecret);
   }
 
   /// Unfocus description field to prevent auto-focus

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:qarsspin/controller/const/base_url.dart';
@@ -84,16 +85,17 @@ class BannerService {
 
   Future<List<BannerModel>> getActiveBanners() async {
     final url = Uri.parse('$base_url$endpoint');
+    final String clientDate = DateFormat('MM-dd-yyyy').format(DateTime.now());
 
     // Prepare the request body
     final requestBody = {
-      'Client_Date':'01-25-2025',
-    };
+      'Client_Date':clientDate //'01-25-2025',
+    };//tk
 
-    log('🔵 ==== BANNER FETCH STARTED ====');
+    log('🔵 ==== BANNER FETCH STARTED ====');//k
     log('🔗 URL: $url');
     log('📝 Request body: $requestBody');
-
+//k
     try {
       final response = await http.post(
         url,
@@ -173,24 +175,31 @@ class BannerService {
   BannerModel? getBannerByPriority(List<BannerModel> banners, String page, String type) {
     if (banners.isEmpty) return null;
 
+    // Convert input parameters to lowercase for case-insensitive comparison
+    final lowerType = type.toLowerCase();
+    final lowerPage = page.toLowerCase();
+
     final priorityOrder = [
-      {'type': type, 'target': page},
-      {'type': type, 'target': 'Global'},
-      {'type': '${type}Filler', 'target': page},
-      {'type': '${type}Filler', 'target': 'Global'},
+      {'type': lowerType, 'target': lowerPage},
+      {'type': lowerType, 'target': 'global'},
+      {'type': '${lowerType}filler', 'target': lowerPage},
+      {'type': '${lowerType}filler', 'target': 'global'},
     ];
 
-    log('🔍 Looking for banner with type: $type and page: $page');
+    log('🔍 Looking for banner with type: $type and page: $page (case-insensitive)');
 
     for (var priority in priorityOrder) {
-      // final matches = banners
-      //     .where((b) => b.bannerType == priority['type'] &&
-      //                  b.targetType == priority['target'])
-      //     .toList();
-      final matches = banners.where((b) =>
-      b.bannerType == priority['type'] &&
-          b.targetType.toString().contains(priority['target']  ?? '')
-      ).toList();
+      final matches = banners.where((b) {
+        // Convert both banner properties and priority values to lowercase for case-insensitive comparison
+        final bannerType = b.bannerType?.toLowerCase() ?? '';
+        final bannerTarget = b.targetType?.toLowerCase() ?? '';
+        final priorityType = (priority['type'] as String?)?.toLowerCase() ?? '';
+        final priorityTarget = (priority['target'] as String?)?.toLowerCase() ?? '';
+        
+        // Compare both type and target in a case-insensitive way
+        return bannerType == priorityType && 
+               bannerTarget.contains(priorityTarget);
+      }).toList();
 
       if (matches.isNotEmpty) {
         log('🎯 Found ${matches.length} matches for ${priority['type']} - ${priority['target']}');

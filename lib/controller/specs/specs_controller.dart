@@ -163,6 +163,10 @@ class SpecsController extends GetxController {
           // Update the list
           specs[specIndex] = updatedSpec;
           log('✅ Updated spec in local list: ${updatedSpec.specHeaderPl} = ${updatedSpec.specValuePl}');
+          
+          // Trigger UI refresh
+          specs.refresh();
+          log('✅ UI refresh triggered after spec update');
         }
 //jk
         return true;
@@ -420,7 +424,7 @@ class SpecsController extends GetxController {
       log('🔍 [FILTER] Found ${modifiedWithValues.length} modified specs with non-empty values:');
       for (final spec in modifiedWithValues) {
         log('  - ${spec.specId.padLeft(2)} | ${spec.specHeaderPl.padRight(20)} | Value: "${spec.specValuePl}"');
-      }
+      }//h
 
       if (modifiedWithValues.isEmpty) {
         log('⚠️ [FILTER] No modified specs found with values. Possible issues:');

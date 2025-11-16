@@ -161,7 +161,7 @@ class _OffersScreenState extends State<OffersScreen> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      controller.deleteOffer(offerId: offer.offerId.toString(), loggedInUser: userName);
+                                      controller.deleteOffer(offerId: offer.offerId.toString(), loggedInUser: userName,context: context);
                                       Navigator.pop(context, true);
                                     },
                                     style: TextButton.styleFrom(//k
@@ -178,7 +178,7 @@ class _OffersScreenState extends State<OffersScreen> {
                             try {
                               final response = await _controller.deleteOffer(
                                 offerId: offer.postId.toString(),
-                                loggedInUser: _controller.authController.userFullName ?? 'unknown',
+                                loggedInUser: _controller.authController.userFullName ?? 'unknown',context: context
                               );
 
                               if (response['Code'] == 'OK') {

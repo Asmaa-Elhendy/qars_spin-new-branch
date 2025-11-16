@@ -25,6 +25,8 @@ Widget carCard({
 }) {
 // }) {
   double price = double.tryParse(car.askingPrice.toString()) ?? 0.0;
+  var lc = AppLocalizations.of(context)!;
+
 
   String formattedPrice = NumberFormat.currency(//update currency asmaa
       locale: 'en_US',
@@ -55,6 +57,10 @@ Widget carCard({
         decoration: BoxDecoration(
           color: AppColors.carCardBackground(context),
           borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color:car.tag== "Sold"?AppColors.danger:car.tag=="Inspected"?AppColors.primary:car.tag=="New"?AppColors.success:Colors.transparent,
+            width: 1.7.w,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3),
@@ -73,31 +79,43 @@ Widget carCard({
             Stack(
               children: [
                 SizedBox(
-                  height: 130.h,
-                  child: ClipRRect(
+                  height: 117.h,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
 
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-                    child: CachedNetworkImage(
-                      //edit placeholder for now asmaa
-                      imageUrl: car.rectangleImageUrl.isNotEmpty
-                          ? car.rectangleImageUrl
-                          : "https://via.placeholder.com/150",
-                      height: tooSmall
-                          ? 90.h
-                          : large
-                          ? 150.h
-                          : 124.9.h,
-                      //i update default height for all cars card car asmaa
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                        child: CachedNetworkImage(
+                          //edit placeholder for now asmaa
+                          imageUrl: car.rectangleImageUrl.isNotEmpty
+                              ? car.rectangleImageUrl
+                              : "https://via.placeholder.com/150",
+                          height: tooSmall
+                              ? 90.h
+                              : large
+                              ? 150.h
+                              : 124.9.h,
+                          //i update default height for all cars card car asmaa
+                          width: double.infinity,
+                          fit: BoxFit.cover,
 
-                      errorWidget: (context, url, error) =>
-                          Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                    ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                        ),
+                      ),
+                      car.tag!="No Tag"?
+                      Positioned(
+                          top: 0,
+                          left: 45.w,
+                          right: 45.w,
+
+                          child: tagContainer(car.tag, context))
+                          :SizedBox()
+                    ],
                   ),
                 ),
                 if (car.pinToTop == 1)
-                  Positioned(bottom: 3, left: 3, child: featuredContainer(context)),
+                  Positioned(bottom: 3, left: 3.w, child: featuredContainer(context)),
               ],
             ),
 
@@ -105,14 +123,14 @@ Widget carCard({
             Flexible(
               fit: FlexFit.loose,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: .7.h),
+                padding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: .3.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 6.h, bottom: 3.h,left: 6.w), // no horizontal padding
-                      child: SizedBox(height: 40.h,
+                      padding: EdgeInsets.only(top: 5.h, bottom: 1.h,left: 6.w), // no horizontal padding
+                      child: SizedBox(height: 45.h,
                         child: Text(
                           Get.locale?.languageCode=='ar'?car.carNameSl :car.carNamePl.trim(),
                           style: TextStyle(
@@ -124,23 +142,23 @@ Widget carCard({
                       ),
                     ),
 
-                    SizedBox(height: tooSmall ? .5.h : 12.h),
+                    SizedBox(height: tooSmall ? .5.h : 4.h),
                     Container(padding: EdgeInsets.only(left: 6.w), //update asmaa
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           carStatus(
 
-                            car.sourceKind == "Individual"
-                                ? CarStatus.personal
-                                : car.sourceKind == "Qars Spin"
-                                ? CarStatus.qarsSpin
-                                : CarStatus.showroom,context
+                              car.sourceKind == "Individual"
+                                  ? CarStatus.personal
+                                  : car.sourceKind == "Qars Spin"
+                                  ? CarStatus.qarsSpin
+                                  : CarStatus.showroom,context
                           ),
-                          SizedBox(height: tooSmall?2.h:8.h),
+                          SizedBox(height: tooSmall?2.h:5.h),
                           Row(
                             children: [
                               Text(
-                                formattedPrice ,
+                                "${formattedPrice} " ,
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 16.sp,
@@ -148,7 +166,7 @@ Widget carCard({
                                 ),
                               ),
                               Text(
-                                " QAR",
+                                lc.currency_Symbol,
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 16.sp,
@@ -157,7 +175,7 @@ Widget carCard({
                               ),
                             ],
                           ),
-                          SizedBox(height: tooSmall?4.h:8.h),
+                          SizedBox(height: tooSmall?4.h:3.h),
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -215,7 +233,7 @@ Widget carCard({
 
 Widget carStatus(CarStatus status,context) {
   var lc = AppLocalizations.of(context)!;
-  
+
 
   return Container(
     width: 93.w,   //update asmaa
@@ -245,7 +263,7 @@ Widget carStatus(CarStatus status,context) {
       child: Text(
         lc.getText(getCarStatusKey(status)),
         //getCarStatusName(status, lc),
-          //lc.translate('CarStatus_${status.name}'),
+        //lc.translate('CarStatus_${status.name}'),
 
         style: TextStyle(color: Colors.white, fontSize: 13.sp,fontFamily: fontFamily),
       ),
@@ -261,4 +279,29 @@ String getCarStatusKey(CarStatus status) {
     case CarStatus.qarsSpin:
       return 'carStatus_qarsSpin';
   }
+}
+Widget tagContainer(String tag,context){
+  var lc = AppLocalizations.of(context)!;
+
+  return Container(
+    //width: 25.w,
+    height: 25.h,
+
+    decoration: BoxDecoration(
+      color:
+      tag== "Sold"?AppColors.danger:tag=="Inspected"?AppColors.primary:tag=="New"?AppColors.success:Colors.transparent,
+
+    ),
+    child:  Center(
+      child: Text(
+        tag== "Sold"?lc.tag_Sold:tag=="Inspected"?lc.tag_Inspected:tag=="New"?lc.tag_New:"",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+
 }

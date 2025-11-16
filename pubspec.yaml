@@ -64,7 +64,8 @@ dependencies:
   sqflite_common_ffi: ^2.3.6
   get_storage:
   flutter_localization:
-
+  flutter_slidable: ^4.0.3
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

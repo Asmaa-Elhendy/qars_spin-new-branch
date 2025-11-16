@@ -50,7 +50,7 @@ class MyAdCleanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchMyAds();
+    // fetchMyAds is now called explicitly when needed
   }
 
   /// Delete an ad
@@ -102,29 +102,27 @@ class MyAdCleanController extends GetxController {
   }
 
   /// Fetch user's ads
-  Future<void> fetchMyAds() async {
-    print('🔄 [CONTROLLER] fetchMyAds() called');
+  Future<void> fetchMyAds({
+    required String userName,
+    required String ourSecret,
+  }) async {
+    print('🔄 [CONTROLLER] fetchMyAds() called for user: $userName');
     isLoadingMyAds.value = true;
     myAdsError.value = null;
     myAdsResponse.value = null;
 
     try {
       final response = await repository.getListOfPostsByUserName(
-        userName: userName??"",
+        userName: userName,
         ourSecret: ourSecret,
       );
 
+      log('post respppppppppppppp, $response  $userName  $ourSecret');
       if (response['Code'] == 'OK') {
         final myAdResponse = MyAdResponse.fromJson(response);
         myAdsResponse.value = myAdResponse;
-
-        // Print only Rectangle_Image_URL for each post
-        for (int i = 0; i < myAdResponse.data.length; i++) {
-          final post = myAdResponse.data[i];
-          print('${post.rectangleImageUrl}');
-        }
-
         myAds.assignAll(myAdResponse.data);
+        print('✅ Successfully fetched ${myAdResponse.data.length} ads');
       } else {
         myAdsError.value = response['Desc'] ?? 'Failed to fetch ads';
         print('❌ API Error: ${response['Desc']}');
@@ -143,7 +141,7 @@ class MyAdCleanController extends GetxController {
 
     try {
       final response = await repository.getListOfPostsByUserName(
-          userName: userName,
+        userName: userName,
         ourSecret: ourSecret,
       );
 

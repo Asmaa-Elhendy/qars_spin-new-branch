@@ -73,6 +73,44 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
   Widget build(BuildContext context) {
     var lc = AppLocalizations.of(context)!;
     return Scaffold(
+      /// 🔹 AppBar نفس ستايل MyAccount
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: AppColors.blackColor(context),
+            size: 24.w,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          lc.specs_management,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.blackColor(context),
+            fontFamily: 'Gilroy',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: AppColors.background(context),
+        toolbarHeight: 60.h,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: AppColors.background(context),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.blackColor(context).withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5.h,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+      ),
       backgroundColor: AppColors.background(context),
       body: Stack(
         children: [
@@ -80,45 +118,45 @@ class _SpecsManagemntState extends State<SpecsManagemnt> {
             children: [
 
               /// AppBar
-              Container(
-                height: 88.h,
-                padding: EdgeInsets.only(top: 13.h, left: 14.w),
-                decoration: BoxDecoration(
-                  color: AppColors.background(context),
-                  boxShadow: [
-                    BoxShadow( //update asmaa
-                      color: AppColors.blackColor(context).withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5.h,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.arrow_back_outlined,
-                        color: AppColors.blackColor(context),
-                        size: 30.w,
-                      ),
-                    ),
-                    105.horizontalSpace,
-                    Center(
-                      child: Text(
-                        lc.specs_management,
-                        style: TextStyle(
-                          color: AppColors.blackColor(context),
-                          fontFamily: 'Gilroy',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   height: 88.h,
+              //   padding: EdgeInsets.only(top: 13.h, left: 14.w),
+              //   decoration: BoxDecoration(
+              //     color: AppColors.background(context),
+              //     boxShadow: [
+              //       BoxShadow( //update asmaa
+              //         color: AppColors.blackColor(context).withOpacity(0.2),
+              //         spreadRadius: 1,
+              //         blurRadius: 5.h,
+              //         offset: Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       GestureDetector(
+              //         onTap: () => Navigator.pop(context),
+              //         child: Icon(
+              //           Icons.arrow_back_outlined,
+              //           color: AppColors.blackColor(context),
+              //           size: 30.w,
+              //         ),
+              //       ),
+              //       105.horizontalSpace,
+              //       Center(
+              //         child: Text(
+              //           lc.specs_management,
+              //           style: TextStyle(
+              //             color: AppColors.blackColor(context),
+              //             fontFamily: 'Gilroy',
+              //             fontSize: 16.sp,
+              //             fontWeight: FontWeight.w800,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               22.verticalSpace,
 
               /// Specs list

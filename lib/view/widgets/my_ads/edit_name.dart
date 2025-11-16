@@ -123,7 +123,7 @@ class _EditSpecsNameState extends State<EditSpecsName> {
 
                             Navigator.pop(context);
                             _showLoadingDialog();
-                            final controller = Get.find<SpecsController>();
+                            final controller = Get.find<SpecsController>(tag: 'specs_${widget.spec.postId}');
                             final success =widget.fromCreateAd?
                             controller.updateLocal(specId: widget.spec.specId, specValuePl: _newNameController.text)
                                 :
