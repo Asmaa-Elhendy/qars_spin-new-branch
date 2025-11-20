@@ -1,8 +1,12 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
+import 'package:qarsspin/controller/payments/payment_controller.dart';
+
+import '../../payments/payment_methods_dialog.dart';
 
 class ContactInfoDialog {
   static Future<Map<String, String>?> show({
@@ -12,6 +16,10 @@ class ContactInfoDialog {
     String? initialMobile,
     String? initialEmail,
     String initialCountry = 'Qatar',
+    required bool isRequest360,
+    required bool isFeauredPost,
+    required double amount,
+
   }) async {
     final firstNameController =
     TextEditingController(text: initialFirstName ?? '');
@@ -47,14 +55,39 @@ class ContactInfoDialog {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-'Service Fee 100 QAR Only',//k
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          isRequest360?    Text(
+                            'Service Fee 100 QAR Only For Request 360 Session.',//k
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
+                            ),
+                          ):SizedBox(),
+                          isFeauredPost?     Text(
+                            'Service Fee 150 QAR Only For Feature Post.',//k
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
+                            ),
+                          ):SizedBox(),
+                        ],
+                      ),
                     ),
-                  ),
+                    InkWell(
+                        onTap: (){Navigator.pop(context);},
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.close,color: AppColors.blackColor(context),size: 24.sp,),
+                        ))
+                  ],),
+
                   SizedBox(height: 12.h),
                   Text(
 'Contact Information',
@@ -274,20 +307,62 @@ class ContactInfoDialog {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    // Update the onPressed handler in the ElevatedButton
+                    // Update the onPressed handler in the ElevatedButton:
+                    onPressed: () async {
                       if (formKey.currentState?.validate() ?? false) {
-                        Navigator.pop(dialogContext, {
-                          'firstName': firstNameController.text.trim(),
-                          'lastName': lastNameController.text.trim(),
-                          'mobile': mobileController.text.trim(),
-                          'email': emailController.text.trim(),
-                          'country': selectedCountry,
-                          'state': stateController.text.trim(),
-                          'city': cityController.text.trim(),
-                          'zipCode': zipController.text.trim(),
-                          'address': addressController.text.trim(),
-                          'saveForFuture': saveForFuture.toString(),
-                        });
+                        try {
+                          final paymentController = Get.find<PaymentController>();
+                          final result = await paymentController.initiatePayment(
+                            amount: amount,
+                            customerName: '${firstNameController.text.trim()} ${lastNameController.text.trim()}',
+                            email: emailController.text.trim(),
+                            mobile: mobileController.text.trim(),
+                          );
+
+                          log('Payment Initiation Result: $result');
+
+                          if (result?['IsSuccess'] == true &&
+                              result?['Data'] != null &&
+                              result?['Data']['PaymentMethods'] != null) {
+                                 Navigator.pop(context);
+                            final selectedMethod = await NewPaymentMethodsDialog.show(
+                              context: context,
+                              paymentMethods: result?['Data']['PaymentMethods'],
+                              amount: amount,
+                              isArabic: Get.locale?.languageCode == 'ar',
+                            );
+
+                            if (selectedMethod != null && context.mounted) {
+                              Navigator.pop(context, {
+                                'firstName': firstNameController.text.trim(),
+                                'lastName': lastNameController.text.trim(),
+                                'email': emailController.text.trim(),
+                                'mobile': mobileController.text.trim(),
+                                'paymentMethod': selectedMethod['paymentMethod'],
+                                'amount': selectedMethod['amount'],
+                              });
+                            }
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(result?['Message'] ?? 'Failed to load payment methods'),
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e, stackTrace) {
+                          log('Error in payment initiation: $e');
+                          log('Stack trace: $stackTrace');
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Payment initiation failed: ${e.toString()}'),
+                              ),
+                            );
+                          }
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

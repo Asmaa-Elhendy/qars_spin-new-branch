@@ -551,36 +551,41 @@ class _SellCarScreenState extends State<SellCarScreen> {
       // 1. Import the dialog
 //
 // // 2. Show the dialog and handle the result
-//       final contactInfo = await ContactInfoDialog.show(
-//         context: context,
-//
-//       );
-//
-// // 3. Handle the result
-//       if (contactInfo != null) {
-//         // User submitted the form
-//         String name = contactInfo['name']!;
-//         String mobile = contactInfo['mobile']!;
-//         String email = contactInfo['email']!;
-//
-//         // Use the contact information
-//         print('Name: $name, Mobile: $mobile, Email: $email');
-//       }//comment for now
-      final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
+      final contactInfo = await ContactInfoDialog.show(
+        amount:amount,
+        context: context,
+          isRequest360:_isRequest360,
+          isFeauredPost:_isFeauredPost
 
-      if (paid == true) {
-        _submitAd(shouldPublish: shouldPublish);
+      );
+
+// 3. Handle the result if payment true then add post (   _submitAd(shouldPublish: shouldPublish);)
+      if (contactInfo != null) {
+        // User submitted the form
+        String name = contactInfo['name']!;
+        String mobile = contactInfo['mobile']!;
+        String email = contactInfo['email']!;
+
+        // Use the contact information
+        print('Name: $name, Mobile: $mobile, Email: $email');
+
       }
-      else {
-        dialog.  SuccessDialog.show(
-          request: true,
-          context: context,
-          title: 'Payment Failed',
-          message: 'Payment failed or cancelled.',
-          onClose: () {},
-          onTappp: () {},
-        );
-      }
+// comment for now
+//       final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
+//
+//       if (paid == true) {
+//         _submitAd(shouldPublish: shouldPublish);
+//       }
+//       else {
+//         dialog.  SuccessDialog.show(
+//           request: true,
+//           context: context,
+//           title: 'Payment Failed',
+//           message: 'Payment failed or cancelled.',
+//           onClose: () {},
+//           onTappp: () {},
+//         );
+//       }
     }else{
       _submitAd(shouldPublish: shouldPublish);//handle add post without payment
 
