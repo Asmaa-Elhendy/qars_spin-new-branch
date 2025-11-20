@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/controller/payments/payment_controller.dart';
 
+import '../../../../model/payment/payment_initiate_request.dart';
+import '../../../../model/payment/payment_method_model.dart';
 import '../../payments/payment_methods_dialog.dart';
 
 class ContactInfoDialog {
@@ -319,28 +321,73 @@ class ContactInfoDialog {
                             email: emailController.text.trim(),
                             mobile: mobileController.text.trim(),
                           );
+                          final userInformationRequest = PaymentInitiateRequest(
+                            amount: amount,
+                            customerName: '${firstNameController.text.trim()} ${lastNameController.text.trim()}',
+                            email: emailController.text.trim(),
+                            mobile: mobileController.text.trim(),
+                          );
 
                           log('Payment Initiation Result: $result');
 
                           if (result?['IsSuccess'] == true &&
                               result?['Data'] != null &&
                               result?['Data']['PaymentMethods'] != null) {
-                                 Navigator.pop(context);
+                            // Map raw JSON to strongly-typed PaymentMethod list
+                            final List<dynamic> methodsRaw =
+                                List<dynamic>.from(result!['Data']['PaymentMethods'] as List);
+                            final methods = methodsRaw
+                                .map((e) => PaymentMethod.fromJson(Map<String, dynamic>.from(e)))
+                                .toList();
+
+                            Navigator.pop(context);
                             final selectedMethod = await NewPaymentMethodsDialog.show(
                               context: context,
-                              paymentMethods: result?['Data']['PaymentMethods'],
-                              amount: amount,
+                              paymentMethods: methods,
+                              userInformationRequest: userInformationRequest,
                               isArabic: Get.locale?.languageCode == 'ar',
                             );
 
                             if (selectedMethod != null && context.mounted) {
+                              final exec = selectedMethod['executeResponse'] as Map<String, dynamic>?;
+                              final msg = exec?['Message']?.toString() ?? 'Payment execution started';
+                              final data = exec?['Data'] as Map<String, dynamic>?;
+                              final url = data == null ? '' :
+                                  (data['RedirectUrl'] ?? data['PaymentURL'] ?? data['InvoiceURL'] ?? '').toString();
+
+                              // Show a small result dialog so the user can see what happened
+                              await showDialog<void>(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text('Payment Execute Result'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(msg),
+                                      if (url.isNotEmpty) ...[
+                                        const SizedBox(height: 8),
+                                        Text(url, style: const TextStyle(fontSize: 12)),
+                                      ],
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              // Now close the contact dialog and return payload
                               Navigator.pop(context, {
                                 'firstName': firstNameController.text.trim(),
                                 'lastName': lastNameController.text.trim(),
                                 'email': emailController.text.trim(),
                                 'mobile': mobileController.text.trim(),
                                 'paymentMethod': selectedMethod['paymentMethod'],
-                                'amount': selectedMethod['amount'],
+                                'executeResponse': exec,
                               });
                             }
                           } else {

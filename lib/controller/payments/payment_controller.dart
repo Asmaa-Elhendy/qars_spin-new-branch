@@ -94,7 +94,8 @@ class PaymentController extends GetxController {
     required String customerName,
     required String email,
     required String mobile,
-  }) async {
+  }) async
+  {
     try {
       isInitiatingPayment.value = true;
       paymentErrorMessage.value = '';

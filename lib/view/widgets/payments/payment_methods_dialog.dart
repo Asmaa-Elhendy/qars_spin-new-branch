@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:myfatoorah_flutter/myfatoorah_flutter.dart';
@@ -9,6 +11,7 @@ import 'package:qarsspin/controller/const/colors.dart';
 import '../../../controller/payments/payment_controller.dart';
 import '../../../controller/payments/payment_service.dart';
 import '../../../l10n/app_localization.dart';
+import '../../../model/payment/payment_initiate_request.dart';
 import '../../../model/payment/payment_method_model.dart';
 
 class PaymentMethodDialog extends StatefulWidget {
@@ -49,7 +52,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
     if (mounted) setState(() => loading = false);
   }
 
-  void _startPayment(MFPaymentMethod method,BuildContext context) async {
+  void _startPayment(MFPaymentMethod method, BuildContext context) async {
     final lc = AppLocalizations.of(context)!;
 
     setState(() {
@@ -69,7 +72,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
         // Redirect: فقط نعلم المستخدم
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-             SnackBar(content: Text(lc.redirecting_payment)),
+            SnackBar(content: Text(lc.redirecting_payment)),
           );
         }
       }
@@ -97,7 +100,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-             lc.choose_payment_method,
+              lc.choose_payment_method,
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -120,7 +123,7 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
                   itemBuilder: (context, index) {
                     final method = methods[index];
                     return InkWell(
-                      onTap: () => _startPayment(method,context),
+                      onTap: () => _startPayment(method, context),
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
                         decoration: BoxDecoration(
@@ -200,28 +203,175 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
   }
 }
 
+class InvoiceLinkDialog extends StatefulWidget {
+  final String invoiceId;
+  final String paymentUrl;
+  final bool isArabic;
 
-// Update the NewPaymentMethodsDialog class in payment_methods_dialog.dart
-// Update the NewPaymentMethodsDialog class to filter by supported currencies
-// Add this at the top of the file
+  const InvoiceLinkDialog({
+    Key? key,
+    required this.invoiceId,
+    required this.paymentUrl,
+    required this.isArabic,
+  }) : super(key: key);
 
+  static Future<void> show({
+    required BuildContext context,
+    required String invoiceId,
+    required String paymentUrl,
+    required bool isArabic,
+  }) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => InvoiceLinkDialog(
+        invoiceId: invoiceId,
+        paymentUrl: paymentUrl,
+        isArabic: isArabic,
+      ),
+    );
+  }
+
+  @override
+  State<InvoiceLinkDialog> createState() => _InvoiceLinkDialogState();
+}
+
+class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final isAr = widget.isArabic;
+    final copiedMsg = isAr ? 'تم النسخ' : 'Copied to clipboard';
+    final copyLabel = isAr ? 'نسخ' : 'Copy';
+    final doneLabel = isAr ? 'تم' : 'Done';
+    return Dialog(
+      backgroundColor: AppColors.toastBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              isAr ? 'رقم الفاتورة' : 'Invoice ID',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+              ),
+            ),
+            8.verticalSpace,
+            Text(
+              widget.invoiceId,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+              ),
+            ),
+            16.verticalSpace,
+            Text(
+              isAr ? 'رابط الدفع' : 'Payment Link',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+              ),
+            ),
+            8.verticalSpace,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.paymentUrl,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+                8.horizontalSpace,
+                InkWell(
+                  onTap: () async {
+                    await Clipboard.setData(ClipboardData(text: widget.paymentUrl));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(copiedMsg)),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.logoGray,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        copyLabel,
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            16.verticalSpace,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _cancelButton(() => Navigator.pop(context), doneLabel),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _cancelButton(VoidCallback ontap, String title) {
+    return InkWell(
+      onTap: ontap,
+      child: Container(
+        width: 95.w,
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: AppColors.logoGray,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: AppColors.black,
+              fontWeight: FontWeight.w700,
+              fontSize: 13.sp,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class NewPaymentMethodsDialog extends StatefulWidget {
-  final List<dynamic> paymentMethods;
-  final double amount;
+  final List<PaymentMethod> paymentMethods;
+  final PaymentInitiateRequest userInformationRequest;
   final bool isArabic;
 
   const NewPaymentMethodsDialog({
     Key? key,
     required this.paymentMethods,
-    required this.amount,
+    required this.userInformationRequest,
     this.isArabic = true,
   }) : super(key: key);
 
   static Future<Map<String, dynamic>?> show({
     required BuildContext context,
-    required List<dynamic> paymentMethods,
-    required double amount,
+    required List<PaymentMethod> paymentMethods,
+    required PaymentInitiateRequest userInformationRequest,
     bool isArabic = true,
   }) async {
     final paymentController = Get.find<PaymentController>();
@@ -234,8 +384,8 @@ class NewPaymentMethodsDialog extends StatefulWidget {
       barrierDismissible: false,
       builder: (_) => NewPaymentMethodsDialog(
         paymentMethods: paymentMethods,
-        amount: amount,
         isArabic: isArabic,
+        userInformationRequest: userInformationRequest,
       ),
     );
   }
@@ -245,9 +395,10 @@ class NewPaymentMethodsDialog extends StatefulWidget {
 }
 
 class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
-  late List<dynamic> filteredPaymentMethods;
+  late List<PaymentMethod> filteredPaymentMethods;
   bool loading = false;
   String? errorMessage;
+  Map<String, dynamic>? lastExecuteResponse;
 
   @override
   void initState() {
@@ -262,19 +413,19 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
         .toList();
 
     print('Supported Currencies: $supportedCurrencies');
-    print('All Payment Methods: ${widget.paymentMethods}');
+    print('All Payment Methods: ${widget.paymentMethods.length}');
 
     filteredPaymentMethods = widget.paymentMethods.where((method) {
-      final currencyIso = method['PaymentCurrencyIso']?.toString().toUpperCase();
-      final isSupported = currencyIso != null && supportedCurrencies.contains(currencyIso);
-      print('Method: ${method['PaymentMethodEn']} - Currency: $currencyIso - Supported: $isSupported');
+      final currencyIso = method.paymentCurrencyIso.toUpperCase();
+      final isSupported = supportedCurrencies.contains(currencyIso);
+      print('Method: ${method.paymentMethodEn} - Currency: $currencyIso - Supported: $isSupported');
       return isSupported;
     }).toList();
 
     log('Filtered Payment Methods: ${filteredPaymentMethods.length}');
   }
 
-  void _handlePaymentMethodTap(Map<String, dynamic> method) {
+  Future<void> _handlePaymentMethodTap(PaymentMethod method) async {
     if (loading) return;
 
     setState(() {
@@ -283,15 +434,54 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
     });
 
     try {
-      Navigator.pop(context, {
-        'paymentMethod': method,
-        'amount': widget.amount,
-      });
+      final paymentController = Get.find<PaymentController>();
+
+      // Extract selected payment method id
+      final int paymentMethodId = method.paymentMethodId;
+
+      // Provide a return URL for the gateway to redirect back to the app/site
+      // TODO: If you have a dedicated return URL, replace the below with it
+      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result";
+
+      final executeResponse = await paymentController.executePayment(
+        amount: widget.userInformationRequest.amount,
+        customerName: widget.userInformationRequest.customerName,
+        email: widget.userInformationRequest.email,
+        mobile: widget.userInformationRequest.mobile,
+        paymentMethodId: paymentMethodId,
+        returnUrl: returnUrl,
+      );
+      log('execute $executeResponse');
+     Navigator.pop(context);
+      // Show invoice dialog with the payment URL
+      final data = (executeResponse ?? const <String, dynamic>{})['Data'] as Map<String, dynamic>?;
+      final invoiceId = data?['InvoiceId']?.toString() ?? '';
+      final paymentUrl = (data == null)
+          ? ''
+          : (data['RedirectUrl'] ?? data['PaymentURL'] ?? data['InvoiceURL'] ?? '').toString();
+
+      if (mounted && (invoiceId.isNotEmpty || paymentUrl.isNotEmpty)) {
+        await InvoiceLinkDialog.show(
+          context: context,
+          invoiceId: invoiceId,
+          paymentUrl: paymentUrl,
+          isArabic: widget.isArabic,
+        );
+      }
+
+      // Close dialog and return execute response to caller so parent can also act
+      if (mounted) {
+        Navigator.pop(context, {
+          'paymentMethod': method,
+          'executeResponse': executeResponse,
+        });
+        return;
+      }
     } catch (e) {
       setState(() {
         errorMessage = widget.isArabic
-            ? 'فشل في تحديد طريقة الدفع'
-            : 'Failed to select payment method';
+            ? 'حدث خطأ أثناء تنفيذ عملية الدفع'
+            : 'An error occurred while executing the payment';
       });
     } finally {
       if (mounted) {
@@ -338,10 +528,8 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
                   itemCount: filteredPaymentMethods.length,
                   separatorBuilder: (_, __) => 12.verticalSpace,
                   itemBuilder: (context, index) {
-                    final method = filteredPaymentMethods[index] as Map<String, dynamic>;
-                    final methodName = widget.isArabic
-                        ? (method['PaymentMethodAr'] ?? method['PaymentMethodEn'] ?? '')
-                        : (method['PaymentMethodEn'] ?? method['PaymentMethodAr'] ?? '');
+                    final method = filteredPaymentMethods[index];
+                    final methodName = method.getDisplayName(widget.isArabic);
 
                     return InkWell(
                       onTap: () => _handlePaymentMethodTap(method),
@@ -353,9 +541,9 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
                         ),
                         child: Row(
                           children: [
-                            if (method['ImageUrl'] != null)
+                            if ((method.imageUrl).isNotEmpty)
                               Image.network(
-                                method['ImageUrl']!,
+                                method.imageUrl,
                                 width: 40.w,
                                 height: 40.w,
                                 errorBuilder: (_, __, ___) =>
