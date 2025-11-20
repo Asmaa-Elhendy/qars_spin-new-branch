@@ -301,7 +301,7 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
                       widget.paymentUrl,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14.sp,
+                        fontSize: 14.sp,decorationColor: Colors.white,
                         decoration: TextDecoration.underline,
                       ),
                     ),
