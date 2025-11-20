@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -237,6 +238,18 @@ class InvoiceLinkDialog extends StatefulWidget {
 }
 
 class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
+  Future<void> _openUrl(String url) async {
+    if (url.isEmpty) return;
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(widget.isArabic ? 'لا يمكن فتح الرابط' : 'Could not open the link')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isAr = widget.isArabic;
@@ -282,11 +295,15 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    widget.paymentUrl,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
+                  child: InkWell(
+                    onTap: () => _openUrl(widget.paymentUrl),
+                    child: Text(
+                      widget.paymentUrl,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ),
@@ -307,6 +324,27 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
                     child: Center(
                       child: Text(
                         copyLabel,
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                8.horizontalSpace,
+                InkWell(
+                  onTap: () => _openUrl(widget.paymentUrl),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.logoGray,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        isAr ? 'فتح' : 'Open',
                         style: TextStyle(
                           color: AppColors.black,
                           fontWeight: FontWeight.w700,
