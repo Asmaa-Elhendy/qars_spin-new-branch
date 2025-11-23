@@ -63,7 +63,7 @@ import 'app_localization_en.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,7 +72,7 @@ abstract class AppLocalizations {
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,12 +85,12 @@ abstract class AppLocalizations {
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @qar_spin_showroom.
   ///
   /// In en, this message translates to:
-  /// **'Qars Spin \n Showroom'**
+  /// **'Qars Spin Showroom'**
   String get qar_spin_showroom;
 
   /// No description provided for @cars_showroom.
@@ -1313,7 +1313,7 @@ abstract class AppLocalizations {
   /// No description provided for @msg_360.
   ///
   /// In en, this message translates to:
-  /// **'Our 360 photo session will beautifully highlight your post \\nclick Confirm, and we\'ll handle the rest! \\n   Additional charges 100 riyal can apply.'**
+  /// **'Our 360 photo session will beautifully highlight your post \nclick Confirm, and we\'ll handle the rest! \n   Additional charges 100 riyal can apply.'**
   String get msg_360;
 
   /// No description provided for @confirmation.
@@ -1367,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @feature_ad_msg.
   ///
   /// In en, this message translates to:
-  /// **'Featuring your post ensures it stands out at the top for everyone to see.\\n Additional charges 150 QR can apply.\\n Click confirm to proceed!'**
+  /// **'Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!'**
   String get feature_ad_msg;
 
   /// No description provided for @payment.
@@ -2125,8 +2125,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+        'an issue with the localizations generation tool. Please file an issue '
+        'on GitHub with a reproducible sample app and the gen-l10n configuration '
+        'that was used.',
   );
 }

@@ -60,7 +60,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personal_cars => 'Personal Cars';
 
   @override
-  String get qar_spin_showroom => 'Qars Spin \n Showroom';
+  String get qar_spin_showroom => 'Qars Spin Showroom';
 
   @override
   String get cars_showroom => 'Cars Showrooms';
@@ -635,7 +635,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_360 =>
-      'Our 360 photo session will beautifully highlight your post \\nclick Confirm, and we\'ll handle the rest! \\n   Additional charges 100 riyal can apply.';
+      'Our 360 photo session will beautifully highlight your post \nclick Confirm, and we\'ll handle the rest! \n   Additional charges 100 riyal can apply.';
 
   @override
   String get confirmation => 'Confirmation';
@@ -664,7 +664,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feature_ad_msg =>
-      'Featuring your post ensures it stands out at the top for everyone to see.\\n Additional charges 150 QR can apply.\\n Click confirm to proceed!';
+      'Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!';
 
   @override
   String get payment => 'Payment';

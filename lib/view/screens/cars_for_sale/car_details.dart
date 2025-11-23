@@ -154,16 +154,16 @@ class _CarDetailsState extends State<CarDetails> {
                 ),
                 Row(
                   children: [
-                    InkWell(
-                      onTap: () {},
-                      child: SizedBox(
-                          width: 25.w,
-                          child: Image.asset(
-                            "assets/images/share.png",
-                            fit: BoxFit.cover,
-                            color: AppColors.blackColor(context),
-                          )),
-                    ),
+                    // InkWell(
+                    //   onTap: () {},
+                    //   child: SizedBox(
+                    //       width: 25.w,
+                    //       child: Image.asset(
+                    //         "assets/images/share.png",
+                    //         fit: BoxFit.cover,
+                    //         color: AppColors.blackColor(context),
+                    //       )),
+                    // ),
                     12.horizontalSpace,
                     InkWell(
                         onTap: () {
@@ -211,7 +211,7 @@ class _CarDetailsState extends State<CarDetails> {
                           blueText(
                               "${controller.carDetails.visitsCount} ${lc.people_view}"),
                           4.verticalSpace,
-                          headerText(Get.locale?.languageCode=='ar'?controller.carDetails.carNameSl:controller.carDetails.carNamePl,context),
+                          headerText(Get.locale?.languageCode=='ar'?controller.carDetails.carNameSl.trim():controller.carDetails.carNamePl.trim(),context),
                           4.verticalSpace,
                           description(Get.locale?.languageCode=='ar'?controller.carDetails.technical_Description_SL:controller.carDetails.description,context: context),
                           12.verticalSpace,

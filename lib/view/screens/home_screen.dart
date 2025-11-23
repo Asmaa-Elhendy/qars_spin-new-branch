@@ -360,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 0,
                     right: 0,
                     child: Align(
-                      alignment: Alignment.topCenter,
+                      alignment: Alignment.center,
                       child: Container(
                         width: 40,
                         height: 40,
@@ -368,15 +368,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: InkWell( //update asmaa
-                          onTap: (){
-                            setState(() {
-                              _isMenuVisible=false;
-                            });
-                          },
-                          child: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.white,size: 45.h,
+                        child: Center(
+                          child: InkWell( //update asmaa
+                            onTap: (){
+                              setState(() {
+                                _isMenuVisible=false;
+                              });
+                            },
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white,size: 45.h,
+                            ),
                           ),
                         ),
                       ),

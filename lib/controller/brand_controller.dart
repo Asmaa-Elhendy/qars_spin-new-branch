@@ -295,7 +295,9 @@ class BrandController extends GetxController{
     update();
   }
 
+
   getCars({required int make_id, required String makeName,String sourceKind="All",sort = "lb_Sort_By_Post_Date_Desc",}) async {
+    log("call$sort ");
     carsList=[];
     currentSourceKind = sourceKind;
     currentMakeId = make_id;
