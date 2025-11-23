@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'payment_webview_page.dart';
 
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -206,27 +206,33 @@ class _PaymentMethodDialogState extends State<PaymentMethodDialog> {
 
 class InvoiceLinkDialog extends StatefulWidget {
   final String invoiceId;
+  final String? paymentId;
   final String paymentUrl;
   final bool isArabic;
 
   const InvoiceLinkDialog({
     Key? key,
     required this.invoiceId,
+    this.paymentId,
     required this.paymentUrl,
     required this.isArabic,
   }) : super(key: key);
 
-  static Future<void> show({
+  static Future<Map<String, dynamic>?> show({
     required BuildContext context,
     required String invoiceId,
+    String? paymentId,
     required String paymentUrl,
     required bool isArabic,
   }) async {
-    await showDialog(
+    return showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
+      barrierColor: Colors.black54,
       builder: (_) => InvoiceLinkDialog(
         invoiceId: invoiceId,
+        paymentId: paymentId,
         paymentUrl: paymentUrl,
         isArabic: isArabic,
       ),
@@ -238,15 +244,56 @@ class InvoiceLinkDialog extends StatefulWidget {
 }
 
 class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
+  bool checking = false;
+  String? checkError;
+  Map<String, dynamic>? statusResponse;
+
   Future<void> _openUrl(String url) async {
     if (url.isEmpty) return;
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(widget.isArabic ? 'لا يمكن فتح الرابط' : 'Could not open the link')),
-      );
+    // Open dedicated in-app webview that auto-detects returnUrl and closes with normalized result
+    const String returnBase = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result";
+    final normalized = await PaymentWebViewPage.open(
+      context,
+      url: url,
+      returnBase: returnBase,
+    );
+    if (!mounted) return;
+    if (normalized is Map<String, dynamic>) {
+      final status = normalized['status']?.toString();
+      final paid = status != null && status.toLowerCase() == 'success';
+      debugPrint(' [InvoiceLinkDialog] WebView returned normalized=$normalized, paid=$paid');
+      Navigator.pop(context, {
+        'paid': paid,
+        'statusResponse': normalized,
+        'normalizedResult': normalized,
+      });
+    }
+  }
+
+  Future<void> _confirmPaid() async {
+    setState(() {
+      checking = true;
+      checkError = null;
+    });
+    try {
+      final ctrl = Get.find<PaymentController>();
+      final id = (widget.paymentId?.isNotEmpty ?? false) ? widget.paymentId! : widget.invoiceId;
+      final resp = await ctrl.getTestStatus(paymentId: id, isTest: true);
+      statusResponse = resp;
+      final paid = (resp?['IsSuccess'] == true) ||
+          ((resp?['status']?.toString().toLowerCase() == 'success'));
+      final normalized = {
+        'message': 'Payment result received.',
+        'paymentId': id,
+        'status': paid ? 'Success' : 'Failed',
+      };
+      if (mounted) Navigator.pop(context, {'paid': paid, 'statusResponse': resp, 'normalizedResult': normalized});
+    } catch (e) {
+      setState(() {
+        checkError = e.toString();
+      });
+    } finally {
+      if (mounted) setState(() => checking = false);
     }
   }
 
@@ -255,7 +302,7 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
     final isAr = widget.isArabic;
     final copiedMsg = isAr ? 'تم النسخ' : 'Copied to clipboard';
     final copyLabel = isAr ? 'نسخ' : 'Copy';
-    final doneLabel = isAr ? 'تم' : 'Done';
+
     return Dialog(
       backgroundColor: AppColors.toastBackground,
       shape: RoundedRectangleBorder(
@@ -301,7 +348,8 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
                       widget.paymentUrl,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14.sp,decorationColor: Colors.white,
+                        fontSize: 14.sp,
+                        decorationColor: Colors.white,
                         decoration: TextDecoration.underline,
                       ),
                     ),
@@ -357,23 +405,37 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
               ],
             ),
             16.verticalSpace,
+            if (checkError != null) ...[
+              12.verticalSpace,
+              Text(checkError!, style: TextStyle(color: Colors.red, fontSize: 12.sp)),
+            ],
+            12.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _cancelButton(() => Navigator.pop(context), doneLabel),
+                // _actionButton(
+                //   onTap: checking ? null : _confirmPaid,
+                //   title: isAr ? 'دفعت' : 'I Paid',
+                //   disabled: checking,
+                // ),
+              //  12.horizontalSpace,
+                _actionButton(
+                  onTap: () => Navigator.pop(context, {'paid': false}),
+                  title: isAr ? 'إلغاء' : 'Cancel',
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _cancelButton(VoidCallback ontap, String title) {
+  Widget _actionButton({VoidCallback? onTap, required String title, bool disabled = false}) {
     return InkWell(
-      onTap: ontap,
+      onTap: disabled ? null : onTap,
       child: Container(
-        width: 95.w,
+        width: 110.w,
         padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.logoGray,
@@ -420,6 +482,8 @@ class NewPaymentMethodsDialog extends StatefulWidget {
     return showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
+      barrierColor: Colors.black87,
       builder: (_) => NewPaymentMethodsDialog(
         paymentMethods: paymentMethods,
         isArabic: isArabic,
@@ -478,8 +542,8 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
       final int paymentMethodId = method.paymentMethodId;
 
       // Provide a return URL for the gateway to redirect back to the app/site
-      // TODO: If you have a dedicated return URL, replace the below with it
-      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result";
+      // Add a default status=Success to satisfy backend validation on redirect
+      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result?status=Success";
 
       final executeResponse = await paymentController.executePayment(
         amount: widget.userInformationRequest.amount,
@@ -490,29 +554,28 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
         returnUrl: returnUrl,
       );
       log('execute $executeResponse');
-     Navigator.pop(context);
       // Show invoice dialog with the payment URL
       final data = (executeResponse ?? const <String, dynamic>{})['Data'] as Map<String, dynamic>?;
       final invoiceId = data?['InvoiceId']?.toString() ?? '';
+      final paymentId = data?['PaymentId']?.toString() ?? data?['PaymentID']?.toString() ?? '';
       final paymentUrl = (data == null)
           ? ''
           : (data['RedirectUrl'] ?? data['PaymentURL'] ?? data['InvoiceURL'] ?? '').toString();
 
-      if (mounted && (invoiceId.isNotEmpty || paymentUrl.isNotEmpty)) {
-        await InvoiceLinkDialog.show(
-          context: context,
-          invoiceId: invoiceId,
-          paymentUrl: paymentUrl,
-          isArabic: widget.isArabic,
-        );
-      }
-
-      // Close dialog and return execute response to caller so parent can also act
+      // Sequential flow: close this dialog first, let parent open the invoice dialog next
       if (mounted) {
-        Navigator.pop(context, {
+        final payload = {
           'paymentMethod': method,
           'executeResponse': executeResponse,
-        });
+          'invoice': {
+            'invoiceId': invoiceId,
+            'paymentId': paymentId.isNotEmpty ? paymentId : null,
+            'paymentUrl': paymentUrl,
+            'isArabic': widget.isArabic,
+          },
+        };
+        debugPrint(' [NewPaymentMethodsDialog] returning payload (to open invoice next) =$payload');
+        Navigator.pop(context, payload);
         return;
       }
     } catch (e) {

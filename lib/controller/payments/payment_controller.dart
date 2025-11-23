@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/payments/payment_service_new.dart';
 import 'package:qarsspin/model/payment/payment_initiate_request.dart';
@@ -135,14 +137,14 @@ class PaymentController extends GetxController {
       lastPaymentExecuteResponse.value = null;
 
       final request = PaymentExecuteRequest(
-        amount: amount,
+        amount: 1,//amount, amount 1 pound
         customerName: customerName,
         email: email,
         mobile: mobile,
         paymentMethodId: paymentMethodId,
         returnUrl: returnUrl,
       );
-
+     log('execute payment request $request');
       final response = await _service.executePayment(request);
 
       lastPaymentExecuteResponse.value = response;

@@ -59,7 +59,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   Future<void> _fetchMyAds() async {
     if (authController.userName != null && authController.userName!.isNotEmpty) {
       await controller.fetchMyAds(
-        userName:userName,
+        userName: authController.userFullName!,
         ourSecret: ourSecret,
       );
     }

@@ -8,10 +8,11 @@ import 'package:qarsspin/controller/payments/payment_controller.dart';
 
 import '../../../../model/payment/payment_initiate_request.dart';
 import '../../../../model/payment/payment_method_model.dart';
+import '../../my_ads/dialog.dart' as dialog;
 import '../../payments/payment_methods_dialog.dart';
 
 class ContactInfoDialog {
-  static Future<Map<String, String>?> show({
+  static Future<Map<String, dynamic>?> show({
     required BuildContext context,
     String? initialFirstName,
     String? initialLastName,
@@ -41,7 +42,7 @@ class ContactInfoDialog {
     String selectedCountry = initialCountry;
     bool saveForFuture = true;
 
-    return showDialog<Map<String, String>>(
+    return showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
@@ -159,7 +160,7 @@ class ContactInfoDialog {
                               keyboardType: TextInputType.phone,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
+                                LengthLimitingTextInputFormatter(11),
                               ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -313,103 +314,16 @@ class ContactInfoDialog {
                     // Update the onPressed handler in the ElevatedButton:
                     onPressed: () async {
                       if (formKey.currentState?.validate() ?? false) {
-                        try {
-                          final paymentController = Get.find<PaymentController>();
-                          final result = await paymentController.initiatePayment(
-                            amount: amount,
-                            customerName: '${firstNameController.text.trim()} ${lastNameController.text.trim()}',
-                            email: emailController.text.trim(),
-                            mobile: mobileController.text.trim(),
-                          );
-                          final userInformationRequest = PaymentInitiateRequest(
-                            amount: amount,
-                            customerName: '${firstNameController.text.trim()} ${lastNameController.text.trim()}',
-                            email: emailController.text.trim(),
-                            mobile: mobileController.text.trim(),
-                          );
-
-                          log('Payment Initiation Result: $result');
-
-                          if (result?['IsSuccess'] == true &&
-                              result?['Data'] != null &&
-                              result?['Data']['PaymentMethods'] != null) {
-                            // Map raw JSON to strongly-typed PaymentMethod list
-                            final List<dynamic> methodsRaw =
-                                List<dynamic>.from(result!['Data']['PaymentMethods'] as List);
-                            final methods = methodsRaw
-                                .map((e) => PaymentMethod.fromJson(Map<String, dynamic>.from(e)))
-                                .toList();
-
-                            Navigator.pop(context);
-                            final selectedMethod = await NewPaymentMethodsDialog.show(
-                              context: context,
-                              paymentMethods: methods,
-                              userInformationRequest: userInformationRequest,
-                              isArabic: Get.locale?.languageCode == 'ar',
-                            );
-
-                            if (selectedMethod != null && context.mounted) {
-                              final exec = selectedMethod['executeResponse'] as Map<String, dynamic>?;
-                              final msg = exec?['Message']?.toString() ?? 'Payment execution started';
-                              final data = exec?['Data'] as Map<String, dynamic>?;
-                              final url = data == null ? '' :
-                                  (data['RedirectUrl'] ?? data['PaymentURL'] ?? data['InvoiceURL'] ?? '').toString();
-
-                              // Show a small result dialog so the user can see what happened
-                              await showDialog<void>(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Payment Execute Result'),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(msg),
-                                      if (url.isNotEmpty) ...[
-                                        const SizedBox(height: 8),
-                                        Text(url, style: const TextStyle(fontSize: 12)),
-                                      ],
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.of(context).pop(),
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                ),
-                              );
-
-                              // Now close the contact dialog and return payload
-                              Navigator.pop(context, {
-                                'firstName': firstNameController.text.trim(),
-                                'lastName': lastNameController.text.trim(),
-                                'email': emailController.text.trim(),
-                                'mobile': mobileController.text.trim(),
-                                'paymentMethod': selectedMethod['paymentMethod'],
-                                'executeResponse': exec,
-                              });
-                            }
-                          } else {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(result?['Message'] ?? 'Failed to load payment methods'),
-                                ),
-                              );
-                            }
-                          }
-                        } catch (e, stackTrace) {
-                          log('Error in payment initiation: $e');
-                          log('Stack trace: $stackTrace');
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Payment initiation failed: ${e.toString()}'),
-                              ),
-                            );
-                          }
+                        // Return only contact info; payment flow will be handled by the caller
+                        if (context.mounted) {
+                          Navigator.of(context, rootNavigator: true).pop({
+                            'firstName': firstNameController.text.trim(),
+                            'lastName': lastNameController.text.trim(),
+                            'email': emailController.text.trim(),
+                            'mobile': mobileController.text.trim(),
+                          });
                         }
+                        return;
                       }
                     },
                     style: ElevatedButton.styleFrom(

@@ -139,6 +139,7 @@ class AuthController extends GetxController {
         // Update auth state
         _registered.value = true;
         _fullName.value = userData['Full_Name'] ?? fullName;
+        _userName.value = userData['Mobile'] ?? mobileNumber;
 
         return {
           'success': true,

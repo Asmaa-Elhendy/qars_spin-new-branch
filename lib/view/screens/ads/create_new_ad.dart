@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:qarsspin/model/car_category.dart';
 import '../../../controller/ads/ad_getx_controller_create_ad.dart';
 import '../../../controller/ads/data_layer.dart';
+import '../../../controller/auth/auth_controller.dart';
 import '../../../controller/const/colors.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../l10n/app_localization.dart';
@@ -21,7 +22,9 @@ import '../../widgets/ads/dialogs/success_dialog.dart';
 import '../../widgets/ads/create_ad_widgets/ad_submission_service.dart';
 import '../../screens/my_ads/my_ads_main_screen.dart';
 import '../../widgets/payments/payment_methods_dialog.dart';
-
+import '../../../controller/payments/payment_controller.dart';
+import '../../../model/payment/payment_initiate_request.dart';
+import '../../../model/payment/payment_method_model.dart';
 
 class SellCarScreen extends StatefulWidget {
   final dynamic postData;
@@ -544,56 +547,134 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Submit the ad using the service
     // _submitAd(shouldPublish: shouldPublish);//handle add post without payment
     //handle add post with payment
-    if(_isRequest360||_isFeauredPost){   //handle payment from here
-      double amount=0;
-      _isRequest360?amount+=100:null;
-      _isFeauredPost?amount+=150:null;
-      // 1. Import the dialog
-//
-// // 2. Show the dialog and handle the result
+    if (_isRequest360 || _isFeauredPost) {   //handle payment from here
+      double amount = 0;
+      _isRequest360 ? amount += 100 : null;
+      _isFeauredPost ? amount += 150 : null;
+
+      // 1) Collect contact info (dialog closes immediately and returns data only)
       final contactInfo = await ContactInfoDialog.show(
-        amount:amount,
+        amount: amount,
         context: context,
-          isRequest360:_isRequest360,
-          isFeauredPost:_isFeauredPost
-
+        isRequest360: _isRequest360,
+        isFeauredPost: _isFeauredPost,
       );
-
-// 3. Handle the result if payment true then add post (   _submitAd(shouldPublish: shouldPublish);)
-      if (contactInfo != null) {
-        // User submitted the form
-        String name = contactInfo['name']!;
-        String mobile = contactInfo['mobile']!;
-        String email = contactInfo['email']!;
-
-        // Use the contact information
-        print('Name: $name, Mobile: $mobile, Email: $email');
-
-      }
 // comment for now
 //       final paid = await PaymentMethodDialog.show(context: context,amount:  amount);
 //
 //       if (paid == true) {
 //         _submitAd(shouldPublish: shouldPublish);
-//       }
-//       else {
-//         dialog.  SuccessDialog.show(
-//           request: true,
-//           context: context,
-//           title: 'Payment Failed',
-//           message: 'Payment failed or cancelled.',
-//           onClose: () {},
-//           onTappp: () {},
-//         );
-//       }
-    }else{
+// 3. Handle the result: if payment is confirmed, submit the ad.
+      if (contactInfo == null) {
+        // user cancelled contact info
+      } else {
+        try {
+          // 2) Initiate payment using contact info
+          final paymentController = Get.find<PaymentController>();
+          final String customerName = '${(contactInfo['firstName'] ?? '').toString().trim()} ${(contactInfo['lastName'] ?? '').toString().trim()}'.trim();
+          final String email = (contactInfo['email'] ?? '').toString().trim();
+          final String mobile = (contactInfo['mobile'] ?? '').toString().trim();
+
+          final result = await paymentController.initiatePayment(
+            amount: amount,
+            customerName: customerName.isEmpty ? 'Customer' : customerName,
+            email: email,
+            mobile: mobile,
+          );
+          log('Payment Initiation Result: $result');
+
+          if (result?['IsSuccess'] == true &&
+              result?['Data'] != null &&
+              result?['Data']['PaymentMethods'] != null) {
+            // 3) Map methods and open NewPaymentMethodsDialog
+            final List<dynamic> methodsRaw = List<dynamic>.from(result!['Data']['PaymentMethods'] as List);
+            final methods = methodsRaw
+                .map((e) => PaymentMethod.fromJson(Map<String, dynamic>.from(e)))
+                .toList();
+
+            final userInformationRequest = PaymentInitiateRequest(
+              amount: amount,
+              customerName: customerName.isEmpty ? 'Customer' : customerName,
+              email: email,
+              mobile: mobile,
+            );
+
+            final methodsPayload = await NewPaymentMethodsDialog.show(
+              context: context,
+              paymentMethods: methods,
+              userInformationRequest: userInformationRequest,
+              isArabic: Get.locale?.languageCode == 'ar',
+            );
+
+            if (methodsPayload != null) {
+              Map<String, dynamic>? normalized;
+              final invoice = methodsPayload['invoice'] as Map<String, dynamic>?;
+              if (invoice != null) {
+                final invoiceResult = await InvoiceLinkDialog.show(
+                  context: context,
+                  invoiceId: (invoice['invoiceId'] ?? '').toString(),
+                  paymentId: (invoice['paymentId'])?.toString(),
+                  paymentUrl: (invoice['paymentUrl'] ?? '').toString(),
+                  isArabic: (invoice['isArabic'] == true),
+                );
+                normalized = invoiceResult?['normalizedResult'] as Map<String, dynamic>?;
+              } else {
+                normalized = methodsPayload['normalizedResult'] as Map<String, dynamic>?;
+              }
+
+              final status = normalized?['status']?.toString();
+              final paymentId = normalized?['paymentId']?.toString();
+              final bool success = (status != null && status.toLowerCase() == 'success') || (paymentId != null && paymentId.isNotEmpty);
+
+              if (success) {
+                dialog.SuccessDialog.show(
+                  request: true,
+                  context: context,
+                  title: 'Payment Succeeded',
+                  message: 'Payment was completed.',
+                  onClose: () { Navigator.pop(context); },
+                  onTappp: () { Navigator.pop(context); },
+                );
+                _submitAd(shouldPublish: shouldPublish);
+              } else
+              {
+                dialog.SuccessDialog.show(
+                  request: true,
+                  context: context,
+                  title: 'Payment Failed',
+                  message: 'Payment was not completed.',
+                  onClose: () { },
+                  onTappp: () { Navigator.pop(context); },
+                );
+              }
+            }
+          }
+          else {
+            dialog.SuccessDialog.show(
+              request: true,
+              context: context,
+              title: 'Payment Failed',
+              message: (result?['Message'] ?? 'Failed to load payment methods').toString(),
+              onClose: () { Navigator.pop(context); },
+              onTappp: () { Navigator.pop(context); },
+            );
+          }
+        } catch (e, st) {
+          log('Payment flow error: $e');
+          log('Stack: $st');
+          dialog.SuccessDialog.show(
+            request: true,
+            context: context,
+            title: 'Payment Failed',
+            message: 'Payment flow failed: $e',
+            onClose: () { Navigator.pop(context); },
+            onTappp: () { Navigator.pop(context); },
+          );
+        }
+      }
+    } else {
       _submitAd(shouldPublish: shouldPublish);//handle add post without payment
-
-     }
-
-
-
-
+    }
   }
 
   /// Show alert for missing fields
@@ -703,7 +784,10 @@ class _SellCarScreenState extends State<SellCarScreen> {
     Get.off(() => const MyAdsMainScreen());
 
     // Refresh My Ads screen
-    Get.find<MyAdCleanController>().fetchMyAds(userName: userName,ourSecret: ourSecret);
+    final auth = Get.find<AuthController>();
+    if (auth.userName != null && auth.userName!.isNotEmpty) {
+      Get.find<MyAdCleanController>().fetchMyAds(userName: auth.userName!, ourSecret: ourSecret);
+    }
   }
 
   /// Unfocus description field to prevent auto-focus
