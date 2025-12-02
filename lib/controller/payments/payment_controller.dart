@@ -8,6 +8,7 @@ import 'package:qarsspin/model/payment/payment_test_status_request.dart';
 import 'package:qarsspin/model/payment/supported_currencies_response.dart';
 
 import '../../model/payment/payment_result_request..dart';
+import '../../model/payment/qars_service.dart';
 
 class PaymentController extends GetxController {
   final PaymentServiceNew _service;
@@ -45,6 +46,12 @@ class PaymentController extends GetxController {
   Rxn<Map<String, dynamic>>();
   final RxString testStatusErrorMessage = ''.obs;
 
+  // ---------- Qars Services (Individual) ----------  for prices 360,featured and others
+  final RxList<QarsService> individualQarsServices = <QarsService>[].obs;
+  final RxBool isLoadingQarsServices = false.obs;
+  final RxString qarsServicesErrorMessage = ''.obs;
+
+
   @override
   void onInit() {
     super.onInit();
@@ -54,6 +61,13 @@ class PaymentController extends GetxController {
       print('💰 Currencies loaded successfully: ${currencies.length} items');
     }).catchError((error) {
       print('❌ Failed to load currencies: $error');
+    });
+    // Load Qars services (Individual)
+    loadIndividualQarsServices().then((_) {
+      print(
+          '🧾 Qars Individual services loaded: ${individualQarsServices.length} items');
+    }).catchError((error) {
+      print('❌ Failed to load Qars services: $error');
     });
   }
 
@@ -210,4 +224,32 @@ class PaymentController extends GetxController {
       isFetchingTestStatus.value = false;
     }
   }
+
+  /// GET /api/v1/QarsRequests/Get-QarsServices
+  /// Load only services where qarsServiceType == "Individual"
+  Future<void> loadIndividualQarsServices() async {
+    try {
+      isLoadingQarsServices.value = true;
+      qarsServicesErrorMessage.value = '';
+      individualQarsServices.clear();
+
+      print('⏳ Loading Qars services (Individual)...');
+
+      final services =
+      await _service.getQarsServices(serviceTypeFilter: 'Individual');
+
+      individualQarsServices.assignAll(services);
+      print('✅ Loaded ${individualQarsServices.length} Individual services');
+    } catch (e, stackTrace) {
+      final errorMsg = '❌ Error loading Qars services: $e';
+      print(errorMsg);
+      print('📜 Stack trace: $stackTrace');
+      qarsServicesErrorMessage.value = errorMsg;
+    } finally {
+      isLoadingQarsServices.value = false;
+      print(
+          '🏁 Qars services loading completed. isError: ${qarsServicesErrorMessage.isNotEmpty}');
+    }
+  }
+
 }

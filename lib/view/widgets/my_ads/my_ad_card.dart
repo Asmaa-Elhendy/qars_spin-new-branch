@@ -10,7 +10,6 @@ import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
 import 'package:qarsspin/model/my_ad_model.dart';
 import '../../../controller/my_ads/my_ad_getx_controller.dart';
 import '../../../controller/payments/payment_controller.dart';
-import '../../../controller/payments/payment_service.dart';
 import '../../../l10n/app_localization.dart';
 import '../../../model/payment/payment_initiate_request.dart';
 import '../../../model/payment/payment_method_model.dart';
@@ -31,6 +30,8 @@ Widget MyAdCard(
     BuildContext context, {
       required VoidCallback onShowLoader,
       required VoidCallback onHideLoader,
+      required double req360Price,
+      required double featuredPrice,
     }) {
   var lc = AppLocalizations.of(context)!;
   return Container(
@@ -203,7 +204,7 @@ Widget MyAdCard(
                     context: context,
                     title: lc.ready_pro,
                     message:
-                    lc.msg_360,
+                    lc.msg_360_first+'${req360Price}'+lc.msg_360_second,
                     onClose: () {},
                     onTappp: () async {
                       // // 1) Close confirmation dialog
@@ -264,7 +265,9 @@ Widget MyAdCard(
 
       // 1) Collect contact info (dialog closes immediately and returns data only)
       final contactInfo = await ContactInfoDialog.show(
-        amount: 100,
+        totalAmount: req360Price,
+        req360Amount: req360Price,//get price from api
+        featuredAmount: 0,
         context: context,
         isRequest360: true,
         isFeauredPost: false,
@@ -281,7 +284,7 @@ Widget MyAdCard(
           final String mobile = (contactInfo['mobile'] ?? '').toString().trim();
 
           final result = await paymentController.initiatePayment(
-            amount: 100,
+            amount: req360Price,
             customerName: customerName.isEmpty ? 'Customer' : customerName,
             email: email,
             mobile: mobile,
@@ -298,7 +301,7 @@ Widget MyAdCard(
                 .toList();
 
             final userInformationRequest = PaymentInitiateRequest(
-              amount: 100,
+              amount: req360Price,
               customerName: customerName.isEmpty ? 'Customer' : customerName,
               email: email,
               mobile: mobile,
@@ -454,7 +457,7 @@ Widget MyAdCard(
                     context: context,//
                     title: lc.centered_ad,
                     message:
-                    lc.feature_ad_msg,
+                    lc.feature_ad_msg_first+'$featuredPrice'+lc.feature_ad_msg_second,
                     onClose: () {},
                     onTappp: () async {
                       // 1) Close confirmation dialog
@@ -463,7 +466,9 @@ Widget MyAdCard(
 
                       // 1) Collect contact info (dialog closes immediately and returns data only)
                       final contactInfo = await ContactInfoDialog.show(
-                        amount: 100,
+                        totalAmount: featuredPrice,
+                        req360Amount: 0, //get price 360
+                        featuredAmount: featuredPrice,
                         context: context,
                         isRequest360: true,
                         isFeauredPost: false,
@@ -480,7 +485,7 @@ Widget MyAdCard(
                           final String mobile = (contactInfo['mobile'] ?? '').toString().trim();
 
                           final result = await paymentController.initiatePayment(
-                            amount: 100,
+                            amount: featuredPrice,
                             customerName: customerName.isEmpty ? 'Customer' : customerName,
                             email: email,
                             mobile: mobile,
@@ -497,7 +502,7 @@ Widget MyAdCard(
                                 .toList();
 
                             final userInformationRequest = PaymentInitiateRequest(
-                              amount: 100,
+                              amount: featuredPrice,
                               customerName: customerName.isEmpty ? 'Customer' : customerName,
                               email: email,
                               mobile: mobile,

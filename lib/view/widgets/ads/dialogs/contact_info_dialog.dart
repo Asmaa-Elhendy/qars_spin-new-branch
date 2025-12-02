@@ -21,7 +21,9 @@ class ContactInfoDialog {
     String initialCountry = 'Qatar',
     required bool isRequest360,
     required bool isFeauredPost,
-    required double amount,
+    required double req360Amount,
+    required double featuredAmount,
+    required double totalAmount,
 
   }) async {
     final firstNameController =
@@ -65,7 +67,7 @@ class ContactInfoDialog {
                       child: Column(mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           isRequest360?    Text(
-                            'Service Fee 100 QAR Only For Request 360 Session.',//k
+                            'Service Fee'+ ' $req360Amount ' +'QAR Only For Request 360 Session.',//k
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
@@ -73,7 +75,7 @@ class ContactInfoDialog {
                             ),
                           ):SizedBox(),
                           isFeauredPost?     Text(
-                            'Service Fee 150 QAR Only For Feature Post.',//k
+                            'Service Fee'+ ' $featuredAmount ' +'QAR Only For Feature Post.',//k
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,

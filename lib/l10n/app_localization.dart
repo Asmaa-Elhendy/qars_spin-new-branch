@@ -1160,17 +1160,29 @@ abstract class AppLocalizations {
   /// **'Enter car description...'**
   String get enter_desc;
 
-  /// No description provided for @make_360.
+  /// No description provided for @make_360_first.
   ///
   /// In en, this message translates to:
-  /// **'Make Your Advertisement special by 360 session (100 riyal only for full shooting session)'**
-  String get make_360;
+  /// **'Make Your Advertisement special by 360 session('**
+  String get make_360_first;
 
-  /// No description provided for @pin_ad.
+  /// No description provided for @make_360_second.
   ///
   /// In en, this message translates to:
-  /// **'Pin your advertisement at the top for (150) QR only'**
-  String get pin_ad;
+  /// **'riyal only for full shooting session)'**
+  String get make_360_second;
+
+  /// No description provided for @pin_ad_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin your advertisement at the top for ('**
+  String get pin_ad_first;
+
+  /// No description provided for @pin_ad_second.
+  ///
+  /// In en, this message translates to:
+  /// **') QR only'**
+  String get pin_ad_second;
 
   /// No description provided for @agreement.
   ///
@@ -1314,7 +1326,9 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Our 360 photo session will beautifully highlight your post \nclick Confirm, and we\'ll handle the rest! \n   Additional charges 100 riyal can apply.'**
-  String get msg_360;
+ /// In app_localization.dart, replace the msg_360 getter with:
+  String get msg_360_first;
+  String get msg_360_second;
 
   /// No description provided for @confirmation.
   ///
@@ -1368,7 +1382,9 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!'**
-  String get feature_ad_msg;
+  /// In app_localization.dart, replace the feature_ad_msg getter with:
+  String get feature_ad_msg_first;
+  String get feature_ad_msg_second;
 
   /// No description provided for @payment.
   ///

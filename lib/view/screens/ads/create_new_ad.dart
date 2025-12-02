@@ -95,6 +95,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   bool _coverPhotoChanged = false;
   bool _videoChanged = false;
+  late PaymentController paymentController; // 👈 هنا   to get prices of services
 
   final AdCleanController brandController = Get.put(
     AdCleanController(AdRepository()),
@@ -326,6 +327,14 @@ class _SellCarScreenState extends State<SellCarScreen> {
       _previousClassValue = _class_controller.text;
     };
     _class_controller.addListener(_classListener!);
+    // 👇 إضافة PaymentController
+    try {
+      paymentController = Get.find<PaymentController>();
+      print('PaymentController found successfully');
+    } catch (e) {
+      paymentController = Get.put(PaymentController());
+      print('Created new PaymentController instance');
+    }
   }
 
   Future<void> _loadPostDataForModify() async {
@@ -548,13 +557,47 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // _submitAd(shouldPublish: shouldPublish);//handle add post without payment
     //handle add post with payment
     if (_isRequest360 || _isFeauredPost) {   //handle payment from here
+    //  double amount = 0;
+      final paymentController = Get.find<PaymentController>();
+
       double amount = 0;
-      _isRequest360 ? amount += 100 : null;
-      _isFeauredPost ? amount += 150 : null;
+      double featuredAmount=0;
+      double req360Amount=0;
+      // كل الخدمات Individual اللي نزلت من الـ API
+      final services = paymentController.individualQarsServices;
+      // خدمة 360
+      final request360Service = services.firstWhereOrNull(
+            (s) => s.qarsServiceName == 'Request to 360',
+      );
+
+
+      // خدمة Feature Ad
+      final featureService = services.firstWhereOrNull(
+            (s) => s.qarsServiceName == 'Request to feature',
+      );
+      if (_isRequest360) {
+        if (request360Service != null) {
+          req360Amount=request360Service.qarsServicePrice.toDouble();
+
+          amount += request360Service.qarsServicePrice.toDouble();
+        }}
+      if (_isFeauredPost) {
+        if (featureService != null) {
+          featuredAmount=featureService.qarsServicePrice.toDouble();
+          amount += featureService.qarsServicePrice.toDouble();
+        }}
+
+
+
+      // _isRequest360 ? amount += 100 : null;
+      // _isFeauredPost ? amount += 150 : null;
 
       // 1) Collect contact info (dialog closes immediately and returns data only)
+
       final contactInfo = await ContactInfoDialog.show(
-        amount: amount,
+        req360Amount: req360Amount,
+        featuredAmount: featuredAmount,
+        totalAmount:amount,
         context: context,
         isRequest360: _isRequest360,
         isFeauredPost: _isFeauredPost,
@@ -970,117 +1013,129 @@ class _SellCarScreenState extends State<SellCarScreen> {
                         //   },
                         // ),
 
-                        FormFieldsSection(postData: widget.postData,
-                          // request360Controller: request360Controller,
-                          // requestFeatureController:requestFeatureController ,
-                          isRequest360:_isRequest360,
-                          isFeaturedPost:_isFeauredPost,
-                          makeController: _make_controller,
-                          classController: _class_controller,
-                          modelController: _model_controller,
-                          typeController: _type_controller,
-                          yearController: _year_controller,
-                          warrantyController: _warranty_controller,
-                          askingPriceController: _askingPriceController,
-                          minimumPriceController: _minimumPriceController,
-                          mileageController: _mileageController,
-                          plateNumberController: _plateNumberController,
-                          chassisNumberController: _chassisNumberController,
-                          descriptionController: _descriptionController,
-                          exteriorColor: _exteriorColor ?? Colors.white,
-                          interiorColor: _interiorColor ?? Colors.white,
-                          fuelTypeController:fuelTypeController,
-                          transmissionController: transmissionController,
-                          cylindersController: cylindersController,
-                          onExteriorColorSelected: (color) {
-                            setState(() {//kتن
-                              _exteriorColor = color;
-                              log(color.hashCode.toString());
-                            });
-                          },
-                          onInteriorColorSelected: (color) {
-                            setState(() {
-                              _interiorColor = color;
-                              log(color.hashCode.toString());
-                            });
-                          },
-                          termsAccepted: _termsAccepted,
-                          infoConfirmed: _infoConfirmed,
-                          onTermsChanged: (value) {
-                            if (value != null) {
-                              setState(() {
-                                _termsAccepted = value;
+                        Obx(() {
+                          final service360 = paymentController.individualQarsServices
+                              .firstWhereOrNull((s) => s.qarsServiceName == 'Request to 360');
+
+                          final priceText360 = service360 != null
+                              ? ' ${service360.qarsServicePrice} '
+                              : ' ';
+                          final featureService = paymentController.individualQarsServices
+                              .firstWhereOrNull((s) => s.qarsServiceName == 'Request to feature');
+
+                          final priceTextFeatured = featureService != null
+                              ? ' ${featureService.qarsServicePrice} '
+                              : ' ';
+                          return FormFieldsSection(postData: widget.postData,
+                            // request360Controller: request360Controller,
+                            // requestFeatureController:requestFeatureController ,
+                            isRequest360: _isRequest360,
+                            isFeaturedPost: _isFeauredPost,
+                            makeController: _make_controller,
+                            classController: _class_controller,
+                            modelController: _model_controller,
+                            typeController: _type_controller,
+                            yearController: _year_controller,
+                            warrantyController: _warranty_controller,
+                            askingPriceController: _askingPriceController,
+                            minimumPriceController: _minimumPriceController,
+                            mileageController: _mileageController,
+                            plateNumberController: _plateNumberController,
+                            chassisNumberController: _chassisNumberController,
+                            descriptionController: _descriptionController,
+                            exteriorColor: _exteriorColor ?? Colors.white,
+                            interiorColor: _interiorColor ?? Colors.white,
+                            fuelTypeController: fuelTypeController,
+                            transmissionController: transmissionController,
+                            cylindersController: cylindersController,
+                            onExteriorColorSelected: (color) {
+                              setState(() { //kتن
+                                _exteriorColor = color;
+                                log(color.hashCode.toString());
                               });
-                            }
-                          },
-                          onInfoChanged: (value) {
-                            if (value != null) {
+                            },
+                            onInteriorColorSelected: (color) {
                               setState(() {
-                                _infoConfirmed = value;
+                                _interiorColor = color;
+                                log(color.hashCode.toString());
                               });
-                            }
-                          },
-                          onReq360Changed: (value) {
-                            if(_isRequest360){
+                            },
+                            termsAccepted: _termsAccepted,
+                            infoConfirmed: _infoConfirmed,
+                            onTermsChanged: (value) {
                               if (value != null) {
                                 setState(() {
-                                  _isRequest360 = value;
-                                  log("36000000 $_isRequest360");
+                                  _termsAccepted = value;
                                 });
                               }
-                            }
-                            else{dialog. SuccessDialog.show(
-                              request: false,
-                              context: context,
-                              title: "Ready to showCase your vehicle like a pro?",
-                              message:
-                              "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we'll handle the rest! \n   Additional charges 100 riyal can apply.",
-                              onClose: () {},
-                              onTappp: () async {
-                                Navigator.pop(context);
+                            },
+                            onInfoChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _infoConfirmed = value;
+                                });
+                              }
+                            },
+                            onReq360Changed: (value) {
+                              if (_isRequest360) {
                                 if (value != null) {
                                   setState(() {
                                     _isRequest360 = value;
+                                    log("36000000 $_isRequest360");
                                   });
                                 }
-
-                              },
-                            );
-                            }
-                          },
-                          onReqFeaturedChanged: (value) {
-                            if(_isFeauredPost){
-                              if (value != null) {
-                                setState(() {
-                                  _isFeauredPost = value;
-                                });
                               }
-                            }
-                            else{
-                              dialog. SuccessDialog.show(
-                                request: false,
-                                context: context,
-                                title: "Let's make your post the center \n of orientation",
-                                message:
-                                "Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges 150 QR can apply.\n Click confirm to proceed!",
-                                onClose: () {},
-                                onTappp: () async {
-                                  Navigator.pop(context);
-                                  if (value != null) {
-                                    setState(() {
-                                      _isFeauredPost = value;
-                                    });
-                                  }
+                              else {
+                                dialog.SuccessDialog.show(
+                                  request: false,
+                                  context: context,
+                                  title: lc.ready_pro,
+                                  message: lc.msg_360_first+'${priceText360}'+lc.msg_360_second,
+                                  onClose: () {},
+                                  onTappp: () async {
+                                    Navigator.pop(context);
+                                    if (value != null) {
+                                      setState(() {
+                                        _isRequest360 = value;
+                                      });
+                                    }
+                                  },
 
-                                },
-                              );
-                            }
-
-
-                          },
-                          onValidateAndSubmit: _validateAndSubmitForm,
-                          onUnfocusDescription: _unfocusDescription,
-                        ),
+                                );
+                              }
+                            },
+                            onReqFeaturedChanged: (value) {
+                              if (_isFeauredPost) {
+                                if (value != null) {
+                                  setState(() {
+                                    _isFeauredPost = value;
+                                  });
+                                }
+                              }
+                              else {
+                                dialog.SuccessDialog.show(
+                                  request: false,
+                                  context: context,
+                                  title: lc.centered_ad,
+                                  message:lc.feature_ad_msg_first+'$priceTextFeatured'+lc.feature_ad_msg_second,
+                                  onClose: () {},
+                                  onTappp: () async {
+                                    Navigator.pop(context);
+                                    if (value != null) {
+                                      setState(() {
+                                        _isFeauredPost = value;
+                                      });
+                                    }
+                                  },
+                                );
+                              }
+                            },
+                            priceReq360Api: priceText360,
+                            priceFeaturedApi: priceTextFeatured,
+                            onValidateAndSubmit: _validateAndSubmitForm,
+                            onUnfocusDescription: _unfocusDescription,
+                          );
+                        }),
                       ],
                     ),
                   ),

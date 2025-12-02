@@ -7,6 +7,7 @@ import 'package:qarsspin/model/payment/payment_execute_request.dart';
 import 'package:qarsspin/model/payment/payment_test_status_request.dart';
 
 import '../../model/payment/payment_result_request..dart';
+import '../../model/payment/qars_service.dart';
 
 class PaymentServiceNew {
   static const String _baseUrl =
@@ -218,6 +219,58 @@ class PaymentServiceNew {
         'Failed to get test status. '
             'Status code: ${response.statusCode}, body: ${response.body}',
       );
+    }
+  }
+  /// GET /api/v1/QarsRequests/Get-QarsServices
+  /// Returns list of Qars services, optionally filtered by serviceType
+  Future<List<QarsService>> getQarsServices({   // get price of services 360, features and others
+    String? serviceTypeFilter, // e.g. "Individual"
+  }) async {
+    try {
+      log('🌐 [PaymentService] Fetching Qars services...');
+      final uri = Uri.parse('$_baseUrl/api/v1/QarsRequests/Get-QarsServices');
+
+      log('🔗 API Endpoint: $uri');
+      final response = await _client.get(
+        uri,
+        headers: const {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      log('✅ [${response.statusCode}] Response received');
+      log('📦 Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = jsonDecode(response.body) as List<dynamic>;
+
+        // Parse to model list
+        List<QarsService> services = jsonList
+            .map((e) => QarsService.fromJson(e as Map<String, dynamic>))
+            .toList();
+
+        log('🔍 Parsed ${services.length} services before filtering');
+
+        // Filter by type if provided (e.g. "Individual")
+        if (serviceTypeFilter != null && serviceTypeFilter.isNotEmpty) {
+          services = services
+              .where((s) => s.qarsServiceType == serviceTypeFilter)
+              .toList();
+          log('🧮 Services after filtering by "$serviceTypeFilter": ${services.length}');
+        }
+
+        return services;
+      } else {
+        final errorMsg =
+            '❌ [${response.statusCode}] Failed to load Qars services: ${response.body}';
+        log(errorMsg);
+        throw Exception(errorMsg);
+      }
+    } catch (e, stackTrace) {
+      log('❌ Error in getQarsServices: $e');
+      log('📜 Stack trace: $stackTrace');
+      rethrow;
     }
   }
 
