@@ -204,7 +204,7 @@ Widget MyAdCard(
                     context: context,
                     title: lc.ready_pro,
                     message:
-                    lc.msg_360_first+'${req360Price}'+lc.msg_360_second,
+                    lc.msg_360_first+' ${req360Price} '+lc.msg_360_second,
                     onClose: () {},
                     onTappp: () async {
                       // // 1) Close confirmation dialog
@@ -385,7 +385,7 @@ Widget MyAdCard(
           dialog.SuccessDialog.show(
             request: true,
             context: context,
-            title: 'Payment Failed',
+            title: lc.payment_failed,
             message: 'Payment flow failed: $e',
             onClose: () { Navigator.pop(context); },
             onTappp: () { Navigator.pop(context); },
@@ -457,7 +457,7 @@ Widget MyAdCard(
                     context: context,//
                     title: lc.centered_ad,
                     message:
-                    lc.feature_ad_msg_first+'$featuredPrice'+lc.feature_ad_msg_second,
+                    lc.feature_ad_msg_first+' $featuredPrice '+lc.feature_ad_msg_second,
                     onClose: () {},
                     onTappp: () async {
                       // 1) Close confirmation dialog
@@ -588,7 +588,7 @@ Widget MyAdCard(
                           dialog.SuccessDialog.show(
                             request: true,
                             context: context,
-                            title: 'Payment Failed',
+                            title: lc.payment_failed,
                             message: 'Payment flow failed: $e',
                             onClose: () {
                               Navigator.pop(context);

@@ -667,7 +667,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get centered_ad =>
-      'Let\'s make your post the center \\n of orientation';
+      'Let\'s make your post the center \n of orientation';
   @override
   String get feature_ad_msg_first => 'Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges';
 

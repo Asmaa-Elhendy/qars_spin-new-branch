@@ -505,6 +505,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
 
   /// Validate form and submit ad
   Future<void> _validateAndSubmitForm({bool shouldPublish = false}) async {
+    var lc = AppLocalizations.of(context)!;
     // Validate form using validation methods
     bool isValid = ValidationMethods.validateForm(
       postData:widget.postData,
@@ -684,7 +685,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                 dialog.SuccessDialog.show(
                   request: true,
                   context: context,
-                  title: 'Payment Failed',
+                  title: lc.payment_failed,
                   message: 'Payment was not completed.',
                   onClose: () { },
                   onTappp: () { Navigator.pop(context); },
@@ -696,7 +697,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
             dialog.SuccessDialog.show(
               request: true,
               context: context,
-              title: 'Payment Failed',
+              title: lc.payment_failed,
               message: (result?['Message'] ?? 'Failed to load payment methods').toString(),
               onClose: () { Navigator.pop(context); },
               onTappp: () { Navigator.pop(context); },
@@ -708,7 +709,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
           dialog.SuccessDialog.show(
             request: true,
             context: context,
-            title: 'Payment Failed',
+            title: lc.payment_failed,
             message: 'Payment flow failed: $e',
             onClose: () { Navigator.pop(context); },
             onTappp: () { Navigator.pop(context); },
@@ -1090,7 +1091,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                                   request: false,
                                   context: context,
                                   title: lc.ready_pro,
-                                  message: lc.msg_360_first+'${priceText360}'+lc.msg_360_second,
+                                  message: lc.msg_360_first+' ${priceText360} '+lc.msg_360_second,
                                   onClose: () {},
                                   onTappp: () async {
                                     Navigator.pop(context);
@@ -1117,7 +1118,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                                   request: false,
                                   context: context,
                                   title: lc.centered_ad,
-                                  message:lc.feature_ad_msg_first+'$priceTextFeatured'+lc.feature_ad_msg_second,
+                                  message:lc.feature_ad_msg_first+' $priceTextFeatured '+lc.feature_ad_msg_second,
                                   onClose: () {},
                                   onTappp: () async {
                                     Navigator.pop(context);
