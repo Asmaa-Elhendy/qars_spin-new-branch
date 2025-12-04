@@ -17,8 +17,14 @@ class CreateAdModel {
   final String ourSecret;
   final String selectedLanguage;
   final String? postId; // Add postId field for update mode
+  final String? Owner_Name;
+  final String? Owner_Mobile;
+  final String? Owner_Email;
 
   CreateAdModel({
+    required this.Owner_Name,
+    required this.Owner_Mobile,
+    required this.Owner_Email,
     required this.makeId,
     required this.classId,
     required this.modelId,
