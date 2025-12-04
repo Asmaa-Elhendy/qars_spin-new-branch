@@ -1033,4 +1033,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get msg_Verification_Code_Is_wrong => 'رمز التحقق غير صحيح!';
+  // In app_localization_ar.dart
+  @override
+  String get youHaveRequestedThisServiceBefore => 'لقد طلبت هذه الخدمة من قبل';
+  // In app_localization_ar.dart
+  @override
+  String get note => 'ملاحظة';
+  // In app_localization_ar.dart
+  @override
+  String get serviceFee => 'رسوم الخدمة';
+  @override
+  String get qarOnlyForRequest360Session => 'ريال فقط لطلب جلسة 360 درجة.';
+  @override
+  String get qarOnlyForFeaturePost => 'ريال فقط للمنشور المميز.';
+  @override
+  String get contactInformation => 'معلومات الاتصال';
+  @override
+  String get pleaseFillAllInformationBelow => 'الرجاء ملء جميع المعلومات أدناه';
+  @override
+  String get firstName => 'الاسم الأول';
+  @override
+  String get enterFirstName => 'أدخل الاسم الأول';
+  @override
+  String get requiredField => 'مطلوب';
+  @override
+  String get lastName => 'الاسم الأخير';
+  @override
+  String get enterLastName => 'أدخل الاسم الأخير';
+  @override
+  String get mobile => 'الجوال';
+  @override
+  String get enterPhoneNumber => 'أدخل رقم الهاتف';
+  @override
+  String get invalidPhoneNumber => 'رقم هاتف غير صالح';
+  @override
+  String get enterEmailAddress => 'أدخل عنوان البريد الإلكتروني';
+  @override
+  String get Cemail => 'البريد الإلكتروني';
+  @override
+  String get proceedToPayment => 'المتابعة للدفع';
+  // In app_localization_ar.dart
+  @override
+  String get invalidEmailAddress => 'عنوان بريد إلكتروني غير صالح';
 }

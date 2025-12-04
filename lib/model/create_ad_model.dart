@@ -48,6 +48,9 @@ class CreateAdModel {
   /// Convert to JSON for API request
   Map<String, dynamic> toJson() {
     return {
+      "Owner_Name":Owner_Name,
+      "Owner_Mobile":Owner_Mobile,
+      "Owner_Email":Owner_Email,
       'Make_ID': makeId,
       'Class_ID': classId,
       'Model_ID': modelId,

@@ -2111,6 +2111,29 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verification Code is Wrong!'**
   String get msg_Verification_Code_Is_wrong;
+  // In app_localization.dart
+  String get youHaveRequestedThisServiceBefore;
+  // In app_localization.dart
+  String get note;
+  // In app_localization.dart
+  String get serviceFee;
+  String get qarOnlyForRequest360Session;
+  String get qarOnlyForFeaturePost;
+  String get contactInformation;
+  String get pleaseFillAllInformationBelow;
+  String get firstName;
+  String get enterFirstName;
+  String get requiredField;
+  String get lastName;
+  String get enterLastName;
+  String get mobile;
+  String get enterPhoneNumber;
+  String get invalidPhoneNumber;
+  String get enterEmailAddress;
+  String get Cemail;
+  String get proceedToPayment;
+  // In app_localization.dart
+  String get invalidEmailAddress;
 }
 
 class _AppLocalizationsDelegate

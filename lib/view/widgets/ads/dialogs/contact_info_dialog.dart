@@ -4,12 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/const/colors.dart';
-import 'package:qarsspin/controller/payments/payment_controller.dart';
 
-import '../../../../model/payment/payment_initiate_request.dart';
-import '../../../../model/payment/payment_method_model.dart';
-import '../../my_ads/dialog.dart' as dialog;
-import '../../payments/payment_methods_dialog.dart';
+import '../../../../l10n/app_localization.dart';
+
 
 class ContactInfoDialog {
   static Future<Map<String, dynamic>?> show({
@@ -26,6 +23,8 @@ class ContactInfoDialog {
     required double totalAmount,
 
   }) async {
+    var lc = AppLocalizations.of(context)!;
+
     final firstNameController =
     TextEditingController(text: initialFirstName ?? '');
     final lastNameController =
@@ -67,7 +66,7 @@ class ContactInfoDialog {
                       child: Column(mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           isRequest360?    Text(
-                            'Service Fee'+ ' $req360Amount ' +'QAR Only For Request 360 Session.',//k
+                            lc.serviceFee+ ' $req360Amount ' +lc.qarOnlyForRequest360Session,//k
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
@@ -75,7 +74,7 @@ class ContactInfoDialog {
                             ),
                           ):SizedBox(),
                           isFeauredPost?     Text(
-                            'Service Fee'+ ' $featuredAmount ' +'QAR Only For Feature Post.',//k
+                            lc.serviceFee+ ' $featuredAmount ' +lc.qarOnlyForFeaturePost,//k
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
@@ -95,7 +94,7 @@ class ContactInfoDialog {
 
                   SizedBox(height: 12.h),
                   Text(
-'Contact Information',
+lc.contactInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.sp,
@@ -103,7 +102,7 @@ class ContactInfoDialog {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-'Please fill all information below',
+lc.pleaseFillAllInformationBelow,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 13.sp,
                       color: AppColors.textMuted,
@@ -123,11 +122,11 @@ class ContactInfoDialog {
                           Expanded(
                             child: _buildTextField(context: context,
                               controller: firstNameController,
-                              label: 'First Name',
-                              hint: 'Enter first name',
+                              label: lc.firstName,
+                              hint: lc.enterFirstName,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Required';
+                                  return lc.requiredField;
                                 }
                                 return null;
                               },
@@ -137,11 +136,11 @@ class ContactInfoDialog {
                           Expanded(
                             child: _buildTextField(context: context,
                               controller: lastNameController,
-                              label: 'Last Name',
-                              hint: 'Enter last name',
+                              label: lc.lastName,
+                              hint:lc.enterLastName,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Required';
+                                  return lc.requiredField;
                                 }
                                 return null;
                               },
@@ -157,8 +156,8 @@ class ContactInfoDialog {
                           Expanded(
                             child: _buildTextField(context: context,
                               controller: mobileController,
-                              label: 'Mobile',
-                              hint: 'Enter phone number',
+                              label: lc.mobile,
+                              hint: lc.enterPhoneNumber,
                               keyboardType: TextInputType.phone,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -166,10 +165,10 @@ class ContactInfoDialog {
                               ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Required';
+                                  return lc.requiredField;
                                 }
                                 if (value.length < 7) {
-                                  return 'Invalid phone number';
+                                  return lc.invalidPhoneNumber;
                                 }
                                 return null;
                               },
@@ -179,17 +178,17 @@ class ContactInfoDialog {
                           Expanded(
                             child: _buildTextField(context: context,
                               controller: emailController,
-                              label: 'Email',
-                              hint: 'Enter email address',
+                              label: lc.Cemail,
+                              hint: lc.enterEmailAddress,
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Required';
+                                  return lc.requiredField;
                                 }
                                 if (!RegExp(
                                   r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                                 ).hasMatch(value)) {
-                                  return 'Invalid email address';
+                                  return lc.invalidEmailAddress;
                                 }
                                 return null;
                               },
@@ -339,7 +338,7 @@ class ContactInfoDialog {
                       minimumSize: const Size(double.infinity, 48),
                     ),
                     child: Text(
-                      'PROCEED TO PAYMENT',
+                      lc.proceedToPayment,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14.sp,

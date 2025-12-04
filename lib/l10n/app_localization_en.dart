@@ -1048,4 +1048,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msg_Verification_Code_Is_wrong => 'Verification Code is Wrong!';
+  // In app_localization_en.dart
+  @override
+  String get youHaveRequestedThisServiceBefore => 'You Have Requested This Service Before';
+  // In app_localization_en.dart
+  @override
+  String get note => 'Note';
+  // In app_localization_en.dart
+  @override
+  String get serviceFee => 'Service Fee';
+  @override
+  String get qarOnlyForRequest360Session => 'QAR Only For Request 360 Session.';
+  @override
+  String get qarOnlyForFeaturePost => 'QAR Only For Feature Post.';
+  @override
+  String get contactInformation => 'Contact Information';
+  @override
+  String get pleaseFillAllInformationBelow => 'Please fill all information below';
+  @override
+  String get firstName => 'First Name';
+  @override
+  String get enterFirstName => 'Enter first name';
+  @override
+  String get requiredField => 'Required';
+  @override
+  String get lastName => 'Last Name';
+  @override
+  String get enterLastName => 'Enter last name';
+  @override
+  String get mobile => 'Mobile';
+  @override
+  String get enterPhoneNumber => 'Enter phone number';
+  @override
+  String get invalidPhoneNumber => 'Invalid phone number';
+  @override
+  String get enterEmailAddress => 'Enter email address';
+  @override
+  String get Cemail => 'Email';
+  @override
+  String get proceedToPayment => 'PROCEED TO PAYMENT';
+  // In app_localization_en.dart
+  @override
+  String get invalidEmailAddress => 'Invalid email address';
 }
