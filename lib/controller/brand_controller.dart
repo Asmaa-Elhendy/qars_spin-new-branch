@@ -475,7 +475,7 @@ class BrandController extends GetxController{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'UserName': Get.find<AuthController>().userName!,
+          'UserName': Get.find<AuthController>().userFullName!,
           'Post_ID': carDetails.postId.toString(),
           'Offer_Origin': "MobileApp",
           'Our_Secret': ourSecret,
