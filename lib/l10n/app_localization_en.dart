@@ -1084,7 +1084,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get enterEmailAddress => 'Enter email address';
   @override
-  String get Cemail => 'Email';
+  String get cemail => 'Email';
   @override
   String get proceedToPayment => 'PROCEED TO PAYMENT';
   // In app_localization_en.dart

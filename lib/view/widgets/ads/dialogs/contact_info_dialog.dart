@@ -178,7 +178,7 @@ lc.pleaseFillAllInformationBelow,
                           Expanded(
                             child: _buildTextField(context: context,
                               controller: emailController,
-                              label: lc.Cemail,
+                              label: lc.cemail,
                               hint: lc.enterEmailAddress,
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {

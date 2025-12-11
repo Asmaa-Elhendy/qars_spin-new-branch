@@ -1069,7 +1069,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get enterEmailAddress => 'أدخل عنوان البريد الإلكتروني';
   @override
-  String get Cemail => 'البريد الإلكتروني';
+  String get cemail => 'البريد الإلكتروني';
   @override
   String get proceedToPayment => 'المتابعة للدفع';
   // In app_localization_ar.dart

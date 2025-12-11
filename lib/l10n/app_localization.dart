@@ -2130,7 +2130,7 @@ abstract class AppLocalizations {
   String get enterPhoneNumber;
   String get invalidPhoneNumber;
   String get enterEmailAddress;
-  String get Cemail;
+  String get cemail;
   String get proceedToPayment;
   // In app_localization.dart
   String get invalidEmailAddress;
