@@ -674,8 +674,8 @@ class _SellCarScreenState extends State<SellCarScreen> {
                 dialog.SuccessDialog.show(
                   request: true,
                   context: context,
-                  title: 'Payment Succeeded',
-                  message: 'Payment was completed.',
+                  title: lc.paymentSucceeded,
+                  message: lc.paymentWasCompleted,
                   onClose: () { Navigator.pop(context); },
                   onTappp: () { Navigator.pop(context); },
                 );
@@ -686,7 +686,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
                   request: true,
                   context: context,
                   title: lc.payment_failed,
-                  message: 'Payment was not completed.',
+                  message: lc.paymentWasNotCompleted,
                   onClose: () { },
                   onTappp: () { Navigator.pop(context); },
                 );
@@ -698,7 +698,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
               request: true,
               context: context,
               title: lc.payment_failed,
-              message: (result?['Message'] ?? 'Failed to load payment methods').toString(),
+              message: (result?['Message'] ?? lc.failedToLoadPaymentMethods).toString(),
               onClose: () { Navigator.pop(context); },
               onTappp: () { Navigator.pop(context); },
             );
@@ -710,7 +710,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
             request: true,
             context: context,
             title: lc.payment_failed,
-            message: 'Payment flow failed: $e',
+            message: '${lc.paymentflowfailed} $e',
             onClose: () { Navigator.pop(context); },
             onTappp: () { Navigator.pop(context); },
           );

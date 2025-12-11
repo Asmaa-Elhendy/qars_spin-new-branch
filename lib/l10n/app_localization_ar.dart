@@ -1075,4 +1075,16 @@ class AppLocalizationsAr extends AppLocalizations {
   // In app_localization_ar.dart
   @override
   String get invalidEmailAddress => 'عنوان بريد إلكتروني غير صالح';
+  // In app_localization_ar.dart
+  @override
+  String get paymentSucceeded => 'تمت عملية الدفع بنجاح';
+  @override
+  String get paymentWasCompleted => 'تم إكمال عملية الدفع.';
+  @override
+  String get paymentWasNotCompleted => 'لم تكتمل عملية الدفع.';
+  @override
+  String get failedToLoadPaymentMethods => 'فشل تحميل طرق الدفع';
+  @override
+  String get paymentflowfailed => 'فشل تدفق الدفع:';
+
 }

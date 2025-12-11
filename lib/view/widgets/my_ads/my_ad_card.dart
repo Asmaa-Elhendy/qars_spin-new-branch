@@ -441,7 +441,7 @@ Widget MyAdCard(
                                 request: true,
                                 context: context,
                                 title: lc.payment_failed,
-                                message: 'Payment flow failed: $e',
+                                message: '${lc.paymentflowfailed} $e',
                                 onClose: () {
                                   Navigator.pop(context);
                                 },

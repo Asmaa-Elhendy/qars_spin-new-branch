@@ -1090,4 +1090,15 @@ class AppLocalizationsEn extends AppLocalizations {
   // In app_localization_en.dart
   @override
   String get invalidEmailAddress => 'Invalid email address';
+  // In app_localization_en.dart
+  @override
+  String get paymentSucceeded => 'Payment Succeeded';
+  @override
+  String get paymentWasCompleted => 'Payment was completed.';
+  @override
+  String get paymentWasNotCompleted => 'Payment was not completed.';
+  @override
+  String get failedToLoadPaymentMethods => 'Failed to load payment methods';
+  @override
+  String get paymentflowfailed => 'Payment flow failed:';
 }

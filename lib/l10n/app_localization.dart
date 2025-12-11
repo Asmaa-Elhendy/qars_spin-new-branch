@@ -2134,6 +2134,12 @@ abstract class AppLocalizations {
   String get proceedToPayment;
   // In app_localization.dart
   String get invalidEmailAddress;
+  // In app_localization.dart
+  String get paymentSucceeded;
+  String get paymentWasCompleted;
+  String get paymentWasNotCompleted;
+  String get failedToLoadPaymentMethods;
+  String get paymentflowfailed;
 }
 
 class _AppLocalizationsDelegate
