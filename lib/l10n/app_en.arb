@@ -208,7 +208,7 @@
   "update": "Update Offer",
   "request_360": "Request 360 Service",
   "ready_pro": "Ready to showCase your vehicle like a pro?",
-  "msg_360_first": "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we\'ll handle the rest! \n   Additional charges",
+  "msg_360_first": "Our 360 photo session will beautifully highlight your post \nclick Confirm, and we 'll handle the rest! \n   Additional charges",
   "msg_360_second" : "riyal can apply.",
   "confirmation": "Confirmation",
   "receive_request_msg": "We Have Received Your Request",
@@ -375,7 +375,7 @@
 
    "enterEmailAddress" :"Enter email address",
 
-   "Cemail" :"Email",
+   "cemail" :"Email",
 
    "proceedToPayment" :"PROCEED TO PAYMENT",
 
