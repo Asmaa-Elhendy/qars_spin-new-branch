@@ -77,13 +77,13 @@ class AdCleanController extends GetxController {
     }
   }
 
-  void fetchCarModels(String classId) async {
+  void fetchCarModels(String classId,String makeId) async {
     isLoadingModels.value = true;
     carModels.clear();
     selectedModel.value = null;
 
     try {
-      final models = await repository.fetchCarModels(classId);
+      final models = await repository.fetchCarModels(classId,makeId);
       carModels.assignAll(models);
     } catch (e) {//k
       print("Error fetching models: $e");

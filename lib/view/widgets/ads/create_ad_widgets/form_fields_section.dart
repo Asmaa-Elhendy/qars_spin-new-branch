@@ -101,6 +101,7 @@ class FormFieldsSection extends StatefulWidget {
 class _FormFieldsSectionState extends State<FormFieldsSection> {
   late SpecsController specsController;
   late FocusNode _descriptionFocusNode;
+  String selected_makeID='0';
 
   bool _isGlobalLoading = false;
 
@@ -202,6 +203,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                 widget.makeController.text = selected.name;
                 log("heee   ${widget.makeController.text}");
                 brandController.fetchCarClasses(selected.id.toString());
+                 selected_makeID=selected.id.toString();
                 widget.classController.clear();
                 brandController.selectedClass.value = null;
                 setState(() {});
@@ -234,7 +236,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
               );
               if (selected != null) {
                 brandController.selectedClass.value = selected;
-                brandController.fetchCarModels(selected.id.toString());
+                brandController.fetchCarModels(selected.id.toString(),selected_makeID);
                 widget.modelController.clear();
                 brandController.selectedModel.value = null;
                 setState(() {});
