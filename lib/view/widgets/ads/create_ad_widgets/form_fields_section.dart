@@ -562,48 +562,7 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
         ),
         SizedBox(height: height * .015),
 
-        // request 360 and feature
-
-        // CustomDropDownTyping(
-        //   label: "Request 360 Service",
-        //   controller: widget.request360Controller,
-        //   options: ["No", "Yes"],
-        //   enableSearch: false,
-        //   hintText: "",
-        //   onChanged: (value) {
-        //     setState(() {
-        //
-        //       // Handle warranty selection if needed
-        //     });
-        //   },
-        // ),
-        // SizedBox(height: height * .01),
-
-        // CustomDropDownTyping(
-        //   label: "Feature Your Ad",
-        //   controller: widget.requestFeatureController,
-        //   options: ["No", "Yes"],
-        //   enableSearch: false,
-        //   hintText: "",
-        //   onChanged: (value) {
-        //     setState(() {
-        //       // Handle warranty selection if needed
-        //     });
-        //   },
-        // ),
-        // CustomDropDownTyping(
-        //   label: "Feature Your Ad",
-        //   controller: widget.requestFeatureController,
-        //   options: ["No", "Yes"],
-        //   enableSearch: false,
-        //   hintText: "",
-        //   onChanged: (value) {
-        //     setState(() {
-        //       // Handle warranty selection if needed
-        //     });
-        //   },
-        // ),
-        // Terms and Conditions Checkbox
+    //  comment payment for now amira
         widget.postData == null
             ? Column(
           children: [
@@ -616,20 +575,13 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   onChanged: widget.onReq360Changed,
                   activeColor: Colors.black,
                 ),
-                // Expanded(
-                //   child: Text(
-                //     lc.make_360_first+lc.make_360_second,
-                //     style: TextStyle(
-                //       fontSize: 14.4.w,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
+
                 Expanded(
                   child:
                    Text(
                       // مثال: "Make 360 (150 QAR) Your Ad ..." حسب النصوص عندك
-                      lc.make_360_first + widget.priceReq360Api + lc.make_360_second,
+                      // lc.make_360_first + widget.priceReq360Api + lc.make_360_second,
+                     lc.make_360_first ,
                       style: TextStyle(
                         fontSize: 14.4.w,
                         fontWeight: FontWeight.bold,
@@ -650,19 +602,13 @@ class _FormFieldsSectionState extends State<FormFieldsSection> {
                   onChanged: widget.onReqFeaturedChanged,
                   activeColor: Colors.black,
                 ),
-                // Expanded(
-                //   child: Text(
-                //     lc.pin_ad_first+lc.pin_ad_second,
-                //     style: TextStyle(
-                //       fontSize: 14.4.w,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
+
                 Expanded(
                   child:
                     Text(
-                      lc.pin_ad_first + widget.priceFeaturedApi+ lc.pin_ad_second,
+                      // lc.pin_ad_first + widget.priceFeaturedApi+ lc.pin_ad_second,
+                      lc.pin_ad_first ,
+
                       style: TextStyle(
                         fontSize: 14.4.w,
                         fontWeight: FontWeight.bold,
