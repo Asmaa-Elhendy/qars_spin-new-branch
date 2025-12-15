@@ -521,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Get.to(CarsShowRoom(notificationsController,title: lc.rental_showroom,rentRoom: true,));
                 },
                 title: lc.rental_showroom,fromHome: 'true',
-                imageAsset: Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-20.svg' :'assets/images/new_svg/Group (5).svg',
+                imageAsset: Get.locale?.languageCode=='ar'?'assets/images/Dark mode icons/QS D-Mode-22.svg':Theme.of(context).brightness == Brightness.dark?'assets/images/Dark mode icons/QS D-Mode-20.svg' :'assets/images/new_svg/Group (5).svg',
                 large: false,
               ),
 

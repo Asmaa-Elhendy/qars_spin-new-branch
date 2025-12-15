@@ -395,7 +395,7 @@ class _CustomFormSheetState extends State<CustomFormSheet> {
                     break;
 
                   case "Choose Class":
-                    searchController.fetchModels(suggestion.id);
+                    searchController.fetchModels(suggestion.id,selctedMakeId);
                     modelController.clear();
                     typeController.clear();
                     selectedClassId = suggestion.id.toString();

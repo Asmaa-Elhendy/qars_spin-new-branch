@@ -132,8 +132,8 @@ class ShowroomCard extends StatelessWidget {
                     children: [
                       // Buttons
 
-                      40.horizontalSpace,
-                      yellowButtons(context:context,title: lc.details,w: 95.w,onTap: (){
+                      10.horizontalSpace,
+                      yellowButtons(context:context,title: lc.details,w: 145.w,onTap: (){
 
                         // Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
 
@@ -143,7 +143,7 @@ class ShowroomCard extends StatelessWidget {
                         Get.to(CarCareDetails(rental,notificationsController,carCare: showroom,isCarCare: carCare,));}),
 
 
-                      35.horizontalSpace,
+                      10.horizontalSpace,
                       Container(
                         height: 40.h,
                         width: 2.w,
@@ -200,7 +200,7 @@ class ShowroomCard extends StatelessWidget {
                       ),
                       10.horizontalSpace,
 
-                      yellowButtons(context:context,title: "${lc.cars} (${showroom.carsCount})",w: 95.w,onTap: (){
+                      yellowButtons(context:context,title: "${lc.cars} (${showroom.carsCount})",w: 100.w,onTap: (){
                         Get.find<ShowRoomsController>().fetchCarsOfShowRooms(context:context,showroomName:showroom.partnerNamePl,forSale: rental?false:true, postId: "0", sourceKind: "Partner", partnerid: showroom.partnerId.toString(), userName: userName);
 
                         if(rental){

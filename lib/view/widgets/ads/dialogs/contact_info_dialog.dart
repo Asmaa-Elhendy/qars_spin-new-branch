@@ -60,41 +60,41 @@ class ContactInfoDialog {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          isRequest360?    Text(
-                            lc.serviceFee+ ' $req360Amount ' +lc.qarOnlyForRequest360Session,//k
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
-                            ),
-                          ):SizedBox(),
-                          isFeauredPost?     Text(
-                            lc.serviceFee+ ' $featuredAmount ' +lc.qarOnlyForFeaturePost,//k
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
-                            ),
-                          ):SizedBox(),
-                        ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            isRequest360?    Text(
+                              lc.serviceFee+ ' $req360Amount ' +lc.qarOnlyForRequest360Session,//k
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
+                              ),
+                            ):SizedBox(),
+                            isFeauredPost?     Text(
+                              lc.serviceFee+ ' $featuredAmount ' +lc.qarOnlyForFeaturePost,//k
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black,
+                              ),
+                            ):SizedBox(),
+                          ],
+                        ),
                       ),
-                    ),
-                    InkWell(
-                        onTap: (){Navigator.pop(context);},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.close,color: AppColors.blackColor(context),size: 24.sp,),
-                        ))
-                  ],),
+                      InkWell(
+                          onTap: (){Navigator.pop(context);},
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.close,color: AppColors.blackColor(context),size: 24.sp,),
+                          ))
+                    ],),
 
                   SizedBox(height: 12.h),
                   Text(
-lc.contactInformation,
+                    lc.contactInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.sp,
@@ -102,7 +102,7 @@ lc.contactInformation,
                   ),
                   SizedBox(height: 4.h),
                   Text(
-lc.pleaseFillAllInformationBelow,
+                    lc.pleaseFillAllInformationBelow,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 13.sp,
                       color: AppColors.textMuted,
@@ -375,7 +375,7 @@ lc.pleaseFillAllInformationBelow,
       maxLines: maxLines,
       decoration: _inputDecoration(
         context: context,
-        label: label, 
+        label: label,
         hint: hint,
       ),
     );

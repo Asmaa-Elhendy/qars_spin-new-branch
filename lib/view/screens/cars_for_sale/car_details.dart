@@ -22,13 +22,16 @@ import '../../widgets/car_details/tab_bar.dart';
 import '../../widgets/car_image.dart';
 import '../../widgets/offer_dialog.dart';
 import '../../widgets/texts/texts.dart';
+import 'dart:developer';
 
 class CarDetails extends StatefulWidget {
   String postKind;
   int id;
   String sourcekind;
 
-  CarDetails({required this.sourcekind,required this.id,required this.postKind,super.key});
+  String mobile;
+
+  CarDetails({required this.mobile,required this.sourcekind,required this.id,required this.postKind,super.key});
 
   @override
   State<CarDetails> createState() => _CarDetailsState();
@@ -95,11 +98,13 @@ class _CarDetailsState extends State<CarDetails> {
                 :unRegisterFunction(context);
           },
           onWhatsApp: () {
-            openWhatsApp("011", message: "Hello 👋");
+            openWhatsApp(controller.carDetails.ownerMobile, message: "Hello 👋");
+            log("moooo${controller.carDetails.ownerMobile} ${widget.id}");
             // Handle WhatsApp
           },
           onCall: () {
             // Handle call
+            makePhoneCall(controller.carDetails.ownerMobile);
           },
         ),
         body: controller.oldData?
