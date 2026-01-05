@@ -6,7 +6,8 @@ import 'dart:developer';
 import '../model/notification_model.dart';
 import '../services/notification_database.dart';
 import '../services/fcm_service.dart';
-import 'ads/data_layer.dart'; // لو فعلاً مستخدمه
+import 'ads/data_layer.dart';
+import 'auth/auth_controller.dart'; // لو فعلاً مستخدمه
 
 class NotificationsController extends GetxController {
   final RxList<NotificationModel> _notifications = <NotificationModel>[].obs;
@@ -35,9 +36,20 @@ class NotificationsController extends GetxController {
 
   /// 🔹 جلب الإشعارات من API
   Future<void> getNotifications() async {
+    final authController = Get.find<AuthController>();
+
     try {
       _isLoading.value = true;
-      log('📡 Fetching notifications for user: $userName');
+      log('📡 Fetching notifications for user: ${authController.userFullName}');
+
+      // ✅ لو اليوزر فاضي (ده سبب "Missing Parameter")
+      if (userName.trim().isEmpty) {
+        log('⚠️ userName is empty. API will return Missing Parameter.');
+        _notifications.clear();
+        _notificationCount.value = 0;
+        Get.snackbar('Error', 'User name is missing');
+        return;
+      }
 
       // Get the response data first
       final responseData = await _database.fetchNotificationsFromAPI(
@@ -45,35 +57,58 @@ class NotificationsController extends GetxController {
         ourSecret: ourSecret,
       );
 
-      // Extract notifications from the response
-      final List<dynamic> notificationsData = responseData['Data'] ?? [];
-      final List<NotificationModel> apiNotifications = notificationsData.map((item) {
+      // ✅ لو API رجعت Error
+      final code = responseData['Code']?.toString();
+      if (code != null && code.toLowerCase() == 'error') {
+        final desc = responseData['Desc']?.toString() ?? 'Unknown error';
+        log('⚠️ API returned error: $desc');
+
+        _notifications.clear();
+        _notificationCount.value = 0;
+
+        Get.snackbar('Error', desc);
+        return;
+      }
+
+      // ✅ استخراج Data بشكل آمن
+      final rawData = responseData['Data'];
+      final List<dynamic> notificationsData =
+      rawData is List ? rawData : <dynamic>[];
+
+      final List<NotificationModel> apiNotifications =
+      notificationsData.map((item) {
+        final m = item is Map<String, dynamic> ? item : <String, dynamic>{};
+
         return NotificationModel(
-          id: item['Notification_ID'] is int
-              ? item['Notification_ID']
-              : int.tryParse(item['Notification_ID']?.toString() ?? '0') ?? 0,
-          title: "Qars Spin Update for Post ${ item['Notification_ID'] }",
-          date: DateTime.tryParse(item['Subscription_Date']?.toString() ?? '') ?? DateTime.now(),
+          id: m['Notification_ID'] is int
+              ? m['Notification_ID']
+              : int.tryParse(m['Notification_ID']?.toString() ?? '0') ?? 0,
+          title: "Qars Spin Update for Post ${m['Notification_ID']}",
+          date: DateTime.tryParse(m['Subscription_Date']?.toString() ?? '') ??
+              DateTime.now(),
+
           // Add other fields as needed
-          postKind: item['Post_Kind']?.toString() ?? '',
-          postCode: item['Post_Code']?.toString() ?? '',
-          status: item['Status']?.toString() ?? '',
-          reason: item['Remarks']?.toString() ?? '',
-          summaryPL: item['Notification_Summary_PL']?.toString() ?? '',
-          summarySL: item['Notification_Summary_SL']?.toString() ?? '',
-          data: item is Map<String, dynamic> ? item : {},
+          postKind: m['Post_Kind']?.toString() ?? '',
+          postCode: m['Post_Code']?.toString() ?? '',
+          status: m['Status']?.toString() ?? '',
+          reason: m['Remarks']?.toString() ?? '',
+          summaryPL: m['Notification_Summary_PL']?.toString() ?? '',
+          summarySL: m['Notification_Summary_SL']?.toString() ?? '',
+          data: m,
         );
       }).toList();
 
       log('📩 Notifications received: ${apiNotifications.length}');
-      _notifications.clear();
-      _notifications.addAll(apiNotifications);
+      _notifications
+        ..clear()
+        ..addAll(apiNotifications);
 
-      // Update the count from API response
+      // ✅ Update the count from API response
       if (responseData['Count'] != null) {
         _notificationCount.value = responseData['Count'] is int
             ? responseData['Count']
-            : int.tryParse(responseData['Count'].toString()) ?? 0;
+            : int.tryParse(responseData['Count'].toString()) ??
+            apiNotifications.length;
         log('📊 Notification count from API: ${_notificationCount.value}');
       } else {
         // Fallback to list length if count is not available
