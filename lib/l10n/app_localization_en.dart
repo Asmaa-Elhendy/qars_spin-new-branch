@@ -554,13 +554,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enter_desc => 'Enter car description...';
 
   @override
-  String get make_360_first => 'Make Your Advertisement special by 360 session';
+  String get make_360_first => 'Make Your Advertisement special by 360 session(';
 
   @override
   String get make_360_second => 'riyal only for full shooting session)';
 
   @override
-  String get pin_ad_first => 'Pin your advertisement at the top';
+  String get pin_ad_first => 'Pin your advertisement at the top for (';
 
   @override
   String get pin_ad_second => ') QR only';
@@ -642,7 +642,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get msg_360_first => 'Our 360 photo session will beautifully highlight your post \nclick Confirm, and we\'ll handle the rest! \n   Additional charges';
 
   @override
-  String get msg_360_second => 'can apply.';
+  String get msg_360_second => 'riyal can apply.';
 
   @override
   String get confirmation => 'Confirmation';
@@ -672,7 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feature_ad_msg_first => 'Featuring your post ensures it stands out at the top for everyone to see.\n Additional charges';
 
   @override
-  String get feature_ad_msg_second => 'can apply.\n Click confirm to proceed!';
+  String get feature_ad_msg_second => 'QR can apply.\n Click confirm to proceed!';
   @override
   String get payment => 'Payment';
 

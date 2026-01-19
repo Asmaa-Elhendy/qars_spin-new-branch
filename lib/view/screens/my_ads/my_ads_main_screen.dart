@@ -199,8 +199,8 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
                     context,
                     onShowLoader: () => setState(() => _isLoading = true),
                     onHideLoader: () => setState(() => _isLoading = false),
-                    req360Price: req360Amount,
-                    featuredPrice: featuredAmount,
+                    // req360Price: req360Amount,
+                    // featuredPrice: featuredAmount,
 
                   );
                 },

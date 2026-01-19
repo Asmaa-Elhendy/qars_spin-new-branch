@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/ads/data_layer.dart';
+import 'package:qarsspin/controller/auth/auth_controller.dart';
 import 'package:qarsspin/controller/const/colors.dart';
 import 'package:qarsspin/view/screens/my_ads/gallery_management.dart';
 import 'package:qarsspin/view/screens/my_ads/specs_management.dart';
@@ -30,9 +31,10 @@ Widget MyAdCard(
     BuildContext context, {
       required VoidCallback onShowLoader,
       required VoidCallback onHideLoader,
-      required double req360Price,
-      required double featuredPrice,
+      // required double req360Price,
+      // required double featuredPrice,
     }) {
+  final paymentController = Get.find<PaymentController>();
   var lc = AppLocalizations.of(context)!;
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
@@ -218,13 +220,14 @@ Widget MyAdCard(
                     );
 
                 }else {
-                    SuccessDialog.show(
+
+                  SuccessDialog.show(
                         request: false,
                         context: context,
                         title: lc.ready_pro,
                         message:
                             //comment payment fr now amira   --- turn on payment now
-                        lc.msg_360_first + ' ${req360Price} ' +
+                        lc.msg_360_first + ' ${paymentController.request360ServicePrice} ' +
                             lc.msg_360_second,
                    //     lc.msg_360_first +' '+lc.msg_360_second,   turn off
                         onClose: () {},
@@ -237,8 +240,8 @@ Widget MyAdCard(
 
                     //      1) Collect contact info (dialog closes immediately and returns data only)
                           final contactInfo = await ContactInfoDialog.show(
-                            totalAmount: req360Price,
-                            req360Amount: req360Price,
+                            totalAmount: paymentController.request360ServicePrice!,
+                            req360Amount: paymentController.request360ServicePrice!,
                             //get price from api
                             featuredAmount: 0,
                             context: context,
@@ -267,12 +270,15 @@ Widget MyAdCard(
 
                               final result = await paymentController
                                   .initiatePayment(
-                                amount: req360Price,
+                                postId: ad.postId,
+                                serviceIds: [paymentController.request360ServiceId!],
+                                amount: paymentController.request360ServicePrice!,
                                 customerName: customerName.isEmpty
                                     ? 'Customer'
                                     : customerName,
                                 email: email,
                                 mobile: mobile,
+                                externalUser: Get.find<AuthController>().userName!
                               );
                               log('Payment Initiation Result: $result');
 
@@ -289,23 +295,18 @@ Widget MyAdCard(
                                     Map<String, dynamic>.from(e)))
                                     .toList();
 
-                                final userInformationRequest = PaymentInitiateRequest(
-                                  amount: req360Price,
-                                  customerName: customerName.isEmpty
-                                      ? 'Customer'
-                                      : customerName,
-                                  email: email,
-                                  mobile: mobile,
-                                  requestFrom : 'MobileApp',
-                                   requestType : 'Request360',
-                                );
+                                final orderMasterId = result?['masterOrderId'] as int?;
+                                if (orderMasterId == null) {
+                                  throw Exception('No orderMasterId in payment initiation response');
+                                }
 
                                 final methodsPayload = await NewPaymentMethodsDialog
                                     .show(
                                   context: context,
                                   paymentMethods: methods,
-                                  userInformationRequest: userInformationRequest,
                                   isArabic: Get.locale?.languageCode == 'ar',
+                                  orderMasterId: orderMasterId,
+                                  initiateResponse: result,
                                 );
 
                                 if (methodsPayload != null) {
@@ -319,7 +320,7 @@ Widget MyAdCard(
                                       context: context,
                                       invoiceId: (invoice['invoiceId'] ?? '')
                                           .toString(),
-                                      paymentId: (invoice['paymentId'])
+                                      paymentId: (invoice['paymentId']??'')
                                           ?.toString(),
                                       paymentUrl: (invoice['paymentUrl'] ?? '')
                                           .toString(),
@@ -335,30 +336,30 @@ Widget MyAdCard(
                                         String,
                                         dynamic>?;
                                   }
-
+                              log("after my fatoorah $normalized");
                                   final status = normalized?['status']
                                       ?.toString();
                                   final paymentId = normalized?['paymentId']
                                       ?.toString();
                                   final bool success = (status != null &&
-                                      status.toLowerCase() == 'success') ||
+                                      status.toLowerCase() == 'success') &&
                                       (paymentId != null &&
                                           paymentId.isNotEmpty);
                                  if (success == true) {
                                     // 🟢 نجاح الدفع
                           //هسيبه في حاالة عدم دقع
-                                    final myAdController = Get.find<
-                                        MyAdCleanController>();
-                                    onShowLoader();
-                                    final ok = await myAdController
-                                        .request360Session(
-                                      userName: userName,
-                                      postId: ad.postId.toString(),
-                                      ourSecret: ourSecret,
-                                    );
-                                    onHideLoader();
+                          //           final myAdController = Get.find<
+                          //               MyAdCleanController>();
+                          //           onShowLoader();
+                          //           final ok = await myAdController
+                          //               .request360Session(
+                          //             userName: userName,
+                          //             postId: ad.postId.toString(),
+                          //             ourSecret: ourSecret,
+                          //           );
+                                    //onHideLoader();
 
-                                    if (ok) {
+
                                       SuccessDialog.show(
                                         request: true,
                                         context: context,
@@ -367,18 +368,19 @@ Widget MyAdCard(
                                         onClose: () {},
                                         onTappp: () {},
                                       );
-                                    } else {
-                                      SuccessDialog.show(
-                                        request: true,
-                                        context: context,
-                                        title: lc.cancellation,
-                                        message: lc.request_failed,
-                                        onClose: () {},
-                                        onTappp: () {},
-                                      );
-                                   }
+                                    }
+                                 // else {
+                                 //      SuccessDialog.show(
+                                 //        request: true,
+                                 //        context: context,
+                                 //        title: lc.cancellation,
+                                 //        message: lc.request_failed,
+                                 //        onClose: () {},
+                                 //        onTappp: () {},
+                                 //      );
+                                 //   }
                                     //لحد هنا
-                                 }
+                               //  }
                                   else {
                                     SuccessDialog.show(
                                       request: true,
@@ -445,9 +447,9 @@ Widget MyAdCard(
                     request: false,
                     context: context,//
                     title: lc.centered_ad,
-                    message:                    lc.feature_ad_msg_first+' '+lc.feature_ad_msg_second,
+                    message:       //             lc.feature_ad_msg_first+' '+lc.feature_ad_msg_second,
 //comment payment now for amira
-                        //     lc.feature_ad_msg_first+' $featuredPrice '+lc.feature_ad_msg_second,
+                             lc.feature_ad_msg_first+' ${paymentController.featuredServicePrice} '+lc.feature_ad_msg_second,
                     onClose: () {},
                     onTappp: () async {
                       // 1) Close confirmation dialog
@@ -455,93 +457,103 @@ Widget MyAdCard(
 // new payment way
 
                       // 1) Collect contact info (dialog closes immediately and returns data only)
-                      // final contactInfo = await ContactInfoDialog.show(
-                      //   totalAmount: featuredPrice,
-                      //   req360Amount: 0, //get price 360
-                      //   featuredAmount: featuredPrice,
-                      //   context: context,
-                      //   isRequest360: true,
-                      //   isFeauredPost: false,
-                      // );
-                      // if (contactInfo == null) {
-                      //   // user cancelled contact info
-                      // }
-                      // else {
-                     //   try {
-                          // 2) Initiate payment using contact info
-                          // final paymentController = Get.find<PaymentController>();
-                          // final String customerName = '${(contactInfo['firstName'] ?? '').toString().trim()} ${(contactInfo['lastName'] ?? '').toString().trim()}'.trim();
-                          // final String email = (contactInfo['email'] ?? '').toString().trim();
-                          // final String mobile = (contactInfo['mobile'] ?? '').toString().trim();
-                          //
-                          // final result = await paymentController.initiatePayment(
-                          //   amount: featuredPrice,
-                          //   customerName: customerName.isEmpty ? 'Customer' : customerName,
-                          //   email: email,
-                          //   mobile: mobile,
-                          // );
-                          // log('Payment Initiation Result: $result');
-                          //
-                          // if (result?['IsSuccess'] == true &&
-                          //     result?['Data'] != null &&
-                          //     result?['Data']['PaymentMethods'] != null) {
-                          //   // 3) Map methods and open NewPaymentMethodsDialog
-                          //   final List<dynamic> methodsRaw = List<dynamic>.from(result!['Data']['PaymentMethods'] as List);
-                          //   final methods = methodsRaw
-                          //       .map((e) => PaymentMethod.fromJson(Map<String, dynamic>.from(e)))
-                          //       .toList();
-                          //
-                          //   final userInformationRequest = PaymentInitiateRequest(
-                          //     amount: featuredPrice,
-                          //     customerName: customerName.isEmpty ? 'Customer' : customerName,
-                          //     email: email,
-                          //     mobile: mobile,
-                          //   );
-                          //
-                          //   final methodsPayload = await NewPaymentMethodsDialog.show(
-                          //     context: context,
-                          //     paymentMethods: methods,
-                          //     userInformationRequest: userInformationRequest,
-                          //     isArabic: Get.locale?.languageCode == 'ar',
-                          //   );
-                          //
-                          //   if (methodsPayload != null) {
-                          //     Map<String, dynamic>? normalized;
-                          //     final invoice = methodsPayload['invoice'] as Map<String,
-                          //         dynamic>?;
-                          //     if (invoice != null) {
-                          //       final invoiceResult = await InvoiceLinkDialog.show(
-                          //         context: context,
-                          //         invoiceId: (invoice['invoiceId'] ?? '').toString(),
-                          //         paymentId: (invoice['paymentId'])?.toString(),
-                          //         paymentUrl: (invoice['paymentUrl'] ?? '').toString(),
-                          //         isArabic: (invoice['isArabic'] == true),
-                          //       );
-                          //       normalized =
-                          //       invoiceResult?['normalizedResult'] as Map<String, dynamic>?;
-                          //     } else {
-                          //       normalized =
-                          //       methodsPayload['normalizedResult'] as Map<String, dynamic>?;
-                          //     }
-                          //
-                          //     final status = normalized?['status']?.toString();
-                          //     final paymentId = normalized?['paymentId']?.toString();
-                          //     final bool success = (status != null &&
-                          //         status.toLowerCase() == 'success') ||
-                          //         (paymentId != null && paymentId.isNotEmpty);
-                            //  if (success == true) {
-                                final myAdController = Get.find<MyAdCleanController>();
+                      final contactInfo = await ContactInfoDialog.show(
+                        totalAmount: paymentController.featuredServicePrice!,
+                        req360Amount: 0, //get price 360
+                        featuredAmount: paymentController.featuredServicePrice!,
+                        context: context,
+                        isRequest360: false,
+                        isFeauredPost: true,
+                      );
+                      if (contactInfo == null) {
+                        // user cancelled contact info
+                      }
+                      else {
+                       try {
+                        //  2) Initiate payment using contact info
+                       //   final paymentController = Get.find<PaymentController>();
+                          final String customerName = '${(contactInfo['firstName'] ?? '').toString().trim()} ${(contactInfo['lastName'] ?? '').toString().trim()}'.trim();
+                          final String email = (contactInfo['email'] ?? '').toString().trim();
+                          final String mobile = (contactInfo['mobile'] ?? '').toString().trim();
 
-                                // 3) After successful payment, send request to server
-                                onShowLoader();
-                                final ok = await myAdController.requestFeatureAd(
-                                  userName: userName,
-                                  postId: ad.postId.toString(),
-                                  ourSecret: ourSecret,
+                          final result = await paymentController .initiatePayment(
+                      postId: ad.postId,
+                      serviceIds: [paymentController.featuredServiceId!],
+                      amount: paymentController.featuredServicePrice!,
+                      customerName: customerName.isEmpty
+                      ? 'Customer'
+                          : customerName,
+                      email: email,
+                      mobile: mobile,
+                      externalUser: Get.find<AuthController>().userName!
+                      );
+                          log('Payment Initiation Result: $result');
+
+                          if (result?['myFatoorahRawJson']?['IsSuccess'] == true &&
+                              result?['myFatoorahRawJson']?['Data'] != null &&
+                              result?['myFatoorahRawJson']?['Data']['PaymentMethods'] != null) {
+
+                            final List<dynamic> methodsRaw = List<dynamic>.from(
+                              result!['myFatoorahRawJson']['Data']['PaymentMethods'] as List,
+                            );
+
+                            final methods = methodsRaw
+                                .map((e) => PaymentMethod.fromJson(Map<String, dynamic>.from(e)))
+                                .toList();
+
+                            // Get the orderMasterId from the result
+                            final orderMasterId = result['masterOrderId'] as int?;
+                            if (orderMasterId == null) {
+                              throw Exception('No orderMasterId in payment initiation response');
+                            }
+
+                            // Show payment methods dialog with the initiated payment data
+                            final methodsPayload = await NewPaymentMethodsDialog.show(
+                              context: context,
+                              paymentMethods: methods,
+                              isArabic: Get.locale?.languageCode == 'ar',
+                              orderMasterId: orderMasterId,
+                              initiateResponse: result,
+                            );
+
+                            if (methodsPayload != null) {
+                              Map<String, dynamic>? normalized;
+                              final invoice = methodsPayload['invoice'] as Map<String,
+                                  dynamic>?;
+                              if (invoice != null) {
+                                final invoiceResult = await InvoiceLinkDialog.show(
+                                  context: context,
+                                  invoiceId: (invoice['invoiceId'] ?? '').toString(),
+                                  paymentId: (invoice['paymentId'])?.toString(),
+                                  paymentUrl: (invoice['paymentUrl'] ?? '').toString(),
+                                  isArabic: (invoice['isArabic'] == true),
                                 );
-                                onHideLoader();
+                                normalized =
+                                invoiceResult?['normalizedResult'] as Map<String, dynamic>?;
+                              } else {
+                                normalized =
+                                methodsPayload['normalizedResult'] as Map<String, dynamic>?;
+                              }
 
-                                if (ok) {
+                              final status = normalized?['status']?.toString();
+                              final paymentId = normalized?['paymentId']?.toString();
+                              final bool success =
+                                  (status != null && status.toLowerCase() == 'success') &&
+                                      (paymentId != null && paymentId.isNotEmpty);
+
+                              if (success == true) {
+                             //   final myAdController = Get.find<MyAdCleanController>();
+
+                                // // 3) After successful payment, send request to server
+                                // onShowLoader();
+                                // final ok = await myAdController.requestFeatureAd(
+                                //   userName: userName,
+                                //   postId: ad.postId.toString(),
+                                //   ourSecret: ourSecret,
+                                // );
+                                // onHideLoader();
+                                //
+                                // if (ok) {
                                   SuccessDialog.show(
                                     request: true,
                                     context: context,
@@ -573,26 +585,26 @@ Widget MyAdCard(
                           //       );
                           //     }
                             }
-                    //}
-               //   }
-               //    catch (e, st) {
-               //            log('Payment flow error: $e');
-               //            log('Stack: $st');
-               //            dialog.SuccessDialog.show(
-               //              request: true,
-               //              context: context,
-               //              title: lc.payment_failed,
-               //              message: 'Payment flow failed: $e',
-               //              onClose: () {
-               //                Navigator.pop(context);
-               //              },
-               //              onTappp: () {
-               //                Navigator.pop(context);
-               //              },
-               //            );
-               //          }
-                  //    }
-               //     }
+                  //  }
+                 }}
+                  catch (e, st) {
+                          log('Payment flow error: $e');
+                          log('Stack: $st');
+                          dialog.SuccessDialog.show(
+                            request: true,
+                            context: context,
+                            title: lc.payment_failed,
+                            message: 'Payment flow failed: $e',
+                            onClose: () {
+                              Navigator.pop(context);
+                            },
+                            onTappp: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                        }
+                     }
+                   }
 
 
                   );

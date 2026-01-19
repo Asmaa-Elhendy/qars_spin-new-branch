@@ -5,7 +5,6 @@ import 'package:qarsspin/model/payment/supported_currencies_response.dart';
 import 'package:qarsspin/model/payment/payment_initiate_request.dart';
 import 'package:qarsspin/model/payment/payment_execute_request.dart';
 import 'package:qarsspin/model/payment/payment_test_status_request.dart';
-
 import '../../model/payment/payment_result_request..dart';
 import '../../model/payment/qars_service.dart';
 
@@ -58,45 +57,67 @@ class PaymentServiceNew {
   ///
   /// Body example:
   /// {
-  ///   "amount": 0,
-  ///   "customerName": "Amira",
-  ///   "email": "Amira@gmail.com",
-  ///   "mobile": "01280077763"
+  ///   "postId": 123,
+  ///   "qarsServiceIds": [1, 2],
+  ///   "amount": 100.0,
+  ///   "customerName": "John Doe",
+  ///   "email": "john@example.com",
+  ///   "mobile": "+1234567890"
   /// }
   Future<Map<String, dynamic>> initiatePayment(
-      PaymentInitiateRequest request,
-      ) async {
-    final uri = Uri.parse('$_baseUrl/api/Payment/initiate');
-
-    final response = await _client.post(
-      uri,
-      headers: const {
-        'accept': '*/*',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(request.toJson()),
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isEmpty) {
-        return <String, dynamic>{'statusCode': 200, 'message': 'Success'};
-      }
-
-      final body = jsonDecode(response.body);
-
-      if (body is Map<String, dynamic>) {
-        return body;
-      } else {
-        return <String, dynamic>{
-          'raw': body,
-          'statusCode': response.statusCode,
-        };
-      }
-    } else {
-      throw Exception(
-        'Failed to initiate payment. '
-            'Status code: ${response.statusCode}, body: ${response.body}',
+    PaymentInitiateRequest request, {
+    String? externalUser,
+  }) async
+  {
+    try {
+      log('💳 [PaymentService] Initiating payment...');
+      
+      final uri = Uri.parse('$_baseUrl/api/Payment/initiate')
+          .replace(queryParameters: {
+            if (externalUser != null) 'externalUser': externalUser,
+          });
+     log("external user $externalUser");
+      log('🔗 API Endpoint: $uri');
+      log('📦 Request body: ${jsonEncode(request.toJson())}');
+      
+      final response = await _client.post(
+        uri,
+        headers: const {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(request.toJson()),
       );
+
+      log('✅ [${response.statusCode}] Payment initiation response received');
+      log('📦 Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          return {'statusCode': 200, 'message': 'Success'};
+        }
+
+        try {
+          final body = jsonDecode(response.body);
+          return body is Map<String, dynamic> 
+              ? body 
+              : {'raw': body, 'statusCode': response.statusCode};
+        } catch (e) {
+          log('⚠️ Error parsing JSON response: $e');
+          return {
+            'statusCode': response.statusCode,
+            'raw': response.body,
+          };
+        }
+      } else {
+        final errorMsg = '❌ [${response.statusCode}] Failed to initiate payment: ${response.body}';
+        log(errorMsg);
+        throw Exception(errorMsg);
+      }
+    } catch (e, stackTrace) {
+      log('❌ Error in initiatePayment: $e');
+      log('📜 Stack trace: $stackTrace');
+      rethrow;
     }
   }
 
@@ -104,54 +125,70 @@ class PaymentServiceNew {
   ///
   /// Body example:
   /// {
-  ///   "amount": 0,
-  ///   "customerName": "string",
-  ///   "email": "string",
-  ///   "mobile": "string",
-  ///   "paymentMethodId": 0,
-  ///   "returnUrl": "string"
+  ///   "ordermasterId": 123,
+  ///   "paymentMethodId": 6,
+  ///   "returnUrl": "https://example.com/return"
   /// }
   Future<Map<String, dynamic>> executePayment(
-      PaymentExecuteRequest request,
-      ) async {
-    final uri = Uri.parse('$_baseUrl/api/Payment/execute');
+    PaymentExecuteRequest request, {
+    String? externalUser,
+  }) async {
+    try {
+      log('💳 [PaymentService] Executing payment for order ${request.orderMasterId}...');
+      
+      final uri = Uri.parse('$_baseUrl/api/Payment/execute')
+          .replace(queryParameters: {
+            if (externalUser != null) 'externalUser': externalUser,
+          });
 
-    final response = await _client.post(
-      uri,
-      headers: const {
-        'accept': '*/*',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(request.toJson()),
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isEmpty) {
-        return <String, dynamic>{'statusCode': 200, 'message': 'Success'};
-      }
-
-      final body = jsonDecode(response.body);
-
-      if (body is Map<String, dynamic>) {
-        return body;
-      } else {
-        return <String, dynamic>{
-          'raw': body,
-          'statusCode': response.statusCode,
-        };
-      }
-    } else {
-      throw Exception(
-        'Failed to execute payment. '
-            'Status code: ${response.statusCode}, body: ${response.body}',
+      log('🔗 API Endpoint: $uri');
+      log('📦 Request body: ${jsonEncode(request.toJson())}');
+      
+      final response = await _client.post(
+        uri,
+        headers: const {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(request.toJson()),
       );
+
+      log('✅ [${response.statusCode}] Payment execution response received');
+      log('📦 Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          return {'statusCode': 200, 'message': 'Success'};
+        }
+
+        try {
+          final body = jsonDecode(response.body);
+          return body is Map<String, dynamic> 
+              ? body 
+              : {'raw': body, 'statusCode': response.statusCode};
+        } catch (e) {
+          log('⚠️ Error parsing JSON response: $e');
+          return {
+            'statusCode': response.statusCode,
+            'raw': response.body,
+          };
+        }
+      } else {
+        final errorMsg = '❌ [${response.statusCode}] Failed to execute payment: ${response.body}';
+        log(errorMsg);
+        throw Exception(errorMsg);
+      }
+    } catch (e, stackTrace) {
+      log('❌ Error in executePayment: $e');
+      log('📜 Stack trace: $stackTrace');
+      rethrow;
     }
   }
 
   /// GET /api/Payment/payment-result?paymentId=...&status=...
   Future<Map<String, dynamic>> getPaymentResult(
-      PaymentResultRequest request,
-      ) async {
+    PaymentResultRequest request,
+  ) async {
     final uri = Uri.parse('$_baseUrl/api/Payment/payment-result')
         .replace(queryParameters: request.toQueryParameters());
 
@@ -187,8 +224,8 @@ class PaymentServiceNew {
 
   /// GET /api/Payment/test-status?paymentId=...&isTest=...
   Future<Map<String, dynamic>> getTestStatus(
-      PaymentTestStatusRequest request,
-      ) async {
+    PaymentTestStatusRequest request,
+  ) async {
     final uri = Uri.parse('$_baseUrl/api/Payment/test-status')
         .replace(queryParameters: request.toQueryParameters());
 
@@ -221,6 +258,7 @@ class PaymentServiceNew {
       );
     }
   }
+
   /// GET /api/v1/QarsRequests/Get-QarsServices
   /// Returns list of Qars services, optionally filtered by serviceType
   Future<List<QarsService>> getQarsServices({   // get price of services 360, features and others

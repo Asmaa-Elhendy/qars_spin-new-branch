@@ -115,34 +115,57 @@ class PaymentController extends GetxController {
   }
 
   /// POST /api/Payment/initiate
+  /// 
+  /// Initiates a payment for a specific post with the given services
+  /// 
+  /// [postId] - The ID of the post to make payment for
+  /// [serviceIds] - List of Qars service IDs to apply to the post
+  /// [amount] - The total amount to be paid
+  /// [customerName] - Name of the customer making the payment
+  /// [email] - Email of the customer
+  /// [mobile] - Mobile number of the customer
+  /// [externalUser] - Optional external user identifier
   Future<Map<String, dynamic>?> initiatePayment({
+    required int postId,
+    required List<int> serviceIds,
     required num amount,
     required String customerName,
     required String email,
     required String mobile,
-    String requestFrom = 'MobileApp',
-    String requestType = 'Request360',
-  }) async
-  {
+    String? externalUser,
+  }) async {
     try {
       isInitiatingPayment.value = true;
       paymentErrorMessage.value = '';
       lastPaymentInitiateResponse.value = null;
 
+      log('💳 Initializing payment for post $postId with services: $serviceIds');
+      
       final request = PaymentInitiateRequest(
+        postId: postId,
+        qarsServiceIds: serviceIds,
         amount: amount,
         customerName: customerName,
         email: email,
         mobile: mobile,
-        requestFrom: requestFrom,
-        requestType: requestType,
       );
 
-      final response = await _service.initiatePayment(request);
+      log('📦 Payment request created: ${request.toJson()}');
+      
+      final response = await _service.initiatePayment(
+        request,
+        externalUser: externalUser,
+      );
 
+      log('✅ Payment initiated successfully');
       lastPaymentInitiateResponse.value = response;
       return response;
-    } catch (e) {
+      
+    } catch (e, stackTrace) {
+      final errorMsg = '❌ Failed to initiate payment: $e';
+      log(errorMsg);
+      log('📜 Stack trace: $stackTrace');
+      
       paymentErrorMessage.value = e.toString();
       return null;
     } finally {
@@ -151,34 +174,50 @@ class PaymentController extends GetxController {
   }
 
   /// POST /api/Payment/execute
+  /// 
+  /// Executes a payment for a specific order with the selected payment method
+  /// 
+  /// [orderMasterId] - The ID of the order from the initiate payment response
+  /// [paymentMethodId] - The ID of the selected payment method
+  /// [returnUrl] - The URL to return to after payment completion
+  /// [externalUser] - Optional external user identifier
   Future<Map<String, dynamic>?> executePayment({
-    required num amount,
-    required String customerName,
-    required String email,
-    required String mobile,
+    required int orderMasterId,
     required int paymentMethodId,
     required String returnUrl,
+    String? externalUser,
   }) async {
     try {
       isExecutingPayment.value = true;
       executePaymentErrorMessage.value = '';
       lastPaymentExecuteResponse.value = null;
 
+      log('💳 Executing payment for order $orderMasterId with method $paymentMethodId');
+      
       final request = PaymentExecuteRequest(
-        amount: 1,//amount, amount 1 pound
-        customerName: customerName,
-        email: email,
-        mobile: mobile,
+        orderMasterId: orderMasterId,
         paymentMethodId: paymentMethodId,
         returnUrl: returnUrl,
       );
-     log('execute payment request $request');
-      final response = await _service.executePayment(request);
+      
+      log('📦 Payment execution request: ${request.toJson()}');
+      
+      final response = await _service.executePayment(
+        request,
+        externalUser: externalUser,
+      );
 
+      log('✅ Payment executed successfully');
+      log('response of execute is $response');
       lastPaymentExecuteResponse.value = response;
       return response;
-    } catch (e) {
-      executePaymentErrorMessage.value = e.toString();
+      
+    } catch (e, stackTrace) {
+      final errorMsg = '❌ Failed to execute payment: $e';
+      log(errorMsg);
+      log('📜 Stack trace: $stackTrace');
+      
+      executePaymentErrorMessage.value = errorMsg;
       return null;
     } finally {
       isExecutingPayment.value = false;

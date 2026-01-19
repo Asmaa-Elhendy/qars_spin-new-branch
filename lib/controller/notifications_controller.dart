@@ -47,7 +47,7 @@ class NotificationsController extends GetxController {
         log('⚠️ userName is empty. API will return Missing Parameter.');
         _notifications.clear();
         _notificationCount.value = 0;
-        Get.snackbar('Error', 'User name is missing');
+     //   Get.snackbar('Error', 'User name is missing');
         return;
       }
 

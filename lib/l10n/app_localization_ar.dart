@@ -551,12 +551,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enter_desc => 'ادخل وصف للسيارة...';
 
   @override
-  String get make_360_first => 'اجعل إعلانك مميزًا بجلسة تصوير 360 درجة ';
+  String get make_360_first => 'اجعل إعلانك مميزًا بجلسة تصوير 360 درجة (';
 
   @override
   String get make_360_second => 'ريال فقط لجلسة التصوير الكاملة)';
 
-  String get pin_ad_first => 'قم بتثبيت إعلانك في الأعلى مقابل ';
+  String get pin_ad_first => 'قم بتثبيت إعلانك في الأعلى مقابل (';
   String get pin_ad_second => ') ريال فقط';
   @override
   String get agreement => 'أوافق على الشروط والأحكام';
@@ -631,7 +631,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get msg_360_first => 'جلسة التصوير 360 درجة الخاصة بنا ستبرز منشورك بشكل جميل \nانقر فوق تأكيد، وسنقوم بالباقي! \n   رسوم إضافية';
 
   @override
-  String get msg_360_second => ' يمكن أن تنطبق.';
+  String get msg_360_second => 'ريال يمكن أن تنطبق.';
   @override
   String get confirmation => 'تأكيد';
 
@@ -660,7 +660,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get feature_ad_msg_first => 'سيضمن تمييز منشورك ظهوره في المقدمة للجميع لرؤيته.\n رسوم إضافية';
 
   @override
-  String get feature_ad_msg_second => ' يمكن أن تنطبق.\n انقر فوق تأكيد للمتابعة!';
+  String get feature_ad_msg_second => 'ريال يمكن أن تنطبق.\n انقر فوق تأكيد للمتابعة!';
   @override
   String get payment => 'الدفع';
 

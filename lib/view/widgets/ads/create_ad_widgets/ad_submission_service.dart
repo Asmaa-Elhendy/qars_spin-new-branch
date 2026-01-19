@@ -403,21 +403,21 @@ class AdSubmissionService {
         log('Modified specs upload completed');
 
         // Request 360 photo session - ONLY IN CREATE MODE
-        if (postId == null &&
-            isRequest360//request360controller.text == "Yes"
-            && responsePostId.isNotEmpty) {
-          log('Requesting 360 photo session for post ID: $responsePostId');
-          await _request360Session(postId: responsePostId);
-        }
+        // if (postId == null &&
+        //     isRequest360//request360controller.text == "Yes"
+        //     && responsePostId.isNotEmpty) {
+        //   log('Requesting 360 photo session for post ID: $responsePostId');
+        //   await _request360Session(postId: responsePostId);
+        // }
 
         // Request to feature ad - ONLY IN CREATE MODE
-        if (postId == null &&
-            isFeaturedPost//  featureyouradcontroller.text == "Yes"
-            && responsePostId.isNotEmpty) {
-          log('Requesting to feature ad for post ID: $responsePostId');
-          await _requestFeatureAd(postId: responsePostId);
-          log('Feature ad request completed');
-        }
+        // if (postId == null &&
+        //     isFeaturedPost//  featureyouradcontroller.text == "Yes"
+        //     && responsePostId.isNotEmpty) {
+        //   log('Requesting to feature ad for post ID: $responsePostId');
+        //   await _requestFeatureAd(postId: responsePostId);
+        //   log('Feature ad request completed');
+        // }
 
         // Upload video if we have a post ID and video path
         if (responsePostId.isNotEmpty && videoPath != null && videoPath.isNotEmpty) {
@@ -662,60 +662,60 @@ class AdSubmissionService {
       log('❌ [SPECS] Error in _uploadModifiedSpecs: $e');
     }
   }
-
-  /// Request 360 photo session for the newly created ad
-  static Future<void> _request360Session({
-    required String postId,
-  }) async
-  {
-    try {
-      log('🔄 [360] Starting 360 photo session request for post ID: $postId');
-
-      // Get the MyAdCleanController instance
-      final myAdController = Get.find<MyAdCleanController>();
-
-      // Request 360 photo session
-      final success = await myAdController.request360Session(
-        userName: userName, // You might want to get this from user session
-        postId: postId,
-        ourSecret: ourSecret, // Using the same secret as in ad creation
-      );
-
-      if (success) {
-        log('✅ [360] Successfully requested 360 photo session');
-      } else {
-        log('❌ [360] Failed to request 360 photo session');
-      }
-    } catch (e) {
-      log('❌ [360] Error in _request360Session: $e');
-    }
-  }
-
-  /// Request to feature the newly created ad
-  static Future<void> _requestFeatureAd({
-    required String postId,
-  }) async
-  {
-    try {
-      log('⭐ [FEATURE] Starting feature ad request for post ID: $postId');
-
-      // Get the MyAdCleanController instance
-      final myAdController = Get.find<MyAdCleanController>();
-
-      // Request to feature ad
-      final success = await myAdController.requestFeatureAd(
-        userName: userName, // You might want to get this from user session
-        postId: postId,
-        ourSecret: ourSecret, // Using the same secret as in ad creation
-      );
-
-      if (success) {
-        log('✅ [FEATURE] Successfully requested to feature ad');
-      } else {
-        log('❌ [FEATURE] Failed to request to feature ad');
-      }
-    } catch (e) {
-      log('❌ [FEATURE] Error in _requestFeatureAd: $e');
-    }
-  }
-}
+//
+//   /// Request 360 photo session for the newly created ad
+//   static Future<void> _request360Session({
+//     required String postId,
+//   }) async
+//   {
+//     try {
+//       log('🔄 [360] Starting 360 photo session request for post ID: $postId');
+//
+//       // Get the MyAdCleanController instance
+//       final myAdController = Get.find<MyAdCleanController>();
+//
+//       // Request 360 photo session
+//       final success = await myAdController.request360Session(
+//         userName: userName, // You might want to get this from user session
+//         postId: postId,
+//         ourSecret: ourSecret, // Using the same secret as in ad creation
+//       );
+//
+//       if (success) {
+//         log('✅ [360] Successfully requested 360 photo session');
+//       } else {
+//         log('❌ [360] Failed to request 360 photo session');
+//       }
+//     } catch (e) {
+//       log('❌ [360] Error in _request360Session: $e');
+//     }
+//   }
+//
+//   /// Request to feature the newly created ad
+//   static Future<void> _requestFeatureAd({
+//     required String postId,
+//   }) async
+//   {
+//     try {
+//       log('⭐ [FEATURE] Starting feature ad request for post ID: $postId');
+//
+//       // Get the MyAdCleanController instance
+//       final myAdController = Get.find<MyAdCleanController>();
+//
+//       // Request to feature ad
+//       final success = await myAdController.requestFeatureAd(
+//         userName: userName, // You might want to get this from user session
+//         postId: postId,
+//         ourSecret: ourSecret, // Using the same secret as in ad creation
+//       );
+//
+//       if (success) {
+//         log('✅ [FEATURE] Successfully requested to feature ad');
+//       } else {
+//         log('❌ [FEATURE] Failed to request to feature ad');
+//       }
+//     } catch (e) {
+//       log('❌ [FEATURE] Error in _requestFeatureAd: $e');
+//     }
+//   }
+ }
