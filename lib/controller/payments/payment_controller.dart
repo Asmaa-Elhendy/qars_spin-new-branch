@@ -50,6 +50,16 @@ class PaymentController extends GetxController {
   final RxList<QarsService> individualQarsServices = <QarsService>[].obs;
   final RxBool isLoadingQarsServices = false.obs;
   final RxString qarsServicesErrorMessage = ''.obs;
+  
+  // Service details for easy access
+  final Rx<QarsService?> featuredService = Rx<QarsService?>(null);
+  final Rx<QarsService?> request360Service = Rx<QarsService?>(null);
+  
+  // Convenience getters
+  int? get featuredServiceId => featuredService.value?.qarsServiceId;
+  double? get featuredServicePrice => featuredService.value?.qarsServicePrice?.toDouble();
+  int? get request360ServiceId => request360Service.value?.qarsServiceId;
+  double? get request360ServicePrice => request360Service.value?.qarsServicePrice?.toDouble();
 
 
   @override
@@ -110,6 +120,8 @@ class PaymentController extends GetxController {
     required String customerName,
     required String email,
     required String mobile,
+    String requestFrom = 'MobileApp',
+    String requestType = 'Request360',
   }) async
   {
     try {
@@ -122,6 +134,8 @@ class PaymentController extends GetxController {
         customerName: customerName,
         email: email,
         mobile: mobile,
+        requestFrom: requestFrom,
+        requestType: requestType,
       );
 
       final response = await _service.initiatePayment(request);
@@ -231,20 +245,31 @@ class PaymentController extends GetxController {
     try {
       isLoadingQarsServices.value = true;
       qarsServicesErrorMessage.value = '';
-      individualQarsServices.clear();
-
-      print('⏳ Loading Qars services (Individual)...');
-
-      final services =
-      await _service.getQarsServices(serviceTypeFilter: 'Individual');
-
-      individualQarsServices.assignAll(services);
-      print('✅ Loaded ${individualQarsServices.length} Individual services');
-    } catch (e, stackTrace) {
-      final errorMsg = '❌ Error loading Qars services: $e';
-      print(errorMsg);
-      print('📜 Stack trace: $stackTrace');
+      
+      final services = await _service.getQarsServices();
+      
+      // Filter for Individual services only
+      final individualServices = services
+          .where((service) => service.qarsServiceType == 'Individual')
+          .toList();
+      
+      individualQarsServices.assignAll(individualServices);
+      
+      // Extract and store specific services
+      for (var service in individualServices) {
+        if (service.qarsServiceName == 'Request to feature') {
+          featuredService.value = service;
+          print('⭐ Featured service stored - ID: ${service.qarsServiceId}, Price: ${service.qarsServicePrice}');
+        } else if (service.qarsServiceName == 'Request to 360') {
+          request360Service.value = service;
+          print('🔄 360 service stored - ID: ${service.qarsServiceId}, Price: ${service.qarsServicePrice}');
+        }
+      }
+      
+    } catch (e) {
+      final errorMsg = 'Failed to load Qars services: $e';
       qarsServicesErrorMessage.value = errorMsg;
+      rethrow;
     } finally {
       isLoadingQarsServices.value = false;
       print(

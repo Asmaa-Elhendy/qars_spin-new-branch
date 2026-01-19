@@ -543,7 +543,7 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
 
       // Provide a return URL for the gateway to redirect back to the app/site
       // Add a default status=Success to satisfy backend validation on redirect
-      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result?status=Success";
+      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/payment-result";
 
       final executeResponse = await paymentController.executePayment(
         amount: widget.userInformationRequest.amount,

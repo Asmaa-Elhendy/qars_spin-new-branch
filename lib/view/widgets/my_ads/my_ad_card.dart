@@ -223,10 +223,10 @@ Widget MyAdCard(
                         context: context,
                         title: lc.ready_pro,
                         message:
-                            //comment payment fr now amira
-                        // lc.msg_360_first + ' ${req360Price} ' +
-                        //     lc.msg_360_second,
-                        lc.msg_360_first +' '+lc.msg_360_second,
+                            //comment payment fr now amira   --- turn on payment now
+                        lc.msg_360_first + ' ${req360Price} ' +
+                            lc.msg_360_second,
+                   //     lc.msg_360_first +' '+lc.msg_360_second,   turn off
                         onClose: () {},
                         onTappp: () async {
 
@@ -235,115 +235,118 @@ Widget MyAdCard(
                           // handle new payment fatoorah backend
                         //comment payment now amira
 
-                          // 1) Collect contact info (dialog closes immediately and returns data only)
-                          // final contactInfo = await ContactInfoDialog.show(
-                          //   totalAmount: req360Price,
-                          //   req360Amount: req360Price,
-                          //   //get price from api
-                          //   featuredAmount: 0,
-                          //   context: context,
-                          //   isRequest360: true,
-                          //   isFeauredPost: false,
-                          // );
-                          // if (contactInfo == null) {
-                          //   // user cancelled contact info
-                          // } else
-                          // {
-                       //     try {
-                              // 2) Initiate payment using contact info
-                              // final paymentController = Get.find<
-                              //     PaymentController>();
-                              // final String customerName = '${(contactInfo['firstName'] ??
-                              //     '')
-                              //     .toString()
-                              //     .trim()} ${(contactInfo['lastName'] ?? '')
-                              //     .toString()
-                              //     .trim()}'.trim();
-                              // final String email = (contactInfo['email'] ?? '')
-                              //     .toString()
-                              //     .trim();
-                              // final String mobile = (contactInfo['mobile'] ??
-                              //     '').toString().trim();
-                              //
-                              // final result = await paymentController
-                              //     .initiatePayment(
-                              //   amount: req360Price,
-                              //   customerName: customerName.isEmpty
-                              //       ? 'Customer'
-                              //       : customerName,
-                              //   email: email,
-                              //   mobile: mobile,
-                              // );
-                              // log('Payment Initiation Result: $result');
-                              //
-                              // if (result?['IsSuccess'] == true &&
-                              //     result?['Data'] != null &&
-                              //     result?['Data']['PaymentMethods'] != null) {
-                              //   // 3) Map methods and open NewPaymentMethodsDialog
-                              //   final List<dynamic> methodsRaw = List<
-                              //       dynamic>.from(
-                              //       result!['Data']['PaymentMethods'] as List);
-                              //   final methods = methodsRaw
-                              //       .map((e) =>
-                              //       PaymentMethod.fromJson(
-                              //       Map<String, dynamic>.from(e)))
-                              //       .toList();
-                              //
-                              //   final userInformationRequest = PaymentInitiateRequest(
-                              //     amount: req360Price,
-                              //     customerName: customerName.isEmpty
-                              //         ? 'Customer'
-                              //         : customerName,
-                              //     email: email,
-                              //     mobile: mobile,
-                              //   );
-                              //
-                              //   final methodsPayload = await NewPaymentMethodsDialog
-                              //       .show(
-                              //     context: context,
-                              //     paymentMethods: methods,
-                              //     userInformationRequest: userInformationRequest,
-                              //     isArabic: Get.locale?.languageCode == 'ar',
-                              //   );
-                              //
-                              //   if (methodsPayload != null) {
-                              //     Map<String, dynamic>? normalized;
-                              //     final invoice = methodsPayload['invoice'] as Map<
-                              //         String,
-                              //         dynamic>?;
-                              //     if (invoice != null) {
-                              //       final invoiceResult = await InvoiceLinkDialog
-                              //           .show(
-                              //         context: context,
-                              //         invoiceId: (invoice['invoiceId'] ?? '')
-                              //             .toString(),
-                              //         paymentId: (invoice['paymentId'])
-                              //             ?.toString(),
-                              //         paymentUrl: (invoice['paymentUrl'] ?? '')
-                              //             .toString(),
-                              //         isArabic: (invoice['isArabic'] == true),
-                              //       );
-                              //       normalized =
-                              //       invoiceResult?['normalizedResult'] as Map<
-                              //           String,
-                              //           dynamic>?;
-                              //     } else {
-                              //       normalized =
-                              //       methodsPayload['normalizedResult'] as Map<
-                              //           String,
-                              //           dynamic>?;
-                              //     }
-                              //
-                              //     final status = normalized?['status']
-                              //         ?.toString();
-                              //     final paymentId = normalized?['paymentId']
-                              //         ?.toString();
-                              //     final bool success = (status != null &&
-                              //         status.toLowerCase() == 'success') ||
-                              //         (paymentId != null &&
-                              //             paymentId.isNotEmpty);
-                              //    if (success == true) {
+                    //      1) Collect contact info (dialog closes immediately and returns data only)
+                          final contactInfo = await ContactInfoDialog.show(
+                            totalAmount: req360Price,
+                            req360Amount: req360Price,
+                            //get price from api
+                            featuredAmount: 0,
+                            context: context,
+                            isRequest360: true,
+                            isFeauredPost: false,
+                          );
+                          if (contactInfo == null) {
+                            // user cancelled contact info
+                          } else
+                          {
+                           try {
+                           //   2) Initiate payment using contact info
+                              final paymentController = Get.find<
+                                  PaymentController>();
+                              final String customerName = '${(contactInfo['firstName'] ??
+                                  '')
+                                  .toString()
+                                  .trim()} ${(contactInfo['lastName'] ?? '')
+                                  .toString()
+                                  .trim()}'.trim();
+                              final String email = (contactInfo['email'] ?? '')
+                                  .toString()
+                                  .trim();
+                              final String mobile = (contactInfo['mobile'] ??
+                                  '').toString().trim();
+
+                              final result = await paymentController
+                                  .initiatePayment(
+                                amount: req360Price,
+                                customerName: customerName.isEmpty
+                                    ? 'Customer'
+                                    : customerName,
+                                email: email,
+                                mobile: mobile,
+                              );
+                              log('Payment Initiation Result: $result');
+
+                              if (result?['myFatoorahRawJson']?['IsSuccess'] == true &&
+                                  result?['myFatoorahRawJson']?['Data'] != null &&
+                                  result?['myFatoorahRawJson']?['Data']['PaymentMethods'] != null) {
+                                // 3) Map methods and open NewPaymentMethodsDialog
+                                final List<dynamic> methodsRaw = List<
+                                    dynamic>.from(
+                                    result!['myFatoorahRawJson']['Data']['PaymentMethods'] as List);
+                                final methods = methodsRaw
+                                    .map((e) =>
+                                    PaymentMethod.fromJson(
+                                    Map<String, dynamic>.from(e)))
+                                    .toList();
+
+                                final userInformationRequest = PaymentInitiateRequest(
+                                  amount: req360Price,
+                                  customerName: customerName.isEmpty
+                                      ? 'Customer'
+                                      : customerName,
+                                  email: email,
+                                  mobile: mobile,
+                                  requestFrom : 'MobileApp',
+                                   requestType : 'Request360',
+                                );
+
+                                final methodsPayload = await NewPaymentMethodsDialog
+                                    .show(
+                                  context: context,
+                                  paymentMethods: methods,
+                                  userInformationRequest: userInformationRequest,
+                                  isArabic: Get.locale?.languageCode == 'ar',
+                                );
+
+                                if (methodsPayload != null) {
+                                  Map<String, dynamic>? normalized;
+                                  final invoice = methodsPayload['invoice'] as Map<
+                                      String,
+                                      dynamic>?;
+                                  if (invoice != null) {
+                                    final invoiceResult = await InvoiceLinkDialog
+                                        .show(
+                                      context: context,
+                                      invoiceId: (invoice['invoiceId'] ?? '')
+                                          .toString(),
+                                      paymentId: (invoice['paymentId'])
+                                          ?.toString(),
+                                      paymentUrl: (invoice['paymentUrl'] ?? '')
+                                          .toString(),
+                                      isArabic: (invoice['isArabic'] == true),
+                                    );
+                                    normalized =
+                                    invoiceResult?['normalizedResult'] as Map<
+                                        String,
+                                        dynamic>?;
+                                  } else {
+                                    normalized =
+                                    methodsPayload['normalizedResult'] as Map<
+                                        String,
+                                        dynamic>?;
+                                  }
+
+                                  final status = normalized?['status']
+                                      ?.toString();
+                                  final paymentId = normalized?['paymentId']
+                                      ?.toString();
+                                  final bool success = (status != null &&
+                                      status.toLowerCase() == 'success') ||
+                                      (paymentId != null &&
+                                          paymentId.isNotEmpty);
+                                 if (success == true) {
                                     // 🟢 نجاح الدفع
+                          //هسيبه في حاالة عدم دقع
                                     final myAdController = Get.find<
                                         MyAdCleanController>();
                                     onShowLoader();
@@ -374,39 +377,40 @@ Widget MyAdCard(
                                         onTappp: () {},
                                       );
                                    }
-                               //   }
-                               //    else {
-                               //      SuccessDialog.show(
-                               //        request: true,
-                               //        context: context,
-                               //        title: lc.payment_failed,
-                               //        message: lc.payment_failed_or_cancelled,
-                               //        onClose: () {},
-                               //        onTappp: () {},
-                               //      );
-                               //    }
-                            //    }
+                                    //لحد هنا
+                                 }
+                                  else {
+                                    SuccessDialog.show(
+                                      request: true,
+                                      context: context,
+                                      title: lc.payment_failed,
+                                      message: lc.payment_failed_or_cancelled,
+                                      onClose: () {},
+                                      onTappp: () {},
+                                    );
+                                  }
+                               }
                               }
-                           // }
-                  // catch (e, st) {
-                  //             log('Payment flow error: $e');
-                  //             log('Stack: $st');
-                  //             dialog.SuccessDialog.show(
-                  //               request: true,
-                  //               context: context,
-                  //               title: lc.payment_failed,
-                  //               message: '${lc.paymentflowfailed} $e',
-                  //               onClose: () {
-                  //                 Navigator.pop(context);
-                  //               },
-                  //               onTappp: () {
-                  //                 Navigator.pop(context);
-                  //               },
-                  //             );
-                  //           }
-                          //}
+                           }
+                  catch (e, st) {
+                              log('Payment flow error: $e');
+                              log('Stack: $st');
+                              dialog.SuccessDialog.show(
+                                request: true,
+                                context: context,
+                                title: lc.payment_failed,
+                                message: '${lc.paymentflowfailed} $e',
+                                onClose: () {
+                                  Navigator.pop(context);
+                                },
+                                onTappp: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            }
+                          }
 
-                      //  }
+                       }
 
 
 
