@@ -809,7 +809,7 @@ class _SellCarScreenState extends State<SellCarScreen> {
     // Refresh My Ads screen
     final auth = Get.find<AuthController>();
     if (auth.userName != null && auth.userName!.isNotEmpty) {
-      Get.find<MyAdCleanController>().fetchMyAds(userName: auth.userName!, ourSecret: ourSecret);
+      Get.find<MyAdCleanController>().fetchMyAds(userName: auth.userFullName!, ourSecret: ourSecret);
     }
   }
 

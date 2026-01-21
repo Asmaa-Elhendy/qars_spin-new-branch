@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -75,6 +77,7 @@ class _MyAdsMainScreenState extends State<MyAdsMainScreen> {
   }
 
   Future<void> _fetchMyAds() async {
+    log('herreeeeeeeeeeeeeeeeee ${authController.userFullName!}');
     if (authController.userName != null && authController.userName!.isNotEmpty) {
       await controller.fetchMyAds(
         userName: authController.userFullName!,
