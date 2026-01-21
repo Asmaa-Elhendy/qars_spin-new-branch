@@ -1020,7 +1020,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get msg_Verification_Code_Is_wrong => 'Verification Code is Wrong!';
 
   @override
-  String get youHaveRequestedThisServiceBefore => 'You Have Requested This Service Before';
+  String get youHaveRequestedThisServiceBefore => 'You Already Have This Service';
 
   @override
   String get note => 'Note';

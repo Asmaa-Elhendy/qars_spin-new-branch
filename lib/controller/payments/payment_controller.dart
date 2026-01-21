@@ -62,6 +62,12 @@ class PaymentController extends GetxController {
   double? get request360ServicePrice => request360Service.value?.qarsServicePrice.toDouble();
 
 
+  // ---------- Check Order Flow ----------
+  final RxBool isCheckingOrderFlow = false.obs;
+  final Rxn<Map<String, dynamic>> lastCheckOrderFlowResponse = Rxn<Map<String, dynamic>>();
+  final RxString checkOrderFlowErrorMessage = ''.obs;
+
+
   @override
   void onInit() {
     super.onInit();
@@ -315,5 +321,37 @@ class PaymentController extends GetxController {
           '🏁 Qars services loading completed. isError: ${qarsServicesErrorMessage.isNotEmpty}');
     }
   }
+
+
+  Future<Map<String, dynamic>?> checkOrderFlow({
+    required int postId,
+    required int qarsServiceId,
+  }) async {
+    try {
+      isCheckingOrderFlow.value = true;
+      checkOrderFlowErrorMessage.value = '';
+      lastCheckOrderFlowResponse.value = null;
+
+      log('🧭 Checking order flow for postId=$postId, serviceId=$qarsServiceId');
+
+      final resp = await _service.checkOrderFlow(
+        postId: postId,
+        qarsServiceId: qarsServiceId,
+      );
+
+      lastCheckOrderFlowResponse.value = resp;
+      log('✅ checkOrderFlow success: $resp');
+      return resp;
+    } catch (e, st) {
+      final msg = '❌ checkOrderFlow failed: $e';
+      log(msg);
+      log('📜 Stack trace: $st');
+      checkOrderFlowErrorMessage.value = msg;
+      return null;
+    } finally {
+      isCheckingOrderFlow.value = false;
+    }
+  }
+
 
 }

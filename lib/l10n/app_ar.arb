@@ -222,6 +222,7 @@
   "modify": "تعديل",
   "specs": "المواصفات",
   "info": "البيانات",
+  "youHaveRequestedThisServiceBefore":  "انت بالفعل لديك هذه الميزة",
   "waiting_ad_approval": "هذا الإعلان في انتظار الموافقة، يرجى الانتظار جاري مراجعة إعلانك",
   "creation_date": "تاريخ الانشاء:",
   "ex_date": "تاريخ الانتهاء:",

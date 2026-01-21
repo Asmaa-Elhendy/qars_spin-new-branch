@@ -312,6 +312,73 @@ class PaymentServiceNew {
     }
   }
 
+
+  /// POST /api/Payment/check-order-flow
+  /// Body:
+  /// {
+  ///   "postId": 10513,
+  ///   "qarsServiceId": 3
+  /// }
+  Future<Map<String, dynamic>> checkOrderFlow({
+    required int postId,
+    required int qarsServiceId,
+  }) async {
+    try {
+      log('🌐 [PaymentService] Checking order flow... postId=$postId, serviceId=$qarsServiceId');
+
+      final uri = Uri.parse('$_baseUrl/api/Payment/check-order-flow');
+      final body = {
+        "postId": postId,
+        "qarsServiceId": qarsServiceId,
+      };
+
+      log('🔗 API Endpoint: $uri');
+      log('📦 Request body: ${jsonEncode(body)}');
+
+      final response = await _client.post(
+        uri,
+        headers: const {
+          'accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      log('✅ [${response.statusCode}] check-order-flow response received');
+      log('📦 Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'status': 'UNKNOWN',
+            'message': 'Empty response',
+          };
+        }
+
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) return decoded;
+
+        return <String, dynamic>{
+          'statusCode': response.statusCode,
+          'raw': decoded,
+        };
+      } else {
+        final errorMsg =
+            '❌ [${response.statusCode}] Failed to check order flow: ${response.body}';
+        log(errorMsg);
+        throw Exception(errorMsg);
+      }
+    } catch (e, st) {
+      log('❌ Error in checkOrderFlow: $e');
+      log('📜 Stack trace: $st');
+      rethrow;
+    }
+  }
+
+
+
+
   void dispose() {
     _client.close();
   }

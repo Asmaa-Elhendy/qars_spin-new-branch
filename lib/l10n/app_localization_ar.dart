@@ -1035,7 +1035,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get msg_Verification_Code_Is_wrong => 'رمز التحقق غير صحيح!';
   // In app_localization_ar.dart
   @override
-  String get youHaveRequestedThisServiceBefore => 'لقد طلبت هذه الخدمة من قبل';
+  String get youHaveRequestedThisServiceBefore => 'انت بالفعل لديك هذه الميزة';
   // In app_localization_ar.dart
   @override
   String get note => 'ملاحظة';

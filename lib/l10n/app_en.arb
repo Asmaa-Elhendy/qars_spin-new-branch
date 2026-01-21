@@ -342,7 +342,7 @@
   "tv_Verify_Mobile_Number_Dialog_Title": "Verify Your Mobile Number",
   "msg_Verification_Code_Is_Empty": "Verification Code is Empty!",
   "msg_Verification_Code_Is_wrong": "Verification Code is Wrong!",
-   "youHaveRequestedThisServiceBefore":  "You Have Requested This Service Before",
+   "youHaveRequestedThisServiceBefore":  "You Already Have This Service",
 
 
    "note" : "Note",

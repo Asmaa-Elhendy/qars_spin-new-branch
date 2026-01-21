@@ -1050,7 +1050,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get msg_Verification_Code_Is_wrong => 'Verification Code is Wrong!';
   // In app_localization_en.dart
   @override
-  String get youHaveRequestedThisServiceBefore => 'You Have Requested This Service Before';
+  String get youHaveRequestedThisServiceBefore => 'You Already Have This Service';
   // In app_localization_en.dart
   @override
   String get note => 'Note';
