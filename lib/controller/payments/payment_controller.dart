@@ -55,11 +55,11 @@ class PaymentController extends GetxController {
   final Rx<QarsService?> featuredService = Rx<QarsService?>(null);
   final Rx<QarsService?> request360Service = Rx<QarsService?>(null);
   
-  // Convenience getters
+  // Convenience getters with null safety
   int? get featuredServiceId => featuredService.value?.qarsServiceId;
-  double? get featuredServicePrice => featuredService.value?.qarsServicePrice?.toDouble();
+  double? get featuredServicePrice => featuredService.value?.qarsServicePrice.toDouble();
   int? get request360ServiceId => request360Service.value?.qarsServiceId;
-  double? get request360ServicePrice => request360Service.value?.qarsServicePrice?.toDouble();
+  double? get request360ServicePrice => request360Service.value?.qarsServicePrice.toDouble();
 
 
   @override
@@ -296,12 +296,12 @@ class PaymentController extends GetxController {
       
       // Extract and store specific services
       for (var service in individualServices) {
-        if (service.qarsServiceName == 'Request to feature') {
+        if (service.qarsServiceName.toLowerCase().contains('feature')) {
           featuredService.value = service;
-          print('⭐ Featured service stored - ID: ${service.qarsServiceId}, Price: ${service.qarsServicePrice}');
-        } else if (service.qarsServiceName == 'Request to 360') {
+          print('⭐ Featured service stored - ID: ${service.qarsServiceId}, Name: ${service.qarsServiceName}, Price: ${service.qarsServicePrice}');
+        } else if (service.qarsServiceName.toLowerCase().contains('360')) {
           request360Service.value = service;
-          print('🔄 360 service stored - ID: ${service.qarsServiceId}, Price: ${service.qarsServicePrice}');
+          print('🔄 360 service stored - ID: ${service.qarsServiceId}, Name: ${service.qarsServiceName}, Price: ${service.qarsServicePrice}');
         }
       }
       
