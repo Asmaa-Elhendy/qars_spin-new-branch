@@ -651,6 +651,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payment_failed_or_cancelled => '\"فشلت عملية الدفع أو تم إلغاؤها';
 
   @override
+  String get missingMasterIdError => 'معرف masterId مفقود في استجابة التحقق من الطلب';
+
+  @override
+  String get noPaymentMethodsError => 'لا توجد طرق دفع متاحة لهذه المعاملة';
+
+  @override
+  String get noTransactionUrlError => 'رابط المعاملة غير متوفر';
+
+  @override
+  String get unhandledStatusError => 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+
+  @override
   String get feature_ad => 'إجعل اعلانك مميزا';
 
   @override

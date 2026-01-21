@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qarsspin/controller/auth/auth_controller.dart';
 import '../../../controller/payments/payment_controller.dart';
-import '../../../l10n/app_localization.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../model/payment/payment_method_model.dart';
 import 'package:qarsspin/view/widgets/my_ads/dialog.dart';
 import 'package:qarsspin/view/widgets/payments/payment_methods_dialog.dart';
@@ -108,7 +108,7 @@ Future<void> handleServiceTap({
         request: true,
         context: context,
         title: lc.payment_failed,
-        message: 'Missing masterId in check-order-flow response',
+        message: lc.missingMasterIdError,
         onClose: () {},
         onTappp: () {},
       );
@@ -119,7 +119,7 @@ Future<void> handleServiceTap({
         request: true,
         context: context,
         title: lc.payment_failed,
-        message: 'No paymentMethods returned in check-order-flow response',
+        message: lc.noPaymentMethodsError,
         onClose: () {},
         onTappp: () {},
       );
@@ -189,7 +189,7 @@ Future<void> handleServiceTap({
         request: true,
         context: context,
         title: lc.payment_failed,
-        message: 'NO_TRANSACTION but paymentUrl is empty',
+        message: lc.noTransactionUrlError,
         onClose: () {},
         onTappp: () {},
       );
@@ -242,7 +242,7 @@ Future<void> handleServiceTap({
       request: true,
       context: context,
       title: lc.note,
-      message: 'Unhandled status: $status\n$message',
+      message: '${lc.unhandledStatusError}\nStatus: $status\n$message',
       onClose: () {},
       onTappp: () {},
     );
