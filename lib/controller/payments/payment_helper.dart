@@ -17,7 +17,7 @@ import 'package:qarsspin/view/widgets/my_ads/dialog.dart' as dialog;
 
 Future<void> handleServiceTap({
   required BuildContext context,
-  required AppLocalizations lc,
+  required  lc,
   required PaymentController paymentController,
   required int postId,
   required String userName,
