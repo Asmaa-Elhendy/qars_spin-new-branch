@@ -2164,6 +2164,7 @@ abstract class AppLocalizations {
   String get paymentWasNotCompleted;
   String get failedToLoadPaymentMethods;
   String get paymentflowfailed;
+  String get wait_admin_approval;
 }
 
 class _AppLocalizationsDelegate

@@ -627,15 +627,16 @@ class MyAdDataLayer {
     required String requestType,
   }) async {
     // بنبني الـ URL بالـ query parameters
-    final uri = Uri.https(
-      'qarspartnersportalapitest.smartvillageqatar.com',
-      '/api/v1/QarsRequests/Get-Request',
-      <String, String>{
+    final uri = Uri.parse(
+      '$baseUrlWeb/api/v1/QarsRequests/Get-Request',
+    ).replace(
+      queryParameters: {
         'postId': postId.toString(),
         'RequestType': requestType,
         'RequestFrom': 'Individual',
       },
     );
+
 
     log('🔍 Calling Get-Request: $uri');
 

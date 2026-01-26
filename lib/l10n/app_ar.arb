@@ -503,6 +503,8 @@
 
    "failedToLoadPaymentMethods" : "فشل تحميل طرق الدفع",
 
-   "paymentflowfailed" : "فشل تدفق الدفع:"
+   "paymentflowfailed" : "فشل تدفق الدفع:",
+  "wait_admin_approval": "لقد طلبت ذلك سابقاً، يرجى الانتظار حتى تتم الموافقة من قبل الإدارة."
+
 }
 

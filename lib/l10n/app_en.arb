@@ -389,7 +389,8 @@
 
    "failedToLoadPaymentMethods" :"Failed to load payment methods",
 
-   "paymentflowfailed" : "Payment flow failed"
+   "paymentflowfailed" : "Payment flow failed",
+  "wait_admin_approval": "You requested before, please wait Admin Approval"
 }
 
 

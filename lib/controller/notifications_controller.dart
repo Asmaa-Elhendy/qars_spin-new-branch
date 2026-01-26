@@ -40,7 +40,8 @@ class NotificationsController extends GetxController {
 
     try {
       _isLoading.value = true;
-      log('📡 Fetching notifications for user: ${authController.userFullName}');
+      final userName = authController.userName ?? '';
+      log('📡 Fetching notifications for user: $userName');
 
       // ✅ لو اليوزر فاضي (ده سبب "Missing Parameter")
       if (userName.trim().isEmpty) {

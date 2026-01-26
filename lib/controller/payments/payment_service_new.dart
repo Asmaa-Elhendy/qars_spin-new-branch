@@ -7,10 +7,10 @@ import 'package:qarsspin/model/payment/payment_execute_request.dart';
 import 'package:qarsspin/model/payment/payment_test_status_request.dart';
 import '../../model/payment/payment_result_request..dart';
 import '../../model/payment/qars_service.dart';
+import '../const/base_url.dart';
 
 class PaymentServiceNew {
-  static const String _baseUrl =
-      'https://qarspartnersportalapitest.smartvillageqatar.com';
+
 
   final http.Client _client;
 
@@ -22,7 +22,7 @@ class PaymentServiceNew {
   }) async {
     try {
       log('🌐 [PaymentService] Fetching supported currencies...');
-      final uri = Uri.parse('$_baseUrl/api/Payment/supported-currencies')
+      final uri = Uri.parse('$baseUrlWeb/api/Payment/supported-currencies')
           .replace(queryParameters: {'env': env});
 
       log('🔗 API Endpoint: $uri');
@@ -72,7 +72,7 @@ class PaymentServiceNew {
     try {
       log('💳 [PaymentService] Initiating payment...');
       
-      final uri = Uri.parse('$_baseUrl/api/Payment/initiate')
+      final uri = Uri.parse('$baseUrlWeb/api/Payment/initiate')
           .replace(queryParameters: {
             if (externalUser != null) 'externalUser': externalUser,
           });
@@ -136,7 +136,7 @@ class PaymentServiceNew {
     try {
       log('💳 [PaymentService] Executing payment for order ${request.orderMasterId}...');
       
-      final uri = Uri.parse('$_baseUrl/api/Payment/execute')
+      final uri = Uri.parse('$baseUrlWeb/api/Payment/execute')
           .replace(queryParameters: {
             if (externalUser != null) 'externalUser': externalUser,
           });
@@ -189,7 +189,7 @@ class PaymentServiceNew {
   Future<Map<String, dynamic>> getPaymentResult(
     PaymentResultRequest request,
   ) async {
-    final uri = Uri.parse('$_baseUrl/api/Payment/payment-result')
+    final uri = Uri.parse('$baseUrlWeb/api/Payment/payment-result')
         .replace(queryParameters: request.toQueryParameters());
 
     final response = await _client.get(
@@ -226,7 +226,7 @@ class PaymentServiceNew {
   Future<Map<String, dynamic>> getTestStatus(
     PaymentTestStatusRequest request,
   ) async {
-    final uri = Uri.parse('$_baseUrl/api/Payment/test-status')
+    final uri = Uri.parse('$baseUrlWeb/api/Payment/test-status')
         .replace(queryParameters: request.toQueryParameters());
 
     final response = await _client.get(
@@ -266,7 +266,7 @@ class PaymentServiceNew {
   }) async {
     try {
       log('🌐 [PaymentService] Fetching Qars services...');
-      final uri = Uri.parse('$_baseUrl/api/v1/QarsRequests/Get-QarsServices');
+      final uri = Uri.parse('$baseUrlWeb/api/v1/QarsRequests/Get-QarsServices');
 
       log('🔗 API Endpoint: $uri');
       final response = await _client.get(
@@ -326,7 +326,7 @@ class PaymentServiceNew {
     try {
       log('🌐 [PaymentService] Checking order flow... postId=$postId, serviceId=$qarsServiceId');
 
-      final uri = Uri.parse('$_baseUrl/api/Payment/check-order-flow');
+      final uri = Uri.parse('$baseUrlWeb/api/Payment/check-order-flow');
       final body = {
         "postId": postId,
         "qarsServiceId": qarsServiceId,

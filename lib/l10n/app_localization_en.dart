@@ -1113,4 +1113,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToLoadPaymentMethods => 'Failed to load payment methods';
   @override
   String get paymentflowfailed => 'Payment flow failed:';
+
+
+  @override
+  String get wait_admin_approval=> 'You requested before, please wait Admin Approval';
 }

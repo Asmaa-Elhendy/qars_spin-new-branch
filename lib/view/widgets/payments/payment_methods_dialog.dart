@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+import 'package:qarsspin/controller/const/base_url.dart';
 import 'payment_webview_page.dart';
 
 import 'package:get/get.dart';
@@ -251,7 +252,7 @@ class _InvoiceLinkDialogState extends State<InvoiceLinkDialog> {
   Future<void> _openUrl(String url) async {
     if (url.isEmpty) return;
     // Open dedicated in-app webview that auto-detects returnUrl and closes with normalized result
-    const String returnBase = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/result";
+    const String returnBase = "$baseUrlWeb/api/Payment/result";
     final normalized = await PaymentWebViewPage.open(
       context,
       url: url,
@@ -560,7 +561,7 @@ class _NewPaymentMethodsDialogState extends State<NewPaymentMethodsDialog> {
     try {
       final paymentController = Get.find<PaymentController>();
       final int paymentMethodId = method.paymentMethodId;
-      const String returnUrl = "https://qarspartnersportalapitest.smartvillageqatar.com/api/Payment/result";
+      const String returnUrl = "$baseUrlWeb/api/Payment/result";
 
       // We must have both orderMasterId and initiateResponse from the parent
       if (widget.orderMasterId == null || widget.initiateResponse == null) {
