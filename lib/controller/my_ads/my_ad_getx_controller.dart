@@ -572,6 +572,7 @@ class MyAdCleanController extends GetxController {
     required int postId,
     required String requestType,
   }) async {
+
     try {
       isCheckingRequestStatus.value = true;
       requestStatusError.value = null;

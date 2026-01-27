@@ -626,6 +626,7 @@ class MyAdDataLayer {
     required int postId,
     required String requestType,
   }) async {
+    log('in check req  ${postId}  ${requestType}  ');
     // بنبني الـ URL بالـ query parameters
     final uri = Uri.parse(
       '$baseUrlWeb/api/v1/QarsRequests/Get-Request',

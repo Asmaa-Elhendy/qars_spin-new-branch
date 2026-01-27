@@ -73,11 +73,11 @@ class PaymentController extends GetxController {
     super.onInit();
     print('🔄 PaymentController initialized');
     // Load currencies when controller is initialized
-    loadSupportedCurrencies().then((_) {
-      print('💰 Currencies loaded successfully: ${currencies.length} items');
-    }).catchError((error) {
-      print('❌ Failed to load currencies: $error');
-    });
+    // loadSupportedCurrencies().then((_) {
+    //   print('💰 Currencies loaded successfully: ${currencies.length} items');
+    // }).catchError((error) {
+    //   print('❌ Failed to load currencies: $error');
+    // });
     // Load Qars services (Individual)
     loadIndividualQarsServices().then((_) {
       print(
@@ -89,36 +89,36 @@ class PaymentController extends GetxController {
 
 
   /// GET /api/Payment/supported-currencies
-  Future<void> loadSupportedCurrencies({String env = 'Sandbox'}) async {
-    try {
-      print('⏳ Loading supported currencies...');
-      isLoadingCurrencies.value = true;
-      currenciesErrorMessage.value = '';
-
-      print('🌍 Environment: $env');
-      final SupportedCurrenciesResponse response =
-          await _service.getSupportedCurrencies(env: env);
-
-      environment.value = response.environment;
-      print('🌐 Environment set to: ${environment.value}');
-      
-      print('🔄 Updating currencies list...');
-      currencies.assignAll(response.currencies);
-      print('✅ Successfully loaded ${currencies.length} currencies');
-      
-    } catch (e, stackTrace) {
-      final errorMsg = '❌ Error loading currencies: $e';
-      print(errorMsg);
-      print('📜 Stack trace: $stackTrace');
-      
-      currenciesErrorMessage.value = errorMsg;
-      // Re-throw to allow callers to handle the error if needed
-      rethrow;
-    } finally {
-      isLoadingCurrencies.value = false;
-      print('🏁 Currency loading completed. isError: ${currenciesErrorMessage.isNotEmpty}');
-    }
-  }
+  // Future<void> loadSupportedCurrencies({String env = 'Sandbox'}) async {
+  //   try {
+  //     print('⏳ Loading supported currencies...');
+  //     isLoadingCurrencies.value = true;
+  //     currenciesErrorMessage.value = '';
+  //
+  //     print('🌍 Environment: $env');
+  //     final SupportedCurrenciesResponse response =
+  //         await _service.getSupportedCurrencies(env: env);
+  //
+  //     environment.value = response.environment;
+  //     print('🌐 Environment set to: ${environment.value}');
+  //
+  //     print('🔄 Updating currencies list...');
+  //     currencies.assignAll(response.currencies);
+  //     print('✅ Successfully loaded ${currencies.length} currencies');
+  //
+  //   } catch (e, stackTrace) {
+  //     final errorMsg = '❌ Error loading currencies: $e';
+  //     print(errorMsg);
+  //     print('📜 Stack trace: $stackTrace');
+  //
+  //     currenciesErrorMessage.value = errorMsg;
+  //     // Re-throw to allow callers to handle the error if needed
+  //     rethrow;
+  //   } finally {
+  //     isLoadingCurrencies.value = false;
+  //     print('🏁 Currency loading completed. isError: ${currenciesErrorMessage.isNotEmpty}');
+  //   }
+  // }
 
   /// POST /api/Payment/initiate
   /// 
