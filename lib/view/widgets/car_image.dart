@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qarsspin/view/widgets/video_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -35,6 +36,12 @@ class _CarImageState extends State<CarImage> {
     }
 
 
+  }
+  bool isVideo(String url) {
+    return url.toLowerCase().endsWith(".mp4") ||
+        url.toLowerCase().endsWith(".mov") ||
+        url.toLowerCase().endsWith(".avi") ||
+        url.toLowerCase().endsWith(".webm");
   }
   @override
   Widget build(BuildContext context) {
@@ -73,9 +80,12 @@ class _CarImageState extends State<CarImage> {
                 itemCount: widget.allImages.length-1,
                 itemBuilder: (context, index) {
                   final imageUrl =  widget.allImages[index+1];
+
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
+                    child: isVideo(imageUrl)
+                        ? VideoItem(url: imageUrl)
+                        :Image.network(
                       imageUrl,
                       width: double.infinity,
                       height: 250.h,
