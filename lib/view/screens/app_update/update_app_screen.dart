@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:qarsspin/controller/const/colors.dart';
-
+import '../../../l10n/app_localization.dart';
 import '../../../services/app_update_service.dart';
 
 class UpdateRequiredScreen extends StatelessWidget {
@@ -21,6 +20,7 @@ class UpdateRequiredScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background(context),
 
@@ -65,7 +65,7 @@ class UpdateRequiredScreen extends StatelessWidget {
               20.verticalSpace,
 
               Text(
-                "App Outdated",
+                l10n.app_outdated,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class UpdateRequiredScreen extends StatelessWidget {
               12.verticalSpace,
 
               Text(
-                "Please update the app to continue using all features.",
+                l10n.update_app_message,
                 textAlign: TextAlign.center,
               ),
 
@@ -90,7 +90,7 @@ class UpdateRequiredScreen extends StatelessWidget {
                     backgroundColor: AppColors.primary,
                   ),
                   child: Text(
-                    "Update Now",
+                    l10n.update_now,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,

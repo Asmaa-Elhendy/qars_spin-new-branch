@@ -46,6 +46,7 @@ class AppUpdateService {
         //     }
         //   }
         // }
+
       } catch (e) {
         print("Error fetching Android store version: $e");
       }
